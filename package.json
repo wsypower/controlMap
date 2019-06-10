@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "createRouter": "vue-cli-service createRouter"
   },
   "dependencies": {
     "ant-design-vue": "^1.2.4",
@@ -20,6 +21,7 @@
     "@vue/cli-plugin-eslint": "^3.0.5",
     "@vue/cli-service": "^3.0.5",
     "@vue/eslint-config-prettier": "^4.0.1",
+    "@xohu/vue-cli-plugin-create-router": "^1.2.1",
     "axios": "^0.18.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
