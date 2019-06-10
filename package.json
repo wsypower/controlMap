@@ -20,6 +20,7 @@
     "@vue/cli-plugin-eslint": "^3.0.5",
     "@vue/cli-service": "^3.0.5",
     "@vue/eslint-config-prettier": "^4.0.1",
+    "axios": "^0.18.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
@@ -28,6 +29,7 @@
     "node-sass": "^4.9.0",
     "sass-loader": "^7.1.0",
     "vue-cli-plugin-ant-design": "^1.0.0",
+    "vue-cli-plugin-axios": "0.0.4",
     "vue-cli-plugin-scss-base": "^0.2.2",
     "vue-cli-plugin-store": "0.0.7",
     "vue-template-compiler": "^2.6.10"
