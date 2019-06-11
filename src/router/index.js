@@ -1,19 +1,29 @@
-/* 此代码自动生成
- * date 2019-6-11 16:10:46
- */
-
-const viewsAbout = () => import("@/views/About");
-const viewsHome = () => import("@/views/Home");
-
-export default [
+import Vue from "vue";
+import Router from "vue-router";
+Vue.use(Router);
+const baseRoutes = [
   {
-    name: "About",
-    path: "/About",
-    component: viewsAbout
-  },
+    path: "/",
+    redirect: "/index"
+  }, //重定向
   {
-    name: "Home",
-    path: "/Home",
-    component: viewsHome
+    path: "/index",
+    name: "index",
+    component: () => import("@/views/map/index.vue"),
+    meta: {
+      title: "地图管控平台"
+    }
   }
 ];
+let RootRouter = new Router({
+  routes: baseRoutes,
+  //when the page jumps the page rolls back to the top
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { x: 0, y: 0 };
+    }
+  }
+});
+export default RootRouter;

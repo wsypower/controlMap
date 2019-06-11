@@ -1,23 +1,12 @@
 <template>
-  <div>
-    111
+  <div id="app">
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import zh_CN from "ant-design-vue/lib/locale-provider/zh_CN";
-import HelloWorld from "./components/HelloWorld.vue";
-
 export default {
-  name: "app",
-  data() {
-    return {
-      zh_CN
-    };
-  },
-  components: {
-    HelloWorld
-  }
+  name: "app"
 };
 </script>
 
@@ -28,6 +17,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
