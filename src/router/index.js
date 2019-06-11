@@ -8,7 +8,9 @@ const routes = [
     path: "/",
     name: "Map",
     component: () => import("@/views/map/index.vue"),
-    meta: { title: "测试" }
+    meta: {
+      title: "测试"
+    }
   }
 ];
 

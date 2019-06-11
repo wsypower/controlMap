@@ -1,5 +1,13 @@
+
 <template>
-  <div class="map">123123123123322</div>
+  <div class="map">
+    <div class="map-header">
+      <div class="map-header_title"></div>
+    </div>
+    <div class="map-main">
+      <div class="map-main_content"></div>
+    </div>
+  </div>
 </template>
 <script>
 export default {
@@ -13,5 +21,5 @@ export default {
 };
 </script>
 <style lang="sass" scoped>
-    @import './index.scss';
+@import 'index.scss';
 </style>

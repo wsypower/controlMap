@@ -1,5 +1,19 @@
 .map {
-    background-color: red;
+    height: 600px;
+    width: 600px;
+    background-color: rgb(182, 196, 193);
+}
+
+.map-header {
     height: 200px;
-    width: 200px;
+    background-color: red;
+
+    &_title {}
+}
+
+.map-main {
+    height: 400;
+    background-color: rgb(34, 180, 119);
+    
+    &_content {}
 }
