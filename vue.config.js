@@ -17,15 +17,18 @@ module.exports = {
   },
   pluginOptions: {
     createRouterConfig: {
-      // 工作目录（默认: src）
+      /* working directory default src */
       // cwd: path.resolve(process.cwd(), "./src"),
-      // 项目页面地址（默认: views）
+      /* project page address (default views) */
       projectPath: `views`,
-      // 生成路由文件的名称（默认: index）
+      /* generate the name of the routing file (default index) */
       outputFileName: "index",
-      // 开启路由异步模式（默认: false）
+      /* enable route asynchronous mode (default false) */
       async: true,
-      // 以监听模式运行 serve 服务，监听 projectPath 目录下文件的 created，removed，changed （默认: false）
+      /*
+       **run the serve service in listener mode listening
+       ** for created removed and changed files in the project path directory(default false)
+       */
       watch: false
     }
   }
