@@ -1,4 +1,3 @@
-
 <template>
   <div class="map">
     <div class="map-header">
