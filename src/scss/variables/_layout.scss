@@ -1,3 +1,7 @@
+// /*=============================================
+// =                   提供布局                   =
+// =============================================*/
+
 // Grid
 $max-width: 1200px;
 $max-width-narrow: 720px;
@@ -7,4 +11,4 @@ $horizontal-padding-small: 30px;
 $horizontal-padding-medium: 60px;
 
 // Containers
-$limit-width: $max-width + ($horizontal-padding-medium * 2);
+$limit-width: $max-width+($horizontal-padding-medium * 2);

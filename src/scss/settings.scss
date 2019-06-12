@@ -1,20 +1,16 @@
-/*
- * @Author: wei.yafei  
- * @Date: 2019-06-11 22:05:54 
- * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-11 22:41:52
- */
- 
-@import 'variables/breakpoints';
+// /*=====================================================
+// =                     setting scss                    =
+// 提供所有的基础功能包括：变量设置，@media，基础mixin，animation
+//                   默认不会解析出任何样式           
+// =======================================================*/
+
 @import 'variables/colors';
 @import 'variables/layout';
 @import 'variables/fonts';
-@import 'variables/hamburger';
-
+@import 'variables/_animation';
 
 // /*----------  导入所有功能类相关文件  ----------*/
 @import 'utilities/family';
 @import 'mixins/variables';
-@import 'animations/animations';
 @import 'mixins/mixin';
 @import 'mixins/media-queries';

@@ -1,2 +1,5 @@
-$animation-speed: .4s;
-$animation-easing: cubic-bezier(0.37, 0.96, 0.22, 1.01);
+//-----------------------------------------------------	
+// animations
+// _animations提供6组动画，添加其他库或者动画样式在此处连接
+//-----------------------------------------------------
+@import '../animations/animations';

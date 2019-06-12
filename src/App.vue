@@ -1,20 +1,7 @@
 <template>
-  <a-locale-provider :locale="zh_CN">
-    <div id="app">
-      <img src="./assets/logo.png">
-      <div>
-        <p>
-          If Ant-Design-Vue is successfully added to this project, you'll see an
-          <code v-text="'<a-button>'"></code>
-          <code v-text="'<a-pagination>'"></code>
-          below
-        </p>
-        <a-button type="primary">Primary</a-button>
-        <a-pagination size="small" :total="50" showSizeChanger showQuickJumper />
-      </div>
-      <HelloWorld msg="Welcome to Your Vue.js App"/>
-    </div>
-  </a-locale-provider>
+  <div>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
@@ -34,7 +21,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
+@import './scss/layout/flex';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
