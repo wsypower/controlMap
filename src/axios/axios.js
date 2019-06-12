@@ -1,62 +1,76 @@
-/* eslint-disable no-unused-vars */
-"use strict";
+'use strict'
+/*
+ * @Author: wei.yafei
+ * @Date: 2019-06-12 15:19:30
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-06-12 20:40:55
+ */
+/*=============================================
+=                    axios                    =
+=============================================*/
 
-import Vue from "vue";
-import axios from "axios";
+import Vue from 'vue'
+import axios from 'axios'
 
-// Full config:  https://github.com/axios/axios#request-config
-// axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
-// axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+//axios默认配置
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
+//axios config配置
+axios.defaults.baseURL = process.env.VUE_APP_BASE_API
 let config = {
-  // baseURL: process.env.baseURL || process.env.apiUrl || ""
-  // timeout: 60 * 1000, // Timeout
-  // withCredentials: true, // Check cross-site Access-Control
-};
+  //public下config配置API接口
+  // baseURL:window.MAP_BASE_ATTRIBUTE.BASERURL
+  baseURL: 'http://www.baidu.com',
+  timeout: 60 * 100 // Timeout
+}
 
-const _axios = axios.create(config);
+//创建axios实例
+
+const _axios = axios.create(config)
+
+//request拦截器
 
 _axios.interceptors.request.use(
   function(config) {
-    // Do something before request is sent
-    return config;
+    // 在发送之前的操作
+    return config
   },
   function(error) {
-    // Do something with request error
-    return Promise.reject(error);
+    // 执行请求错误后的操作
+    return Promise.reject(error)
   }
-);
+)
 
-// Add a response interceptor
+//request拦截器
+
 _axios.interceptors.response.use(
   function(response) {
-    // Do something with response data
-    return response;
+    // 对响应数据进行的操作
+    return response
   },
   function(error) {
-    // Do something with response error
-    return Promise.reject(error);
+    // 对错误响应数据的操作
+    return Promise.reject(error)
   }
-);
+)
 
-Plugin.install = function(Vue, options) {
-  Vue.axios = _axios;
-  window.axios = _axios;
+Plugin.install = function(Vue) {
+  Vue.axios = _axios
+  window.axios = _axios
   Object.defineProperties(Vue.prototype, {
     axios: {
       get() {
-        return _axios;
+        return _axios
       }
     },
     $axios: {
       get() {
-        return _axios;
+        return _axios
       }
     }
-  });
-};
+  })
+}
 
-Vue.use(Plugin);
+Vue.use(Plugin)
 
-export default Plugin;
+export default Plugin

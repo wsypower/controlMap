@@ -10,14 +10,17 @@
 </template>
 <script>
 export default {
-  name: "Map",
+  name: 'Map',
   data() {
-    return {};
+    return {}
   },
 
   methods: {},
-  mounted() {}
-};
+  mounted() {
+    console.log(process.env)
+    this.$axios('/user').then()
+  }
+}
 </script>
 <style lang="sass" scoped>
 @import 'index.scss';

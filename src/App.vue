@@ -5,26 +5,23 @@
 </template>
 
 <script>
-import zh_CN from "ant-design-vue/lib/locale-provider/zh_CN";
-import HelloWorld from "./components/HelloWorld.vue";
+import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN'
 
 export default {
-  name: "app",
+  name: 'app',
   data() {
     return {
       zh_CN
-    };
+    }
   },
-  components: {
-    HelloWorld
-  }
-};
+  components: {}
+}
 </script>
 
 <style scoped lang="scss">
-@import "./scss/layout/flex";
+@import './scss/layout/flex';
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
