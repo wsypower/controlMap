@@ -3,7 +3,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-12 15:19:30
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-12 22:59:30
+ * @Last Modified time: 2019-06-13 15:45:50
  */
 /*=============================================
 =                    axios                    =
@@ -11,7 +11,7 @@
 
 import Vue from 'vue'
 import axios from 'axios'
-
+import Qs from 'qs'
 //axios默认配置
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
@@ -20,8 +20,15 @@ axios.defaults.baseURL = process.env.VUE_APP_BASE_API
 let config = {
   //public下config配置API接口
   // baseURL:window.MAP_BASE_ATTRIBUTE.BASERURL
-  baseURL: '/api',
-  timeout: 60 * 100 // Timeout
+  baseURL: 'http://api',
+  timeout: 60 * 100, // Timeout
+  //参数序列化
+  transformRequest: [
+    function(data) {
+      // 对 data 进行任意转换处理
+      return Qs.stringify(data, { arrayFormat: 'repeat' })
+    }
+  ]
 }
 
 //创建axios实例

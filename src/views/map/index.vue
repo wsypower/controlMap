@@ -15,9 +15,14 @@ export default {
     return {}
   },
 
-  methods: {},
+  methods: {
+
+  },
   mounted() {
-    this.$axios.post('/login').then((res) => {
+    this.$axios.post('@text/login',{
+      username:'1111',
+      password:'123123'
+    }).then((res) => {
       console.log(res);
     })
   }

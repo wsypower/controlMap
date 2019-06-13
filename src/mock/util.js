@@ -1,3 +1,11 @@
+/*
+ * @Author: wei.yafei
+ * @Date: 2019-06-08 23:39:35
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-06-13 15:37:20
+ */
+import Qs from 'qs'
+
 const responseBody = {
   message: '',
   timestamp: 0,
@@ -14,11 +22,10 @@ const responseBody = {
  * @param {Number} code
  * @param {Object} headers
  */
+
 export const builder = (data, message, code = 0, headers = {}) => {
   responseBody.result = data
-  if (message !== undefined && message !== null) {
-    responseBody.message = message
-  }
+  if (message !== undefined && message !== null) responseBody.message = message
   if (code !== undefined && code !== 0) {
     responseBody.code = code
     responseBody._status = code
@@ -30,6 +37,11 @@ export const builder = (data, message, code = 0, headers = {}) => {
   return responseBody
 }
 
+/**
+ * @description url上获取参数 - get
+ * @author weiyafei
+ * @date 2019-06-13-10:25:18
+ */
 export const getQueryParameters = options => {
   const url = options.url
   const search = url.split('?')[1]
@@ -45,7 +57,10 @@ export const getQueryParameters = options => {
       '"}'
   )
 }
-
-export const getBody = options => {
-  return options.body && JSON.parse(options.body)
-}
+/**
+ * @description 获取参数 - post
+ * @author weiyafei
+ * @date 2019-06-13-14:32:15
+ * @param {Object} options axios上传的参数对象
+ */
+export const getBody = options => options.body && Qs.parse(options.body)
