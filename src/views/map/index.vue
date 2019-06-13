@@ -17,8 +17,9 @@ export default {
 
   methods: {},
   mounted() {
-    console.log(process.env)
-    this.$axios('/user').then()
+    this.$axios.post('/login').then((res) => {
+      console.log(res);
+    })
   }
 }
 </script>

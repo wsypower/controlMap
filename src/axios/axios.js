@@ -3,7 +3,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-12 15:19:30
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-12 20:40:55
+ * @Last Modified time: 2019-06-12 22:59:30
  */
 /*=============================================
 =                    axios                    =
@@ -20,7 +20,7 @@ axios.defaults.baseURL = process.env.VUE_APP_BASE_API
 let config = {
   //public下config配置API接口
   // baseURL:window.MAP_BASE_ATTRIBUTE.BASERURL
-  baseURL: 'http://www.baidu.com',
+  baseURL: '/api',
   timeout: 60 * 100 // Timeout
 }
 
