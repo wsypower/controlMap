@@ -26,7 +26,8 @@
     "lodash": "^4.17.11",
     "dayjs": "^1.8.12",
     "hotkeys-js": "^3.6.2",
-    "ua-parser-js": "^0.7.19"
+    "ua-parser-js": "^0.7.19",
+    "nprogress": "^0.2.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.8.0",
