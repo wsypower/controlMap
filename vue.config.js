@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-05-23 23:32:53
- * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-14 14:51:33
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-06-14 15:22:35
  */
 /* eslint-disable no-unused-vars */
 
@@ -28,7 +28,13 @@ module.exports = {
   publicPath, // 根据你的实际情况更改这里
   outputDir: 'dist', //当运行 vue-cli-service build 时生成的生产环境构建文件的目录.
   assetsDir: 'assets', //放置生成的静态资源 (js、css、img、fonts) 的 (相对于 outputDir 的) 目录.
-  lintOnSave: true, //是否在开发环境下通过 eslint-loader 在每次保存时 lint 代码.
+  // 是否在保存的时候使用 `eslint-loader` 进行检查。
+  // 有效的值：`true` | `false` | `"error"`
+  // 当设置为 `"error"` 时，检查出的错误会触发编译失败。
+  lintOnSave: true,
+  // 是否为生产环境构建生成 source map？
+  productionSourceMap: true,
+  // CSS 相关选项
   css: {
     loaderOptions: {
       // 设置 scss 公用变量文件
@@ -73,14 +79,11 @@ module.exports = {
       })
     // 重新设置 alias
     config.resolve.alias.set('@', resolve('src'))
-  },
-  //可以在正式环境下关闭错误报告 console.log...
-  configureWebpack: config => {
-    if (process.env.NODE_ENV === 'production') {
-      // 为生产环境修改配置...
-    } else {
-      // 为开发环境修改配置...
-    }
+    // 判断环境加入模拟数据
+    /*   const entry = config.entry('app')
+    if (process.env.VUE_APP_BUILD_MODE !== 'nomock') {
+      entry.add('@/mock').end()
+    } */
   },
   devServer: {
     open: true

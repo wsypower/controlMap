@@ -1,7 +1,15 @@
+/*
+ * @Author: wei.yafei
+ * @Date: 2019-06-12 02:44:03
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-06-14 15:01:34
+ */
 const log = {}
 
 /**
  * @description 返回这个样式的颜色值
+ * @author weiyafei
+ * @date 2019-06-13-22:22:05
  * @param {String} type 样式名称 [ primary | success | warning | danger | text ]
  */
 function typeColor(type = 'default') {
@@ -30,6 +38,8 @@ function typeColor(type = 'default') {
 
 /**
  * @description 打印一个 [ title | text ] 样式的信息
+ * @author weiyafei
+ * @date 2019-06-12-08:12:05
  * @param {String} title title text
  * @param {String} info info text
  * @param {String} type style
@@ -45,10 +55,16 @@ log.capsule = function(title, info, type = 'primary') {
 
 /**
  * @description 打印彩色文字
+ * @author weiyafei
+ * @date 2019-06-13-21:12:27
  */
 log.colorful = function(textArr) {
   console.log(`%c${textArr.map(t => t.text || '').join('%c')}`, ...textArr.map(t => `color: ${typeColor(t.type)};`))
 }
+
+/*=============================================
+=                  打印彩色文字                 =
+=============================================*/
 
 /**
  * @description 打印 default 样式的文字
@@ -86,3 +102,5 @@ log.danger = function(text) {
 }
 
 export default log
+
+/*=====  End of Section comment block  ======*/

@@ -11,6 +11,7 @@
   "dependencies": {
     "ant-design-vue": "^1.2.4",
     "core-js": "^2.6.5",
+    "better-scroll": "^1.15.2",
     "js-cookie": "^2.2.0",
     "mockjs": "^1.0.1-beta3",
     "vue": "^2.6.10",

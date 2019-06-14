@@ -9,6 +9,8 @@ const util = {
 
 /**
  * @description 更新标题
+ * @author weiyafei
+ * @date 2019-06-10-21:12:27
  * @param {String} title 标题
  */
 util.title = function(titleText) {
@@ -18,6 +20,8 @@ util.title = function(titleText) {
 
 /**
  * @description 打开新页面
+ * @author weiyafei
+ * @date 2019-06-10-23:45:01
  * @param {String} url 地址
  */
 util.open = function(url) {
