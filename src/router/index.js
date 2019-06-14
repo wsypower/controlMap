@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { BasicLayout } from '../layouts';
 
 Vue.use(VueRouter)
 
@@ -10,6 +11,14 @@ const routes = [
     component: () => import('@/views/map/index.vue'),
     meta: {
       title: '测试'
+    }
+  },
+  {
+    path: '/',
+    name: 'BasicLayout',
+    component: () => import('@/layouts/BasicLayout'),
+    meta: {
+      title: '基础布局'
     }
   }
 ]
