@@ -41,6 +41,7 @@
     "vue-cli-plugin-route": "0.0.5",
     "vue-cli-plugin-scss-base": "^0.2.2",
     "vue-cli-plugin-store": "0.0.7",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "uglifyjs-webpack-plugin": "^2.1.2"
   }
 }
