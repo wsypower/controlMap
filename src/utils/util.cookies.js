@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-04 21:25:15
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-14 11:19:36
+ * @Last Modified time: 2019-06-14 14:40:15
  */
 import Cookies from 'js-cookie'
 const cookies = {}
@@ -20,7 +20,7 @@ cookies.set = function(name = 'default', value = '', cookieSetting = {}) {
     expires: 1
   }
   Object.assign(currentCookieSetting, cookieSetting)
-  Cookies.set(`cgadmin-${process.env.VUE_APP_VERSION}-${name}`, value, currentCookieSetting)
+  Cookies.set(`cg-admin-${process.env.VUE_APP_VERSION}-${name}`, value, currentCookieSetting)
 }
 
 /**
@@ -30,7 +30,7 @@ cookies.set = function(name = 'default', value = '', cookieSetting = {}) {
  * @param {String} name cookie name
  */
 cookies.get = function(name = 'default') {
-  return Cookies.get(`cgadmin-${process.env.VUE_APP_VERSION}-${name}`)
+  return Cookies.get(`cg-admin-${process.env.VUE_APP_VERSION}-${name}`)
 }
 
 /**
@@ -47,7 +47,7 @@ cookies.getAll = function() {
  * @param {String} name cookie name
  */
 cookies.remove = function(name = 'default') {
-  return Cookies.remove(`cgadmin-${process.env.VUE_APP_VERSION}-${name}`)
+  return Cookies.remove(`cg-admin-${process.env.VUE_APP_VERSION}-${name}`)
 }
 
 export default cookies
