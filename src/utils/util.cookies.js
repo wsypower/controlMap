@@ -1,8 +1,8 @@
-/*
+/* TODO: process.env.VUE_APP_VERSION?
  * @Author: wei.yafei
  * @Date: 2019-06-04 21:25:15
- * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-14 14:40:15
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-06-15 17:28:54
  */
 import Cookies from 'js-cookie'
 const cookies = {}

@@ -1,7 +1,6 @@
 <template>
   <!-- 外包裹 -->
   <div class="cg-layout-header-aside-group">
-    11111111111111
     <!-- 主体内容 -->
     <div class="cg-layout-header-content">
       <!-- 顶栏 -->
@@ -26,7 +25,11 @@ export default {
   data() {
     return {}
   },
-  mounted() {}
+  mounted() {
+    this.$axios.post('@text/login').then((res) => {
+      console.log(res);
+    })
+  }
 }
 </script>
 
@@ -35,6 +38,9 @@ export default {
 .cg-layout-header-aside-group {
     width: 100%;
     height: 100%;
-    background-color:red;
 }
+.cg-layout-header-content{
+  
+}
+
 </style>
