@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-05-23 23:32:53
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-06-18 17:04:59
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-06-18 17:31:01
  */
 /* eslint-disable no-unused-vars */
 
@@ -39,7 +39,7 @@ module.exports = {
     loaderOptions: {
       // 设置 scss 公用变量文件
       sass: {
-        data: '@import "@/scss/settings.scss";'
+        data: '@import "@/assets/style/settings.scss";'
       }
     }
   },

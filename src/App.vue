@@ -19,7 +19,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import './scss/layout/flex';
+@import './assets/style/layout/flex';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
