@@ -1,3 +1,3 @@
 window.MAP_BASE_ATTRIBUTE = {
-    BASERURL='',
+  win_BASERURL: 'http://api'
 }

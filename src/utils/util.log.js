@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-12 02:44:03
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-06-14 15:01:34
+ * @Last Modified by: wei.yafei  
+ * @Last Modified time: 2019-06-18 12:31:50
  */
 const log = {}
 
@@ -28,7 +28,7 @@ function typeColor(type = 'default') {
       color = '#e6a23c'
       break
     case 'danger':
-      color = '#f56c6c'
+      color = '#FF0000'
       break
     default:
       break

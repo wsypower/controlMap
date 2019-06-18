@@ -5,7 +5,7 @@
     <div class="cg-layout-header-content">
       <!-- 顶栏 -->
       <div class="cg-header"></div>
-      <!-- 下面 主体 -->
+      <!-- 主体 -->
       <div class="cg-container">
         <!-- 主体 左侧边栏 -->
         <div class="cg-container-meau"></div>
@@ -26,9 +26,14 @@ export default {
     return {}
   },
   mounted() {
-    this.$axios.post('@text/login').then((res) => {
-      console.log(res);
-    })
+    this.$axios
+      .post('@text/login', {
+        username: 'admin',
+        password: '123456'
+      })
+      .then(res => {
+        console.log(res)
+      })
   }
 }
 </script>
@@ -36,11 +41,9 @@ export default {
 <style lang="scss" scoped>
 // 外层包裹
 .cg-layout-header-aside-group {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
-.cg-layout-header-content{
-  
+.cg-layout-header-content {
 }
-
 </style>

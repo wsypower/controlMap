@@ -19,12 +19,9 @@ export default {
 
   },
   mounted() {
-    this.$axios.post('@text/login',{
-      username:'1111',
-      password:'123123'
-    }).then((res) => {
-      console.log(res);
-    })
+    // this.$axios('/loginn',{
+    //   user:'1111'
+    // })
   }
 }
 </script>
