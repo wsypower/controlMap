@@ -3,6 +3,9 @@ import '../antDesignVue/ant-design-vue.js'
 // axios
 import '../axios/axios'
 
+// svg 图标
+import '@/assets/svg-icons'
+
 // 功能插件
 import pluginError from '@/plugins/error'
 import pluginLog from '@/plugins/log'

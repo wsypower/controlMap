@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-05-23 23:32:53
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-19 19:17:24
+ * @Last Modified time: 2019-06-19 23:10:00
  */
 /* eslint-disable no-unused-vars */
 
@@ -81,15 +81,18 @@ module.exports = {
     const svgRule = config.module.rule('svg')
     svgRule.uses.clear()
     svgRule.include
-      .add(resolve('src/assets/svg-icons/icons'))
+      .add(resolve('src/assets/svg-icons/icons')) // 处理svg目录
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
       .options({
-        symbolId: 'd2-[name]'
+        symbolId: 'cg-[name]'
       })
       .end()
     // image exclude
+    // vue-cli默认情况下会使用 url-loader 对svg进行处理，会将它放在/img 目录下
+    // 所以这时候我们引入svg-sprite-loader 会引发一些冲突
+    // 采用webpack的 exclude 和 include
     const imagesRule = config.module.rule('images')
     imagesRule
       .test(/\.(png|jpe?g|gif|webp|svg)(\?.*)?$/)

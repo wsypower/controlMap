@@ -38,11 +38,18 @@
       <!-- 主体 -->
       <div class="container" flex>
         <!-- 主体 左侧边栏 -->
-        <div class="container__menu"></div>
+        <div class="container__menu">
+          
+          <div class="container__menu__item">
+            <cg-icon-svg name="action"></cg-icon-svg>
+          </div>
+        </div>
         <!-- 主体 右侧按钮栏 -->
         <div class="container__aside"></div>
         <!-- 主体 -->
-        <div class="ccontainer__main"></div>
+        <div class="ccontainer__main">
+         
+        </div>
       </div>
     </div>
   </div>
@@ -54,10 +61,20 @@ export default {
   data() {
     return {}
   },
-  mounted() {}
+  mounted() {
+    console.log(this.$IconSvg)
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 @import './index';
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+  color: #000;
+}
 </style>

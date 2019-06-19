@@ -2,7 +2,7 @@
  * @Author: wei.yafei  
  * @Date: 2019-06-17 12:53:24 
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-19 17:25:54
+ * @Last Modified time: 2019-06-19 21:17:36
  */
 
 /*=============================================
@@ -76,6 +76,9 @@
     width: 60px;
     height: 100%;
     background-image: $color-menu;
+    &__item{
+        width: 14px;
+    }
 }
 
 /*=============================================
