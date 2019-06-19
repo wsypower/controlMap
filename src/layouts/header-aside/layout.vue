@@ -1,3 +1,4 @@
+import { extends } from '../../../.eslintrc';
 <template>
   <!-- 外包裹 -->
   <div class="cg-layout-header-aside-group">
@@ -8,7 +9,7 @@
       <!-- 主体 -->
       <div class="cg-container">
         <!-- 主体 左侧边栏 -->
-        <div class="cg-container-meau"></div>
+        <div class="cg-container-menu"></div>
         <!-- 主体 右侧按钮栏 -->
         <div class="cg-container-aside"></div>
         <!-- 主体 -->
@@ -19,31 +20,44 @@
 </template>
 
 <script>
-import qs from 'qs'
 export default {
   name: 'layoutHeaderAside',
   data() {
     return {}
   },
-  mounted() {
-    this.$axios
-      .post('@text/login', {
-        username: 'admin',
-        password: '123456'
-      })
-      .then(res => {
-        console.log(res)
-      })
-  }
+  mounted() {}
 }
 </script>
 
 <style lang="scss" scoped>
-// 外层包裹
+/*=============================================
+=                   包裹层                     =
+=============================================*/
 .cg-layout-header-aside-group {
+  @extend %full;
+  .cg-layout-header-content {
+     @extend %full;
+    background-color: saddlebrown;
+  }
+}
+
+/*=============================================
+=                   header                    =
+=============================================*/
+.cg-header {
   width: 100%;
-  height: 100%;
+  height: 60px;
+  background-color: red;
 }
-.cg-layout-header-content {
-}
+/*=============================================
+=                   content                   =
+=============================================*/
+
+/*=============================================
+=                    menu                     =
+=============================================*/
+
+/*=============================================
+=                    aside                    =
+=============================================*/
 </style>

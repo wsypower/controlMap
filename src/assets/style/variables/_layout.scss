@@ -2,13 +2,19 @@
 // =                   提供布局                   =
 // =============================================*/
 
-// Grid
+
+// /*=============================================
+// =                   variable                  =
+// =============================================*/
+
+// 网格
 $max-width: 1200px;
 $max-width-narrow: 720px;
 
-// Spacing
+// 间距
 $horizontal-padding-small: 30px;
 $horizontal-padding-medium: 60px;
 
-// Containers
+// 内容
 $limit-width: $max-width+($horizontal-padding-medium * 2);
+

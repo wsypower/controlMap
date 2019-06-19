@@ -6,7 +6,6 @@
 
 <script>
 import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN'
-
 export default {
   name: 'app',
   data() {
@@ -14,12 +13,11 @@ export default {
       zh_CN
     }
   },
-  components: {}
 }
 </script>
 
 <style scoped lang="scss">
-@import './scss/layout/flex';
+@import '~@/assets/style/layout/flex';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
