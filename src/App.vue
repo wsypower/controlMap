@@ -12,11 +12,11 @@ export default {
     return {
       zh_CN
     }
-  },
+  }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import '~@/assets/style/layout/flex';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -25,8 +25,7 @@ export default {
   color: #2c3e50;
   width: 100%;
   height: 100%;
-  min-width: 1366px;
-  min-height: 768px;
-  background-color: silver;
+  // min-width: 1366px;
+  // min-height: 768px;
 }
 </style>

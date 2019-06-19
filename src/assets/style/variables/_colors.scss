@@ -1,38 +1,54 @@
-
 @import '../base/color';
 
 // /*=============================================
-// =             basicColor 基本颜色              =
+// =                   主色                      =
 // =============================================*/
 
-$black: #000;
-$white: #fff;
-$grey-darker: #111;
-$grey-dark: #333;
-$grey: #999;
-$grey-light: #ccc;
-$grey-lighter: #f5f5f5;
-$gold: #ac955f;
-$blue: #2196f3;
-$success: #4caf50;
-$error: $w-red-3;
-$warning: #ffc105;
-$disabled: #aaa;
+// menu颜色
+$color-menu:linear-gradient(0deg, #00a5ff 0%, #0066E8 80%, #0066E8 100%);
+// header颜色
+$color-header-white:#ffffff;
+$color-top-line:linear-gradient(90deg, #1066eb 0%, #3a65ed 50%, #6463ee 100%);
+// 主色调
+$color-primary: #409EFF;
+
 
 // /*=============================================
-// =           背景色，文本色，边框色，链接色         =
+// =                   辅助色                     =
 // =============================================*/
 
-$colorText:                      #333 !default;
-$colorBg:                        #fff !default;
-$colorBorder:                    #dbdbdb !default;
-$colorLink:                      #08c !default;
-$colorPlaceholder:               #999 !default; // input placeholder color
-$colorDisabled:                  (text: #999, bg: #e3e3e3, border: #dbdbdb) !default; // textColor bgColor borderColor
-$colorOverlay:                   rgba(0,0,0,.7) !default; // 遮罩层颜色
+$color-info: #909399;
+$color-success: #67C23A;
+$color-warning: #E6A23C;
+$color-danger: #F56C6C;
 
 // /*=============================================
-// =                 buttonColor                  =
+// =                   文字                     =
+// =============================================*/
+
+$color-text-main: #303133;
+$color-text-normal: #606266;
+$color-text-sub: #909399;
+$color-text-placehoder: #C0C4CC;
+
+// /*=============================================
+// =                   边框                       =
+// =============================================*/
+
+$color-border-1: #DCDFE6;
+$color-border-2: #E4E7ED;
+$color-border-3: #EBEEF5;
+$color-border-4: #F2F6FC;
+
+// /*=============================================
+// =                   背景色                     =
+// =============================================*/
+$color-bg: #f8f8f9;
+
+
+
+// /*=============================================
+// =                   按钮色                     =
 // =============================================*/
 
 // -- button::hover
@@ -43,7 +59,7 @@ $colorOverlay:                   rgba(0,0,0,.7) !default; // 遮罩层颜色
 
 
 // /*=============================================
-// =                 formColor                  =
+// =                 form表单                     =
 // =============================================*/
 
 // input
@@ -71,12 +87,36 @@ $colorOverlay:                   rgba(0,0,0,.7) !default; // 遮罩层颜色
 
 
 // /*=============================================
-// =                 radius                  =
+// =                 radius                      =
 // =============================================*/
 
-$radiusBase:                      5px !default;
-$radiusSmall:                     3px !default;
+$radiusBase: 5px !default;
+$radiusSmall: 3px !default;
 
 
+// /*=============================================
+// =                 minx默认色                   =
+// =============================================*/
 
+$black: #000;
+$white: #fff;
+$grey-darker: #111;
+$grey-dark: #333;
+$grey: #999;
+$grey-light: #ccc;
+$grey-lighter: #f5f5f5;
+$gold: #ac955f;
+$blue: #2196f3;
+$success: #4caf50;
+$error: $w-red-3;
+$warning: #ffc105;
+$disabled: #aaa;
 
+//文字
+$colorText: #333 !default;
+$colorBg: #fff !default;
+$colorBorder: #dbdbdb !default;
+$colorLink: #08c !default;
+$colorPlaceholder: #999 !default; // input placeholder color
+$colorDisabled: (text: #999, bg: #e3e3e3, border: #dbdbdb) !default; // textColor bgColor borderColor
+$colorOverlay: rgba(0, 0, 0, .7) !default; // 遮罩层颜色

@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-05-23 23:32:53
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-19 15:26:17
+ * @Last Modified time: 2019-06-19 19:17:24
  */
 /* eslint-disable no-unused-vars */
 
@@ -77,8 +77,26 @@ module.exports = {
           })
         ])
       })
+    // svg自动
+    const svgRule = config.module.rule('svg')
+    svgRule.uses.clear()
+    svgRule.include
+      .add(resolve('src/assets/svg-icons/icons'))
+      .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({
+        symbolId: 'd2-[name]'
+      })
+      .end()
+    // image exclude
+    const imagesRule = config.module.rule('images')
+    imagesRule
+      .test(/\.(png|jpe?g|gif|webp|svg)(\?.*)?$/)
+      .exclude.add(resolve('src/assets/svg-icons/icons'))
+      .end()
     // 重新设置 alias
-    config.resolve.alias.set('@', resolve('src'))
+    config.resolve.alias.set('@', resolve('src')).set('@img', resolve('src/assets/images'))
     // 判断环境加入模拟数据
     /*   const entry = config.entry('app')
     if (process.env.VUE_APP_BUILD_MODE !== 'nomock') {
