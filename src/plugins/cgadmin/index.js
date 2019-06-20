@@ -2,7 +2,8 @@
 import '../antDesignVue/ant-design-vue.js'
 // axios
 import '../axios/axios'
-
+// 组件
+import '@/components'
 // svg 图标
 import '@/assets/svg-icons'
 

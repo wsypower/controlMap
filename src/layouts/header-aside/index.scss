@@ -2,7 +2,7 @@
  * @Author: wei.yafei  
  * @Date: 2019-06-17 12:53:24 
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-19 21:17:36
+ * @Last Modified time: 2019-06-20 16:52:21
  */
 
 /*=============================================
@@ -58,6 +58,10 @@
         height: 100%;
         background: url('~@img/layout-header-title-bc.png') no-repeat;
         padding-left: 24px;
+        overflow: hidden;
+        &__icon{
+            font-size: 15em;
+        }
     }
 }
 
@@ -78,6 +82,10 @@
     background-image: $color-menu;
     &__item{
         width: 14px;
+    }
+    &__icon{
+        font-size: 40px;
+        color: red;
     }
 }
 

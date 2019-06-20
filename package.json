@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "createRouter": "vue-cli-service createRouter"
+    "createRouter": "vue-cli-service createRouter",
+    "svgo": "svgo -f src/assets/svg-icons/icons --config=src/assets/svg-icons/svgo.yml"
   },
   "dependencies": {
     "ant-design-vue": "^1.2.4",
@@ -54,6 +55,7 @@
     "vue-cli-plugin-store": "0.0.7",
     "vue-template-compiler": "^2.6.10",
     "uglifyjs-webpack-plugin": "^2.1.2",
-    "svg-sprite-loader": "^4.1.6"
+    "svg-sprite-loader": "^4.1.6",
+    "svgo": "1.2.2"
   }
 }
