@@ -1,5 +1,5 @@
 <template>
-  <div class="LayoutHeader"></div>
+  
 </template>
 
 <script>
@@ -8,11 +8,10 @@ export default {
   data() {
     return {}
   },
-
   methods: {},
   mounted() {}
 }
 </script>
-<style lang="sass" scoped>
-    @import './index.scss';
+<style lang="scss" scoped>
+
 </style>
