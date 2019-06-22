@@ -28,19 +28,45 @@
       <div class="container" flex>
         <!-- 主体 左侧边栏 -->
         <div class="menu">
-          <div class="menu__item" flex="main:center cross:center">
-            <cg-icon-svg name="menu-section" class="menu__item__icon"></cg-icon-svg>
+          <div class="menu__items">
+            <cg-container scroll>
+              <div class="menu__item" flex="main:center cross:center">
+                <cg-icon-svg name="menu-section" class="menu__item__icon"></cg-icon-svg>
+              </div>
+              <div class="menu__item" flex="main:center cross:center">
+                <cg-icon-svg name="menu-car" class="menu__item__icon"></cg-icon-svg>
+              </div>
+              <div class="menu__item" flex="main:center cross:center">
+                <cg-icon-svg name="menu-records" class="menu__item__icon"></cg-icon-svg>
+              </div>
+              <div class="menu__item" flex="main:center cross:center">
+                <cg-icon-svg name="menu-video" class="menu__item__icon"></cg-icon-svg>
+              </div>
+              <div class="menu__item" flex="main:center cross:center">
+                <cg-icon-svg name="menu-special" class="menu__item__icon"></cg-icon-svg>
+              </div>
+              <div class="menu__item" flex="main:center cross:center">
+                <cg-icon-svg name="menu-emergency" class="menu__item__icon"></cg-icon-svg>
+              </div>
+            </cg-container>
           </div>
-          <div class="menu__item" flex="main:center cross:center"></div>
-          <div class="menu__item" flex="main:center cross:center"></div>
-          <div class="menu__item" flex="main:center cross:center"></div>
-          <div class="menu__item" flex="main:center cross:center"></div>
-          <div class="menu__item" flex="main:center cross:center"></div>
         </div>
-        <!-- 主体 右侧按钮栏 -->
-        <div class="container__aside"></div>
+        <!-- 主体 右侧上按钮栏 -->
+        <div class="container__aside--top">
+          <a-button class="container__aside__item" type="primary">1</a-button>
+          <a-button class="container__aside__item">2</a-button>
+          <a-button class="container__aside__item">3</a-button>
+          <a-button class="container__aside__item">4</a-button>
+        </div>
+        <!-- 主体 右侧下按钮栏 -->
+        <div class="container__aside--bottom" flex="dir:top cross:top">
+          <a-button class="container__aside__item">1</a-button>
+          <a-button class="container__aside__item">2</a-button>
+          <a-button class="container__aside__item">3</a-button>
+          <a-button class="container__aside__item">4</a-button>
+        </div>
         <!-- 主体 -->
-        <div class="ccontainer__main"></div>
+        <div class="container__main"></div>
       </div>
     </div>
   </div>
@@ -63,17 +89,20 @@ export default {
 <style lang="scss" scoped>
 .layout {
   &__group {
-    @extend %full;
+    @extend %fu;
   }
 
   &__content {
-    @extend %full;
+    @extend %fu;
+    position: relative;
   }
 }
 .header {
   width: 100%;
   height: 60px;
-  position: relative;
+  position: absolute;
+  top: 0px;
+  z-index: 1;
   // 头部
   &__status {
     width: 100%;
@@ -99,11 +128,12 @@ export default {
   &__icon--warp {
     width: 60px;
     height: 60px;
-    background: #064ac2;
+    background: $color-header-logo-bc;
   }
   //logo => SVG
   &__logo__icon {
-    font-size: 34px;
+    font-size: $fs-header-logo;
+    color: #fff;
   }
   //title包裹层
   &__title {
@@ -114,37 +144,79 @@ export default {
     overflow: hidden;
     //title => SVG
     &__icon {
-      font-size: 12em;
+      font-size: $fs-header-title;
+      color: #fff;
     }
   }
 }
 //menu
 .menu {
   width: 60px;
-  height: 100%;
+  height: calc(100% - 60px);
   background-image: $color-menu;
-  padding-top: 50px;
+  position: relative;
+  top: 60px;
+  &__items {
+    position: absolute;
+    height: 100%;
+    width: 60px;
+    /deep/.cg-container-full-bs__body-wrapper-inner {
+      padding-top: 50px;
+      padding-bottom: 50px;
+    }
+  }
   //menu-item
   &__item {
     width: 60px;
     height: 60px;
     cursor: pointer;
     margin-bottom: 28px;
-    background-color: #00a4fe;
+    // background-color:$color-menu-item-bc;
     &__icon {
-      font-size: 22px;
-      color: #fff;
+      font-size: $fs-menu-item-icon;
+      color: $color-menu-item;
     }
   }
 }
 //content
 .container {
   width: 100%;
-  height: calc(100% - 60px);
+  height: 100%;
+  &__main {
+    width: calc(100% - 60px);
+    height: 100%;
+  }
 }
-.ontainer__aside {
+.container__aside--top {
+  width: 40px;
+  position: absolute;
+  top: 73px;
+  right: 10px;
 }
-
+.container__aside--bottom {
+  width: 40px;
+  position: absolute;
+  bottom: 17px;
+  right: 10px;
+}
+.container__aside--bottom,
+.container__aside--top {
+  .container__aside__item {
+    :nth-last-child() {
+      margin-bottom: 0;
+    }
+  }
+}
+.container__aside__item {
+  width: 40px;
+  height: 40px;
+  box-shadow: 0px 2px 10px 0px rgba(6, 61, 114, 0.2);
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
 .container__main {
+  width: calc(100% - 60px);
+  height: 100%;
+  background: rgb(244, 244, 245);
 }
 </style>

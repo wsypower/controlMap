@@ -10,3 +10,16 @@ $fontFamily:                     system-ui, -apple-system, BlinkMacSystemFont, "
 $fontCn:                          "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Source Han Sans CN" sans-serif !default;
 // 前两个为safari chrome, ios4.0+, ios4.0-, Android 4.0+, Android 4.0-, windows&windows Phone,
 $fontEn:                         -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Roboto, "Droid Sans", "Seogoe UI", Arial !default;
+
+// /*=============================================
+// =                  header                   =
+// =============================================*/
+
+$fs-header-logo:34px;
+$fs-header-title:12em;
+
+// /*=============================================
+// =                  menu                   =
+// =============================================*/
+
+$fs-menu-item-icon:22px;
