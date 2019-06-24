@@ -30,23 +30,16 @@
         <div class="menu">
           <div class="menu__items">
             <cg-container scroll>
-              <div class="menu__item" flex="main:center cross:center">
-                <cg-icon-svg name="menu-section" class="menu__item__icon"></cg-icon-svg>
-              </div>
-              <div class="menu__item" flex="main:center cross:center">
-                <cg-icon-svg name="menu-car" class="menu__item__icon"></cg-icon-svg>
-              </div>
-              <div class="menu__item" flex="main:center cross:center">
-                <cg-icon-svg name="menu-records" class="menu__item__icon"></cg-icon-svg>
-              </div>
-              <div class="menu__item" flex="main:center cross:center">
-                <cg-icon-svg name="menu-video" class="menu__item__icon"></cg-icon-svg>
-              </div>
-              <div class="menu__item" flex="main:center cross:center">
-                <cg-icon-svg name="menu-special" class="menu__item__icon"></cg-icon-svg>
-              </div>
-              <div class="menu__item" flex="main:center cross:center">
-                <cg-icon-svg name="menu-emergency" class="menu__item__icon"></cg-icon-svg>
+              <div
+                tabindex="0"
+                class="menu__item"
+                flex="main:center cross:center"
+                v-for="(item,index) in menu"
+                :key="item.icon"
+                :class="menuItemActive == index ? 'menu__item--active':''"
+                @click="handlerMenuClick(index)"
+              >
+                <cg-icon-svg :name="item.icon" class="menu__item__icon"></cg-icon-svg>
               </div>
             </cg-container>
           </div>
@@ -66,21 +59,48 @@
           <a-button class="container__aside__item">4</a-button>
         </div>
         <!-- 主体 -->
-        <div class="container__main"></div>
+        <div class="container__main">
+          <!-- 功能抽屉 -->
+          <layout-drawer>
+            <!-- page-view -->
+            <router-view></router-view>
+          </layout-drawer>
+          <div class="ceshi"></div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { LayoutHeader, LayoutMenu } from './components/index'
+import { LayoutDrawer } from './components/index'
 export default {
   name: 'layoutHeaderAside',
   components: {
-    LayoutMenu
+    LayoutDrawer
   },
   data() {
-    return {}
+    return {
+      // 0为默认选择第一个，-1为不选择
+      menuItemActive: -1,
+      menu: [
+        { name: '人员管控', icon: 'menu-section' },
+        { name: '车辆管控', icon: 'menu-car' },
+        { name: '案卷', icon: 'menu-records' },
+        { name: '视频', icon: 'menu-video' },
+        { name: '专题服务', icon: 'menu-special' },
+        { name: '应急指挥', icon: 'menu-emergency' }
+      ],
+      visible: false
+    }
+  },
+  methods: {
+    // 把当前点击元素的index，赋值给menuItemActive
+    // 点击启动激活状态
+    // 重复点击取消激活状态
+    handlerMenuClick(index) {
+      this.menuItemActive == index ? (this.menuItemActive = -1) : (this.menuItemActive = index)
+    }
   },
   mounted() {}
 }
@@ -102,7 +122,7 @@ export default {
   height: 60px;
   position: absolute;
   top: 0px;
-  z-index: 1;
+  z-index: 10;
   // 头部
   &__status {
     width: 100%;
@@ -156,6 +176,7 @@ export default {
   background-image: $color-menu;
   position: relative;
   top: 60px;
+  z-index: 9;
   &__items {
     position: absolute;
     height: 100%;
@@ -165,12 +186,33 @@ export default {
       padding-bottom: 50px;
     }
   }
+  &__slider {
+    width: 60px;
+    height: 60px;
+    background-color: $color-menu-item-bc;
+    position: absolute;
+    top: 50px;
+    opacity: 0.4;
+  }
   //menu-item
   &__item {
     width: 60px;
     height: 60px;
     cursor: pointer;
     margin-bottom: 28px;
+    transition: 0.5s;
+    z-index: 2;
+    border-radius: 3px;
+    outline: 0;
+    &:active {
+      background-color: rgb(19, 85, 199);
+    }
+    &--active {
+      background-color: $color-menu-item-bc;
+    }
+    // &:hover {
+    //   background-color: $color-menu-item-bc;
+    // }
     // background-color:$color-menu-item-bc;
     &__icon {
       font-size: $fs-menu-item-icon;
@@ -218,5 +260,9 @@ export default {
   width: calc(100% - 60px);
   height: 100%;
   background: rgb(244, 244, 245);
+  /deep/ .ant-drawer-content-wrapper {
+    top: 60px !important;
+    left: 60px;
+  }
 }
 </style>

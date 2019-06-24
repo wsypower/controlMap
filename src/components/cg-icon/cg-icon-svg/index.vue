@@ -1,5 +1,4 @@
 <template>
-  <!-- 外部链接调用 -->
   <div
     v-if="isExternal"
     :style="styleExternalIcon"

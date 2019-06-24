@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "svgo -f src/assets/svg-icons/icons --config=src/assets/svg-icons/svgo.yml;vue-cli-service build",
     "lint": "vue-cli-service lint",
     "createRouter": "vue-cli-service createRouter",
-    "svgo": "svgo -f src/assets/svg-icons/icons --config=src/assets/svg-icons/svgo.yml"
+    "svgo": "svgo -f src/assets/svg-icons/icons --config=src/assets/svg-icons/svgo.yml",
+    "docz:dev": "docz dev",
+    "docz:build": "docz build"
   },
   "dependencies": {
     "ant-design-vue": "^1.2.4",
@@ -26,9 +28,7 @@
     "screenfull": "^4.2.0",
     "qs": "^6.7.0",
     "lodash": "^4.17.11",
-    "dayjs": "^1.8.12",
     "hotkeys-js": "^3.6.2",
-    "ua-parser-js": "^0.7.19",
     "nprogress": "^0.2.0"
   },
   "devDependencies": {
@@ -39,6 +39,8 @@
     "@xohu/vue-cli-plugin-create-router": "^1.2.1",
     "axios": "^0.18.0",
     "babel-eslint": "^10.0.1",
+    "docz": "^1.2.0",
+    "docz-theme-default": "^1.2.0",
     "eslint": "^5.16.0",
     "eslint-config-elemefe": "^0.3.0",
     "eslint-plugin-vue": "^5.0.0",
@@ -46,6 +48,9 @@
     "less-loader": "^4.1.0",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.1.0",
+    "svg-sprite-loader": "^4.1.6",
+    "svgo": "1.2.2",
+    "uglifyjs-webpack-plugin": "^2.1.2",
     "vue-cli-plugin-ant-design": "^1.0.0",
     "vue-cli-plugin-axios": "0.0.4",
     "vue-cli-plugin-layouts": "^1.0.2",
@@ -53,9 +58,6 @@
     "vue-cli-plugin-route": "0.0.5",
     "vue-cli-plugin-scss-base": "^0.2.2",
     "vue-cli-plugin-store": "0.0.7",
-    "vue-template-compiler": "^2.6.10",
-    "uglifyjs-webpack-plugin": "^2.1.2",
-    "svg-sprite-loader": "^4.1.6",
-    "svgo": "1.2.2"
+    "vue-template-compiler": "^2.6.10"
   }
 }

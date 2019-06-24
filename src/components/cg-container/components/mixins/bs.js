@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-21 15:35:05
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-22 15:58:54
+ * @Last Modified time: 2019-06-22 19:55:52
  */
 import BScroll from 'better-scroll'
 export default {
@@ -28,7 +28,6 @@ export default {
   methods: {
     scrollInit() {
       // 初始化 bs
-      console.log(1)
       this.BS = new BScroll(
         this.$refs.wrapper,
         Object.assign(
