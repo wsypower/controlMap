@@ -1,12 +1,12 @@
 <template>
   <div class="page">
-      page1
+      page3
   </div>
 </template>
 
 <script>
 export default {
-  name: 'page-lock'
+  name: 'page3'
 }
 </script>
 

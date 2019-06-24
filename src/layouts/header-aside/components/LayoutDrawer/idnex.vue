@@ -5,7 +5,7 @@
     :zIndex="1"
     :width="357"
     :closable="false"
-    :visible="false"
+    :visible="true"
     :maskClosable="false"
     :mask="false"
   >

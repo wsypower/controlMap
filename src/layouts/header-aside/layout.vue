@@ -62,10 +62,8 @@
         <div class="container__main">
           <!-- 功能抽屉 -->
           <layout-drawer>
-            <!-- page-view -->
-            <router-view></router-view>
+            <router-view/>
           </layout-drawer>
-          <div class="ceshi"></div>
         </div>
       </div>
     </div>
