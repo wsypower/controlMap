@@ -21,10 +21,10 @@ export default {
      // 展开侧边栏菜单
      * this.$store.dispatch('cgadmin/menu/asideCollapseSet', true)
      */
-    asideCollapseSet({ state }, collapse) {
+    asideCollapseSet({ commit }, collapse) {
       return new Promise(resolve => {
         // store 赋值
-        state.asideCollapse = collapse
+        commit('asideCollapseSetState', collapse)
         // end
         resolve()
       })
@@ -33,10 +33,10 @@ export default {
      * 切换侧边栏展开和收缩
      * @param {Object} state vuex state
      */
-    asideCollapseToggle({ state }) {
+    asideCollapseToggle({ commit }) {
       return new Promise(resolve => {
         // store 赋值
-        state.asideCollapse = !state.asideCollapse
+        commit('asideCollapseToggleState')
         // end
         resolve()
       })
@@ -44,13 +44,40 @@ export default {
   },
   mutations: {
     /**
-     * @description 设置侧边栏菜单
+     * @description 设置侧边栏收缩
+     * @param {Object} state vuex state
+     * @param {Boolean} collapse
+     */
+    asideCollapseSetState(state, collapse) {
+      state.asideCollapse = collapse
+    },
+    /**
+     * @description 切换侧边栏展开和收缩
+     * @param {Object} state vuex state
+     * @param {Boolean} collapse
+     */
+    asideCollapseToggleState(state) {
+      state.asideCollapse = !state.asideCollapse
+    },
+    /**
+     * @description 设置侧边栏菜单数据
      * @param {Object} state vuex state
      * @param {Array} menu menu setting
      */
     asideSet(state, menu) {
       // store 赋值
       state.aside = menu
+    },
+    /**
+     * @description 激活当前被点击菜单 - active
+     * @param {Object} state vuex state
+     * @param {Array} item 点击的元素
+     */
+    asideSetItemActive(state, item) {
+      state.aside.map(v => {
+        //切换点击元素的active，其他设为false
+        v.path === item.path ? (v.active = !v.active) : (v.active = false)
+      })
     }
   }
 }

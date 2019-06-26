@@ -4,7 +4,7 @@
       <cg-container scroll>
         <menu-item
           tabindex="0"
-          v-for="(item,index) in menu"
+          v-for="(item,index) in aside"
           :key="index"
           :class="item.active ? 'menu__item--active':''"
           :icon="item.icon"
@@ -17,7 +17,8 @@
 
 <script>
 import menuItem from '../components/menu-item/index'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
+import router from '../../../../router'
 export default {
   name: 'LayoutMenu',
   components: {
@@ -25,41 +26,42 @@ export default {
   },
   data() {
     return {
-      // 0为默认选择第一个，-1为不选择
-      menuItemActive: -1,
-      menu: [
-        { name: '人员管控', icon: 'menu-section', path: '/section', active: false },
-        { name: '车辆管控', icon: 'menu-car', path: '/car', active: false },
-        { name: '案卷', icon: 'menu-records', path: '/records', active: false },
-        { name: '视频', icon: 'menu-video', path: '/special', active: false },
-        { name: '专题服务', icon: 'menu-special', path: '/video', active: false },
-        { name: '应急指挥', icon: 'menu-emergency', path: '/emergency', active: false }
-      ]
+      menuItemActivePath: null //被点击元素的path
     }
   },
   computed: {
-    ...mapState('cgadmin/menu', ['asideCollapse']),
+    ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
     ...mapState('cgadmin/page', ['current'])
-  },
-  watch: {
-    current(newValue, oldValue) {
-      console.log(newValue)
-      console.log(oldValue)
-      this.asideCollapseToggle()
-    }
   },
   methods: {
     ...mapActions('cgadmin/menu', ['asideCollapseSet', 'asideCollapseToggle']),
+    ...mapMutations('cgadmin/menu', ['asideSetItemActive']),
+    /**
+     * @description 点击激活,展开侧边栏，跳转路径
+     * @author weiyafei
+     * @date 2019-06-26-11:14:25
+     * @param {Number} index
+     * @param {Object} item
+     */
     menuItemClick(index, item) {
       let { active } = item
-      item.active = !active
+      this.menuItemActivePath = item.path
+      this.asideSetItemActive(item)
       this.asideCollapseSet(!active)
-      this.$router.push(item.path)
-      this.menu.map((v, i) => {
-        if (i !== index) {
-          v.active = false
-        }
-      })
+    }
+  },
+  watch: {
+    aside: {
+      handler(newValue, oldValue) {
+        this.asideCollapseToggle().then(() => {
+          setTimeout(() => {
+            this.asideCollapseSet(true).then(() => {
+              this.$router.replace(this.menuItemActivePath)
+            })
+          }, 300)
+        })
+      },
+      deep: true
     }
   }
 }

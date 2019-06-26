@@ -13,6 +13,7 @@ export default {
     // 需要缓存的页面 name
     keepAlive: []
   },
+
   actions: {
     /**
      * @class current
@@ -22,40 +23,8 @@ export default {
      */
     open({ commit }, { fullPath }) {
       return new Promise(resolve => {
+        // 设置当前页
         commit('currentSet', fullPath)
-        resolve()
-      })
-    },
-    /**
-     * @class opened
-     * @description 关闭当前激活之外的 tag
-     * @param {Object} state vuex state
-     * @param {Object} param { pageSelect: 当前选中的tagName }
-     */
-    closeOther({ state, commit, dispatch }, { pageSelect } = {}) {
-      return new Promise(async resolve => {
-        const pageAim = pageSelect || state.current
-        let currentIndex = 0
-        state.opened.forEach((page, index) => {
-          if (page.fullPath === pageAim) {
-            currentIndex = index
-          }
-        })
-        // 删除打开的页面数据 并更新缓存设置
-        if (currentIndex === 0) {
-          state.opened.splice(1).forEach(({ name }) => commit('keepAliveRemove', name))
-        } else {
-          state.opened.splice(currentIndex + 1).forEach(({ name }) => commit('keepAliveRemove', name))
-          state.opened.splice(1, currentIndex - 1).forEach(({ name }) => commit('keepAliveRemove', name))
-        }
-        // 设置新的页面
-        state.current = pageAim
-        if (router.app.$route.fullPath !== pageAim) {
-          router.push(pageAim)
-        }
-        // 持久化
-        await dispatch('opencgdb')
-        // end
         resolve()
       })
     }
@@ -131,6 +100,19 @@ export default {
       }
       push(routes)
       state.pool = pool
+    }
+  },
+  /**
+   * @description 获取router-page
+   * @author weiyafei
+   * @date 2019-06-26-12:56:42
+   * @param {Object} state
+   * @param {Object} getters
+   * @param {Object} rootState
+   */
+  getters: {
+    getRouterPage(state, getters, rootState) {
+      return rootState.cgadmin.menu.aside
     }
   }
 }

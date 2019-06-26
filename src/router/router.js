@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-25 21:14:07
+ * @Last Modified time: 2019-06-26 14:14:31
  */
 
 /*=============================================
@@ -51,7 +51,7 @@ const frameIn = [
       //测试 => page3
       {
         path: '/records',
-        name: 'page2',
+        name: 'page3',
         meta: {
           title: '案卷'
         },
