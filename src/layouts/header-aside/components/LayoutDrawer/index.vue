@@ -5,7 +5,7 @@
     :zIndex="1"
     :width="357"
     :closable="false"
-    :visible="true"
+    :visible="asideCollapse"
     :maskClosable="false"
     :mask="false"
   >
@@ -15,8 +15,12 @@
   </a-drawer>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
-  name: 'LayoutDrawer'
+  name: 'LayoutDrawer',
+  computed: {
+    ...mapState('cgadmin/menu', ['asideCollapse'])
+  }
 }
 </script>
 

@@ -27,23 +27,7 @@
       <!-- 主体 -->
       <div class="container" flex>
         <!-- 主体 左侧边栏 -->
-        <div class="menu">
-          <div class="menu__items">
-            <cg-container scroll>
-              <div
-                tabindex="0"
-                class="menu__item"
-                flex="main:center cross:center"
-                v-for="(item,index) in menu"
-                :key="item.icon"
-                :class="menuItemActive == index ? 'menu__item--active':''"
-                @click="handlerMenuClick(index)"
-              >
-                <cg-icon-svg :name="item.icon" class="menu__item__icon"></cg-icon-svg>
-              </div>
-            </cg-container>
-          </div>
-        </div>
+        <layout-menu></layout-menu>
         <!-- 主体 右侧上按钮栏 -->
         <div class="container__aside--top">
           <a-button class="container__aside__item" type="primary">1</a-button>
@@ -71,35 +55,17 @@
 </template>
 
 <script>
-import { LayoutDrawer } from './components/index'
+import { LayoutMenu, LayoutDrawer } from './components/index'
 export default {
   name: 'layoutHeaderAside',
   components: {
+    LayoutMenu,
     LayoutDrawer
   },
   data() {
-    return {
-      // 0为默认选择第一个，-1为不选择
-      menuItemActive: -1,
-      menu: [
-        { name: '人员管控', icon: 'menu-section' },
-        { name: '车辆管控', icon: 'menu-car' },
-        { name: '案卷', icon: 'menu-records' },
-        { name: '视频', icon: 'menu-video' },
-        { name: '专题服务', icon: 'menu-special' },
-        { name: '应急指挥', icon: 'menu-emergency' }
-      ],
-      visible: false
-    }
+    return {}
   },
-  methods: {
-    // 把当前点击元素的index，赋值给menuItemActive
-    // 点击启动激活状态
-    // 重复点击取消激活状态
-    handlerMenuClick(index) {
-      this.menuItemActive == index ? (this.menuItemActive = -1) : (this.menuItemActive = index)
-    }
-  },
+  methods: {},
   mounted() {}
 }
 </script>
@@ -167,57 +133,7 @@ export default {
     }
   }
 }
-//menu
-.menu {
-  width: 60px;
-  height: calc(100% - 60px);
-  background-image: $color-menu;
-  position: relative;
-  top: 60px;
-  z-index: 9;
-  &__items {
-    position: absolute;
-    height: 100%;
-    width: 60px;
-    /deep/.cg-container-full-bs__body-wrapper-inner {
-      padding-top: 50px;
-      padding-bottom: 50px;
-    }
-  }
-  &__slider {
-    width: 60px;
-    height: 60px;
-    background-color: $color-menu-item-bc;
-    position: absolute;
-    top: 50px;
-    opacity: 0.4;
-  }
-  //menu-item
-  &__item {
-    width: 60px;
-    height: 60px;
-    cursor: pointer;
-    margin-bottom: 28px;
-    transition: 0.5s;
-    z-index: 2;
-    border-radius: 3px;
-    outline: 0;
-    &:active {
-      background-color: rgb(19, 85, 199);
-    }
-    &--active {
-      background-color: $color-menu-item-bc;
-    }
-    // &:hover {
-    //   background-color: $color-menu-item-bc;
-    // }
-    // background-color:$color-menu-item-bc;
-    &__icon {
-      font-size: $fs-menu-item-icon;
-      color: $color-menu-item;
-    }
-  }
-}
+
 //content
 .container {
   width: 100%;

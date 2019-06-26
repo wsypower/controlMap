@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 16:56:20
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-06-22 22:34:01
+ * @Last Modified by: wei.yafei  
+ * @Last Modified time: 2019-06-25 22:57:33
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -51,6 +51,8 @@ router.beforeEach((to, from, next) => {
 router.afterEach(to => {
   // 进度条
   NProgress.done()
+  // 打开新的页面
+  store.dispatch('cgadmin/page/open', to)
   // 更改标题
   util.title(to.meta.title)
 })

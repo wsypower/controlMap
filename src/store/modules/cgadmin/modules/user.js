@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-08 11:11:41
- * @Last Modified by:   wei.yafei
- * @Last Modified time: 2019-06-18 11:11:41
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-06-25 11:29:48
  */
 export default {
   namespaced: true,
@@ -22,7 +22,7 @@ export default {
         state.info = info
         // 持久化
         await dispatch(
-          'd2admin/db/set',
+          'cgadmin/db/set',
           {
             dbName: 'sys',
             path: 'user.info',
@@ -43,7 +43,7 @@ export default {
       return new Promise(async resolve => {
         // store 赋值
         state.info = await dispatch(
-          'd2admin/db/get',
+          'cgadmin/db/get',
           {
             dbName: 'sys',
             path: 'user.info',

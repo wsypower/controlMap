@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-24 21:11:01
+ * @Last Modified time: 2019-06-25 11:29:24
  */
 // Vue
 import Vue from 'vue'
@@ -14,8 +14,8 @@ import store from './store/index'
 
 // 菜单和路由设置
 import router from '@/router/index'
-// import menuAside from '@/menu/menu.js'
-// import { frameInRoutes } from '@/router/router'
+import menuAside from '@/menu/aside.js'
+import { frameInRoutes } from '@/router/router'
 Vue.config.productionTip = false
 
 //mock
@@ -30,8 +30,8 @@ new Vue({
   render: h => h(App),
   created() {
     // 处理路由 得到每一级的路由设置
-    // this.$store.commit('d2admin/page/init', frameInRoutes)
+    // this.$store.commit('cgadmin/page/init', frameInRoutes)
     // 设置侧边栏菜单
-    // this.$store.commit('d2admin/menu/asideSet', menuAside)
+    // this.$store.commit('cgadmin/menu/asideSet', menuAside)
   }
 }).$mount('#app')

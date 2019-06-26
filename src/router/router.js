@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-06-24 22:06:30
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-06-25 21:14:07
  */
 
 /*=============================================
@@ -26,13 +26,13 @@ const frameIn = [
   {
     path: '/',
     name: 'layoutHeaderAside',
-    redirect: { name: 'page1' },
+    redirect: { path: '/section' },
     component: layoutHeaderAside,
     meta: { title: '管控平台' },
     children: [
       //测试 => page1
       {
-        path: '/index',
+        path: '/section',
         name: 'page1',
         meta: {
           title: '人员管控'

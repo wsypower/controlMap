@@ -29,7 +29,7 @@ export default {
 </script>
 <style lang="scss">
 // 填充式布局组件
-.d2-container-full {
+.cg-container-full {
   position: absolute;
   top: 0px;
   right: 0px;
@@ -38,10 +38,10 @@ export default {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  .d2-container-full__header {
+  .cg-container-full__header {
     padding: 20px;
   }
-  .d2-container-full__body {
+  .cg-container-full__body {
     flex-grow: 1;
     height: 100%;
     overflow: auto;
@@ -52,7 +52,7 @@ export default {
       border: 1px solid rgba(255, 255, 255, 0.3)!important;
     }
   }
-  .d2-container-full__footer {
+  .cg-container-full__footer {
     padding: 20px;
   }
 }

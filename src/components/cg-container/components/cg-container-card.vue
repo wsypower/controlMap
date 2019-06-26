@@ -31,7 +31,7 @@ export default {
 </script>
 <style lang="scss">
 // 卡片式布局组件
-.d2-container-card {
+.cg-container-card {
   position: absolute;
   top: 0px;
   right: 0px;
@@ -40,13 +40,13 @@ export default {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  .d2-container-card__header {
+  .cg-container-card__header {
     padding: 20px;
   }
-  .d2-container-card__body {
+  .cg-container-card__body {
     flex-grow: 1;
     overflow: auto;
-    .d2-container-card__body-card {
+    .cg-container-card__body-card {
       position: relative;
       margin-bottom: 20px;
       border-bottom-left-radius: 4px;
@@ -58,7 +58,7 @@ export default {
       border: 1px solid rgba(255, 255, 255, 0.3)!important;
     }
   }
-  .d2-container-card__footer {
+  .cg-container-card__footer {
     padding: 20px;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
