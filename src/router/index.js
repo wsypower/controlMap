@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 16:56:20
- * @Last Modified by: wei.yafei  
- * @Last Modified time: 2019-06-25 22:57:33
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-06-27 18:25:40
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -19,7 +19,8 @@ Vue.use(VueRouter)
 
 // 导出路由 在 main.js 里使用
 const router = new VueRouter({
-  routes
+  routes,
+  scrollBehavior: () => ({ y: 0 })
 })
 
 router.beforeEach((to, from, next) => {

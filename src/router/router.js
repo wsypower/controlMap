@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-26 14:14:31
+ * @Last Modified time: 2019-06-27 17:28:56
  */
 
 /*=============================================
@@ -37,7 +37,7 @@ const frameIn = [
         meta: {
           title: '人员管控'
         },
-        component: _import('other/page1.vue')
+        component: _import('section/page1.vue')
       },
       //测试 => page2
       {
@@ -46,7 +46,7 @@ const frameIn = [
         meta: {
           title: '车辆管控'
         },
-        component: _import('other/page2.vue')
+        component: _import('car/page2.vue')
       },
       //测试 => page3
       {
@@ -55,7 +55,7 @@ const frameIn = [
         meta: {
           title: '案卷'
         },
-        component: _import('other/page3.vue')
+        component: _import('records/page3.vue')
       },
       //测试 => page4
       {
@@ -64,7 +64,7 @@ const frameIn = [
         meta: {
           title: '视频'
         },
-        component: _import('other/page4.vue')
+        component: _import('special/page4.vue')
       },
       //测试 => page5
       {
@@ -73,7 +73,7 @@ const frameIn = [
         meta: {
           title: '专题服务'
         },
-        component: _import('other/page5.vue')
+        component: _import('video/page5.vue')
       },
       //测试 => page6
       {
@@ -82,7 +82,7 @@ const frameIn = [
         meta: {
           title: '应急指挥'
         },
-        component: _import('other/page6.vue')
+        component: _import('emergency/page6.vue')
       },
       // 刷新页面 必须保留
       {
@@ -115,8 +115,8 @@ const frameOut = []
 /* 错误页面-404 */
 const errorPage = [
   {
-    path: '/404',
-    name: 'Page404',
+    path: '*',
+    name: '404',
     component: _import('error/404')
   }
 ]

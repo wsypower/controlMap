@@ -30,7 +30,7 @@ export default {
       })
     },
     /**
-     * 切换侧边栏展开和收缩
+     * @description 切换侧边栏展开和收缩
      * @param {Object} state vuex state
      */
     asideCollapseToggle({ commit }) {
@@ -41,12 +41,24 @@ export default {
         resolve()
       })
     },
-    asideCollapseActive({ commit }, item) {
+    /**
+     * @description 点击元素开启active,如果没有active为true返回false,否则相反
+     * @author weiyafei
+     * @date 2019-06-27-15:02:08
+     * @param {Object} commit vuex mutations
+     * @param {Object} state  vuex state
+     * @param {Object} item 点击元素
+     */
+    asideSetItemActive({ commit, state }, item) {
       return new Promise(resolve => {
         // store 赋值
-        commit('asideSetItemActive', item)
+        commit('asideSetItem', item)
+        // 获取aside
+        let aside = state.aside
+        // 判断当前有没有active为true的元素，有=>返回true,否则相反
+        let asideMenuIsExpand = aside.some(item => item.active)
         // end
-        resolve()
+        resolve(asideMenuIsExpand)
       })
     }
   },

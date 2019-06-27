@@ -9,9 +9,7 @@
     :maskClosable="false"
     :mask="false"
   >
-    <cg-container scroll>
-      <slot></slot>
-    </cg-container>
+    <slot></slot>
   </a-drawer>
 </template>
 <script>
@@ -28,5 +26,16 @@ export default {
 .drawer {
   top: 60px;
   left: 60px;
+  .ant-drawer-content-wrapper {
+    height: calc(100% - 60px);
+    .ant-drawer-wrapper-body {
+      overflow: hidden !important;
+    }
+    .ant-drawer-body {
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
 </style>

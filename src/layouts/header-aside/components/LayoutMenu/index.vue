@@ -24,18 +24,12 @@ export default {
   components: {
     menuItem
   },
-  data() {
-    return {
-      menuItemActivePath: null //被点击元素的path
-    }
-  },
   computed: {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
     ...mapState('cgadmin/page', ['current'])
   },
   methods: {
-    ...mapActions('cgadmin/menu', ['asideCollapseSet', 'asideCollapseToggle']),
-    ...mapMutations('cgadmin/menu', ['asideSetItemActive']),
+    ...mapActions('cgadmin/menu', ['asideCollapseSet', 'asideSetItemActive']),
     /**
      * @description 点击激活,展开侧边栏，跳转路径
      * @author weiyafei
@@ -44,39 +38,32 @@ export default {
      * @param {Object} item
      */
     menuItemClick(index, item) {
-      let { active } = item
-      this.asideCollapseSet(!active)
-      // this.menuItemActivePath = item.path
-      // this.$router.replace(item.path)
-      this.asideSetItemActive(item).then(() => {
-        console.log(1)
+      //当前元素设置active设为true，其他设为false
+      this.asideSetItemActive(item).then(isCollapse => {
+        if (item.path !== this.current)
+          this.menuItemCange(item).then(() => {
+            this.$router.replace(item.path)
+          })
+        else this.asideCollapseSet(isCollapse)
       })
-    }
-  },
-  watch: {
+    },
     /**
-     * TODO:后续修改*
-     * @description 不能通过路由路径判断(页面会先跳转再执行动画)，通过判断aside改变控制侧边栏的路径跳转收缩动画
+     * @description 切换不同页面时menu做一个关闭再打开的动画（表示切换）
      * @author weiyafei
-     * @date 2019-06-27-11:34:07
+     * @date 2019-06-27-16:33:30
+     * @param {Object} item 点击的元素
      */
-    aside: {
-      // handler(newValue, oldValue) {
-      //   //获取改变后的aside激活的对象
-      //   let newValueChange = newValue.filter(item => item.active)[0]
-      //   let oldValueChange = oldValue.filter(item => item.active)[0]
-      //   console.log(newValueChange)
-      //   console.log(oldValueChange)
-      //   //做收起动画并跳转到被点击的页面
-      //   this.asideCollapseToggle().then(() => {
-      //     setTimeout(() => {
-      //       this.asideCollapseSet(true).then(() => {
-      //         this.$router.replace(this.menuItemActivePath)
-      //       })
-      //     }, 300)
-      //   })
-      // },
-      // deep: true
+    menuItemCange(item) {
+      //当前menu伸缩状态
+      let asideCollapse = this.asideCollapse
+      return new Promise(resolve => {
+        if (asideCollapse) {
+          this.asideCollapseSet(false)
+          setTimeout(() => (this.asideCollapseSet(true), resolve()), 300)
+        } else {
+          this.asideCollapseSet(true), resolve()
+        }
+      })
     }
   }
 }

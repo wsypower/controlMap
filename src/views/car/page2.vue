@@ -1,6 +1,8 @@
 <template>
   <div class="page">
-      page2
+    <cg-container scroll>
+      <div style="width:100%;height:1000px;">测试页面切换滚动条重新置顶</div>
+    </cg-container>
   </div>
 </template>
 
@@ -13,6 +15,6 @@ export default {
 <style lang="scss" scoped>
 .page {
   width: 100%;
-  height: 1600px;
+  height: 100%;
 }
 </style>

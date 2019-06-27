@@ -1,18 +1,16 @@
 <template>
-  <div class="page">
-      page1
-  </div>
+  <div class="page">page4</div>
 </template>
 
 <script>
 export default {
-  name: 'page1'
+  name: 'page4'
 }
 </script>
 
 <style lang="scss" scoped>
 .page {
   width: 100%;
-  height: 1600px;
+  height: 100%;
 }
 </style>
