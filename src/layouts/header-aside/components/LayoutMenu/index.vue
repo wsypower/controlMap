@@ -45,23 +45,38 @@ export default {
      */
     menuItemClick(index, item) {
       let { active } = item
-      this.menuItemActivePath = item.path
-      this.asideSetItemActive(item)
       this.asideCollapseSet(!active)
+      // this.menuItemActivePath = item.path
+      // this.$router.replace(item.path)
+      this.asideSetItemActive(item).then(() => {
+        console.log(1)
+      })
     }
   },
   watch: {
+    /**
+     * TODO:后续修改*
+     * @description 不能通过路由路径判断(页面会先跳转再执行动画)，通过判断aside改变控制侧边栏的路径跳转收缩动画
+     * @author weiyafei
+     * @date 2019-06-27-11:34:07
+     */
     aside: {
-      handler(newValue, oldValue) {
-        this.asideCollapseToggle().then(() => {
-          setTimeout(() => {
-            this.asideCollapseSet(true).then(() => {
-              this.$router.replace(this.menuItemActivePath)
-            })
-          }, 300)
-        })
-      },
-      deep: true
+      // handler(newValue, oldValue) {
+      //   //获取改变后的aside激活的对象
+      //   let newValueChange = newValue.filter(item => item.active)[0]
+      //   let oldValueChange = oldValue.filter(item => item.active)[0]
+      //   console.log(newValueChange)
+      //   console.log(oldValueChange)
+      //   //做收起动画并跳转到被点击的页面
+      //   this.asideCollapseToggle().then(() => {
+      //     setTimeout(() => {
+      //       this.asideCollapseSet(true).then(() => {
+      //         this.$router.replace(this.menuItemActivePath)
+      //       })
+      //     }, 300)
+      //   })
+      // },
+      // deep: true
     }
   }
 }

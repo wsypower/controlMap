@@ -40,6 +40,14 @@ export default {
         // end
         resolve()
       })
+    },
+    asideCollapseActive({ commit }, item) {
+      return new Promise(resolve => {
+        // store 赋值
+        commit('asideSetItemActive', item)
+        // end
+        resolve()
+      })
     }
   },
   mutations: {
@@ -73,7 +81,7 @@ export default {
      * @param {Object} state vuex state
      * @param {Array} item 点击的元素
      */
-    asideSetItemActive(state, item) {
+    asideSetItem(state, item) {
       state.aside.map(v => {
         //切换点击元素的active，其他设为false
         v.path === item.path ? (v.active = !v.active) : (v.active = false)
