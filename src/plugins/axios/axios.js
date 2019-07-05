@@ -3,14 +3,13 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-12 15:19:30
- * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-18 15:30:10
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-07-05 11:04:37
  */
 /*=============================================
 =                    axios                    =
 =============================================*/
 
-import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
 import { message } from 'ant-design-vue'
@@ -45,11 +44,31 @@ const errorLog = error => {
   })
   // 打印到控制台
   if (process.env.NODE_ENV === 'development') {
-    util.log.danger('>>>>>> Error >>>>>>')
+    // util.log.danger('>>>>>> Error >>>>>>')
+    util.log.danger(`
+    ===============================================
+    >>>>>>>              Error              >>>>>>>
+    ===============================================
+    `)
     console.log(error)
   }
-  // 显示提示 => 依赖于Ant Dedign of Vue => message
+  // 显示提示,依赖于Ant Dedign of Vue
   message.error(error.message)
+}
+/*=============================================
+=                axios-成功提示                =
+=============================================*/
+/**
+ * @description 提示连接成功
+ * @author weiyafei
+ * @date 2019-06-16-17:57:43
+ */
+const success = success => {
+  // 打印到控制台
+  if (process.env.NODE_ENV === 'development') {
+    // util.log.danger('>>>>>> Error >>>>>>')
+    util.log.success(`>>>>>>> 连接成功： ${success}   >>>>>>>`)
+  }
 }
 //axios默认配置
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -58,11 +77,14 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 let config = {
   baseURL: process.env.VUE_APP_API,
   timeout: 60 * 100, // 请求超时时间
-  //参数序列化
+  //修改请求数据添加必填项 userId
   transformRequest: [
     function(data) {
+      //给所有的数据请求添加参数userId
+      const userId = util.cookies.get('userId')
+      const dataModify = Object.assign((data = {}), { userId })
       // 对 data 进行任意转换处理 => 转为fromData(按照实际后台约定修改转换)
-      return Qs.stringify(data, { arrayFormat: 'repeat' })
+      return Qs.stringify(dataModify, { arrayFormat: 'repeat' })
     }
   ]
 }
@@ -71,19 +93,14 @@ let config = {
 =                创建axios实例                 =
 =============================================*/
 
-const _axios = axios.create(config)
+const service = axios.create(config)
 
 /*=============================================
 =                   请求拦截器                  =
 =============================================*/
 
-_axios.interceptors.request.use(
+service.interceptors.request.use(
   config => {
-    // 在发送之前的操作
-    // // 在请求发送之前做一些处理
-    // const token = util.cookies.get('token')
-    // // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
-    // config.headers['X-Token'] = token
     return config
   },
   error => {
@@ -97,7 +114,7 @@ _axios.interceptors.request.use(
 /*=============================================
 =                   响应拦截器                  =
 =============================================*/
-_axios.interceptors.response.use(
+service.interceptors.response.use(
   /*----------  对响应数据进行的操作  ----------*/
 
   /* 正确响应数据 => response */
@@ -106,14 +123,16 @@ _axios.interceptors.response.use(
     const dataAxios = response.data
     // 这个状态码是和后端约定的
     const { code } = dataAxios
+
     //根据 code 进行判断
-    switch (code) {
+    switch (Number(code)) {
       case 0:
         // [ 示例 ] code === 0 代表成功
+        success(response.config.url)
         return dataAxios.result
-      case 'xxx':
-        // [ 示例 ] 其它和后台约定的 code
-        errorCreate(`[ code: xxx ] ${dataAxios.msg}: ${response.config.url}`)
+      case 401:
+        // [ 示例 ] code === 401 代表没有权限
+        errorCreate(`${dataAxios.msg}`)
         break
       default:
         // 不是正确的 code
@@ -123,13 +142,14 @@ _axios.interceptors.response.use(
   },
   /* 对错误响应数据的操作 => error */
   error => {
+    console.log(0)
     if (error && error.response) {
       switch (error.response.status) {
         case 400:
           error.message = '请求错误'
           break
         case 401:
-          error.message = '未授权，请登录'
+          error.message = '未授权，请联系管理员'
           break
         case 403:
           error.message = '拒绝访问'
@@ -167,23 +187,4 @@ _axios.interceptors.response.use(
   }
 )
 
-Plugin.install = function(Vue) {
-  Vue.axios = _axios
-  window.axios = _axios
-  Object.defineProperties(Vue.prototype, {
-    axios: {
-      get() {
-        return _axios
-      }
-    },
-    $axios: {
-      get() {
-        return _axios
-      }
-    }
-  })
-}
-
-Vue.use(Plugin)
-
-export default Plugin
+export default service

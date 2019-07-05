@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-26 15:15:11
+ * @Last Modified time: 2019-07-05 10:57:01
  */
 // Vue
 import Vue from 'vue'
@@ -15,12 +15,13 @@ import store from './store/index'
 // 菜单和路由设置
 import router from '@/router/index'
 import menuAside from '@/menu/aside.js'
-import { frameInRoutes } from '@/router/router'
+// import { frameInRoutes } from '@/router/router'
 Vue.config.productionTip = false
 // 设置文件
 import setting from '@/setting.js'
-//mock
-import './mock'
+
+//mock => 生产环境(上线前请注释！！！)
+import '@/mock'
 
 // 核心插件
 Vue.use(cgAdmin)
@@ -30,11 +31,17 @@ new Vue({
   store,
   render: h => h(App),
   created() {
+    // 获取userId并登陆
+    this.$store.dispatch('cgadmin/account/login')
     // 处理路由 得到每一级的路由设置
     // this.$store.commit('cgadmin/page/init', frameInRoutes)
     //设置侧边栏菜单
     this.$store.commit('cgadmin/menu/asideSet', menuAside)
     //设置侧边栏
     this.$store.commit('cgadmin/menu/asideCollapseSetState', setting.menu.asideCollapse)
+  },
+  mounted() {
+    // 获取并记录用户 UA
+    this.$store.commit('cgadmin/ua/get')
   }
 }).$mount('#app')

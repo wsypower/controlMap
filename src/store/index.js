@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-11 11:58:18
- * @Last Modified by: wei.yafei  
- * @Last Modified time: 2019-06-26 10:02:44
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-07-05 11:47:42
  */
 
 /*=============================================
@@ -25,6 +25,7 @@ const store = new Vuex.Store({
     createPersistedState({
       storage: window.sessionStorage
     })
+    // createPersistedState()
   ],
   modules: {
     cgadmin

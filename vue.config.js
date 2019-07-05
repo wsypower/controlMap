@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-05-23 23:32:53
- * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-19 23:10:00
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-07-04 19:59:54
  */
 /* eslint-disable no-unused-vars */
 
@@ -11,6 +11,10 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 // 拼接路径
 const resolve = dir => require('path').join(__dirname, dir)
+
+// 增加环境变量
+process.env.VUE_APP_VERSION = require('./package.json').version
+process.env.VUE_APP_BUILD_TIME = require('dayjs')().format('YYYY-M-D HH:mm:ss')
 
 // 基础路径 注意发布之前要先修改这里
 let publicPath = './'
@@ -100,11 +104,6 @@ module.exports = {
       .end()
     // 重新设置 alias
     config.resolve.alias.set('@', resolve('src')).set('@img', resolve('src/assets/images'))
-    // 判断环境加入模拟数据
-    /*   const entry = config.entry('app')
-    if (process.env.VUE_APP_BUILD_MODE !== 'nomock') {
-      entry.add('@/mock').end()
-    } */
   },
   devServer: {
     open: true

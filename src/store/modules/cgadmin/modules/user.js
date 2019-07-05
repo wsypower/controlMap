@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-08 11:11:41
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-25 11:29:48
+ * @Last Modified time: 2019-07-05 15:16:48
  */
 export default {
   namespaced: true,
@@ -10,17 +10,22 @@ export default {
     // 用户信息
     info: {}
   },
+  getters: {
+    role: state => {
+      return state.info.role
+    }
+  },
   actions: {
     /**
      * @description 设置用户数据
      * @param {Object} state vuex state
      * @param {*} info info
      */
-    set({ state, dispatch }, info) {
+    set({ commit, dispatch }, info) {
       return new Promise(async resolve => {
-        // store 赋值
-        state.info = info
-        // 持久化
+        // store 赋值 => 通过 => createPersistedState()持久化用户数据到se
+        commit('infoSet', info)
+        // 持久化 => 讲用户数据放入到存储到localStorage
         await dispatch(
           'cgadmin/db/set',
           {
@@ -55,6 +60,18 @@ export default {
         // end
         resolve()
       })
+    }
+  },
+  /**
+   * @description 存取用户信息
+   * @author weiyafei
+   * @date 2019-06-27-21:34:52
+   * @param {Object} state vuex state
+   * @param {Object} info 用户信息
+   */
+  mutations: {
+    infoSet(state, info) {
+      state.info = info
     }
   }
 }

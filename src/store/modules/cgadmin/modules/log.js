@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-16 17:40:53
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-06-18 11:46:21
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-06-28 21:44:17
  */
 import dayjs from 'dayjs'
 import { get } from 'lodash'
@@ -42,12 +42,18 @@ export default {
      * @param {String} param type {String} 类型
      * @param {Object} param meta {Object} 附带的信息
      */
-    push({ commit }, { message, type = 'info', meta }) {
+    push({ rootState, commit }, { message, type = 'info', meta }) {
       commit('push', {
         message,
         type,
         time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
         meta: {
+          // 当前用户信息
+          user: rootState.cgadmin.user.info,
+          // 当前用户的 userId
+          userId: util.cookies.get('userId'),
+          // 当前地址
+          url: get(window, 'location.href', ''),
           // 用户设置
           ...meta
         }

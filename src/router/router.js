@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-06-27 17:28:56
+ * @Last Modified time: 2019-07-05 14:22:51
  */
 
 /*=============================================
@@ -35,7 +35,8 @@ const frameIn = [
         path: '/section',
         name: 'page1',
         meta: {
-          title: '人员管控'
+          title: '人员管控',
+          role: ['admin', 'super_editor']
         },
         component: _import('section/page1.vue')
       },
@@ -44,7 +45,8 @@ const frameIn = [
         path: '/car',
         name: 'page2',
         meta: {
-          title: '车辆管控'
+          title: '车辆管控',
+          role: ['admin', 'super_editor']
         },
         component: _import('car/page2.vue')
       },
@@ -53,7 +55,8 @@ const frameIn = [
         path: '/records',
         name: 'page3',
         meta: {
-          title: '案卷'
+          title: '案卷',
+          role: ['admin', 'super_editor']
         },
         component: _import('records/page3.vue')
       },
@@ -62,7 +65,8 @@ const frameIn = [
         path: '/special',
         name: 'page4',
         meta: {
-          title: '视频'
+          title: '视频',
+          role: ['admin', 'super_editor']
         },
         component: _import('special/page4.vue')
       },
@@ -71,7 +75,8 @@ const frameIn = [
         path: '/video',
         name: 'page5',
         meta: {
-          title: '专题服务'
+          title: '专题服务',
+          role: ['admin', 'super_editor']
         },
         component: _import('video/page5.vue')
       },
@@ -80,7 +85,8 @@ const frameIn = [
         path: '/emergency',
         name: 'page6',
         meta: {
-          title: '应急指挥'
+          title: '应急指挥',
+          role: ['admin', 'super_editor']
         },
         component: _import('emergency/page6.vue')
       },
@@ -89,7 +95,8 @@ const frameIn = [
         path: 'refresh',
         name: 'refresh',
         meta: {
-          title: '案卷'
+          title: '案卷',
+          role: ['admin', 'super_editor']
         },
         component: _import('function/refresh')
       },
@@ -98,7 +105,8 @@ const frameIn = [
         path: 'redirect/:route*',
         name: 'redirect',
         meta: {
-          title: '案卷'
+          title: '案卷',
+          role: ['admin', 'super_editor']
         },
         component: _import('function/redirect')
       }
@@ -112,22 +120,15 @@ const frameIn = [
 /* 登录 */
 const frameOut = []
 
-/* 错误页面-404 */
+/* 没有权限-401 */
 const errorPage = [
   {
     path: '*',
-    name: '404',
-    component: _import('error/404')
-  }
-]
-/* 没有权限-401 */
-const errorPermission = [
-  {
-    path: '/401',
-    name: 'Page401',
+    name: '401',
     component: _import('error/401')
   }
 ]
+
 /*=============================================
 =               导出需要显示菜单的               =
 =============================================*/
@@ -138,4 +139,4 @@ export const frameInRoutes = frameIn
 =                 重新组织后导出                =
 =============================================*/
 
-export default [...frameIn, ...errorPage, ...errorPermission, ...frameOut]
+export default [...frameIn, ...errorPage, ...frameOut]

@@ -46,9 +46,10 @@
         <div class="container__main">
           <!-- 功能抽屉 -->
           <layout-drawer>
-            <router-view/>
+            <router-view></router-view>
           </layout-drawer>
-          
+          <!-- 地图控件注入地址 -->
+          <LayoutMap></LayoutMap>
         </div>
       </div>
     </div>
@@ -57,17 +58,26 @@
 
 <script>
 import { LayoutMenu, LayoutDrawer } from './components/index'
+import LayoutMap from '@/views/map/index.vue'
 export default {
   name: 'layoutHeaderAside',
   components: {
     LayoutMenu,
-    LayoutDrawer
+    LayoutDrawer,
+    LayoutMap
   },
   data() {
     return {}
   },
   methods: {},
-  mounted() {}
+  mounted() {
+    // this.$axios
+    //   .post('http://192.168.71.33:51000/api/report/area', {
+    //   })
+    //   .then(re => {
+    //     console.log(re)
+    //   })
+  }
 }
 </script>
 
@@ -175,9 +185,5 @@ export default {
   width: calc(100% - 60px);
   height: 100%;
   background: rgb(244, 244, 245);
-  /deep/ .ant-drawer-content-wrapper {
-    top: 60px !important;
-    left: 60px;
-  }
 }
 </style>

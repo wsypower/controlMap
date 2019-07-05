@@ -59,7 +59,7 @@ export default {
       return new Promise(resolve => {
         if (asideCollapse) {
           this.asideCollapseSet(false)
-          setTimeout(() => (this.asideCollapseSet(true), resolve()), 300)
+          setTimeout(() => (this.asideCollapseSet(true), resolve()), 400)
         } else {
           this.asideCollapseSet(true), resolve()
         }

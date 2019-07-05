@@ -1,30 +1,15 @@
 <template>
-  <div class="map">
-    <div class="map-header">
-      <div class="map-header_title"></div>
-    </div>
-    <div class="map-main">
-      <div class="map-main_content"></div>
-    </div>
-  </div>
+  <div class="layout__map"></div>
 </template>
 <script>
 export default {
-  name: 'Map',
-  data() {
-    return {}
-  },
-
-  methods: {
-
-  },
-  mounted() {
-    // this.$axios('/loginn',{
-    //   user:'1111'
-    // })
-  }
+  name: 'LayoutMap'
 }
 </script>
-<style lang="sass" scoped>
-@import 'index.scss';
+<style lang="scss" scoped>
+/* 地图控件样式 */
+.layout__map {
+  width: 100%;
+  height: 100%;
+}
 </style>

@@ -15,11 +15,11 @@ export default {
   page: {
     opened: [
       {
-        name: 'index',
-        fullPath: '/index',
+        name: '401',
+        // fullPath: '/index',
         meta: {
-          title: '首页',
-          auth: false
+          title: '401'
+          // auth: false
         }
       }
     ]

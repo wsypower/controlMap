@@ -21,10 +21,21 @@ export default {
      // 展开侧边栏菜单
      * this.$store.dispatch('cgadmin/menu/asideCollapseSet', true)
      */
-    asideCollapseSet({ commit }, collapse) {
-      return new Promise(resolve => {
+    asideCollapseSet({ commit, dispatch, state }, collapse) {
+      return new Promise(async resolve => {
         // store 赋值
         commit('asideCollapseSetState', collapse)
+        // 持久化
+        await dispatch(
+          'cgadmin/db/set',
+          {
+            dbName: 'sys',
+            path: 'menu.asideCollapse',
+            value: state.asideCollapse,
+            user: true
+          },
+          { root: true }
+        )
         // end
         resolve()
       })
@@ -33,10 +44,42 @@ export default {
      * @description 切换侧边栏展开和收缩
      * @param {Object} state vuex state
      */
-    asideCollapseToggle({ commit }) {
-      return new Promise(resolve => {
+    asideCollapseToggle({ commit, state, dispatch }) {
+      return new Promise(async resolve => {
         // store 赋值
         commit('asideCollapseToggleState')
+        // 持久化
+        await dispatch(
+          'cgadmin/db/set',
+          {
+            dbName: 'sys',
+            path: 'menu.asideCollapse',
+            value: state.asideCollapse,
+            user: true
+          },
+          { root: true }
+        )
+        // end
+        resolve()
+      })
+    },
+    /**
+     * @description 从持久化数据读取侧边栏展开或者收缩
+     * @param {Object} state vuex state
+     */
+    asideCollapseLoad({ state, dispatch }) {
+      return new Promise(async resolve => {
+        // store 赋值
+        state.asideCollapse = await dispatch(
+          'cgadmin/db/get',
+          {
+            dbName: 'sys',
+            path: 'menu.asideCollapse',
+            defaultValue: setting.menu.asideCollapse,
+            user: true
+          },
+          { root: true }
+        )
         // end
         resolve()
       })
@@ -50,12 +93,12 @@ export default {
      * @param {Object} item 点击元素
      */
     asideSetItemActive({ commit, state }, item) {
-      return new Promise(resolve => {
+      return new Promise(async resolve => {
         // store 赋值
         commit('asideSetItem', item)
         // 获取aside
         let aside = state.aside
-        // 判断当前有没有active为true的元素，有=>返回true,否则相反
+        // 判断当前有没有active为true的元素，有 => 返回true,否则相反
         let asideMenuIsExpand = aside.some(item => item.active)
         // end
         resolve(asideMenuIsExpand)

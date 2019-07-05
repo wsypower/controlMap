@@ -6,6 +6,38 @@ const util = {
   db,
   log
 }
+/**
+ * @description 获取网址参数
+ * @author weiyafei
+ * @date 2019-06-28-15:00:04
+ * @param {String} 网址
+ * @returns {Object} 参数对象
+ */
+util.getURLParameters = prop => {
+  let params = {},
+    query = window.location.search.length > 0 ? window.location.search.substring(1) : '',
+    arr = query.split('&'),
+    rt
+  for (let i = 0, len = arr.length; i < len; i++) {
+    let item = arr[i],
+      tmp = item.split('='),
+      key = tmp[0],
+      val = tmp[1]
+    if (typeof params[key] == 'undefined') {
+      params[key] = val
+    } else if (typeof params[key] == 'string') {
+      params[key] = [params[key], val]
+    } else {
+      params[key].push(val)
+    }
+  }
+  rt = prop ? params[prop] : params
+  return rt
+}
+// (url.match(/([^?=&]+)(=([^&]*))/g) || []).reduce(
+//   (a, v) => ((a[v.slice(0, v.indexOf('='))] = v.slice(v.indexOf('=') + 1)), a),
+//   {}
+// )
 
 /**
  * @description 更新标题
