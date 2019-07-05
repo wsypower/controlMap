@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-05 14:22:51
+ * @Last Modified time: 2019-07-05 19:41:33
  */
 
 /*=============================================
@@ -26,14 +26,14 @@ const frameIn = [
   {
     path: '/',
     name: 'layoutHeaderAside',
-    redirect: { path: '/section' },
+    // redirect: { path: '/section' },
     component: layoutHeaderAside,
     meta: { title: '管控平台' },
     children: [
       //测试 => page1
       {
         path: '/section',
-        name: 'page1',
+        name: 'section',
         meta: {
           title: '人员管控',
           role: ['admin', 'super_editor']
@@ -43,7 +43,7 @@ const frameIn = [
       //测试 => page2
       {
         path: '/car',
-        name: 'page2',
+        name: 'car',
         meta: {
           title: '车辆管控',
           role: ['admin', 'super_editor']
@@ -53,7 +53,7 @@ const frameIn = [
       //测试 => page3
       {
         path: '/records',
-        name: 'page3',
+        name: 'records',
         meta: {
           title: '案卷',
           role: ['admin', 'super_editor']
@@ -63,7 +63,7 @@ const frameIn = [
       //测试 => page4
       {
         path: '/special',
-        name: 'page4',
+        name: 'special',
         meta: {
           title: '视频',
           role: ['admin', 'super_editor']
@@ -73,7 +73,7 @@ const frameIn = [
       //测试 => page5
       {
         path: '/video',
-        name: 'page5',
+        name: 'video',
         meta: {
           title: '专题服务',
           role: ['admin', 'super_editor']
@@ -83,7 +83,7 @@ const frameIn = [
       //测试 => page6
       {
         path: '/emergency',
-        name: 'page6',
+        name: 'emergency',
         meta: {
           title: '应急指挥',
           role: ['admin', 'super_editor']

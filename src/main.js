@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
- * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-05 16:52:30
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-07-05 19:26:32
  */
 // Vue
 import Vue from 'vue'
@@ -33,20 +33,17 @@ new Vue({
   created() {
     // 获取userId并登陆
     this.$store.dispatch('cgadmin/account/login').then(() => {
-      // console.log(this.$store.getters)
-      console.log(this.$store.state)
+      //登录后获取用户权限
+      const role = this.$store.getters['cgadmin/user/role']
+      //设置侧边栏菜单
+      const menu = menuAside.filter(v => v.role.includes(role))
+      this.$store.commit('cgadmin/menu/asideSet', menu)
     })
-    // 处理路由 得到每一级的路由设置
-    // this.$store.commit('cgadmin/page/init', frameInRoutes)
-    //设置侧边栏菜单
-    this.$store.commit('cgadmin/menu/asideSet', menuAside)
-    //设置侧边栏
+    //设置侧边栏伸缩
     this.$store.commit('cgadmin/menu/asideCollapseSetState', setting.menu.asideCollapse)
   },
   mounted() {
     // 获取并记录用户 UA
-    // console.log(this.$store.getters('cgadmin/user/role'))
-    // console.log(this.$store.getter('cgadmin/user/role'))
     this.$store.commit('cgadmin/ua/get')
   }
 }).$mount('#app')

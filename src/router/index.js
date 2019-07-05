@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 16:56:20
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-05 15:45:33
+ * @Last Modified time: 2019-07-05 17:25:56
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -56,7 +56,6 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   // 进度条
   NProgress.start()
-
   next()
 })
 
