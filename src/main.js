@@ -2,7 +2,11 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
  * @Last Modified by: wei.yafei 
+<<<<<<< HEAD
  * @Last Modified time: 2019-07-05 15:58:32
+=======
+ * @Last Modified time: 2019-07-05 16:09:48
+>>>>>>> wsy
  */
 // Vue
 import Vue from 'vue'
