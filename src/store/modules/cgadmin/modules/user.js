@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-08 11:11:41
- * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-05 15:16:48
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-07-05 15:28:36
  */
 export default {
   namespaced: true,
@@ -22,6 +22,7 @@ export default {
      * @param {*} info info
      */
     set({ commit, dispatch }, info) {
+      console.log(1111)
       return new Promise(async resolve => {
         // store 赋值 => 通过 => createPersistedState()持久化用户数据到se
         commit('infoSet', info)

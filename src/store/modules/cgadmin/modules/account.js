@@ -24,7 +24,6 @@ export default {
           AccountLogin()
             .then(async res => {
               // 设置 vuex 用户信息
-              commit('cgadmin/user/infoSet', res, { root: true })
               await dispatch(
                 'cgadmin/user/set',
                 {
