@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-05 10:57:01
+ * @Last Modified time: 2019-07-05 16:09:48
  */
 // Vue
 import Vue from 'vue'
@@ -42,6 +42,8 @@ new Vue({
   },
   mounted() {
     // 获取并记录用户 UA
+    console.log(this.$store)
+    console.log(this.$store.getter('cgadmin/user/role'))
     this.$store.commit('cgadmin/ua/get')
   }
 }).$mount('#app')
