@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-05 16:22:04
+ * @Last Modified time: 2019-07-05 16:52:30
  */
 // Vue
 import Vue from 'vue'
@@ -32,7 +32,10 @@ new Vue({
   render: h => h(App),
   created() {
     // 获取userId并登陆
-    this.$store.dispatch('cgadmin/account/login')
+    this.$store.dispatch('cgadmin/account/login').then(() => {
+      // console.log(this.$store.getters)
+      console.log(this.$store.state)
+    })
     // 处理路由 得到每一级的路由设置
     // this.$store.commit('cgadmin/page/init', frameInRoutes)
     //设置侧边栏菜单
@@ -42,7 +45,7 @@ new Vue({
   },
   mounted() {
     // 获取并记录用户 UA
-    // console.log(this.$store)
+    // console.log(this.$store.getters('cgadmin/user/role'))
     // console.log(this.$store.getter('cgadmin/user/role'))
     this.$store.commit('cgadmin/ua/get')
   }
