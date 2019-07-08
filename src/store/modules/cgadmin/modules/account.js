@@ -35,12 +35,14 @@ export default {
               resolve(res)
             })
             .catch(err => {
+              console.log('登录错误')
               //打断登录退出至401页面
               dispatch('logout')
               //回调捕获错误
               reject(err)
             })
         } else {
+          console.log('登录错误111')
           //打断登录退出至401页面
           dispatch('logout')
         }
@@ -52,6 +54,7 @@ export default {
      * @param {Object} param confirm {Boolean} 是否需要确认
      */
     logout({ dispatch }) {
+      console.log(1121)
       /**
        * @description 注销
        */
