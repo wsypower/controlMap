@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-08 12:49:16
+ * @Last Modified time: 2019-07-08 12:52:42
  */
 
 /*=============================================
@@ -10,7 +10,6 @@
  =============================================*/
 
 import layoutHeaderAside from '@/layouts/header-aside'
-import VueRouter from 'vue-router'
 // 由于懒加载页面太多的话会造成webpack热更新太慢，所以开发环境不使用懒加载，只有生产环境使用懒加载
 // 对应utils下util.import.development.js和util.import.production.js
 // eslint-disable-next-line no-unused-vars
@@ -27,11 +26,11 @@ const frameIn = [
   {
     path: '/',
     name: 'layoutHeaderAside',
-    // redirect: { path: '/section' },
-    redirect: to => {
-      console.log(to)
-      console.log(VueRouter)
-    },
+    redirect: { path: '/section' },
+    // redirect: to => {
+    //   console.log(to)
+    //   console.log(VueRouter)
+    // },
     component: layoutHeaderAside,
     meta: { title: '管控平台' },
     children: [
