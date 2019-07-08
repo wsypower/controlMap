@@ -58,7 +58,7 @@
 
 <script>
 import { LayoutMenu, LayoutDrawer } from './components/index'
-import LayoutMap from '@/views/map/index.vue'
+import LayoutMap from '@/views/map/olMap.vue'
 export default {
   name: 'layoutHeaderAside',
   components: {
