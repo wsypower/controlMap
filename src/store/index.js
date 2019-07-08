@@ -1,7 +1,7 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-11 11:58:18
- * @Last Modified by: wei.yafei 
+ * @Last Modified by: wei.yafei
  * @Last Modified time: 2019-07-05 11:47:42
  */
 
@@ -16,6 +16,7 @@ import Vuex from 'vuex'
 //默认持久化所有state
 import createPersistedState from 'vuex-persistedstate'
 import cgadmin from './modules/cgadmin'
+import emergency from './modules/emergency'
 Vue.use(Vuex)
 /* eslint-disable no-new */
 const store = new Vuex.Store({
@@ -28,7 +29,8 @@ const store = new Vuex.Store({
     // createPersistedState()
   ],
   modules: {
-    cgadmin
+    cgadmin,
+    emergency
   }
 })
 
