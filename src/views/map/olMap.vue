@@ -1,6 +1,5 @@
 <template>
-  <div id="map">
-  </div>
+  <div id="map"></div>
 </template>
 <script>
 import 'ol/ol.css'
@@ -39,8 +38,6 @@ export default {
         layers: this.getBaseLayers(),
         controls: defaultControls({ attribution: false, rotate: false, zoom: false }) // 默认控件配置
       })
-      // this.setMap(this.map) // 共享到vuex
-      // this.map.on('click', this.mapClickHandler)
     },
     getBaseLayers() {
       /*
@@ -84,11 +81,8 @@ export default {
           url: 'http://t{0-6}.tianditu.com/vec_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
           tileGrid: tdtGrid,
           wrapX: true
-        }),
-        // minResolution: 0.0000858306884765625,
-        // maxResolution: 0.02197265625
+        })
       })
-
       const wmtsAnnoLayer = new TileLayer({
         source: new WMTS({
           layer: 'cva',
@@ -102,7 +96,6 @@ export default {
         }),
 
       })
-
       /**
        * @desc 浙江天地图图层
        */
@@ -135,13 +128,12 @@ export default {
         minResolution: 0.0000013411045074462890625,
         maxResolution: 0.0000858306884765625
       })
-      return [wmtsVecLayer, wmtsAnnoLayer,zJVecLayer, zJAnnoLayer]
+      return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
     },
     getMap() {
       return this.map;
     }
-  },
-  components: {}
+  }
 }
 
 </script>
