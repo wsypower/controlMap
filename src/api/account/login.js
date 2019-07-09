@@ -2,14 +2,14 @@
  * @Author: wei.yafei
  * @Date: 2019-06-27 21:26:07
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-09 14:36:37
+ * @Last Modified time: 2019-07-09 14:38:03
  */
 
 import request from '@/plugins/axios/axios'
 
-/*=============================================
-=               request Example               =
-=============================================*/
+/*========================================
+=            request Example             =
+=========================================*/
 
 /*----------  post 请求示例 ----------*/
 /**
