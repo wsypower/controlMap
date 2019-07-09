@@ -1,14 +1,14 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-27 21:26:07
- * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-09 14:38:03
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-07-09 18:30:03
  */
 
 import request from '@/plugins/axios/axios'
 
 /*========================================
-=            request Example             =
+=            request example             =
 =========================================*/
 
 /*----------  post 请求示例 ----------*/
@@ -25,13 +25,14 @@ import request from '@/plugins/axios/axios'
 /*----------  get 请求示例  ----------*/
 /**
  *export const Account = id => {
- * return request({
- *   url: `@test/login`,
- *   method: 'get',
- *   param: {
- *     id
- *   }
- * })
+ *    return request({
+ *      url: `@test/login`,
+ *      method: 'get',
+ *      param: {
+ *        id
+ *      }
+ *    })
+ * }
  */
 
 /*--------- delete 请求示例  --------*/

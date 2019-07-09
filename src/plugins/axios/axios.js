@@ -3,8 +3,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-12 15:19:30
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-07-05 11:04:37
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-07-09 20:55:34
  */
 /*=============================================
 =                    axios                    =
@@ -15,7 +15,6 @@ import Qs from 'qs'
 import { message } from 'ant-design-vue'
 import util from '@/utils/util'
 import store from '@/store'
-
 /*=============================================
 =              axios-全局错误捕获               =
 =============================================*/
@@ -121,11 +120,14 @@ service.interceptors.response.use(
   response => {
     // dataAxios 是 axios 返回数据中的 data
     const dataAxios = response.data
-    // 这个状态码是和后端约定的
-    const { code } = dataAxios
-
-    //根据 code 进行判断
-    switch (Number(code)) {
+    // 这个状态码是和后端约定的（默认值为防止外部接口没有code，导致值为undefined）
+    const { code = 111 } = dataAxios
+    // 根据 code 进行判断
+    switch (code >>> 0) {
+      case 111:
+        // [ 示例 ] code === 111 代表code不存在，为外部接口直接返回结果
+        success(response.config.url)
+        return dataAxios
       case 0:
         // [ 示例 ] code === 0 代表成功
         success(response.config.url)
@@ -142,7 +144,6 @@ service.interceptors.response.use(
   },
   /* 对错误响应数据的操作 => error */
   error => {
-    console.log(0)
     if (error && error.response) {
       switch (error.response.status) {
         case 400:

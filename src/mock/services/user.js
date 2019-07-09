@@ -6,7 +6,7 @@ const userId = ['123', '000']
 const login = options => {
   const body = getBody(options)
   if (!userId.includes(body.userId)) {
-    return builder({ isLogin: true }, '您还没有权限访问，请联系管理员', 401)
+    return builder({ isLogin: true }, '用户账号密码错误，请联系管理员', 401)
   }
   if (body.userId === userId[0]) {
     return builder(
