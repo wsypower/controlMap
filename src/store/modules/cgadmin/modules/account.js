@@ -50,9 +50,6 @@ export default {
      * @param {Object} param confirm {Boolean} 是否需要确认
      */
     logout({ dispatch }) {
-      /**
-       * @description 注销
-       */
       // 跳转路由
       router.replace({
         name: '401'
