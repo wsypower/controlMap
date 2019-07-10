@@ -77,6 +77,8 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 let config = {
   baseURL: process.env.VUE_APP_API,
   timeout: 60 * 100, // 请求超时时间
+  // `headers` 是即将被发送的自定义请求头
+  headers: {'Content-Type': 'application/json'},
   //修改请求数据添加必填项 userId
   transformRequest: [
     function(data) {
@@ -101,6 +103,7 @@ const service = axios.create(config)
 
 service.interceptors.request.use(
   config => {
+    console.log(config)
     return config
   },
   error => {
@@ -121,12 +124,20 @@ service.interceptors.response.use(
   response => {
     // dataAxios 是 axios 返回数据中的 data
     const dataAxios = response.data
+    // map 数据判断
+    if (dataAxios.type && dataAxios.type === "FeatureCollection"){
+      success(response.config.url)
+      return dataAxios
+    }
     // 这个状态码是和后端约定的
     const { code } = dataAxios
-
     //根据 code 进行判断
     switch (Number(code)) {
       case 0:
+        // [ 示例 ] code === 0 代表成功
+        success(response.config.url)
+        return dataAxios.result
+      case 200:
         // [ 示例 ] code === 0 代表成功
         success(response.config.url)
         return dataAxios.result

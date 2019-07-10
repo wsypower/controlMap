@@ -10,6 +10,8 @@ import { Tile as TileLayer } from 'ol/layer'
 import WMTS from 'ol/source/WMTS'
 import WMTSTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent'
+import { getTypePoint } from '@/api/map/service'
+
 export default {
   data() {
     return {
@@ -19,7 +21,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       // 初始化地图底图
-      this.initMap();
+      this.initMap()
     })
   },
   methods: {
@@ -38,6 +40,9 @@ export default {
         layers: this.getBaseLayers(),
         controls: defaultControls({ attribution: false, rotate: false, zoom: false }) // 默认控件配置
       })
+      getTypePoint().then(points=>{
+        console.log(points)
+      })
     },
     getBaseLayers() {
       /*
@@ -48,7 +53,23 @@ export default {
       /**
        * @desc 去掉第0层的天地图分辨率信息，不会出现缩放到最后是空白的现象
        */
-      const tdtResolutions = [0.02197265625,0.010986328125,0.0054931640625,0.00274658203125, 0.001373291015625, 0.0006866455078125, 0.00034332275390625, 0.000171661376953125, 0.0000858306884765625, 0.00004291534423828125, 0.000021457672119140625, 0.0000107288360595703125, 0.00000536441802978515625, 0.000002682209014892578125, 0.0000013411045074462890625]
+      const tdtResolutions = [
+        0.02197265625,
+        0.010986328125,
+        0.0054931640625,
+        0.00274658203125,
+        0.001373291015625,
+        0.0006866455078125,
+        0.00034332275390625,
+        0.000171661376953125,
+        0.0000858306884765625,
+        0.00004291534423828125,
+        0.000021457672119140625,
+        0.0000107288360595703125,
+        0.00000536441802978515625,
+        0.000002682209014892578125,
+        0.0000013411045074462890625
+      ]
 
       /**
        * @desc 与分辨率信息需要每层严格对应起来
@@ -93,8 +114,7 @@ export default {
           url: 'http://t{0-6}.tianditu.com/cva_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
           tileGrid: tdtGrid,
           wrapX: true
-        }),
-
+        })
       })
       /**
        * @desc 浙江天地图图层
@@ -131,16 +151,14 @@ export default {
       return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
     },
     getMap() {
-      return this.map;
+      return this.map
     }
   }
 }
-
 </script>
 <style scoped>
 #map {
   width: 100%;
   height: 100%;
 }
-
 </style>

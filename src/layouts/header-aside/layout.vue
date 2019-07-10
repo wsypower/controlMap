@@ -49,7 +49,7 @@
             <router-view></router-view>
           </layout-drawer>
           <!-- 地图控件注入地址 -->
-          <LayoutMap></LayoutMap>
+          <LayoutMap ref="olMap"></LayoutMap>
         </div>
       </div>
     </div>
@@ -71,12 +71,6 @@ export default {
   },
   methods: {},
   mounted() {
-    // this.$axios
-    //   .post('http://192.168.71.33:51000/api/report/area', {
-    //   })
-    //   .then(re => {
-    //     console.log(re)
-    //   })
   }
 }
 </script>
