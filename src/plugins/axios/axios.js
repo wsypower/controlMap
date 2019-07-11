@@ -82,7 +82,8 @@ let config = {
     function(data) {
       //给所有的数据请求添加参数userId
       const userId = util.cookies.get('userId')
-      const dataModify = Object.assign((data = {}), { userId })
+      const dataModify = Object.assign({userId},data)
+        console.log('dataModify',dataModify);
       // 对 data 进行任意转换处理 => 转为fromData(按照实际后台约定修改转换)
       return Qs.stringify(dataModify, { arrayFormat: 'repeat' })
     }

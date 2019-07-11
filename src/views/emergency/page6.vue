@@ -17,64 +17,29 @@
                 </a-spin>
             </div>
             <div class="data-panel" v-else>
-                <yuan-item v-for="(item, index) in dataArr"
-                           :itemData="item"
-                           :index="index"
-                           :key="index"
-                           :class="{active: activeIndex==index}"
-                           :isActive="activeIndex==index"
-                           @editYuAnItem="editYuAnItem"
-                           @deleteYuAnItem="deleteYuAnItem"
-                           @onClick="clickDataItem(index)">
-                </yuan-item>
-                <!--<div-->
-                        <!--class="item"-->
-                        <!--:class="{active: activeIndex==index}"-->
-                        <!--v-for="(item, index) in dataArr"-->
-                        <!--:key="index"-->
-                        <!--flex-->
-                        <!--@click="clickDataItem(index)"-->
-                <!--&gt;-->
-                    <!--<div class="item-left">-->
-                        <!--<pin :content="index" :isActive="activeIndex==index"></pin>-->
-                    <!--</div>-->
-                    <!--<div class="item-right" flex="dir:top">-->
-                        <!--<div class="top" flex="cross: center main:justify">-->
-                            <!--<div class="name-panel">{{ item.name }}</div>-->
-                            <!--<div class="flag-panel">-->
-                <!--<span v-if="item.level == 0" class="level-panel yanzhong"-->
-                <!--&gt;等级：严重</span-->
-                <!--&gt;-->
-                                <!--<span v-else class="level-panel yiban">等级：一般</span>-->
-                                <!--<span v-if="item.status == 0" class="status-panel handle"-->
-                                <!--&gt;进行中</span-->
-                                <!--&gt;-->
-                                <!--<span v-else-if="item.status == -1" class="status-panel nostart"-->
-                                <!--&gt;未开始</span-->
-                                <!--&gt;-->
-                                <!--<span v-else class="status-panel complete">已完成</span>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="description-panel">信息：{{ item.description }}</div>-->
-                        <!--<div class="item-operate">-->
-                        <!--<span class="operate-btn" @click="editYuan(item)">-->
-                             <!--<cg-icon-svg name="edit" class="svg_icon_edit"></cg-icon-svg>-->
-                            <!--编辑-->
-                        <!--</span>-->
-                            <!--<span class="operate-btn" @click="deleteYuan(item)">-->
-                            <!--<cg-icon-svg name="delete" class="svg_icon_delete"></cg-icon-svg>-->
-                            <!--删除-->
-                        <!--</span>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
+                <cg-container scroll v-if="dataArr.length>0" >
+                    <yu-an-item v-for="(item, index) in dataArr"
+                               :itemData="item"
+                               :index="index"
+                               :key="index"
+                               :class="{active: activeIndex==index}"
+                               :isActive="activeIndex==index"
+                               @editYuAnItem="editYuAnItem"
+                               @deleteYuAnItem="deleteYuAnItem"
+                               @onClick="clickDataItem(index)">
+                    </yu-an-item>
+                </cg-container>
+                <div v-else class="none-panel" flex="main:center cross:center">
+                    <img src="~@img/zanwuyuan.png" />
+                </div>
             </div>
+
         </div>
-        <div class="pagination-panel">
+        <div v-if="dataArr.length>0" class="pagination-panel">
             <a-pagination
                     :total="totalSize"
                     :showTotal="total => `共 ${total} 条`"
-                    :pageSize="4"
+                    :pageSize="10"
                     :defaultCurrent="1"
                     @change="changePagination"
             />
@@ -94,12 +59,11 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
-    import pin from './components/position.vue';
-    import operation from './components/operation.vue';
-    import yuanForm from "./components/yuanForm.vue";
+    import { mapState,mapActions } from 'vuex'
+    import Operation from './components/Operation.vue';
+    import YuAnForm from "./components/YuAnForm.vue";
     import ychj from "./components/ychj.vue";
-    import yuanItem from "./components/yuanItem.vue";
+    import YuAnItem from "./components/YuAnItem.vue";
     export default {
         name: 'page6',
         data(){
@@ -119,36 +83,23 @@
             }
         },
         components:{
-            pin,
-            operation,
-            yuanForm,
+            Operation,
+            YuAnForm,
             ychj,
-            yuanItem
+            YuAnItem
         },
         computed: {
-            ...mapState('cgadmin/page', ['current']),
-            isActive:function(){
-                return
-            }
+            ...mapState('cgadmin/page', ['current'])
         },
         mounted(){
-            // let result = {
-            //     code: 0,
-            //     data: [{'name':'消防安全','description':'烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火。','level': '0','status':0,'statusName':'进行中'},
-            //         {'name':'消防安全','description':'烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火。','level': '1','status':-1,'statusName':'未开始'},
-            //         {'name':'消防安全','description':'烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火。','level': '1','status':1,'statusName':'已完成'},
-            //         {'name':'消防安全','description':'烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火。','level': '1','status':1,'statusName':'已完成'}],
-            //     total: 9
-            // };
-            // this.dataArr = result.data;
-            // this.totalSize = result.total;
             this.showLoading = true;
             let data = {
                 searchContent: '',
+                status: '',
                 pageNo: 1,
-                pageSize: 4
+                pageSize: 10
             }
-            this.$store.dispatch('emergency/emergency/getEmergencyYuAnDataList',data).then((res) => {
+            this.getEmergencyYuAnDataList(data).then((res) => {
                 console.log(res);
                 this.dataArr = res.data;
                 this.totalSize = res.total;
@@ -161,11 +112,12 @@
             this.isActiveOperation = false;
         },
         methods:{
+            ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList']),
             onSearch(val){
 
             },
             addItemOperation(){
-                this.dialogComponentId = yuanForm;
+                this.dialogComponentId = YuAnForm;
                 this.dWidth = 810;
                 this.dHeight = 450;
                 this.dialogTitle = '新增预案';
@@ -188,15 +140,20 @@
             },
             editYuAnItem(item){
                 console.log('editYuan item',item);
-                this.dialogComponentId = yuanForm;
+                this.dialogComponentId = YuAnForm;
                 this.dWidth = 810;
                 this.dHeight = 450;
                 this.dialogTitle = '修改预案';
                 this.bodyPadding = [0,10,10,10];
                 this.sourceData = {
-                    data1: 'female',
-                    data2: 1423,
-                    data3: '2019-07-05'
+                    type: '1',
+                    level: '0',
+                    time: '2019-07-11',
+                    position: '华星路99号',
+                    message: '这是第一条开发测试数据',
+                    area: '3',
+                    photo:{},
+                    files:{}
                 };
                 this.dialogVisible = true;
             },
@@ -215,9 +172,6 @@
         width: 100%;
         height: 100%;
         background-color: #ffffff;
-        -webkit-box-shadow: 1px 0px 10px 0px rgba(1, 44, 104, 0.2);
-        box-shadow: 1px 0px 10px 0px rgba(1, 44, 104, 0.2);
-        border: solid 2px #ffffff;
         position: relative;
         .left-message-title {
             height: 50px;
@@ -234,7 +188,8 @@
         }
         .search-result {
             width: 100%;
-            min-height: 480px;
+            height: calc(100% - 200px);
+            position: relative;
             .spin-panel{
                 width: 100%;
                 height: 480px;
@@ -242,6 +197,10 @@
             .data-panel{
                 width: 100%;
                 height: 100%;
+                .none-panel{
+                    width: 100%;
+                    height: 100%;
+                }
             }
 
         }

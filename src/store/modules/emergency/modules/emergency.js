@@ -1,4 +1,4 @@
-import { getEmergencyYuAnList } from '@/api/emergency/index.js'
+import { getEmergencyYuAnList,addNewEmergencyYuAn } from '@/api/emergency/index.js'
 
 export default {
     namespaced: true,
@@ -7,7 +7,8 @@ export default {
          * @description
          *
          */
-        getEmergencyYuAnDataList(data) {
+        getEmergencyYuAnDataList(state,data) {
+            console.log('store',data);
             return new Promise((resolve, reject) => {
                 getEmergencyYuAnList(data)
                     .then(res => {
@@ -19,5 +20,18 @@ export default {
                     })
             })
         },
+        addNewEmergencyYuAn(state,data){
+            console.log('store:addNewEmergencyYuAn',data);
+            return new Promise((resolve, reject) => {
+                addNewEmergencyYuAn(data)
+                    .then(res => {
+                        resolve(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        reject(err)
+                    })
+            })
+        }
     }
 }

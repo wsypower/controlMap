@@ -1,5 +1,5 @@
 <template>
-    <div class="item" flex @click.native="clickDataItem">
+    <div class="item" flex @click="clickDataItem">
         <div class="item-left">
             <pin :content="index" :isActive="isActive"></pin>
         </div>
@@ -16,10 +16,10 @@
             </div>
             <div class="description-panel">信息：{{ itemData.description }}</div>
             <div class="item-operate">
-                <span class="operate-btn" @click="editYuan(itemData)">
+                <span class="operate-btn" @click.stop="editYuan(itemData)">
                     <cg-icon-svg name="edit" class="svg_icon_edit"></cg-icon-svg>编辑
                 </span>
-                <span class="operate-btn" @click="deleteYuan(itemData)">
+                <span class="operate-btn" @click.stop="deleteYuan(itemData)">
                     <cg-icon-svg name="delete" class="svg_icon_delete"></cg-icon-svg>删除
                 </span>
             </div>
@@ -27,9 +27,9 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
-    import pin from './position.vue';
+    import Pin from './Position.vue';
     export default {
-        name: 'yuanItem',
+        name: 'yuAnItem',
         props:{
             index:{
                 type:Number,
@@ -54,7 +54,7 @@
             }
         },
         components:{
-            pin
+            Pin
         },
         methods:{
             editYuan(item){
@@ -64,7 +64,7 @@
                 this.$emit('deleteYuAnItem',item);
             },
             clickDataItem(){
-                this.$emit('onClick')
+                this.$emit('onClick');
             }
         }
     }
@@ -141,6 +141,11 @@
                 color: #666666;
                 margin: 8px 0px;
                 max-height: 80px;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 3;
+                overflow: hidden;
             }
             .item-operate {
                 .operate-btn {
@@ -156,6 +161,7 @@
                         width: 12px;
                         height: 14px;
                         color: #2c90f3;
+                        margin-right: 5px;
                     }
                 }
             }
