@@ -2,7 +2,6 @@ import { builder, getQueryParameters } from '../util'
 import Mock from 'mockjs'
 
 const add = options => {
-  console.log(options)
   const queryParameters = getQueryParameters(options)
   console.log(queryParameters)
   return builder(

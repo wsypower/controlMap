@@ -4,12 +4,12 @@
  * @Author: wei.yafei
  * @Date: 2019-06-12 15:19:30
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-07-11 15:18:30
+ * @Last Modified time: 2019-07-11 15:28:36
  */
 /*=============================================
 =                    axios                    =
 =============================================*/
-
+import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
 import { message } from 'ant-design-vue'
@@ -189,4 +189,26 @@ service.interceptors.response.use(
   }
 )
 
+/*=============================================
+=            Vue prototype 上挂载axios         =
+=============================================*/
+
+Plugin.install = function(Vue, options) {
+  Vue.axios = service
+  window.axios = service
+  Object.defineProperties(Vue.prototype, {
+    axios: {
+      get() {
+        return service
+      }
+    },
+    $axios: {
+      get() {
+        return service
+      }
+    }
+  })
+}
+
+Vue.use(Plugin)
 export default service
