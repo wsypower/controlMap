@@ -100,8 +100,9 @@
                 name="avatar"
                 listType="picture-card"
                 class="avatar-uploader"
+                :accept=".jpg,.png"
                 :showUploadList="false"
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                action="http://192.168.71.33:50000/file/file/uploadFileWeb"
                 :beforeUpload="beforeUpload"
                 @change="handleChange"
               >
@@ -189,11 +190,30 @@ export default {
         onChange(value){
             console.log('date',value);
         },
-        beforeUpload(file){
-
+        beforeUpload (file,filelist) {
+            // const isJPG = file.type === 'image/jpeg'
+            // if (!isJPG) {
+            //     this.$message.error('You can only upload JPG file!')
+            // }
+            const isLt2M = file.size / 1024 / 1024 < 2
+            if (!isLt2M) {
+                this.$message.error('Image must smaller than 2MB!')
+            }
+            return isLt2M
         },
-        handleChange(file){
-
+        handleChange (res) {
+            // if (info.file.status === 'uploading') {
+            //     this.loading = true
+            //     return
+            // }
+            console.log('uploadImage handleChange',res);
+            // if (info.file.status === 'done') {
+            //     // Get this url from response in real world.
+            //     getBase64(info.file.originFileObj, (imageUrl) => {
+            //         this.imageUrl = imageUrl
+            //         this.loading = false
+            //     })
+            // }
         },
         handleSubmit(e){
             e.preventDefault();
@@ -256,6 +276,9 @@ export default {
         height: 100%;
         background: url("~@img/picture-upload.png") no-repeat;
         background-size: 100% 100%;
+      }
+      img{
+        width: 100%;
       }
     }
   }
