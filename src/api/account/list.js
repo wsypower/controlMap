@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-07-11 11:32:17
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-11 23:02:26
+ * @Last Modified time: 2019-07-11 23:10:00
  */
 import request from '@/plugins/axios/axios'
 
@@ -17,7 +17,7 @@ import request from '@/plugins/axios/axios'
  */
 export function add(data = {}) {
   return request({
-    url: '@atest/add',
+    url: '@test/add',
     method: 'get',
     params: data
   })
