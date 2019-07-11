@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-12 02:44:03
- * @Last Modified by: wei.yafei  
- * @Last Modified time: 2019-06-18 12:31:50
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-07-11 22:44:54
  */
 const log = {}
 
@@ -25,10 +25,10 @@ function typeColor(type = 'default') {
       color = '#43B883'
       break
     case 'warning':
-      color = '#e6a23c'
+      color = '#E7A343'
       break
     case 'danger':
-      color = '#FF0000'
+      color = '#f56c6c'
       break
     default:
       break
@@ -47,8 +47,8 @@ function typeColor(type = 'default') {
 log.capsule = function(title, info, type = 'primary') {
   console.log(
     `%c ${title} %c ${info} %c`,
-    'background:#35495E; padding: 1px; border-radius: 3px 0 0 3px; color: #fff;',
-    `background:${typeColor(type)}; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff;`,
+    'background:#35495E; padding: 4px; border-radius: 3px 0 0 3px; color: #fff;',
+    `background:${typeColor(type)}; padding: 4px; border-radius: 0 3px 3px 0;  color: #fff;`,
     'background:transparent'
   )
 }

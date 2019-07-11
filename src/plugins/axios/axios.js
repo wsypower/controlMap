@@ -3,8 +3,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-12 15:19:30
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-07-11 16:16:55
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-07-11 23:09:25
  */
 /*=============================================
 =                    axios                    =
@@ -16,9 +16,8 @@ import { message } from 'ant-design-vue'
 import util from '@/utils/util'
 import store from '@/store'
 /*=============================================
-=              axios-全局错误捕获               =
+=             axios-记录和显示错误              =
 =============================================*/
-
 // 创建一个错误
 const errorCreate = msg => {
   const error = new Error(msg)
@@ -44,12 +43,7 @@ const errorLog = error => {
   // 打印到控制台
   if (process.env.NODE_ENV === 'development') {
     // util.log.danger('>>>>>> Error >>>>>>')
-    util.log.danger(`
-    ===============================================
-    >>>>>>>              Error              >>>>>>>
-    ===============================================
-    `)
-    console.log(error)
+    util.log.capsule(' cg-Admin ', `💀 ${error}`, 'danger')
   }
   // 显示提示,依赖于Ant Dedign of Vue
   message.error(error.message)
@@ -65,8 +59,7 @@ const errorLog = error => {
 const success = success => {
   // 打印到控制台
   if (process.env.NODE_ENV === 'development') {
-    // util.log.danger('>>>>>> Error >>>>>>')
-    util.log.success(`>>>>>>> 连接成功： ${success}   >>>>>>>`)
+    util.log.capsule(' cg-Admin ', `🌝 ${success}`, 'success')
   }
 }
 //axios默认配置

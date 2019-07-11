@@ -13,7 +13,7 @@ import pluginLog from '@/plugins/log'
 import pluginOpen from '@/plugins/open'
 
 export default {
-  async install(Vue) {
+  install(Vue, options) {
     // 设置为 false 以阻止 vue 在启动时生成生产提示
     // https://cn.vuejs.org/v2/api/#productionTip
     Vue.config.productionTip = false
@@ -26,8 +26,8 @@ export default {
     // 构建时间
     Vue.prototype.$buildTime = process.env.VUE_APP_BUILD_TIME
     // 插件
-    Vue.use(pluginError)
     Vue.use(pluginLog)
     Vue.use(pluginOpen)
+    Vue.use(pluginError)
   }
 }
