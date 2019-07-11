@@ -11,7 +11,7 @@ export default {
      * @param {Object} param context
      * @param {Object} param route {Object} 登录成功后定向的路由对象 任何 vue-router 支持的格式
      */
-    login({ dispatch }) {
+    login({ dispatch, rootGetters }) {
       return new Promise(resolve => {
         //获取url参数对象
         const UrlParameters = util.getURLParameters()
@@ -35,6 +35,10 @@ export default {
               },
               { root: true }
             )
+            //登录后获取用户权限
+            const role = rootGetters.role
+            console.log(role)
+            // const role = this.$store.getters['cgadmin/user/role']
             // 结束
             resolve(res)
           })
