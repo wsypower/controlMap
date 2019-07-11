@@ -3,8 +3,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-12 15:19:30
- * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-09 20:55:34
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-07-11 15:18:30
  */
 /*=============================================
 =                    axios                    =
@@ -76,13 +76,14 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 let config = {
   baseURL: process.env.VUE_APP_API,
   timeout: 60 * 100, // 请求超时时间
+  //TODO:只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法
   //修改请求数据添加必填项 userId
   transformRequest: [
-    function(data) {
+    function(data = {}) {
       //给所有的数据请求添加参数userId
       const userId = util.cookies.get('userId')
-      const dataModify = Object.assign((data = {}), { userId })
-      // 对 data 进行任意转换处理 => 转为fromData(按照实际后台约定修改转换)
+      const dataModify = Object.assign({ userId }, data)
+      //对 data 进行任意转换处理 => 转为fromData(按照实际后台约定修改转换)
       return Qs.stringify(dataModify, { arrayFormat: 'repeat' })
     }
   ]

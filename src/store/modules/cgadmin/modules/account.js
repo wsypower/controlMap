@@ -22,9 +22,10 @@ export default {
           return false
         }
         //cookies缓存userId
-        util.cookies.set('userId', UrlParameters.userId)
+        const userId = UrlParameters.userId
+        util.cookies.set('userId', userId)
         //调用登录接口
-        AccountLogin()
+        AccountLogin({ userId: userId })
           .then(async res => {
             // 设置 vuex 用户信息
             await dispatch(

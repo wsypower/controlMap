@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-27 21:26:07
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-07-09 18:30:03
+ * @Last Modified by: wei.yafei  
+ * @Last Modified time: 2019-07-11 15:14:46
  */
 
 import request from '@/plugins/axios/axios'
@@ -28,7 +28,7 @@ import request from '@/plugins/axios/axios'
  *    return request({
  *      url: `@test/login`,
  *      method: 'get',
- *      param: {
+ *      params: {
  *        id
  *      }
  *    })

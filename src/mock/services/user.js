@@ -5,6 +5,7 @@ const userId = ['123', '000']
 
 const login = options => {
   const body = getBody(options)
+  console.log(body);
   if (!userId.includes(body.userId)) {
     return builder({ isLogin: true }, '用户账号密码错误，请联系管理员', 401)
   }
