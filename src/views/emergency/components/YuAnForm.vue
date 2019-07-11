@@ -97,14 +97,14 @@
               :wrapper-col="{ span: 12 }"
             >
               <a-upload
-                name="avatar"
+                name="file"
                 listType="picture-card"
                 class="avatar-uploader"
-                :accept=".jpg,.png"
+                accept=".jpg,.png"
                 :showUploadList="false"
                 action="http://192.168.71.33:50000/file/file/uploadFileWeb"
                 :beforeUpload="beforeUpload"
-                @change="handleChange"
+                @change="handleImgChange"
               >
                 <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
                 <div v-else class="upload-btn"></div>
@@ -117,15 +117,20 @@
             >
               <a-upload
                 name="file"
-                :multiple="true"
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                :headers="headers"
-                @change="handleChange"
+                :multiple="false"
+                action="http://192.168.71.33:50000/file/file/uploadFileWeb"
+                :showUploadList="false"
+                @change="handleFileChange"
               >
                 <a-button style="width: 277px;">
-                  <a-icon type="upload" /> 上传附件
+                  <a-icon type="upload" /> 上传附件<a-icon style="margin-left: 20px;" v-if="fileLoading" type="loading"/>
                 </a-button>
               </a-upload>
+              <div v-if="fileList.length>0" class="upload-file-panel" flex="main:justify cross:center">
+                <div v-for="(file,index) in fileList" class="file-item">
+                  <span>{{file.basefile.oldName}}</span><a-icon type="close"/>
+                </div>
+              </div>
             </a-form-item>
           </a-col>
         </a-row>
@@ -145,9 +150,10 @@ export default {
             form: this.$form.createForm(this),
             dateFormat:'YYYY-MM-DD',
             imageUrl: '',
-            headers: {
-                authorization: 'authorization-text',
-            },
+            image:{},
+            fileLoading: false,
+            fileList:[]
+
         }
     },
     props:{
@@ -199,21 +205,28 @@ export default {
             if (!isLt2M) {
                 this.$message.error('Image must smaller than 2MB!')
             }
-            return isLt2M
+            console.log('isLt2M',isLt2M);
+            return true
         },
-        handleChange (res) {
-            // if (info.file.status === 'uploading') {
-            //     this.loading = true
-            //     return
-            // }
+        handleImgChange (res) {
             console.log('uploadImage handleChange',res);
-            // if (info.file.status === 'done') {
-            //     // Get this url from response in real world.
-            //     getBase64(info.file.originFileObj, (imageUrl) => {
-            //         this.imageUrl = imageUrl
-            //         this.loading = false
-            //     })
-            // }
+            if (res.file.status === 'done') {
+                this.imageUrl = res.file.response.basefile.newPath;
+                this.image = res.file.response;
+            }
+        },
+        handleFileChange (res) {
+            if (res.file.status === 'uploading') {
+                this.fileLoading = true;
+                return
+            }
+            console.log('uploadImage handleChange',res.file.response);
+            if (res.file.status === 'done') {
+                // this.imageUrl = res.file.response.basefile.newPath;
+                // this.file = res.file.response;
+                this.fileLoading = false;
+                this.fileList.push(res.file.response);
+            }
         },
         handleSubmit(e){
             e.preventDefault();
@@ -223,7 +236,6 @@ export default {
                 if(values.time){
                     values.time = values.time.format("YYYY-MM-DD")
                 }
-
                 console.log('form value: ', values);
             });
             // let data = {
@@ -271,6 +283,7 @@ export default {
       display: inline-block;
       width: 277px;
       height: 190px;
+      overflow: hidden;
       .upload-btn {
         width: 100%;
         height: 100%;
@@ -278,13 +291,26 @@ export default {
         background-size: 100% 100%;
       }
       img{
-        width: 100%;
+        max-width: 100%;
       }
+    }
+    .upload-file-panel{
+      height: 40px;
+      width: 270px;
     }
   }
   .operate-panel {
     width: 100%;
     height: 60px;
+    .file-item{
+      width: 133px;
+      height: 30px;
+      background-color: rgba(43,144,243,.2);
+      border-radius: 4px;
+      span{
+
+      }
+    }
   }
 }
 </style>

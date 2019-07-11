@@ -1,10 +1,12 @@
-import { builder, getBody } from '../util'
+import {builder, getBody, getQueryParameters} from '../util'
 import Mock from 'mockjs'
 
 const getEmergencyYuAnList = (options) => {
     console.log(options)
-    const kkk = getBody(options)
-    console.log('getEmergencyYuAnList body',kkk);
+    const queryParameters = getQueryParameters(options);
+    console.log(queryParameters);
+    // const kkk = getBody(options)
+    // console.log('getEmergencyYuAnList body',kkk);
     return builder(
         {
             code: 0,

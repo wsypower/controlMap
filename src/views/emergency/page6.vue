@@ -99,12 +99,13 @@
                 pageNo: 1,
                 pageSize: 10
             }
+            this.isActiveOperation = true;
+
             this.getEmergencyYuAnDataList(data).then((res) => {
                 console.log(res);
                 this.dataArr = res.data;
                 this.totalSize = res.total;
                 this.showLoading = false;
-                this.isActiveOperation = true;
             })
         },
         beforeDestroy(){

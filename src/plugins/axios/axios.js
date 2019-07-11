@@ -115,11 +115,12 @@ service.interceptors.request.use(
 =                   响应拦截器                  =
 =============================================*/
 service.interceptors.response.use(
-  /*----------  对响应数据进行的操作  ----------*/
+
+/*----------  对响应数据进行的操作  ----------*/
 
   /* 正确响应数据 => response */
   response => {
-    // dataAxios 是 axios 返回数据中的 data
+      // dataAxios 是 axios 返回数据中的 data
     const dataAxios = response.data
     // 这个状态码是和后端约定的（默认值为防止外部接口没有code，导致值为undefined）
     const { code = 111 } = dataAxios
@@ -145,7 +146,7 @@ service.interceptors.response.use(
   },
   /* 对错误响应数据的操作 => error */
   error => {
-    if (error && error.response) {
+      if (error && error.response) {
       switch (error.response.status) {
         case 400:
           error.message = '请求错误'
