@@ -35,10 +35,6 @@ export default {
               },
               { root: true }
             )
-            //登录后获取用户权限
-            const role = rootGetters.role
-            console.log(role)
-            // const role = this.$store.getters['cgadmin/user/role']
             // 结束
             resolve(res)
           })
