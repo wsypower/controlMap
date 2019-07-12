@@ -1,12 +1,8 @@
-import { getEmergencyYuAnList,addNewEmergencyYuAn } from '@/api/emergency/index.js'
+import { getEmergencyYuAnList,addNewEmergencyYuAn,deleteEmergencyYuAn,getAllEmergencyPeople } from '@/api/emergency/index.js'
 
 export default {
     namespaced: true,
     actions: {
-        /**
-         * @description
-         *
-         */
         getEmergencyYuAnDataList(state,data) {
             console.log('store',data);
             return new Promise((resolve, reject) => {
@@ -24,6 +20,32 @@ export default {
             console.log('store:addNewEmergencyYuAn',data);
             return new Promise((resolve, reject) => {
                 addNewEmergencyYuAn(data)
+                    .then(res => {
+                        resolve(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        reject(err)
+                    })
+            })
+        },
+        deleteEmergencyYuAn(state,data){
+            console.log('store:deleteEmergencyYuAn',data);
+            return new Promise((resolve, reject) => {
+                deleteEmergencyYuAn(data)
+                    .then(res => {
+                        resolve(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        reject(err)
+                    })
+            })
+        },
+        getAllEmergencyPeople(state,data){
+            console.log('store:getAllEmergencyPeople',data);
+            return new Promise((resolve, reject) => {
+                getAllEmergencyPeople(data)
                     .then(res => {
                         resolve(res)
                     })

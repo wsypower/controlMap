@@ -62,12 +62,18 @@
     import { mapState,mapActions } from 'vuex'
     import Operation from './components/Operation.vue';
     import YuAnForm from "./components/YuAnForm.vue";
-    import ychj from "./components/ychj.vue";
+    import FarCall from "./components/FarCall.vue";
     import YuAnItem from "./components/YuAnItem.vue";
     export default {
         name: 'page6',
         data(){
             return{
+                query:{
+                    searchContent: '',
+                    status: '',
+                    pageNo: 1,
+                    pageSize: 10
+                },
                 showLoading: false,
                 dataArr:[],
                 activeIndex: null,
@@ -85,37 +91,39 @@
         components:{
             Operation,
             YuAnForm,
-            ychj,
+            FarCall,
             YuAnItem
         },
         computed: {
             ...mapState('cgadmin/page', ['current'])
         },
         mounted(){
-            this.showLoading = true;
-            let data = {
-                searchContent: '',
-                status: '',
-                pageNo: 1,
-                pageSize: 10
-            }
-            this.isActiveOperation = true;
-
-            this.getEmergencyYuAnDataList(data).then((res) => {
-                console.log(res);
-                this.dataArr = res.data;
-                this.totalSize = res.total;
-                this.showLoading = false;
-            })
+            this.getDataList();
         },
         beforeDestroy(){
             console.log('beforeDestroy',this.isActiveOperation);
             this.isActiveOperation = false;
         },
         methods:{
-            ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList']),
+            ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList','deleteEmergencyYuAn']),
+            getDataList(){
+                this.showLoading = true;
+                this.getEmergencyYuAnDataList(this.query).then((res) => {
+                    console.log(res);
+                    this.dataArr = res.data;
+                    this.totalSize = res.total;
+                    this.showLoading = false;
+                    this.isActiveOperation = true;
+                })
+            },
             onSearch(val){
-
+                this.query.searchContent = val;
+                this.getDataList();
+            },
+            changePagination(pageNo,pageSize){
+                console.log('changePagination',pageNo,pageSize);
+                this.query.pageNo = pageNo;
+                this.getDataList();
             },
             addItemOperation(){
                 this.dialogComponentId = YuAnForm;
@@ -126,19 +134,6 @@
                 this.sourceData = {};
                 this.dialogVisible = true;
             },
-            ychjOperation(){
-                this.dialogComponentId = ychj;
-                this.dWidth = 1200;
-                this.dHeight = 644;
-                this.dialogTitle = '远程呼叫';
-                this.bodyPadding = [0,10,10,10];
-                this.dialogVisible = true;
-            },
-            clickDataItem(index){
-                console.log(1)
-                this.activeIndex = index;
-                console.log('this.activeIndex',this.activeIndex);
-            },
             editYuAnItem(item){
                 console.log('editYuan item',item);
                 this.dialogComponentId = YuAnForm;
@@ -146,23 +141,32 @@
                 this.dHeight = 450;
                 this.dialogTitle = '修改预案';
                 this.bodyPadding = [0,10,10,10];
-                this.sourceData = {
-                    type: '1',
-                    level: '0',
-                    time: '2019-07-11',
-                    position: '华星路99号',
-                    message: '这是第一条开发测试数据',
-                    area: '3',
-                    photo:{},
-                    files:{}
-                };
+                this.sourceData = item;
                 this.dialogVisible = true;
             },
             deleteYuAnItem(item){
                 console.log('deleteYuan',item);
+                let data = {id:item.id};
+                let _this = this;
+                this.deleteEmergencyYuAn(data).then((res) => {
+                    console.log(res);
+                    if(res.code == 0){
+                        _this.getDataList();
+                    }
+                })
             },
-            changePagination(pageNo,pageSize){
-                console.log('changePagination',pageNo,pageSize);
+            clickDataItem(index){
+                console.log(1)
+                this.activeIndex = index;
+                console.log('this.activeIndex',this.activeIndex);
+            },
+            ychjOperation(){
+                this.dialogComponentId = FarCall;
+                this.dWidth = 1200;
+                this.dHeight = 644;
+                this.dialogTitle = '远程呼叫';
+                this.bodyPadding = [0,10,10,10];
+                this.dialogVisible = true;
             }
         }
     }

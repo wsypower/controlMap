@@ -5,13 +5,17 @@
         </div>
         <div class="item-right" flex="dir:top">
             <div class="top" flex="cross: center main:justify">
-                <div class="name-panel">{{ itemData.name }}</div>
+                <div class="name-panel">{{ itemData.typeName }}</div>
                 <div class="flag-panel">
-                <span v-if="itemData.level == 0" class="level-panel yanzhong">等级：严重</span>
-                    <span v-else class="level-panel yiban">等级：一般</span>
-                    <span v-if="itemData.status == 0" class="status-panel handle">进行中</span>
-                    <span v-else-if="itemData.status == -1" class="status-panel nostart">未开始</span>
-                    <span v-else class="status-panel complete">已完成</span>
+                    <span class="level-panel"
+                          :class="{yanzhong:itemData.levelId == 0,yiban:itemData.levelId == 1}">等级：{{itemData.levelName}}</span>
+                    <!--<span v-if="itemData.levelId == 0" class="level-panel yanzhong">等级：{{itemData.levelName}}</span>-->
+                    <!--<span v-else class="level-panel yiban">等级：一般</span>-->
+                    <span class="status-panel"
+                          :class="{nostart:itemData.statusId == 0,handle:itemData.statusId == 1,complete:itemData.statusId == 2}">{{itemData.statusName}}</span>
+                    <!--<span v-if="itemData.statusId == 0" class="status-panel handle">{{itemData.statusName}}</span>-->
+                    <!--<span v-else-if="itemData.statusId == 1" class="status-panel nostart">{{itemData.statusName}}</span>-->
+                    <!--<span v-else class="status-panel complete">{{itemData.statusName}}</span>-->
                 </div>
             </div>
             <div class="description-panel">信息：{{ itemData.description }}</div>
@@ -90,6 +94,7 @@
             }
         }
         .item-right {
+            width: 100%;
             padding-left: 5px;
             padding-bottom: 10px;
             border-bottom: solid 1px #dddddd;

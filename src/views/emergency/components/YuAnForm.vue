@@ -11,12 +11,12 @@
                 :wrapper-col="{ span: 12 }"
               >
                 <a-select
-                        v-decorator="['subType',
+                        v-decorator="['typeId',
                                          {rules: [{ required: true, message: '请选择' }]}
                                        ]"
                           placeholder="请选择"
                           style="width: 277px">
-                  <a-select-option value='0'>消防火灾</a-select-option>
+                  <a-select-option value='0'>消防安全</a-select-option>
                   <a-select-option value='1'>地震灾害</a-select-option>
                   <a-select-option value='3'>洪涝灾害</a-select-option>
                   <a-select-option value='4'>台风灾害</a-select-option>
@@ -28,7 +28,7 @@
                 :wrapper-col="{ span: 12 }"
               >
                 <a-select
-                          v-decorator="['level',
+                          v-decorator="['levelId',
                                          {rules: [{ required: true, message: '请选择' }]}
                                        ]"
                           placeholder="请选择"
@@ -43,7 +43,7 @@
                 :wrapper-col="{ span: 12 }"
               >
                 <a-date-picker
-                        v-decorator="['time',
+                        v-decorator="['dayTime',
                                          {rules: [{ required: true, message: '请选择' }]}
                                        ]"
                         :format="dateFormat"
@@ -67,7 +67,7 @@
                 :label-col="{ span: 5 }"
                 :wrapper-col="{ span: 12 }"
               >
-                <a-textarea v-decorator="['message',
+                <a-textarea v-decorator="['description',
                                          {rules: [{ required: true, message: '请选择' }]}
                                        ]"
                         placeholder="请输入" :rows="2" :autosize="{minRows: 2, maxRows: 2}" style="width: 277px" />
@@ -77,7 +77,7 @@
                 :label-col="{ span: 5 }"
                 :wrapper-col="{ span: 12 }"
               >
-                <a-select v-decorator="['area',
+                <a-select v-decorator="['areaId',
                                          {rules: [{ required: true, message: '请选择' }]}
                                        ]"
                           placeholder="请选择" style="width: 277px">
@@ -127,7 +127,7 @@
                 </a-button>
               </a-upload>
               <div v-if="fileList.length>0" class="upload-file-panel" flex="main:justify cross:center">
-                <div v-for="(file,index) in fileList" class="file-item">
+                <div v-for="(file,index) in fileList" class="file-item" flex="cross:center">
                   <span>{{file.basefile.oldName}}</span><a-icon type="close"/>
                 </div>
               </div>
@@ -143,6 +143,7 @@
 </template>
 <script type="text/ecmascript-6">
 import moment from 'moment';
+import { mapActions } from 'vuex';
 export default {
     name: 'yuanForm',
     data(){
@@ -170,26 +171,33 @@ export default {
         sourceData: function(value){
             console.log('sourceData',value);
             this.form.setFieldsValue({
-                subType: value.type,
-                level: value.level,
-                time: moment(value.time, 'YYYY-MM-DD'),
+                typeId: value.typeId||value.typeId==0?value.typeId.toString():null,
+                levelId: value.levelId||value.levelId==0?value.levelId.toString():null,
+                dayTime: value.dayTime?moment(value.dayTime, 'YYYY-MM-DD'):null,
                 position: value.position,
-                message: value.message,
-                area: value.area,
-            })
+                description: value.description,
+                areaId: value.areaId||value.areaId==0?value.areaId.toString():null
+            });
+            this.image = value.image?value.image:{};
+            this.fileList = value.fileList?value.fileList:[];
+            this.imageUrl = this.image.basefile?this.image.basefile.newPath:'';
         }
     },
     mounted(){
         this.form.setFieldsValue({
-            subType: this.sourceData.type,
-            level: this.sourceData.level,
-            time: moment(this.sourceData.time, 'YYYY-MM-DD'),
+            typeId: this.sourceData.typeId||this.sourceData.typeId==0?this.sourceData.typeId.toString():null,
+            levelId: this.sourceData.levelId||this.sourceData.levelId==0?this.sourceData.levelId.toString():null,
+            dayTime: this.sourceData.dayTime?moment(this.sourceData.dayTime, 'YYYY-MM-DD'):null,
             position: this.sourceData.position,
-             message: this.sourceData.message,
-             area: this.sourceData.area,
+            description: this.sourceData.description,
+            areaId: this.sourceData.areaId||this.sourceData.areaId==0?this.sourceData.areaId.toString():null
         })
+        this.image = this.sourceData.image?this.sourceData.image:{};
+        this.fileList = this.sourceData.fileList?this.sourceData.fileList:[];
+        this.imageUrl = this.image.basefile?this.image.basefile.newPath:'';
     },
     methods:{
+        ...mapActions('emergency/emergency', ['addNewEmergencyYuAn']),
         init(){
 
         },
@@ -222,35 +230,31 @@ export default {
             }
             console.log('uploadImage handleChange',res.file.response);
             if (res.file.status === 'done') {
-                // this.imageUrl = res.file.response.basefile.newPath;
-                // this.file = res.file.response;
                 this.fileLoading = false;
                 this.fileList.push(res.file.response);
             }
         },
         handleSubmit(e){
             e.preventDefault();
+            let _this = this;
             this.form.validateFields((error, values) => {
                 console.log('error', error);
                 console.log('Received values of form: ', values);
-                if(values.time){
-                    values.time = values.time.format("YYYY-MM-DD")
+                if(values.dayTime){
+                    values.dayTime = values.dayTime.format("YYYY-MM-DD")
                 }
                 console.log('form value: ', values);
+                if(this.sourceData.id){
+                    values.id = this.sourceData.id;
+                }
+                //编辑时状态status是否需要改变
+                this.addNewEmergencyYuAn(values).then((res) => {
+                    console.log(res);
+                    if(res.code==0){
+                        _this.$emit('close');
+                    }
+                })
             });
-            // let data = {
-            //     type: 1,
-            //     level: 0,
-            //     time: '2019-07-11 11:07:38',
-            //     position: '华星路99号',
-            //     message: '这是第一条开发测试数据',
-            //     area: 3,
-            //     photo:{},
-            //     files:{}
-            // }
-            // this.$store.dispatch('emergency/emergency/addNewEmergencyYuAn',data).then((res) => {
-            //     console.log(res);
-            // })
         }
     }
 }
@@ -296,21 +300,36 @@ export default {
     }
     .upload-file-panel{
       height: 40px;
-      width: 270px;
+      width: 277px;
+      .file-item{
+        width: 133px;
+        height: 30px;
+        background-color: rgba(43,144,243,.2);
+        border-radius: 4px;
+        span{
+          display:inline-block;
+          padding-left: 20px;
+          width: 110px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          font-size: 13px;
+          line-height: 30px;
+          color: #2b90f3;
+        }
+        i{
+          color:#2b90f3;
+          cursor: pointer;
+          &:hover{
+            color: #1761f3;
+          }
+        }
+      }
     }
   }
   .operate-panel {
     width: 100%;
     height: 60px;
-    .file-item{
-      width: 133px;
-      height: 30px;
-      background-color: rgba(43,144,243,.2);
-      border-radius: 4px;
-      span{
-
-      }
-    }
   }
 }
 </style>

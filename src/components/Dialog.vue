@@ -16,7 +16,7 @@
         ></div>
       </div>
       <div class="modal-body" :style="padding">
-        <component v-if="Object.keys(componentId).length>0" :is="componentId" :sourceData="sourceData"></component>
+        <component v-if="Object.keys(componentId).length>0" :is="componentId" :sourceData="sourceData" @close="closeDialog"></component>
       </div>
     </div>
   </div>

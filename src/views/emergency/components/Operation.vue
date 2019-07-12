@@ -78,7 +78,6 @@
             }
         },
         mounted(){
-            //console.log('mounted',this.current);
             this.$nextTick(() => {
                 const body = document.querySelector("body");
                 if (body.append) {
@@ -102,13 +101,6 @@
             },
             clickYCHJBtn(){
                 this.$emit('ychjOperate');
-                // this.showVideo = false;
-                // this.dialogComponentId = Ychj;
-                // this.dWidth = 1200;
-                // this.dHeight = 644;
-                // this.dialogTitle = '远程呼叫';
-                // this.bodyPadding = [0,10,10,10];
-                // this.dialogVisible = true;
             }
         }
     }
