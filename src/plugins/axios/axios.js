@@ -103,7 +103,6 @@ const service = axios.create(config)
 
 service.interceptors.request.use(
   config => {
-    console.log(config)
     return config
   },
   error => {
@@ -153,7 +152,6 @@ service.interceptors.response.use(
   },
   /* 对错误响应数据的操作 => error */
   error => {
-    console.log(0)
     if (error && error.response) {
       switch (error.response.status) {
         case 400:

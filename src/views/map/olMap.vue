@@ -1,5 +1,12 @@
 <template>
-  <div id="map"></div>
+  <div id="map">
+    <button class="draw" @click="drawArea">
+      绘制
+    </button>
+    <button class="draw1" @click="drawResult">
+      显示
+    </button>
+  </div>
 </template>
 <script>
 import 'ol/ol.css'
@@ -11,7 +18,14 @@ import WMTS from 'ol/source/WMTS'
 import WMTSTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent'
 import { getTypePoint } from '@/api/map/service'
+import { MapManager } from '@/utils/util.map.manage'
+import { emergencyPointStyle } from '@/utils/util.map.style'
+// import LinearRing from 'ol/geom/LinearRing.js';
+// import {Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon} from 'ol/geom.js';
+// import OL3Parser from 'node_modules/jsts/org/locationtech/jts/io/OL3Parser';
 
+let mapManager
+let drawLayer
 export default {
   data() {
     return {
@@ -25,6 +39,18 @@ export default {
     })
   },
   methods: {
+    drawArea() {
+      drawLayer = mapManager.activateDraw('Polygon', false)
+    },
+    drawResult() {
+      // let parser = new OL3Parser()
+      // console.log(parser);
+      // parser.inject(Point, LineString, LinearRing, Polygon, MultiPoint, MultiLineString, MultiPolygon);
+      // const jstsGeom = parser.read(drawLayer.getSource().getFeatures()[0].getGeometry());
+      // const buffered = jstsGeom.buffer(100);
+      // drawLayer.getSource().getFeatures()[0].setGeometry(parser.write(buffered));
+      console.log(drawLayer.getSource().getFeatures())
+    },
     initMap() {
       /* 添加影像地图 */
       this.map = new Map({
@@ -40,14 +66,17 @@ export default {
         layers: this.getBaseLayers(),
         controls: defaultControls({ attribution: false, rotate: false, zoom: false }) // 默认控件配置
       })
-      getTypePoint().then(points=>{
-        console.log(points)
+      mapManager = new MapManager(this.map)
+      //获取点位数据并加到地图上
+      getTypePoint().then(points => {
+        const layer = mapManager.addVectorLayerByFeatures(points, emergencyPointStyle('公园'), 1)
+        console.log(layer)
       })
     },
     getBaseLayers() {
-      /*
-      @desc 定义坐标系统与范围
-      */
+      /**
+       * @desc 定义坐标系统与范围
+       */
       const projection = projGet('EPSG:4326') // 4326坐标
       const projectionExtent = projection.getExtent()
       /**
@@ -149,9 +178,6 @@ export default {
         maxResolution: 0.0000858306884765625
       })
       return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
-    },
-    getMap() {
-      return this.map
     }
   }
 }
@@ -160,5 +186,22 @@ export default {
 #map {
   width: 100%;
   height: 100%;
+  position: relative;
+}
+.draw {
+  position: absolute;
+  top: 100px;
+  right: 100px;
+  width: 60px;
+  height: 40px;
+  z-index: 999;
+}
+.draw1 {
+  position: absolute;
+  top: 200px;
+  right: 100px;
+  width: 60px;
+  height: 40px;
+  z-index: 999;
 }
 </style>

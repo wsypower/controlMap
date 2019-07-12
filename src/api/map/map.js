@@ -1,16 +1,16 @@
 /**
+ * @description: 定义地图数据接口的文件
  * @author:sijianting
- * @date:2019/7/9
- **/
+ * @createDate:2019/7/11 9:19
+ */
 
 import request from '@/plugins/axios/axios'
 
 /**
- * @description 获取geoserver地图点位
- * @author sijianting
- * @date 2019/7/9
-*/
-
+ * @description: 获取基础点位调用的接口
+ * @author:sijianting
+ * @param {String}type
+ */
 export function getPoint(type = '视频') {
   const ceshi = {
     service: 'WFS',
