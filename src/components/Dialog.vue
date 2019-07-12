@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" :class="{ bkUpAnimation: isActive }" v-show="visible">
+  <div class="modal" ref="modal" :class="{ bkUpAnimation: isActive }" v-show="visible">
     <div
       class="modal-content"
       :class="{ upAnimate: isActive }"
@@ -16,7 +16,7 @@
         ></div>
       </div>
       <div class="modal-body" :style="padding">
-        <component v-if="Object.keys(componentId).length>0" :is="componentId" :sourceData="sourceData" @close="closeDialog"></component>
+        <component v-if="Object.keys(componentId).length>0" :is="componentId" :sourceData="sourceData" @close="closeDialog" @hide="hideDialog"></component>
       </div>
     </div>
   </div>
@@ -93,6 +93,20 @@ export default{
     },
     methods:{
         init(){
+        },
+        hideDialog(){
+            this.isActive = true;
+            setTimeout(()=>{
+                this.isActive = false;
+                this.visible = false;
+            },600);
+
+            setTimeout(()=>{
+                this.visible = true;
+            },3000);
+        },
+        showDialog(){
+            this.visible = true;
         },
         closeDialog(){
             this.isActive = true;

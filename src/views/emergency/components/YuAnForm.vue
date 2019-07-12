@@ -1,6 +1,6 @@
 <template>
   <div class="yuan-body" flex>
-    <a-form :form="form" @submit="handleSubmit" style="width: 100%">
+    <a-form :form="form" hideRequiredMark @submit="handleSubmit" style="width: 100%">
       <div class="yuan-form">
         <a-row style="height:100%">
           <a-col :span="12" style="height:100%">
@@ -77,10 +77,8 @@
                 :label-col="{ span: 5 }"
                 :wrapper-col="{ span: 12 }"
               >
-                <a-select v-decorator="['areaId',
-                                         {rules: [{ required: true, message: '请选择' }]}
-                                       ]"
-                          placeholder="请选择" style="width: 277px">
+                <a-select v-decorator="['areaId',{rules: [{ required: true, message: '请选择' }]}]"
+                          placeholder="请选择" style="width: 277px" @change="changePaintMethod">
                   <a-select-option value="0">正方形</a-select-option>
                   <a-select-option value="1">矩形</a-select-option>
                   <a-select-option value="2">圆形</a-select-option>
@@ -128,7 +126,7 @@
               </a-upload>
               <div v-if="fileList.length>0" class="upload-file-panel" flex="main:justify cross:center">
                 <div v-for="(file,index) in fileList" class="file-item" flex="cross:center">
-                  <span>{{file.basefile.oldName}}</span><a-icon type="close"/>
+                  <span>{{file.basefile.oldName}}</span><a-icon type="close" @click="deleteFile(index)"/>
                 </div>
               </div>
             </a-form-item>
@@ -171,12 +169,12 @@ export default {
         sourceData: function(value){
             console.log('sourceData',value);
             this.form.setFieldsValue({
-                typeId: value.typeId||value.typeId==0?value.typeId.toString():null,
-                levelId: value.levelId||value.levelId==0?value.levelId.toString():null,
-                dayTime: value.dayTime?moment(value.dayTime, 'YYYY-MM-DD'):null,
+                typeId: value.typeId||value.typeId==0?value.typeId.toString():undefined,
+                levelId: value.levelId||value.levelId==0?value.levelId.toString():undefined,
+                dayTime: value.dayTime?moment(value.dayTime, 'YYYY-MM-DD'):undefined,
                 position: value.position,
                 description: value.description,
-                areaId: value.areaId||value.areaId==0?value.areaId.toString():null
+                areaId: value.areaId||value.areaId==0?value.areaId.toString():undefined
             });
             this.image = value.image?value.image:{};
             this.fileList = value.fileList?value.fileList:[];
@@ -185,13 +183,13 @@ export default {
     },
     mounted(){
         this.form.setFieldsValue({
-            typeId: this.sourceData.typeId||this.sourceData.typeId==0?this.sourceData.typeId.toString():null,
-            levelId: this.sourceData.levelId||this.sourceData.levelId==0?this.sourceData.levelId.toString():null,
-            dayTime: this.sourceData.dayTime?moment(this.sourceData.dayTime, 'YYYY-MM-DD'):null,
+            typeId: this.sourceData.typeId||this.sourceData.typeId==0?this.sourceData.typeId.toString():undefined,
+            levelId: this.sourceData.levelId||this.sourceData.levelId==0?this.sourceData.levelId.toString():undefined,
+            dayTime: this.sourceData.dayTime?moment(this.sourceData.dayTime, 'YYYY-MM-DD'):undefined,
             position: this.sourceData.position,
             description: this.sourceData.description,
-            areaId: this.sourceData.areaId||this.sourceData.areaId==0?this.sourceData.areaId.toString():null
-        })
+            areaId: this.sourceData.areaId||this.sourceData.areaId==0?this.sourceData.areaId.toString():undefined
+        });
         this.image = this.sourceData.image?this.sourceData.image:{};
         this.fileList = this.sourceData.fileList?this.sourceData.fileList:[];
         this.imageUrl = this.image.basefile?this.image.basefile.newPath:'';
@@ -203,6 +201,10 @@ export default {
         },
         onChange(value){
             console.log('date',value);
+        },
+        changePaintMethod(val,option){
+          console.log('changePaintMethod',val,option);
+          this.$emit('hide');
         },
         beforeUpload (file,filelist) {
             // const isJPG = file.type === 'image/jpeg'
@@ -234,6 +236,9 @@ export default {
                 this.fileList.push(res.file.response);
             }
         },
+        deleteFile(index){
+            this.fileList.splice(index,1);
+        },
         handleSubmit(e){
             e.preventDefault();
             let _this = this;
@@ -248,6 +253,9 @@ export default {
                     values.id = this.sourceData.id;
                 }
                 //编辑时状态status是否需要改变
+
+                values.image = this.image;
+                values.fileList = this.fileList;
                 this.addNewEmergencyYuAn(values).then((res) => {
                     console.log(res);
                     if(res.code==0){
