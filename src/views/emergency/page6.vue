@@ -45,7 +45,7 @@
                     @change="changePagination"
             />
         </div>
-        <operation :isActiveOperation.sync="isActiveOperation" @addItem="addItemOperation" @ychjOperate="ychjOperation"></operation>
+        <operation ref="operate" :isActiveOperation="isActiveOperation" @addItem="addItemOperation" @ychjOperate="ychjOperation"></operation>
         <custom-dialog
                 :visible.sync="dialogVisible"
                 :dWidth="dWidth"
@@ -120,8 +120,13 @@
             this.getDataList();
         },
         beforeDestroy(){
-            console.log('beforeDestroy',this.isActiveOperation);
             this.isActiveOperation = false;
+            // this.$children[1].isActive = false;
+            this.$refs.operate.setNone()
+            console.log(this.$children)
+            console.log('beforeDestroy',this.isActiveOperation);
+            console.log('beforeDestroy dataArr',this.dataArr);
+            console.log('operate',this.$refs.operate);
         },
         methods:{
             ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList','deleteEmergencyYuAn']),
@@ -133,6 +138,7 @@
                     this.totalSize = res.total;
                     this.showLoading = false;
                     this.isActiveOperation = true;
+                    console.log('operate',this.$refs.operate);
                 })
             },
             onSearch(val){
