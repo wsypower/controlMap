@@ -36,6 +36,7 @@
 
         </div>
         <div v-if="dataArr.length>0" class="pagination-panel">
+            <!--<div @click="clickTip">测试点击</div>-->
             <a-pagination
                     :total="totalSize"
                     :showTotal="total => `共 ${total} 条`"
@@ -55,6 +56,15 @@
                 :sourceData="sourceData"
         >
         </custom-dialog>
+        <tip-modal
+                :visible.sync="yuAnTipVisible"
+                :positionX="positionX"
+                :positionY="positionY"
+                :title="modalTitle"
+                :timeStr="timeStr"
+                :componentId="tipComponentId"
+                :info="sourceData"
+        ></tip-modal>
     </div>
 </template>
 
@@ -64,6 +74,7 @@
     import YuAnForm from "./components/YuAnForm.vue";
     import FarCall from "./components/FarCall.vue";
     import YuAnItem from "./components/YuAnItem.vue";
+    import YuAnInfo from "./components/YuAnInfo.vue";
     export default {
         name: 'page6',
         data(){
@@ -85,14 +96,22 @@
                 dialogTitle: '新增预案',
                 bodyPadding: [0,10,10,10],
                 dialogComponentId: {},
-                sourceData: {}
+                sourceData: {},
+
+                yuAnTipVisible: false,
+                positionX: 0,
+                positionY: 0,
+                modalTitle: '',
+                timeStr: '',
+                tipComponentId: {}
             }
         },
         components:{
             Operation,
             YuAnForm,
             FarCall,
-            YuAnItem
+            YuAnItem,
+            YuAnInfo
         },
         computed: {
             ...mapState('cgadmin/page', ['current'])
@@ -156,9 +175,17 @@
                 })
             },
             clickDataItem(index){
-                console.log(1)
+                console.log('clickDataItem',index)
                 this.activeIndex = index;
                 console.log('this.activeIndex',this.activeIndex);
+            },
+            clickTip(e){
+                this.positionX = e.clientX;
+                this.positionY = e.clientY;
+                this.modalTitle = '消防火灾';
+                this.timeStr = '2019-07-12';
+                this.tipComponentId = YuAnInfo;
+                this.yuAnTipVisible = true;
             },
             ychjOperation(){
                 this.dialogComponentId = FarCall;

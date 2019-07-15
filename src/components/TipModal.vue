@@ -8,8 +8,8 @@
     <div class="tip-header" flex="dir:left cross:center main:justify">
       <div class="tip-title" flex="cross:center">
         <i v-if="iconShow" class="icon"></i>
-        <span>{{ title }}</span>
-        <span>{{ timeStr }}</span>
+        <span>{{ title || info.typeName }}</span>
+        <span>{{ timeStr || info.dayTime}}</span>
       </div>
       <div
         class="close"
@@ -18,7 +18,7 @@
       ></div>
     </div>
     <div class="tip-body" :style="padding">
-      <component :is="componentId"></component>
+      <component :is="componentId" :info="info"></component>
     </div>
     <div class="tooltip__arrow"></div>
   </div>
@@ -71,6 +71,12 @@ export default{
             default: ''
         },
         componentId:{
+            type: Object,
+            default(){
+                return {}
+            }
+        },
+        info:{
             type: Object,
             default(){
                 return {}

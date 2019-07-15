@@ -146,7 +146,6 @@
                 color: #666666;
                 margin: 8px 0px;
                 max-height: 80px;
-                overflow: hidden;
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 3;

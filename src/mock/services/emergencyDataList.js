@@ -74,8 +74,8 @@ Mock.mock(/\/@test\/addNewEmergencyYuAn/, 'post', addNewEmergencyYuAn);
 
 const deleteEmergencyYuAn = (options) => {
     console.log('deleteEmergencyYuAn options',options);
-    const queryParameters = getQueryParameters(options);
-    console.log('deleteEmergencyYuAn query',queryParameters);
+    const body = getBody(options);
+    console.log('deleteEmergencyYuAn body',body);
     return builder(
         {
             code: 0,
