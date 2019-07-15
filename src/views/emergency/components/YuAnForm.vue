@@ -221,7 +221,9 @@ export default {
         handleImgChange (res) {
             console.log('uploadImage handleChange',res);
             if (res.file.status === 'done') {
-                this.imageUrl = res.file.response.basefile.newPath;
+                let data  = res.file.response.basefile;
+                this.imageUrl = data.newPath;
+                //this.image = data.newPath + '|' + data.oldName;
                 this.image = res.file.response;
             }
         },
@@ -254,8 +256,18 @@ export default {
                 }
                 //编辑时状态status是否需要改变
 
-                values.image = this.image;
-                values.fileList = this.fileList;
+                values.imageStr = this.image.basefile.newPath + '|' + this.image.basefile.oldName;
+                let fileStr = '';
+                for(let i=0;i<this.fileList.length;i++){
+                    if(i<this.fileList.length-1){
+                        fileStr = this.fileList[i].basefile.newPath + '|' + this.fileList[i].basefile.oldName + ',';
+                    }
+                    else{
+                        fileStr = this.fileList[i].basefile.newPath + '|' + this.fileList[i].basefile.oldName;
+                    }
+                }
+                values.fileStr = fileStr;
+
                 this.addNewEmergencyYuAn(values).then((res) => {
                     console.log(res);
                     if(res.code==0){
