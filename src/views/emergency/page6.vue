@@ -4,9 +4,14 @@
 
 <script>
 import { add } from '@/api/account/list'
-
 export default {
   name: 'page6',
+  data() {
+    return {
+      shw: true,
+      title: '6666'
+    }
+  },
   mounted() {
     add({
       add: 1,

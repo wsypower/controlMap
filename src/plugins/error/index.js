@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-07-11 19:58:33
- * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-11 22:45:07
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-07-15 18:12:20
  */
 import store from '@/store'
 import util from '@/utils/util'
@@ -31,9 +31,9 @@ export default {
           util.log.danger('>>>>>> 错误信息 >>>>>>')
           console.log(info)
           util.log.danger('>>>>>> 错误组件 >>>>>>')
-          const errorComponents = instance.$vnode.tag.split('-')
-          const errorComponentsLength = errorComponents.length - 1
-          console.log(errorComponents[errorComponentsLength])
+          const errorComponents = instance && instance.$vnode && instance.$vnode.tag.split('-')
+          const errorComponentsLength = errorComponents && errorComponents.length - 1
+          console.log(errorComponentsLength && errorComponents[errorComponentsLength])
           util.log.danger('>>>>>> 错误实例 >>>>>>')
           console.log(instance)
           util.log.danger('>>>>>> Error >>>>>>')
@@ -51,9 +51,9 @@ export default {
         util.log.warning('>>>>>> 警告实例 >>>>>>')
         console.log(vm)
         util.log.warning('>>>>>> 警告组件 >>>>>>')
-        const errorComponents = vm.$vnode.tag.split('-')
-        const errorComponentsLength = errorComponents.length - 1
-        console.log(errorComponents[errorComponentsLength])
+        const errorComponents = vm && vm.$vnode && vm.$vnode.tag.split('-')
+        const errorComponentsLength = errorComponents && errorComponents.length - 1
+        console.log(errorComponentsLength && errorComponents[errorComponentsLength])
         util.log.warning('>>>>>> 继承关系 >>>>>>')
         console.log(trace)
       })
