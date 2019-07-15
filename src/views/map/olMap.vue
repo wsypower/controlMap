@@ -20,8 +20,10 @@ import { getTopLeft } from 'ol/extent'
 import { getTypePoint } from '@/api/map/service'
 import { MapManager } from '@/utils/util.map.manage'
 import { emergencyPointStyle } from '@/utils/util.map.style'
-// import LinearRing from 'ol/geom/LinearRing.js';
-// import {Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon} from 'ol/geom.js';
+import LinearRing from 'ol/geom/LinearRing.js';
+import {Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon} from 'ol/geom.js';
+// import OL3Parser from '../../../node_modules/_jsts@2.0.4@jsts/org/locationtech/jts/io/OL3Parser'
+// import { BufferOp } from '../../../node_modules/_jsts@2.0.4@jsts/org/locationtech/jts/operation/buffer'
 // import OL3Parser from 'node_modules/jsts/org/locationtech/jts/io/OL3Parser';
 
 let mapManager
@@ -40,16 +42,15 @@ export default {
   },
   methods: {
     drawArea() {
-      drawLayer = mapManager.activateDraw('Polygon', false)
+      drawLayer = mapManager.activateDraw('LineString', false)
     },
     drawResult() {
-      // let parser = new OL3Parser()
-      // console.log(parser);
-      // parser.inject(Point, LineString, LinearRing, Polygon, MultiPoint, MultiLineString, MultiPolygon);
-      // const jstsGeom = parser.read(drawLayer.getSource().getFeatures()[0].getGeometry());
-      // const buffered = jstsGeom.buffer(100);
-      // drawLayer.getSource().getFeatures()[0].setGeometry(parser.write(buffered));
-      console.log(drawLayer.getSource().getFeatures())
+      const feature=drawLayer.getSource().getFeatures()[0];
+      var parser = new jsts.io.OL3Parser();
+      parser.inject(Point, LineString, LinearRing, Polygon, MultiPoint, MultiLineString, MultiPolygon);
+      var jstsGeom = parser.read(feature.getGeometry());
+      var buffered = jstsGeom.buffer(40);
+      feature.setGeometry(parser.write(buffered));
     },
     initMap() {
       /* 添加影像地图 */
@@ -70,7 +71,6 @@ export default {
       //获取点位数据并加到地图上
       getTypePoint().then(points => {
         const layer = mapManager.addVectorLayerByFeatures(points, emergencyPointStyle('公园'), 1)
-        console.log(layer)
       })
     },
     getBaseLayers() {
