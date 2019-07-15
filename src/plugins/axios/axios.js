@@ -4,22 +4,20 @@
  * @Author: wei.yafei
  * @Date: 2019-06-12 15:19:30
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-07-05 11:04:37
+ * @Last Modified time: 2019-07-11 23:09:25
  */
 /*=============================================
 =                    axios                    =
 =============================================*/
-
+import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
 import { message } from 'ant-design-vue'
 import util from '@/utils/util'
 import store from '@/store'
-
 /*=============================================
-=              axios-全局错误捕获               =
+=             axios-记录和显示错误              =
 =============================================*/
-
 // 创建一个错误
 const errorCreate = msg => {
   const error = new Error(msg)
@@ -45,12 +43,7 @@ const errorLog = error => {
   // 打印到控制台
   if (process.env.NODE_ENV === 'development') {
     // util.log.danger('>>>>>> Error >>>>>>')
-    util.log.danger(`
-    ===============================================
-    >>>>>>>              Error              >>>>>>>
-    ===============================================
-    `)
-    console.log(error)
+    util.log.capsule(' cg-Admin ', `💀 ${error}`, 'danger')
   }
   // 显示提示,依赖于Ant Dedign of Vue
   message.error(error.message)
@@ -66,8 +59,7 @@ const errorLog = error => {
 const success = success => {
   // 打印到控制台
   if (process.env.NODE_ENV === 'development') {
-    // util.log.danger('>>>>>> Error >>>>>>')
-    util.log.success(`>>>>>>> 连接成功： ${success}   >>>>>>>`)
+    util.log.capsule(' cg-Admin ', `🌝 ${success}`, 'success')
   }
 }
 //axios默认配置
@@ -79,16 +71,24 @@ let config = {
   timeout: 60 * 100, // 请求超时时间
   // `headers` 是即将被发送的自定义请求头
   headers: {'Content-Type': 'application/json'},
+  //TODO:只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法
   //修改请求数据添加必填项 userId
   transformRequest: [
-    function(data) {
+    function(data = {}) {
       //给所有的数据请求添加参数userId
       const userId = util.cookies.get('userId')
-      const dataModify = Object.assign((data = {}), { userId })
-      // 对 data 进行任意转换处理 => 转为fromData(按照实际后台约定修改转换)
+      const dataModify = Object.assign({ userId }, data)
+      //对 data 进行任意转换处理 => 转为fromData(按照实际后台约定修改转换)
       return Qs.stringify(dataModify, { arrayFormat: 'repeat' })
     }
-  ]
+  ],
+  //TODO:必须是一个无格式对象(plain object)或 URLSearchParams 对象(GET)
+  paramsSerializer: function(params) {
+    //给所有的数据请求添加参数userId
+    const userId = util.cookies.get('userId')
+    const dataModify = Object.assign({ userId }, params)
+    return Qs.stringify(dataModify, { arrayFormat: 'brackets' })
+  }
 }
 
 /*=============================================
@@ -117,26 +117,22 @@ service.interceptors.request.use(
 =                   响应拦截器                  =
 =============================================*/
 service.interceptors.response.use(
-  /*----------  对响应数据进行的操作  ----------*/
+
+/*----------  对响应数据进行的操作  ----------*/
 
   /* 正确响应数据 => response */
   response => {
-    // dataAxios 是 axios 返回数据中的 data
+      // dataAxios 是 axios 返回数据中的 data
     const dataAxios = response.data
-    // map 数据判断
-    if (dataAxios.type && dataAxios.type === "FeatureCollection"){
-      success(response.config.url)
-      return dataAxios
-    }
-    // 这个状态码是和后端约定的
-    const { code } = dataAxios
-    //根据 code 进行判断
-    switch (Number(code)) {
-      case 0:
-        // [ 示例 ] code === 0 代表成功
+    // 这个状态码是和后端约定的（默认值为防止外部接口没有code，导致值为undefined）
+    const { code = 111 } = dataAxios
+    // 根据 code 进行判断
+    switch (code >>> 0) {
+      case 111:
+        // [ 示例 ] code === 111 代表code不存在，为外部接口直接返回结果
         success(response.config.url)
-        return dataAxios.result
-      case 200:
+        return dataAxios
+      case 0:
         // [ 示例 ] code === 0 代表成功
         success(response.config.url)
         return dataAxios.result
@@ -152,7 +148,7 @@ service.interceptors.response.use(
   },
   /* 对错误响应数据的操作 => error */
   error => {
-    if (error && error.response) {
+      if (error && error.response) {
       switch (error.response.status) {
         case 400:
           error.message = '请求错误'
@@ -196,4 +192,26 @@ service.interceptors.response.use(
   }
 )
 
+/*=============================================
+=            Vue prototype 上挂载axios         =
+=============================================*/
+
+Plugin.install = function(Vue, options) {
+  Vue.axios = service
+  window.axios = service
+  Object.defineProperties(Vue.prototype, {
+    axios: {
+      get() {
+        return service
+      }
+    },
+    $axios: {
+      get() {
+        return service
+      }
+    }
+  })
+}
+
+Vue.use(Plugin)
 export default service

@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-07-05 19:26:32
+ * @Last Modified time: 2019-07-11 15:53:33
  */
 // Vue
 import Vue from 'vue'
@@ -20,7 +20,7 @@ Vue.config.productionTip = false
 // 设置文件
 import setting from '@/setting.js'
 
-//mock => 生产环境(上线前请注释！！！)
+// mock => 生产环境(上线前请注释！！！)
 import '@/mock'
 
 // 核心插件

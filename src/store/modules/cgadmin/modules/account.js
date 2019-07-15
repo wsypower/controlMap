@@ -11,39 +11,38 @@ export default {
      * @param {Object} param context
      * @param {Object} param route {Object} 登录成功后定向的路由对象 任何 vue-router 支持的格式
      */
-    login({ dispatch, commit }) {
-      return new Promise((resolve, reject) => {
+    login({ dispatch, rootGetters }) {
+      return new Promise(resolve => {
         //获取url参数对象
         const UrlParameters = util.getURLParameters()
         //判断参数是不是key是不是userId
         const isUserId = has(UrlParameters, 'userId')
-        if (isUserId) {
-          //cookies存储userId
-          util.cookies.set('userId', UrlParameters.userId)
-          //调用登录接口
-          AccountLogin()
-            .then(async res => {
-              // 设置 vuex 用户信息
-              await dispatch(
-                'cgadmin/user/set',
-                {
-                  name: res
-                },
-                { root: true }
-              )
-              // 结束
-              resolve(res)
-            })
-            .catch(err => {
-              //打断登录退出至401页面
-              dispatch('logout')
-              //回调捕获错误
-              reject(err)
-            })
-        } else {
-          //打断登录退出至401页面
+        if (!isUserId) {
           dispatch('logout')
+          return false
         }
+        //cookies缓存userId
+        const userId = UrlParameters.userId
+        util.cookies.set('userId', userId)
+        //调用登录接口
+        AccountLogin({ userId: userId })
+          .then(async res => {
+            // 设置 vuex 用户信息
+            await dispatch(
+              'cgadmin/user/set',
+              {
+                name: res
+              },
+              { root: true }
+            )
+            // 结束
+            resolve(res)
+          })
+          .catch(() => {
+            //打断登录退出至401页面
+            dispatch('logout')
+            //回调捕获错误
+          })
       })
     },
     /**
@@ -52,9 +51,6 @@ export default {
      * @param {Object} param confirm {Boolean} 是否需要确认
      */
     logout({ dispatch }) {
-      /**
-       * @description 注销
-       */
       // 跳转路由
       router.replace({
         name: '401'
