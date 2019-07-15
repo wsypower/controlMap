@@ -127,7 +127,7 @@ export function addNewEmergencyYuAn(data){
  * @author moxuejuan
  * @date 2019-07-12 10:53:20
  * @param {Number} id 预案的唯一标识Id
- * @method：GET
+ * @method：POST
  * @response：{
  *     msg:'操作成功;
  * }
@@ -168,7 +168,7 @@ export function deleteEmergencyYuAn(data){
 export function getAllEmergencyPeople(data){
     console.log('api:getAllEmergencyPeople',data);
     return request({
-        url: '@test/getAllEmergencyPeople',
+        url: '@test/getAllEmergencyPeople?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
