@@ -1,5 +1,5 @@
 <template>
-    <div class="top-operate-panel" :class="{animation: isActive}" v-if="isActive">
+    <div class="top-operate-panel" :class="{animation: isActive}" v-show="isActive">
         <a-dropdown>
             <a-menu slot="overlay" @click="handleMenuClick">
                 <a-menu-item key="add">
@@ -68,9 +68,9 @@
             }
         },
         watch:{
-            isActiveOperation: function(value){
-                console.log('isActive: ' + value);
-                if(value){
+            isActiveOperation: function(newValue,oldValue){
+                console.log('isActiveOperation: ' + newValue);
+                if(newValue){
                     this.isActive = true;
                 }
                 else{

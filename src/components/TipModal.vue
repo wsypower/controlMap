@@ -18,7 +18,7 @@
       ></div>
     </div>
     <div class="tip-body" :style="padding">
-      <component :is="componentId" :info="info"></component>
+      <component v-if="Object.keys(componentId).length>0" :is="componentId" :info="info"></component>
     </div>
     <div class="tooltip__arrow"></div>
   </div>
