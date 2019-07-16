@@ -43,9 +43,9 @@ const getEmergencyYuAnList = (options) => {
     return builder(
         {
             code: 0,
-            data: [{'id':0,'typeId':0,'typeName':'消防安全','levelId': 0,'levelName':'重大','statusId':0,'statusName':'未开始','description':'xxx路与yyyy路交叉口烧烤店起火。','dayTime':'2019-07-25','position':'xxx路与yyyy路交叉口','areaId':2,'areaName':'圆形','image':image,'fileList':fileList},
-                {'id':1,'typeId':1,'typeName':'地震灾害','levelId': 1,'levelName':'一般','statusId':1,'statusName':'进行中','description':'xxx县有1.4级地震，震源在深3500公里的地方。','dayTime':'2019-07-11','position':'xxxx县','areaId':2,'areaName':'圆形','image':image,'fileList':fileList},
-                {'id':2,'typeId':3,'typeName':'洪涝灾害','levelId': 1,'levelName':'一般','statusId':2,'statusName':'已完成','description':'烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火。','dayTime':'2019-07-05','position':'华星路99号','areaId':3,'areaName':'多边形','image':image,'fileList':fileList},
+            data: [{'id':0,'mapId':'','typeId':0,'typeName':'消防安全','levelId': 0,'levelName':'重大','statusId':0,'statusName':'未开始','description':'xxx路与yyyy路交叉口烧烤店起火。','dayTime':'2019-07-25','position':'xxx路与yyyy路交叉口','areaId':2,'areaName':'圆形','image':image,'fileList':fileList},
+                {'id':1,'mapId':'','typeId':1,'typeName':'地震灾害','levelId': 1,'levelName':'一般','statusId':1,'statusName':'进行中','description':'xxx县有1.4级地震，震源在深3500公里的地方。','dayTime':'2019-07-11','position':'xxxx县','areaId':2,'areaName':'圆形','image':image,'fileList':fileList},
+                {'id':2,'mapId':'','typeId':3,'typeName':'洪涝灾害','levelId': 1,'levelName':'一般','statusId':2,'statusName':'已完成','description':'烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火烧烤店起火。','dayTime':'2019-07-05','position':'华星路99号','areaId':3,'areaName':'多边形','image':image,'fileList':fileList},
             ],
             total: 3
         },

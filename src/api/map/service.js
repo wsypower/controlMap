@@ -11,7 +11,7 @@ import GeoJSON from 'ol/format/GeoJSON'
  * @author:sijianting
  * @returns {Promise<*>}
  */
-export async function getTypePoint() {
-  const data = await getPoint();
+export async function getTypePoint(type) {
+  const data = await getPoint(type);
   return new GeoJSON().readFeatures(data);
 }

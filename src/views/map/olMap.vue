@@ -9,6 +9,7 @@
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex'
 import 'ol/ol.css'
 import { Map, View } from 'ol'
 import { defaults as defaultControls } from 'ol/control'
@@ -17,15 +18,11 @@ import { Tile as TileLayer } from 'ol/layer'
 import WMTS from 'ol/source/WMTS'
 import WMTSTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent'
-import { getTypePoint } from '@/api/map/service'
 import { MapManager } from '@/utils/util.map.manage'
-import { emergencyPointStyle } from '@/utils/util.map.style'
 import LinearRing from 'ol/geom/LinearRing.js';
 import {Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon} from 'ol/geom.js';
-// import OL3Parser from '../../../node_modules/_jsts@2.0.4@jsts/org/locationtech/jts/io/OL3Parser'
-// import { BufferOp } from '../../../node_modules/_jsts@2.0.4@jsts/org/locationtech/jts/operation/buffer'
-// import OL3Parser from 'node_modules/jsts/org/locationtech/jts/io/OL3Parser';
 
+const namespace = 'map'
 let mapManager
 let drawLayer
 export default {
@@ -41,6 +38,9 @@ export default {
     })
   },
   methods: {
+    ...mapMutations(namespace, [
+      'setMapManager',
+    ]),
     drawArea() {
       drawLayer = mapManager.activateDraw('LineString', false)
     },
@@ -68,10 +68,8 @@ export default {
         controls: defaultControls({ attribution: false, rotate: false, zoom: false }) // 默认控件配置
       })
       mapManager = new MapManager(this.map)
-      //获取点位数据并加到地图上
-      getTypePoint().then(points => {
-        const layer = mapManager.addVectorLayerByFeatures(points, emergencyPointStyle('公园'), 1)
-      })
+      // 将mapManager状态存至vuex
+      this.setMapManager(mapManager)
     },
     getBaseLayers() {
       /**
