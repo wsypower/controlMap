@@ -89,6 +89,7 @@
                 activeIndex: null,
                 totalSize: 0,
                 isActiveOperation: false,
+                showAddYuAnDialog: false,
                 dialogVisible: false,
                 dWidth: 0,
                 dHeight: 0,
@@ -177,6 +178,7 @@
                     }
                 })
             },
+
             clickDataItem(index){
                 console.log('clickDataItem',index)
                 this.activeIndex = index;

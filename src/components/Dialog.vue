@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" ref="modal" :class="{ bkUpAnimation: isActive }" v-if="visible">
+  <div class="modal" ref="modal" :class="{ bkUpAnimation: isActive }" v-if="visible" v-show="showModal">
     <div
       class="modal-content"
       :class="{ upAnimate: isActive }"
@@ -26,7 +26,8 @@ export default{
     name: 'customDialog',
     data(){
         return {
-            isActive: false
+            isActive: false,
+            showModal: true
         }
     },
     props:{
@@ -98,11 +99,11 @@ export default{
             this.isActive = true;
             setTimeout(()=>{
                 this.isActive = false;
-                this.visible = false;
+                this.showModal = false;
             },600);
 
             setTimeout(()=>{
-                this.visible = true;
+                this.showModal = true;
             },3000);
         },
         showDialog(){

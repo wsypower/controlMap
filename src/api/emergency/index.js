@@ -54,8 +54,43 @@ import request from '@/plugins/axios/axios'
  */
 
 /*=====  End of Section comment block  ======*/
+/**
+ * @description 获取所有类型数据
+ * @author moxuejuan
+ * @date 2019-07-08 15:53:20
+ * @method： GET
+ * @response：{data:{
+ *     {Number} id: 类型Id
+ *     {String} name: 类型名称
+ * }}
+ */
+export function getAllTypeData(data){
+    console.log('api:getAllTypeData',data);
+    return request({
+        url: '@test/getAllTypeData?_t='+ new Date().getTime(),
+        method: 'get',
+        params: data
+    })
+}
 
-
+/**
+ * @description 获取所有等级数据
+ * @author moxuejuan
+ * @date 2019-07-08 15:53:20
+ * @method： GET
+ * @response：{data:{
+ *     {Number} id: 等级Id
+ *     {String} name: 等级名称
+ * }}
+ */
+export function getAllLevelData(data){
+    console.log('api:getAllLevelData',data);
+    return request({
+        url: '@test/getAllLevelData?_t='+ new Date().getTime(),
+        method: 'get',
+        params: data
+    })
+}
 
 /**
  * @description 登录应急预案列表数据
