@@ -12,9 +12,7 @@
         </div>
         <div class="search-result">
             <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
-                <a-spin tip="数据加载中...">
-
-                </a-spin>
+                <a-spin tip="数据加载中..."></a-spin>
             </div>
             <div class="data-panel" v-else>
                 <cg-container scroll v-if="dataArr.length>0" >
@@ -78,31 +76,50 @@
         name: 'page6',
         data(){
             return{
+                //查询条件
                 query:{
-                    searchContent: '',
-                    status: '',
-                    pageNo: 1,
-                    pageSize: 10
+                    searchContent: '',  //搜索关键字
+                    status: '',   //状态，‘’代表全部
+                    pageNo: 1,    //当前页码
+                    pageSize: 10  //当前页条数
                 },
+                //数据查询中
                 showLoading: false,
+                //数据存放处
                 dataArr:[],
-                activeIndex: null,
+                //预案总数
                 totalSize: 0,
+                //目前激活的预案序号
+                activeIndex: null,
+                //操作区是否展示
                 isActiveOperation: false,
+                //新增预案弹窗是否隐藏
                 showAddYuAnDialog: false,
+                //dialog弹窗是否渲染
                 dialogVisible: false,
+                //dialog弹窗宽度
                 dWidth: 0,
+                //dialog弹窗高度
                 dHeight: 0,
+                //dialog弹窗标题
                 dialogTitle: '新增预案',
+                //dialog弹窗body内边距设置
                 bodyPadding: [0,10,10,10],
+                //dialog弹窗body内组件
                 dialogComponentId: {},
+                //dialog弹窗body内组件需要使用的数据
                 sourceData: {},
-
+                //tipModal弹窗是否渲染
                 yuAnTipVisible: false,
+                //tipModal弹窗显示位置X
                 positionX: 0,
+                //tipModal弹窗显示位置Y
                 positionY: 0,
+                //tipModal弹窗标题
                 modalTitle: '',
+                //tipModal弹窗标题上的时间
                 timeStr: '',
+                //tipModal弹窗body内组件
                 tipComponentId: {}
             }
         },
@@ -124,6 +141,7 @@
         },
         methods:{
             ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList','deleteEmergencyYuAn']),
+            //获取预案数据
             getDataList(){
                 this.showLoading = true;
                 this.getEmergencyYuAnDataList(this.query).then((res) => {
@@ -132,22 +150,20 @@
                     this.totalSize = res.total;
                     this.showLoading = false;
                     this.isActiveOperation = true;
-                    console.log('operate',this.$refs.operate);
-                    //this.$refs.customOne.$destroy();
-                    // setTimeout(()=>{
-                    //     this.isActiveOperation = false;
-                    // },5000)
                 })
             },
+            //搜索关键字查询
             onSearch(val){
                 this.query.searchContent = val;
                 this.getDataList();
             },
+            //翻页
             changePagination(pageNo,pageSize){
                 console.log('changePagination',pageNo,pageSize);
                 this.query.pageNo = pageNo;
                 this.getDataList();
             },
+            //增加预案
             addItemOperation(){
                 this.dialogComponentId = YuAnForm;
                 this.dWidth = 810;
@@ -157,6 +173,7 @@
                 this.sourceData = {};
                 this.dialogVisible = true;
             },
+            //编辑预案
             editYuAnItem(item){
                 console.log('editYuan item',item);
                 this.dialogComponentId = YuAnForm;
@@ -167,6 +184,7 @@
                 this.sourceData = item;
                 this.dialogVisible = true;
             },
+            //删除预案
             deleteYuAnItem(item){
                 console.log('deleteYuan',item);
                 let data = {id:item.id};
@@ -178,7 +196,7 @@
                     }
                 })
             },
-
+            //选择某个预案
             clickDataItem(index){
                 console.log('clickDataItem',index)
                 this.activeIndex = index;
@@ -192,6 +210,7 @@
                 this.tipComponentId = YuAnInfo;
                 this.yuAnTipVisible = true;
             },
+            //远程呼叫
             ychjOperation(){
                 this.dialogComponentId = FarCall;
                 this.dWidth = 1200;

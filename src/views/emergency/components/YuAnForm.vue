@@ -143,22 +143,31 @@ export default {
     data(){
         return{
             form: this.$form.createForm(this),
+            //校验配置
             config: {rules: [{ required: true, message: '请选择' }]},
+            //类型数据
             typeList: [],
+            //等级数据
             levelList: [],
+            //区域数据
             areaList:[{'id':0,'name':'正方形'},
                 {'id':1,'name':'矩形'},
                 {'id':2,'name':'圆形'},
                 {'id':3,'name':'多边形'},
                 {'id':4,'name':'任意面'}],
+            //照片路径，全路径
             imageUrl: '',
+            //照片上传后得到的照片对象
             image:{},
+            //附件上传过程的动效展示
             fileLoading: false,
+            //附件上传后得到的附件对象数组
             fileList:[]
 
         }
     },
     props:{
+        //原始数据
         sourceData:{
             type: Object,
             default(){
@@ -204,16 +213,16 @@ export default {
         init(){
 
         },
+        //时间不可选设置
         disabledDate(current) {
             return current && current < moment().endOf('day');
         },
-        onChange(value){
-            console.log('date',value);
-        },
+        //选择区域
         changePaintMethod(val,option){
           console.log('changePaintMethod',val,option);
           this.$emit('hide');
         },
+        //照片上传之前的校验
         beforeUpload (file,filelist) {
             // const isJPG = file.type === 'image/jpeg'
             // if (!isJPG) {
@@ -226,6 +235,7 @@ export default {
             console.log('isLt2M',isLt2M);
             return true
         },
+        //照片上传状态改变
         handleImgChange (res) {
             console.log('uploadImage handleChange',res);
             if (res.file.status === 'done') {
@@ -235,6 +245,7 @@ export default {
                 this.image = res.file.response;
             }
         },
+        //附件上传状态改变
         handleFileChange (res) {
             if (res.file.status === 'uploading') {
                 this.fileLoading = true;
@@ -246,9 +257,11 @@ export default {
                 this.fileList.push(res.file.response);
             }
         },
+        //删除附件
         deleteFile(index){
             this.fileList.splice(index,1);
         },
+        //提交表单
         handleSubmit(e){
             e.preventDefault();
             let _this = this;
