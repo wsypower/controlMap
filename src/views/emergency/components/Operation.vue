@@ -1,7 +1,7 @@
 <template>
     <div class="top-operate-panel" :class="{animation: isAnimationActive}" v-if="isActive">
         <a-dropdown>
-            <a-menu slot="overlay" @click="handleMenuClick">
+            <a-menu slot="overlay" @click="handleOperateClick">
                 <a-menu-item key="add">
                     <a-icon type="plus-square" theme="filled" />新增预案</a-menu-item>
             </a-menu>
@@ -21,18 +21,18 @@
             <a-icon type="right" style="font-size: 12px;" />
         </a-button>
         <a-dropdown>
-            <a-menu slot="overlay">
-                <a-menu-item><cg-icon-svg name="video-one" class="svg_icon_common"></cg-icon-svg>全部视频</a-menu-item>
-                <a-menu-item><cg-icon-svg name="video-two" class="svg_icon_common"></cg-icon-svg>周边视频</a-menu-item>
-                <a-menu-item><cg-icon-svg name="menu-section" class="svg_icon_common"></cg-icon-svg>救援队伍</a-menu-item>
+            <a-menu slot="overlay" @click="handleResourceClick">
+                <a-menu-item :key="allVideo"><cg-icon-svg name="video-one" class="svg_icon_common"></cg-icon-svg>全部视频</a-menu-item>
+                <a-menu-item :key="partVideo"><cg-icon-svg name="video-two" class="svg_icon_common"></cg-icon-svg>周边视频</a-menu-item>
+                <a-menu-item :key="jiuyuan"><cg-icon-svg name="menu-section" class="svg_icon_common"></cg-icon-svg>救援队伍</a-menu-item>
                 <a-sub-menu>
                     <span slot="title"><cg-icon-svg name="zhangpeng" class="svg_icon_common"></cg-icon-svg><span>避难场所</span></span>
-                    <a-menu-item>全部</a-menu-item>
-                    <a-menu-item v-for="(item,index) in placeList" :key="index">{{item}}</a-menu-item>
+                    <a-menu-item :key="allPlace">全部</a-menu-item>
+                    <a-menu-item v-for="(item,index) in placeList" :key="item.key">{{item}}</a-menu-item>
                 </a-sub-menu>
-                <a-menu-item><cg-icon-svg name="wuzi" class="svg_icon_common"></cg-icon-svg>物资装备</a-menu-item>
-                <a-menu-item><cg-icon-svg name="jianzhu" class="svg_icon_common"></cg-icon-svg>物资企业</a-menu-item>
-                <a-menu-item><cg-icon-svg name="zhuanjia" class="svg_icon_common"></cg-icon-svg>专家库</a-menu-item>
+                <a-menu-item :key="equip"><cg-icon-svg name="wuzi" class="svg_icon_common"></cg-icon-svg>物资装备</a-menu-item>
+                <a-menu-item :key="enterprise"><cg-icon-svg name="jianzhu" class="svg_icon_common"></cg-icon-svg>物资企业</a-menu-item>
+                <a-menu-item :key="expert"><cg-icon-svg name="zhuanjia" class="svg_icon_common"></cg-icon-svg>专家库</a-menu-item>
             </a-menu>
             <a-button class="op-btn yjzy-btn">
                 <i class="icon_yjzy">
@@ -49,18 +49,31 @@
         name: 'operation',
         data(){
             return{
+                //是否添加动效
                 isAnimationActive: false,
+                //组件是否渲染
                 isActive: false,
-                placeList:['救助管理站','公园','广场','绿地','其他避难场所','防空洞','防空地下室','防空报警站点','其他人防工事']
+                //避难场所下的所有类别
+                placeList:[{'key':'jiuzhuzhan','name':'救助管理站'},
+                    {'key':'park','name':'公园'},
+                    {'key':'square','name':'广场'},
+                    {'key':'greenbelt','name':'绿地'},
+                    {'key':'otherbncs','name':'其他避难场所'},
+                    {'key':'fangkongdong','name':'防空洞'},
+                    {'key':'fkdxs','name':'防空地下室'},
+                    {'key':'fkbjzd','name':'防空报警站点'},
+                    {'key':'othergongshi','name':'其他人防工事'}]
             }
         },
         props:{
+            //组件是否渲染
             isActiveOperation:{
                 type: Boolean,
                 default: false
             }
         },
         watch:{
+            //监听从而实现动画效果
             isActiveOperation: function(newValue,oldValue){
                 console.log('isActiveOperation: ' + newValue);
                 if(newValue){
@@ -88,13 +101,10 @@
                 }
             });
         },
-        beforeDestory(){
-            console.log('operation beforeDestroy 11111');
-            this.isAnimationActive = false;
-            this.isActive = false;
-        },
+
         methods:{
-            handleMenuClick(value){
+            //预案操作：目前只有新增预案
+            handleOperateClick(value){
                 console.log('handleMenuClick',value);
                 switch(value.key){
                     case 'add':
@@ -105,8 +115,49 @@
                         console.log('no operation');
                 }
             },
+            //远程呼叫
             clickYCHJBtn(){
                 this.$emit('ychjOperate');
+            },
+            //应急资源
+            handleResourceClick(value){
+                console.log('handleResourceClick',value);
+                switch(value.key){
+                    case 'allVideo':
+                        break;
+                    case 'partVideo':
+                        break;
+                    case 'jiuyuan':
+                        break;
+                    case 'allPlace':
+                        break;
+                    case 'jiuzhuzhan':
+                        break;
+                    case 'park':
+                        break;
+                    case 'square':
+                        break;
+                    case 'greenbelt':
+                        break;
+                    case 'otherbncs':
+                        break;
+                    case 'fangkongdong':
+                        break;
+                    case 'fkdxs':
+                        break;
+                    case 'fkbjzd':
+                        break;
+                    case 'othergongshi':
+                        break;
+                    case 'equip':
+                        break;
+                    case 'enterprise':
+                        break;
+                    case 'expert':
+                        break;
+                    default:
+                        console.log('no operation');
+                }
             }
         }
     }

@@ -26,45 +26,55 @@ export default{
     name: 'customDialog',
     data(){
         return {
+            //是否增加出现的动效
             isActive: false,
+            //dialog显示还是隐藏
             showModal: true
         }
     },
     props:{
+        //dialog是否渲染
         visible:{
             type: Boolean,
             default: false
         },
+        //dialog标题
         dialogTitle:{
             type:String,
             default: '标题'
         },
+        //dialog宽度
         dWidth:{
             type: Number,
             default: 810
         },
+        //dialog高度
         dHeight:{
             type: Number,
             default: 450
         },
+        //dialog的body内边框
         bodyPadding:{
             type: Array,
             default: function(){
                 return [0,0,0,0]
             }
         },
+        //dialog的body内组件
         componentId:{
             type: Object,
             default(){
                 return {}
             }
         },
+        //dialog关闭时的回调
         closeCallBack:{
             type: Function,
             default(){
                 return null
             }
         },
+        //dialog给内部组件的原始数据
         sourceData:{
             type: Object,
             default(){
@@ -83,6 +93,7 @@ export default{
         }
     },
     mounted(){
+        //挂载到body上
         this.$nextTick(() => {
             const body = document.querySelector("body");
             if (body.append) {
@@ -95,6 +106,7 @@ export default{
     methods:{
         init(){
         },
+        //隐藏dialog
         hideDialog(){
             this.isActive = true;
             setTimeout(()=>{
@@ -106,9 +118,7 @@ export default{
                 this.showModal = true;
             },3000);
         },
-        showDialog(){
-            this.visible = true;
-        },
+        //关闭dialog
         closeDialog(){
             this.isActive = true;
             let _this = this;
