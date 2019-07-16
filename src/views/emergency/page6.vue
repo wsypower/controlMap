@@ -13,7 +13,6 @@
         <div class="search-result">
             <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
                 <a-spin tip="数据加载中...">
-
                 </a-spin>
             </div>
             <div class="data-panel" v-else>

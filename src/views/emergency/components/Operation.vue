@@ -24,7 +24,6 @@
         <a-menu-item @click="showTypePoints('公园')"><cg-icon-svg name="video-one" class="svg_icon_common"></cg-icon-svg>全部视频</a-menu-item>
         <a-menu-item><cg-icon-svg name="video-two" class="svg_icon_common"></cg-icon-svg>周边视频</a-menu-item>
         <a-menu-item><cg-icon-svg name="menu-section" class="svg_icon_common"></cg-icon-svg>救援队伍</a-menu-item>
-
         <a-sub-menu>
           <span slot="title">
             <cg-icon-svg name="zhangpeng" class="svg_icon_common"></cg-icon-svg><span>避难场所</span>
