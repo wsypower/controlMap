@@ -207,9 +207,6 @@ export default {
         disabledDate(current) {
             return current && current < moment().endOf('day');
         },
-        onChange(value){
-            console.log('date',value);
-        },
         changePaintMethod(val,option){
           console.log('changePaintMethod',val,option);
           this.$emit('hide');
