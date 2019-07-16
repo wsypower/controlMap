@@ -1,5 +1,5 @@
 <template>
-    <div class="top-operate-panel" :class="{animation: isActive}" v-show="isActive">
+    <div class="top-operate-panel" :class="{animation: isAnimationActive}" v-if="isActive">
         <a-dropdown>
             <a-menu slot="overlay" @click="handleMenuClick">
                 <a-menu-item key="add">
@@ -25,19 +25,10 @@
                 <a-menu-item><cg-icon-svg name="video-one" class="svg_icon_common"></cg-icon-svg>全部视频</a-menu-item>
                 <a-menu-item><cg-icon-svg name="video-two" class="svg_icon_common"></cg-icon-svg>周边视频</a-menu-item>
                 <a-menu-item><cg-icon-svg name="menu-section" class="svg_icon_common"></cg-icon-svg>救援队伍</a-menu-item>
-
                 <a-sub-menu>
                     <span slot="title"><cg-icon-svg name="zhangpeng" class="svg_icon_common"></cg-icon-svg><span>避难场所</span></span>
                     <a-menu-item>全部</a-menu-item>
-                    <a-menu-item>救助管理站</a-menu-item>
-                    <a-menu-item>公园</a-menu-item>
-                    <a-menu-item>广场</a-menu-item>
-                    <a-menu-item>绿地</a-menu-item>
-                    <a-menu-item>其他避难场所</a-menu-item>
-                    <a-menu-item>防空洞</a-menu-item>
-                    <a-menu-item>防空地下室</a-menu-item>
-                    <a-menu-item>防空报警站点</a-menu-item>
-                    <a-menu-item>其他人防工事</a-menu-item>
+                    <a-menu-item v-for="(item,index) in placeList" :key="index">{{item}}</a-menu-item>
                 </a-sub-menu>
                 <a-menu-item><cg-icon-svg name="wuzi" class="svg_icon_common"></cg-icon-svg>物资装备</a-menu-item>
                 <a-menu-item><cg-icon-svg name="jianzhu" class="svg_icon_common"></cg-icon-svg>物资企业</a-menu-item>
@@ -58,7 +49,9 @@
         name: 'operation',
         data(){
             return{
-                isActive: false
+                isAnimationActive: false,
+                isActive: false,
+                placeList:['救助管理站','公园','广场','绿地','其他避难场所','防空洞','防空地下室','防空报警站点','其他人防工事']
             }
         },
         props:{
@@ -72,9 +65,16 @@
                 console.log('isActiveOperation: ' + newValue);
                 if(newValue){
                     this.isActive = true;
+                    setTimeout(()=> {
+                        this.isAnimationActive = true;
+                    },200)
                 }
                 else{
-                    this.isActive = false;
+                    this.isAnimationActive = false;
+                    setTimeout(()=>{
+                        this.isActive = false;
+                    },1000);
+
                 }
             }
         },
@@ -87,6 +87,11 @@
                     body.appendChild(this.$el);
                 }
             });
+        },
+        beforeDestory(){
+            console.log('operation beforeDestroy 11111');
+            this.isAnimationActive = false;
+            this.isActive = false;
         },
         methods:{
             handleMenuClick(value){
@@ -115,9 +120,10 @@
         -o-transition: opacity 1s; /* Opera */
     }
     .top-operate-panel {
-        position: absolute;
+        position: fixed;
         left: 437px;
         top: 70px;
+        width: 426px;
         opacity: 0;
         transition: opacity 1s;
         -moz-transition: opacity 1s; /* Firefox 4 */
