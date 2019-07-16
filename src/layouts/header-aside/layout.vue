@@ -27,7 +27,7 @@
         <div class="container__main">
           <!-- 功能抽屉 -->
           <layout-drawer>
-            <router-view />>
+            <router-view />
           </layout-drawer>
           <!-- 地图控件注入地址 -->
           <LayoutMap />
@@ -52,7 +52,7 @@ export default {
     return {}
   },
   methods: {
-    
+
   },
 }
 </script>

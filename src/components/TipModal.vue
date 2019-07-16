@@ -3,7 +3,7 @@
     class="tip-content"
     :style="tipClass"
     :class="{ active: isActive }"
-    v-show="visible"
+    v-if="visible"
   >
     <div class="tip-header" flex="dir:left cross:center main:justify">
       <div class="tip-title" flex="cross:center">

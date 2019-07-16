@@ -1,5 +1,5 @@
 <template>
-    <div class="top-operate-panel" :class="{animation: isActive}" v-show="isActive">
+    <div class="top-operate-panel" :class="{animation: isAnimationActive}" v-if="isActive">
         <a-dropdown>
             <a-menu slot="overlay" @click="handleMenuClick">
                 <a-menu-item key="add">
@@ -58,6 +58,7 @@
         name: 'operation',
         data(){
             return{
+                isAnimationActive: false,
                 isActive: false
             }
         },
@@ -72,9 +73,16 @@
                 console.log('isActiveOperation: ' + newValue);
                 if(newValue){
                     this.isActive = true;
+                    setTimeout(()=> {
+                        this.isAnimationActive = true;
+                    },200)
                 }
                 else{
-                    this.isActive = false;
+                    this.isAnimationActive = false;
+                    setTimeout(()=>{
+                        this.isActive = false;
+                    },1000);
+
                 }
             }
         },
@@ -87,6 +95,11 @@
                     body.appendChild(this.$el);
                 }
             });
+        },
+        beforeDestory(){
+            console.log('operation beforeDestroy 11111');
+            this.isAnimationActive = false;
+            this.isActive = false;
         },
         methods:{
             handleMenuClick(value){
@@ -115,9 +128,10 @@
         -o-transition: opacity 1s; /* Opera */
     }
     .top-operate-panel {
-        position: absolute;
+        position: fixed;
         left: 437px;
         top: 70px;
+        width: 426px;
         opacity: 0;
         transition: opacity 1s;
         -moz-transition: opacity 1s; /* Firefox 4 */

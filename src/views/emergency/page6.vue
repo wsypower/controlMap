@@ -33,7 +33,6 @@
                     <img src="~@img/zanwuyuan.png" />
                 </div>
             </div>
-
         </div>
         <div v-if="dataArr.length>0" class="pagination-panel">
             <!--<div @click="clickTip">测试点击</div>-->
@@ -45,7 +44,7 @@
                     @change="changePagination"
             />
         </div>
-        <operation ref="operate" :isActiveOperation="isActiveOperation" @addItem="addItemOperation" @ychjOperate="ychjOperation"></operation>
+        <operation :isActiveOperation="isActiveOperation" @addItem="addItemOperation" @ychjOperate="ychjOperation"></operation>
         <custom-dialog
                 :visible.sync="dialogVisible"
                 :dWidth="dWidth"
@@ -120,13 +119,7 @@
             this.getDataList();
         },
         beforeDestroy(){
-            this.isActiveOperation = false;
-            // this.$children[1].isActive = false;
-            this.$refs.operate.setNone()
-            console.log(this.$children)
-            console.log('beforeDestroy',this.isActiveOperation);
-            console.log('beforeDestroy dataArr',this.dataArr);
-            console.log('operate',this.$refs.operate);
+            //this.isActiveOperation = false;
         },
         methods:{
             ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList','deleteEmergencyYuAn']),
@@ -139,6 +132,10 @@
                     this.showLoading = false;
                     this.isActiveOperation = true;
                     console.log('operate',this.$refs.operate);
+                    //this.$refs.customOne.$destroy();
+                    // setTimeout(()=>{
+                    //     this.isActiveOperation = false;
+                    // },5000)
                 })
             },
             onSearch(val){

@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" ref="modal" :class="{ bkUpAnimation: isActive }" v-show="visible">
+  <div class="modal" ref="modal" :class="{ bkUpAnimation: isActive }" v-if="visible">
     <div
       class="modal-content"
       :class="{ upAnimate: isActive }"
