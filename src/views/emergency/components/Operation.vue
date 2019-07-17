@@ -28,7 +28,7 @@
                 <a-sub-menu>
                     <span slot="title"><cg-icon-svg name="zhangpeng" class="svg_icon_common"></cg-icon-svg><span>避难场所</span></span>
                     <a-menu-item key="allPlace"><a-checkbox @change="onChange">全部</a-checkbox></a-menu-item>
-                    <a-menu-item v-for="(item,index) in placeList" :key="item.key">{{item}}</a-menu-item>
+                    <a-menu-item v-for="(item,index) in placeList" :key="item.key">{{item.name}}</a-menu-item>
                 </a-sub-menu>
                 <a-menu-item key="equip"><cg-icon-svg name="wuzi" class="svg_icon_common"></cg-icon-svg>物资装备</a-menu-item>
                 <a-menu-item key="enterprise"><cg-icon-svg name="jianzhu" class="svg_icon_common"></cg-icon-svg>物资企业</a-menu-item>
