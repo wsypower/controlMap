@@ -8,7 +8,7 @@
       <!-- 主体 -->
       <div class="container" flex>
         <!-- 主体 左侧边栏 -->
-        <layout-menu />
+        <layout-menu></layout-menu>
         <!-- 主体 右侧上按钮栏 -->
         <div class="container__aside--top">
           <a-button class="container__aside__item" type="primary">1</a-button>
@@ -27,10 +27,10 @@
         <div class="container__main">
           <!-- 功能抽屉 -->
           <layout-drawer>
-            <router-view />
+              <router-view></router-view>
           </layout-drawer>
           <!-- 地图控件注入地址 -->
-          <LayoutMap />
+          <LayoutMap ref="olMap"></LayoutMap>
         </div>
       </div>
     </div>
@@ -39,7 +39,7 @@
 
 <script>
 import { LayoutMenu, LayoutDrawer, LayoutHeader } from './components/index'
-import LayoutMap from '@/views/map/index.vue'
+import LayoutMap from '@/views/map/olMap.vue'
 export default {
   name: 'layoutHeaderAside',
   components: {
