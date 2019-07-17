@@ -40,7 +40,9 @@ export default {
     menuItemClick(index, item) {
       //当前元素设置active设为true，其他设为false
       this.asideSetItemActive(item).then(isCollapse => {
-        if (item.path !== this.current)
+        //TODO:(貌似search更快一点，实际再测试)判断点击页是否是当前页或当前页子页面
+        const isPath = this.current.includes(item.path)
+        if (!isPath)
           this.menuItemCange(item).then(() => {
             this.$router.replace(item.path)
           })
@@ -56,6 +58,7 @@ export default {
     menuItemCange(item) {
       //当前menu伸缩状态
       let asideCollapse = this.asideCollapse
+      console.log(this.asideCollapse)
       return new Promise(resolve => {
         if (asideCollapse) {
           this.asideCollapseSet(false)

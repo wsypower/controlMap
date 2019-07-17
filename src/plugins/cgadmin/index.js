@@ -6,7 +6,8 @@ import '../axios/axios'
 import '@/components'
 // svg 图标
 import '@/assets/svg-icons'
-
+// ie polyfill
+import '@babel/polyfill'
 // 功能插件
 import pluginError from '@/plugins/error'
 import pluginLog from '@/plugins/log'

@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-08 12:52:42
+ * @Last Modified time: 2019-07-16 22:41:45
  */
 
 /*=============================================
@@ -27,10 +27,6 @@ const frameIn = [
     path: '/',
     name: 'layoutHeaderAside',
     redirect: { path: '/section' },
-    // redirect: to => {
-    //   console.log(to)
-    //   console.log(VueRouter)
-    // },
     component: layoutHeaderAside,
     meta: { title: '管控平台' },
     children: [
@@ -42,7 +38,27 @@ const frameIn = [
           title: '人员管控',
           role: ['admin', 'super_editor']
         },
-        component: _import('section/page1.vue')
+        component: _import('section/page1.vue'),
+        redirect: { path: '/section/warnList' },
+        children: [
+          {
+            path: '/section/warnList',
+            meta: {
+              title: '人员管控列表',
+              role: ['admin', 'super_editor']
+            },
+            component: _import('section/list.vue')
+          },
+          //列表详情
+          {
+            path: '/section/warnDetails',
+            meta: {
+              title: '人员管控详情',
+              role: ['admin', 'super_editor']
+            },
+            component: _import('section/details.vue')
+          }
+        ]
       },
       //测试 => page2
       {
