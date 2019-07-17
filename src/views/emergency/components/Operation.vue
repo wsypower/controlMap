@@ -22,17 +22,17 @@
         </a-button>
         <a-dropdown>
             <a-menu slot="overlay" @click="handleResourceClick">
-                <a-menu-item :key="allVideo"><cg-icon-svg name="video-one" class="svg_icon_common"></cg-icon-svg>全部视频</a-menu-item>
-                <a-menu-item :key="partVideo"><cg-icon-svg name="video-two" class="svg_icon_common"></cg-icon-svg>周边视频</a-menu-item>
-                <a-menu-item :key="jiuyuan"><cg-icon-svg name="menu-section" class="svg_icon_common"></cg-icon-svg>救援队伍</a-menu-item>
+                <a-menu-item key="allVideo"><cg-icon-svg name="video-one" class="svg_icon_common"></cg-icon-svg>全部视频</a-menu-item>
+                <a-menu-item key="partVideo"><cg-icon-svg name="video-two" class="svg_icon_common"></cg-icon-svg>周边视频</a-menu-item>
+                <a-menu-item key="jiuyuan"><cg-icon-svg name="menu-section" class="svg_icon_common"></cg-icon-svg>救援队伍</a-menu-item>
                 <a-sub-menu>
                     <span slot="title"><cg-icon-svg name="zhangpeng" class="svg_icon_common"></cg-icon-svg><span>避难场所</span></span>
-                    <a-menu-item :key="allPlace">全部</a-menu-item>
+                    <a-menu-item key="allPlace"><a-checkbox @change="onChange">全部</a-checkbox></a-menu-item>
                     <a-menu-item v-for="(item,index) in placeList" :key="item.key">{{item}}</a-menu-item>
                 </a-sub-menu>
-                <a-menu-item :key="equip"><cg-icon-svg name="wuzi" class="svg_icon_common"></cg-icon-svg>物资装备</a-menu-item>
-                <a-menu-item :key="enterprise"><cg-icon-svg name="jianzhu" class="svg_icon_common"></cg-icon-svg>物资企业</a-menu-item>
-                <a-menu-item :key="expert"><cg-icon-svg name="zhuanjia" class="svg_icon_common"></cg-icon-svg>专家库</a-menu-item>
+                <a-menu-item key="equip"><cg-icon-svg name="wuzi" class="svg_icon_common"></cg-icon-svg>物资装备</a-menu-item>
+                <a-menu-item key="enterprise"><cg-icon-svg name="jianzhu" class="svg_icon_common"></cg-icon-svg>物资企业</a-menu-item>
+                <a-menu-item key="expert"><cg-icon-svg name="zhuanjia" class="svg_icon_common"></cg-icon-svg>专家库</a-menu-item>
             </a-menu>
             <a-button class="op-btn yjzy-btn">
                 <i class="icon_yjzy">
@@ -158,6 +158,9 @@
                     default:
                         console.log('no operation');
                 }
+            },
+            onChange(val){
+                console.log('checkbox',val);
             }
         }
     }
