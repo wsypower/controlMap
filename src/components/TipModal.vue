@@ -3,7 +3,7 @@
     class="tip-content"
     :style="tipClass"
     :class="{ active: isActive }"
-    v-show="visible"
+    v-if="visible"
   >
     <div class="tip-header" flex="dir:left cross:center main:justify">
       <div class="tip-title" flex="cross:center">
@@ -18,7 +18,7 @@
       ></div>
     </div>
     <div class="tip-body" :style="padding">
-      <component :is="componentId" :info="info"></component>
+      <component v-if="Object.keys(componentId).length>0" :is="componentId" :info="info"></component>
     </div>
     <div class="tooltip__arrow"></div>
   </div>

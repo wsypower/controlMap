@@ -8,14 +8,9 @@
                 <div class="name-panel">{{ itemData.typeName }}</div>
                 <div class="flag-panel">
                     <span class="level-panel"
-                          :class="{yanzhong:itemData.levelId == 0,yiban:itemData.levelId == 1}">等级：{{itemData.levelName}}</span>
-                    <!--<span v-if="itemData.levelId == 0" class="level-panel yanzhong">等级：{{itemData.levelName}}</span>-->
-                    <!--<span v-else class="level-panel yiban">等级：一般</span>-->
+                        :class="{yanzhong:itemData.levelId == 0,yiban:itemData.levelId == 1}">等级：{{itemData.levelName}}</span>
                     <span class="status-panel"
-                          :class="{nostart:itemData.statusId == 0,handle:itemData.statusId == 1,complete:itemData.statusId == 2}">{{itemData.statusName}}</span>
-                    <!--<span v-if="itemData.statusId == 0" class="status-panel handle">{{itemData.statusName}}</span>-->
-                    <!--<span v-else-if="itemData.statusId == 1" class="status-panel nostart">{{itemData.statusName}}</span>-->
-                    <!--<span v-else class="status-panel complete">{{itemData.statusName}}</span>-->
+                        :class="{nostart:itemData.statusId == 0,handle:itemData.statusId == 1,complete:itemData.statusId == 2}">{{itemData.statusName}}</span>
                 </div>
             </div>
             <div class="description-panel">信息：{{ itemData.description }}</div>
@@ -35,10 +30,12 @@
     export default {
         name: 'yuAnItem',
         props:{
+            //序号
             index:{
                 type:Number,
                 default: null
             },
+            //展示数据
             itemData:{
                 type: Object,
                 default(){
@@ -47,6 +44,7 @@
                     }
                 }
             },
+            //是否激活
             isActive:{
                 type: Boolean,
                 default: false

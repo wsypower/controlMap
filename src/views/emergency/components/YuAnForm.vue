@@ -11,15 +11,15 @@
                 :wrapper-col="{ span: 12 }"
               >
                 <a-select
-                        v-decorator="['typeId',
-                                         {rules: [{ required: true, message: '请选择' }]}
-                                       ]"
-                          placeholder="请选择"
-                          style="width: 277px">
-                  <a-select-option value='0'>消防安全</a-select-option>
-                  <a-select-option value='1'>地震灾害</a-select-option>
-                  <a-select-option value='3'>洪涝灾害</a-select-option>
-                  <a-select-option value='4'>台风灾害</a-select-option>
+                    v-decorator="['typeId',config]"
+                    placeholder="请选择"
+                    style="width: 277px">
+                  <a-select-option
+                          v-for="(item,index) in typeList"
+                          :value="item.id"
+                          :key="item.id">
+                      {{item.name}}
+                  </a-select-option>
                 </a-select>
               </a-form-item>
               <a-form-item
@@ -28,13 +28,15 @@
                 :wrapper-col="{ span: 12 }"
               >
                 <a-select
-                          v-decorator="['levelId',
-                                         {rules: [{ required: true, message: '请选择' }]}
-                                       ]"
+                          v-decorator="['levelId',config]"
                           placeholder="请选择"
                           style="width: 277px">
-                  <a-select-option value="0">重大</a-select-option>
-                  <a-select-option value="1">一般</a-select-option>
+                  <a-select-option
+                          v-for="(item,index) in levelList"
+                          :value="item.id"
+                          :key="item.id">
+                      {{item.name}}
+                  </a-select-option>
                 </a-select>
               </a-form-item>
               <a-form-item
@@ -42,24 +44,19 @@
                 :label-col="{ span: 5 }"
                 :wrapper-col="{ span: 12 }"
               >
-                <a-date-picker
-                        v-decorator="['dayTime',
-                                         {rules: [{ required: true, message: '请选择' }]}
-                                       ]"
-                        :format="dateFormat"
-                  placeholder="请选择"
-                  @change="onChange"
-                  style="width: 277px"
-                />
+                  <a-range-picker
+                          v-decorator="['rangeDay', config]"
+                          :disabledDate="disabledDate"
+                          format="YYYY-MM-DD"
+                          style="width: 277px"
+                  />
               </a-form-item>
               <a-form-item
                 label="位置"
                 :label-col="{ span: 5 }"
                 :wrapper-col="{ span: 12 }"
               >
-                <a-input v-decorator="['position',
-                                         {rules: [{ required: true, message: '请选择' }]}
-                                       ]"
+                <a-input v-decorator="['position',config]"
                          placeholder="请输入" style="width: 277px" />
               </a-form-item>
               <a-form-item
@@ -67,9 +64,7 @@
                 :label-col="{ span: 5 }"
                 :wrapper-col="{ span: 12 }"
               >
-                <a-textarea v-decorator="['description',
-                                         {rules: [{ required: true, message: '请选择' }]}
-                                       ]"
+                <a-textarea v-decorator="['description',config]"
                         placeholder="请输入" :rows="2" :autosize="{minRows: 2, maxRows: 2}" style="width: 277px" />
               </a-form-item>
               <a-form-item
@@ -77,13 +72,14 @@
                 :label-col="{ span: 5 }"
                 :wrapper-col="{ span: 12 }"
               >
-                <a-select v-decorator="['areaId',{rules: [{ required: true, message: '请选择' }]}]"
+                <a-select v-decorator="['areaId',config]"
                           placeholder="请选择" style="width: 277px" @change="changePaintMethod">
-                  <a-select-option value="0">正方形</a-select-option>
-                  <a-select-option value="1">矩形</a-select-option>
-                  <a-select-option value="2">圆形</a-select-option>
-                  <a-select-option value="3">多边形</a-select-option>
-                  <a-select-option value="4">任意面</a-select-option>
+                  <a-select-option
+                          v-for="(item,index) in areaList"
+                          :value="item.id"
+                          :key="item.id">
+                      {{item.name}}
+                  </a-select-option>
                 </a-select>
               </a-form-item>
             </cg-container>
@@ -147,65 +143,86 @@ export default {
     data(){
         return{
             form: this.$form.createForm(this),
-            dateFormat:'YYYY-MM-DD',
+            //校验配置
+            config: {rules: [{ required: true, message: '请选择' }]},
+            //类型数据
+            typeList: [],
+            //等级数据
+            levelList: [],
+            //区域数据
+            areaList:[{'id':0,'name':'正方形'},
+                {'id':1,'name':'矩形'},
+                {'id':2,'name':'圆形'},
+                {'id':3,'name':'多边形'},
+                {'id':4,'name':'任意面'}],
+            //照片路径，全路径
             imageUrl: '',
+            //照片上传后得到的照片对象
             image:{},
+            //附件上传过程的动效展示
             fileLoading: false,
+            //附件上传后得到的附件对象数组
             fileList:[]
 
         }
     },
     props:{
+        //原始数据
         sourceData:{
             type: Object,
             default(){
-                return{
-
-                }
+                return{}
             }
         }
     },
-    watch:{
-        sourceData: function(value){
-            console.log('sourceData',value);
-            this.form.setFieldsValue({
-                typeId: value.typeId||value.typeId==0?value.typeId.toString():undefined,
-                levelId: value.levelId||value.levelId==0?value.levelId.toString():undefined,
-                dayTime: value.dayTime?moment(value.dayTime, 'YYYY-MM-DD'):undefined,
-                position: value.position,
-                description: value.description,
-                areaId: value.areaId||value.areaId==0?value.areaId.toString():undefined
-            });
-            this.image = value.image?value.image:{};
-            this.fileList = value.fileList?value.fileList:[];
-            this.imageUrl = this.image.basefile?this.image.basefile.newPath:'';
-        }
-    },
+    watch:{},
+    created(){},
     mounted(){
-        this.form.setFieldsValue({
-            typeId: this.sourceData.typeId||this.sourceData.typeId==0?this.sourceData.typeId.toString():undefined,
-            levelId: this.sourceData.levelId||this.sourceData.levelId==0?this.sourceData.levelId.toString():undefined,
-            dayTime: this.sourceData.dayTime?moment(this.sourceData.dayTime, 'YYYY-MM-DD'):undefined,
-            position: this.sourceData.position,
-            description: this.sourceData.description,
-            areaId: this.sourceData.areaId||this.sourceData.areaId==0?this.sourceData.areaId.toString():undefined
-        });
-        this.image = this.sourceData.image?this.sourceData.image:{};
-        this.fileList = this.sourceData.fileList?this.sourceData.fileList:[];
-        this.imageUrl = this.image.basefile?this.image.basefile.newPath:'';
+        let _this = this;
+        let p1 = this.getAllTypeData().then((res) => {
+            console.log(res);
+            if(res.code==0){
+                _this.typeList = res.data;
+            }
+        })
+        let p2 = this.getAllLevelData().then((res) => {
+            console.log(res);
+            if(res.code==0){
+                _this.levelList = res.data;
+            }
+        })
+        Promise.all([p1, p2]).then((result) => {
+            _this.form.setFieldsValue({
+                typeId: _this.sourceData.typeId,
+                levelId: _this.sourceData.levelId,
+                rangeDay: _this.sourceData.startDay?[moment(_this.sourceData.startDay, 'YYYY-MM-DD'),moment(_this.sourceData.endDay, 'YYYY-MM-DD')]:undefined,
+                position: _this.sourceData.position,
+                description: _this.sourceData.description,
+                areaId: _this.sourceData.areaId
+            });
+            _this.image = _this.sourceData.image?_this.sourceData.image:{};
+            _this.fileList = _this.sourceData.fileList?_this.sourceData.fileList:[];
+            _this.imageUrl = _this.image.newPath?_this.image.newPath:'';
+        }).catch((error) => {
+            console.log(error)
+        })
+
     },
     methods:{
-        ...mapActions('emergency/emergency', ['addNewEmergencyYuAn']),
+        ...mapActions('emergency/emergency', ['getAllTypeData','getAllLevelData','addNewEmergencyYuAn']),
         init(){
 
         },
-        onChange(value){
-            console.log('date',value);
+        //时间不可选设置
+        disabledDate(current) {
+            return current && current < moment().endOf('day');
         },
+        //选择区域
         changePaintMethod(val,option){
           console.log('changePaintMethod',val,option);
           this.$emit('hide');
         },
+        //照片上传之前的校验
         beforeUpload (file,filelist) {
             // const isJPG = file.type === 'image/jpeg'
             // if (!isJPG) {
@@ -218,13 +235,17 @@ export default {
             console.log('isLt2M',isLt2M);
             return true
         },
+        //照片上传状态改变
         handleImgChange (res) {
             console.log('uploadImage handleChange',res);
             if (res.file.status === 'done') {
-                this.imageUrl = res.file.response.basefile.newPath;
+                let data  = res.file.response.basefile;
+                this.imageUrl = data.newPath;
+                //this.image = data.newPath + '|' + data.oldName;
                 this.image = res.file.response;
             }
         },
+        //附件上传状态改变
         handleFileChange (res) {
             if (res.file.status === 'uploading') {
                 this.fileLoading = true;
@@ -236,9 +257,11 @@ export default {
                 this.fileList.push(res.file.response);
             }
         },
+        //删除附件
         deleteFile(index){
             this.fileList.splice(index,1);
         },
+        //提交表单
         handleSubmit(e){
             e.preventDefault();
             let _this = this;
@@ -254,8 +277,18 @@ export default {
                 }
                 //编辑时状态status是否需要改变
 
-                values.image = this.image;
-                values.fileList = this.fileList;
+                values.imageStr = this.image.basefile.newPath + '|' + this.image.basefile.oldName;
+                let fileStr = '';
+                for(let i=0;i<this.fileList.length;i++){
+                    if(i<this.fileList.length-1){
+                        fileStr = this.fileList[i].basefile.newPath + '|' + this.fileList[i].basefile.oldName + ',';
+                    }
+                    else{
+                        fileStr = this.fileList[i].basefile.newPath + '|' + this.fileList[i].basefile.oldName;
+                    }
+                }
+                values.fileStr = fileStr;
+
                 this.addNewEmergencyYuAn(values).then((res) => {
                     console.log(res);
                     if(res.code==0){
