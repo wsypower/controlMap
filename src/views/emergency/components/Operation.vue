@@ -21,6 +21,13 @@
             <a-icon type="right" style="font-size: 12px;" />
         </a-button>
         <a-dropdown>
+            <a-button class="op-btn yjzy-btn">
+                <i class="icon_yjzy">
+                    <cg-icon-svg name="yinjiguanli" class="svg_icon_yinjiguanli"></cg-icon-svg>
+                </i>
+                <span class="memu-title-text">应急资源</span>
+                <a-icon type="down" />
+            </a-button>
             <a-menu slot="overlay" @click="handleResourceClick">
                 <a-menu-item key="allVideo"><cg-icon-svg name="video-one" class="svg_icon_common"></cg-icon-svg>全部视频</a-menu-item>
                 <a-menu-item key="partVideo"><cg-icon-svg name="video-two" class="svg_icon_common"></cg-icon-svg>周边视频</a-menu-item>
@@ -34,13 +41,6 @@
                 <a-menu-item key="enterprise"><cg-icon-svg name="jianzhu" class="svg_icon_common"></cg-icon-svg>物资企业</a-menu-item>
                 <a-menu-item key="expert"><cg-icon-svg name="zhuanjia" class="svg_icon_common"></cg-icon-svg>专家库</a-menu-item>
             </a-menu>
-            <a-button class="op-btn yjzy-btn">
-                <i class="icon_yjzy">
-                    <cg-icon-svg name="yinjiguanli" class="svg_icon_yinjiguanli"></cg-icon-svg>
-                </i>
-                <span class="memu-title-text">应急资源</span>
-                <a-icon type="down" />
-            </a-button>
         </a-dropdown>
     </div>
 </template>
@@ -49,6 +49,9 @@
         name: 'operation',
         data(){
             return{
+                //关闭点击菜单关闭功能
+                visible: false,
+                showSubMenu: true,
                 //是否添加动效
                 isAnimationActive: false,
                 //组件是否渲染
