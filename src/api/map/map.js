@@ -11,17 +11,17 @@ import request from '@/plugins/axios/axios'
  * @author:sijianting
  * @param {String}type
  */
-export function getPoint(type = '视频') {
-  const ceshi = {
-    service: 'WFS',
-    version: '1.0.0',
-    request: 'GetFeature',
-    typeName: `guankongceshi:${type}`,
-    outputFormat: 'application/json'
-  }
+export function getPoint(type = '全部视频') {
+  type= type=='全部视频'?'视频':type
   return request({
     url: 'http://192.168.1.10:8080/geoserver/guankongceshi/ows',
     method: 'get',
-    params: ceshi
+    params: {
+      service: 'WFS',
+      version: '1.0.0',
+      request: 'GetFeature',
+      typeName: `guankongceshi:${type}`,
+      outputFormat: 'application/json'
+    }
   })
 }

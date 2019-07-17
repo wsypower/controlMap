@@ -29,9 +29,9 @@
         </a-button>
         <a-menu slot="overlay" @click="handleResourceClick">
             <template v-for="(item, index) in selectType">
-                <a-menu-item v-if="!item.children" :key="item.key"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>{{item.name}}</a-menu-item>
+                <a-menu-item v-if="!item.children" :key="item.key" @click="showTypePoints(item.name)"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>{{item.name}}</a-menu-item>
                 <a-sub-menu v-if="item.children" :key="item.key"><span slot="title"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg><span>{{item.name}}</span></span>
-                    <a-menu-item v-for="(bncs, index) in item.children" :key="bncs.key">{{ bncs.name }}</a-menu-item>
+                    <a-menu-item v-for="(bncs, index) in item.children" :key="bncs.key" @click="showTypePoints(item.name)">{{ bncs.name }}</a-menu-item>
                 </a-sub-menu>
             </template>
         <!--<a-menu-item key="allVideo"><cg-icon-svg name="video-one" class="svg_icon_common"></cg-icon-svg>全部视频</a-menu-item>-->
@@ -49,6 +49,9 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapState } from 'vuex'
+import { getTypePoint } from '@/api/map/service'
+import { emergencyPointStyle } from '@/utils/util.map.style'
 export default {
     name: 'operation',
     data(){
@@ -194,60 +197,6 @@ export default {
         clickYCHJBtn(){
             this.$emit('ychjOperate');
         },
-    }
-}
-import { mapState } from 'vuex'
-import { getTypePoint } from '@/api/map/service'
-import { emergencyPointStyle } from '@/utils/util.map.style'
-export default {
-    name: 'operation',
-    data(){
-        return{
-            isActive: false
-        }
-    },
-    props:{
-        isActiveOperation:{
-            type: Boolean,
-            default: false
-        }
-    },
-    watch:{
-        isActiveOperation: function(value){
-            console.log('isActive: ' + value);
-            if(value){
-                this.isActive = true;
-            }
-            else{
-                this.isActive = false;
-            }
-        }
-    },
-    mounted(){
-        this.$nextTick(() => {
-            const body = document.querySelector("body");
-            if (body.append) {
-                body.append(this.$el);
-            } else {
-                body.appendChild(this.$el);
-            }
-        });
-    },
-    methods:{
-        handleMenuClick(value){
-            console.log('handleMenuClick',value);
-            switch(value.key){
-                case 'add':
-                    console.log('add operation');
-                    this.$emit('addItem');
-                    break;
-                default:
-                    console.log('no operation');
-            }
-        },
-        clickYCHJBtn(){
-            this.$emit('ychjOperate');
-        },
         //在地图上显示不同类型点位
         showTypePoints(type){
           getTypePoint(type).then(points => {
@@ -255,11 +204,11 @@ export default {
           })
         }
     },
-    computed:{
-      ...mapState('map', [
-        'mapManager'
-      ]),
-    }
+      computed:{
+        ...mapState('map', [
+          'mapManager'
+        ]),
+      }
 }
 </script>
 <style lang="scss" scoped>
