@@ -16,7 +16,13 @@
         ></div>
       </div>
       <div class="modal-body" :style="padding">
-        <component v-if="Object.keys(componentId).length>0" :is="componentId" :sourceData="sourceData" @close="closeDialog" @hide="hideDialog" @show="showDialog"></component>
+        <component v-if="Object.keys(componentId).length>0"
+                   :is="componentId"
+                   :sourceData="sourceData"
+                   @close="closeDialog"
+                   @hide="hideDialog"
+                   @show="showDialog">
+        </component>
       </div>
     </div>
   </div>
@@ -111,13 +117,8 @@ export default{
         hideDialog(){
             this.isActive = true;
             setTimeout(()=>{
-              this.isActive = false;
               this.showModal = false;
             },600);
-            //
-            // setTimeout(()=>{
-            //     this.showModal = true;
-            // },3000);
         },
         //关闭dialog
         closeDialog(){
@@ -136,6 +137,7 @@ export default{
         },
         //显示dialog
         showDialog(){
+          this.isActive = false;
           this.showModal = true;
         }
     }

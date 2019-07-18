@@ -1,5 +1,5 @@
 <template>
-  <div class="top-operate-panel" :class="{ animation: isAnimationActive }" v-if="isActive">
+  <div class="top-operate-panel" :class="{ animation: isAnimationActive }" v-show="isActive">
     <a-dropdown>
       <a-menu slot="overlay" @click="handleOperateClick">
         <a-menu-item key="add"> <a-icon type="plus-square" theme="filled" />新增预案</a-menu-item>
@@ -155,13 +155,13 @@ export default {
                 this.isActive = true;
                 setTimeout(()=> {
                     this.isAnimationActive = true;
-                },200)
+                },100)
             }
             else{
                 this.isAnimationActive = false;
                 setTimeout(()=>{
                     this.isActive = false;
-                },1000);
+                },100);
 
             }
         },
@@ -177,14 +177,14 @@ export default {
         }
     },
     mounted(){
-        this.$nextTick(() => {
-            const body = document.querySelector("body");
-            if (body.append) {
-                body.append(this.$el);
-            } else {
-                body.appendChild(this.$el);
-            }
-        });
+        // this.$nextTick(() => {
+        //     const body = document.querySelector("body");
+        //     if (body.append) {
+        //         body.append(this.$el);
+        //     } else {
+        //         body.appendChild(this.$el);
+        //     }
+        // });
     },
     methods:{
         //预案操作：目前只有新增预案

@@ -182,36 +182,41 @@ export default {
     created(){},
     mounted(){
         let _this = this;
-        let p1 = this.getAllTypeData().then((res) => {
-            console.log(res);
+        // let p1 = this.getAllTypeData().then((res) => {
+        //     console.log(res);
+        //     if(res.code==0){
+        //         _this.typeList = res.data;
+        //     }
+        // })
+        // let p2 = this.getAllLevelData().then((res) => {
+        //     console.log(res);
+        //     if(res.code==0){
+        //         _this.levelList = res.data;
+        //     }
+        // })
+        this.getEmergencyYuAnInitData().then((res) => {
             if(res.code==0){
-                _this.typeList = res.data;
+                _this.typeList = res.data.typeData;
+                _this.levelList = res.data.levelData;
+                _this.form.setFieldsValue({
+                    typeId: _this.sourceData.typeId,
+                    levelId: _this.sourceData.levelId,
+                    rangeDay: _this.sourceData.startDay?[moment(_this.sourceData.startDay, 'YYYY-MM-DD'),moment(_this.sourceData.endDay, 'YYYY-MM-DD')]:undefined,
+                    position: _this.sourceData.position,
+                    description: _this.sourceData.description,
+                    areaId: _this.sourceData.areaId
+                });
+                _this.image = _this.sourceData.image?_this.sourceData.image:{};
+                _this.fileList = _this.sourceData.fileList?_this.sourceData.fileList:[];
+                _this.imageUrl = _this.image.newPath?_this.image.newPath:'';
             }
-        })
-        let p2 = this.getAllLevelData().then((res) => {
-            console.log(res);
-            if(res.code==0){
-                _this.levelList = res.data;
-            }
-        })
-        Promise.all([p1, p2]).then((result) => {
-            _this.form.setFieldsValue({
-                typeId: _this.sourceData.typeId,
-                levelId: _this.sourceData.levelId,
-                rangeDay: _this.sourceData.startDay?[moment(_this.sourceData.startDay, 'YYYY-MM-DD'),moment(_this.sourceData.endDay, 'YYYY-MM-DD')]:undefined,
-                position: _this.sourceData.position,
-                description: _this.sourceData.description,
-                areaId: _this.sourceData.areaId
-            });
-            _this.image = _this.sourceData.image?_this.sourceData.image:{};
-            _this.fileList = _this.sourceData.fileList?_this.sourceData.fileList:[];
-            _this.imageUrl = _this.image.newPath?_this.image.newPath:'';
+
         }).catch((error) => {
             console.log(error)
         })
     },
     methods:{
-        ...mapActions('emergency/emergency', ['getAllTypeData','getAllLevelData','addNewEmergencyYuAn']),
+        ...mapActions('emergency/emergency', ['getEmergencyYuAnInitData','addNewEmergencyYuAn']),
         init(){
         },
         //时间不可选设置
@@ -220,17 +225,17 @@ export default {
         },
         //选择区域
         changePaintMethod(val,option){
-          let _this = this;
-          if(draw){
-            this.mapManager.inactivateDraw(draw);
-          }
-          draw = this.mapManager.activateDraw(val)[0];
-          console.log('changePaintMethod',val,option);
-          this.$emit('hide');
-          draw.on('drawend', function() {
-            _this.mapManager.inactivateDraw(draw);
-            _this.$emit('show');
-          })
+            console.log('changePaintMethod',val,option);
+            this.$emit('hide');
+            let _this = this;
+            if(draw){
+                this.mapManager.inactivateDraw(draw);
+            }
+            draw = this.mapManager.activateDraw(val)[0];
+            draw.on('drawend', function() {
+                _this.mapManager.inactivateDraw(draw);
+                _this.$emit('show');
+            })
         },
         //照片上传之前的校验
         beforeUpload (file,filelist) {

@@ -42,7 +42,7 @@
                     @change="changePagination"
             />
         </div>
-        <operation :isActiveOperation="isActiveOperation" @addItem="addItemOperation" @ychjOperate="ychjOperation"></operation>
+        <operation ref="Operate" :class="{position:addPositionClass}" :isActiveOperation="isActiveOperation" @addItem="addItemOperation" @ychjOperate="ychjOperation"></operation>
         <custom-dialog
                 :visible.sync="dialogVisible"
                 :dWidth="dWidth"
@@ -76,6 +76,8 @@
         name: 'page6',
         data(){
             return{
+                //
+                addPositionClass: false,
                 //查询条件
                 query:{
                     searchContent: '',  //搜索关键字
@@ -131,10 +133,31 @@
             YuAnInfo
         },
         computed: {
+            ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
             ...mapState('cgadmin/page', ['current'])
+        },
+        watch:{
+            asideCollapse: function(val){
+                console.log('asideCollapse 777777',val);
+                this.isActiveOperation = false;
+                //true:展开，false:关闭
+                if(val){
+                    setTimeout(()=>{
+                        this.addPositionClass = !val;
+                        this.isActiveOperation = true;
+                    },300);
+                }
+                else{
+                    this.addPositionClass = !val;
+                    setTimeout(()=>{
+                        this.isActiveOperation = true;
+                    },300);
+                }
+            }
         },
         mounted(){
             this.getDataList();
+            this.isActiveOperation = true;
         },
         beforeDestroy(){
             //this.isActiveOperation = false;
@@ -149,7 +172,6 @@
                     this.dataArr = res.data;
                     this.totalSize = res.total;
                     this.showLoading = false;
-                    this.isActiveOperation = true;
                 })
             },
             //搜索关键字查询
@@ -263,6 +285,10 @@
         .pagination-panel {
             text-align: right;
             padding: 20px 20px 0px 0px;
+        }
+        .position{
+            left: 380px;
+            top: 20px;
         }
     }
 </style>

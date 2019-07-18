@@ -1,23 +1,35 @@
-import { getAllTypeData,getAllLevelData,getEmergencyYuAnList,addNewEmergencyYuAn,deleteEmergencyYuAn,getAllEmergencyPeople } from '@/api/emergency/index.js'
+import { getEmergencyYuAnInitData,getEmergencyYuAnList,addNewEmergencyYuAn,deleteEmergencyYuAn,getAllEmergencyPeople } from '@/api/emergency/index.js'
 
 export default {
     namespaced: true,
     actions: {
-        getAllTypeData(state,data){
+        // getAllTypeData(state,data){
+        //     return new Promise((resolve, reject) =>{
+        //         getAllTypeData(data)
+        //             .then(res => {
+        //                 resolve(res)
+        //             })
+        //             .catch(err => {
+        //                 console.log(err)
+        //                 reject(err)
+        //             })
+        //     })
+        // },
+        // getAllLevelData(state,data){
+        //     return new Promise((resolve, reject) =>{
+        //         getAllLevelData(data)
+        //             .then(res => {
+        //                 resolve(res)
+        //             })
+        //             .catch(err => {
+        //                 console.log(err)
+        //                 reject(err)
+        //             })
+        //     })
+        // },
+        getEmergencyYuAnInitData(state,data){
             return new Promise((resolve, reject) =>{
-                getAllTypeData(data)
-                    .then(res => {
-                        resolve(res)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        reject(err)
-                    })
-            })
-        },
-        getAllLevelData(state,data){
-            return new Promise((resolve, reject) =>{
-                getAllLevelData(data)
+                getEmergencyYuAnInitData(data)
                     .then(res => {
                         resolve(res)
                     })

@@ -37,3 +37,26 @@ const getAllLevelData = (options) => {
     )
 }
 Mock.mock(/\/@test\/getAllLevelData/, 'get', getAllLevelData);
+
+const getEmergencyYuAnInitData = (options) => {
+    console.log('getEmergencyYuAnInitData options',options);
+    const queryParameters = getQueryParameters(options);
+    console.log('getEmergencyYuAnInitData query',queryParameters);
+    let levelData = [{'id':0,'name':'重大'},{'id':1,'name':'一般'}];
+    let typeData = [{'id':0,'name':'火灾演练'},{'id':1,'name':'消防演练'},{'id':2,'name':'台风演练'},{'id':3,'name':'洪涝演练'}];
+
+    return builder(
+        {
+            code: 0,
+            data:{
+                levelData:levelData,
+                typeData:typeData
+            },
+            msg: '操作成功'
+        },
+        '请求成功',
+        0,
+        { 'Custom-Header': Mock.mock('@id') }
+    )
+}
+Mock.mock(/\/@test\/getEmergencyYuAnInitData/, 'get', getEmergencyYuAnInitData);

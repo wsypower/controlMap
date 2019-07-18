@@ -92,6 +92,26 @@ export function getAllLevelData(data){
     })
 }
 
+
+/**
+ * @description 获取所有类型，等级数据
+ * @author moxuejuan
+ * @date 2019-07-18 15:53:20
+ * @method： GET
+ * @response：{data:{
+ *     {Number} id: 等级Id
+ *     {String} name: 等级名称
+ * }}
+ */
+export function getEmergencyYuAnInitData(data){
+    console.log('api:getEmergencyYuAnInitData',data);
+    return request({
+        url: '@test/getEmergencyYuAnInitData?_t='+ new Date().getTime(),
+        method: 'get',
+        params: data
+    })
+}
+
 /**
  * @description 登录应急预案列表数据
  * @author moxuejuan
