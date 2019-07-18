@@ -7,11 +7,15 @@
 export default {
   namespaced: true,
   state: {
-    mapManager: null, // 车辆管理-地图管理器
+    mapManager: null,
+    drawEnd:false
   },
   mutations: {
     setMapManager(state, mapManager) {
       state.mapManager = mapManager;
+    },
+    setDrawEnd(state, drawEnd) {
+      state.drawEnd = drawEnd;
     },
   },
   actions: {

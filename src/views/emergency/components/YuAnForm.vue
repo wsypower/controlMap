@@ -137,12 +137,15 @@
 </template>
 <script type="text/ecmascript-6">
 import moment from 'moment';
-import { mapActions } from 'vuex';
+import { mapActions,mapState } from 'vuex';
+import { mapMutations } from 'vuex'
+let draw;
+const namespace = 'map'
 export default {
     name: 'yuanForm',
     data(){
         return{
-            form: this.$form.createForm(this),
+           form: this.$form.createForm(this),
             //校验配置
             config: {rules: [{ required: true, message: '请选择' }]},
             //类型数据
@@ -150,11 +153,12 @@ export default {
             //等级数据
             levelList: [],
             //区域数据
-            areaList:[{'id':0,'name':'正方形'},
-                {'id':1,'name':'矩形'},
-                {'id':2,'name':'圆形'},
-                {'id':3,'name':'多边形'},
-                {'id':4,'name':'任意面'}],
+            areaList:[
+              {'id':0,'name':'正方形'},
+              {'id':1,'name':'矩形'},
+              {'id':2,'name':'圆形'},
+              {'id':3,'name':'多边形'},
+              {'id':4,'name':'任意面'}],
             //照片路径，全路径
             imageUrl: '',
             //照片上传后得到的照片对象
@@ -163,7 +167,6 @@ export default {
             fileLoading: false,
             //附件上传后得到的附件对象数组
             fileList:[]
-
         }
     },
     props:{
@@ -206,12 +209,13 @@ export default {
         }).catch((error) => {
             console.log(error)
         })
-
     },
     methods:{
+        ...mapMutations(namespace, [
+          'setDrawEnd',
+        ]),
         ...mapActions('emergency/emergency', ['getAllTypeData','getAllLevelData','addNewEmergencyYuAn']),
         init(){
-
         },
         //时间不可选设置
         disabledDate(current) {
@@ -219,8 +223,15 @@ export default {
         },
         //选择区域
         changePaintMethod(val,option){
+          if(draw){
+            this.mapManager.inactivateDraw(draw);
+          }
+          draw = this.mapManager.activateDraw(val)[0];
           console.log('changePaintMethod',val,option);
           this.$emit('hide');
+          draw.on('drawend', function() {
+            this.setDrawEnd(true)
+          })
         },
         //照片上传之前的校验
         beforeUpload (file,filelist) {
@@ -297,6 +308,11 @@ export default {
                 })
             });
         }
+    },
+    computed:{
+      ...mapState('map', [
+        'mapManager'
+      ]),
     }
 }
 </script>
