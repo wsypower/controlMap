@@ -19,7 +19,7 @@
       <span class="memu-title-text">远程呼叫</span>
       <a-icon type="right" style="font-size: 12px;" />
     </a-button>
-    <a-dropdown>
+    <a-dropdown v-model="visible">
         <a-button class="op-btn yjzy-btn">
             <i class="icon_yjzy">
                 <cg-icon-svg name="yinjiguanli" class="svg_icon_yinjiguanli"></cg-icon-svg>
@@ -27,23 +27,13 @@
             <span class="memu-title-text">应急资源</span>
             <a-icon type="down" />
         </a-button>
-        <a-menu slot="overlay" @click="handleResourceClick">
+        <a-menu slot="overlay" multiple :openKeys.sync="openKeys" @click="handleResourceClick">
             <template v-for="(item, index) in selectType">
-                <a-menu-item v-if="!item.children" :key="item.key" @click="showTypePoints(item.name)"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>{{item.name}}</a-menu-item>
+                <a-menu-item v-if="!item.children" :key="item.key" @click="clickShowPoints(item.name)"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>{{item.name}}</a-menu-item>
                 <a-sub-menu v-if="item.children" :key="item.key"><span slot="title"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg><span>{{item.name}}</span></span>
-                    <a-menu-item v-for="(bncs, index) in item.children" :key="bncs.key" @click="showTypePoints(item.name)">{{ bncs.name }}</a-menu-item>
+                    <a-menu-item v-for="(bncs, index) in item.children" :key="bncs.key" @click="showTypePoints(bncs.key)"><a-checkbox :checked="bncs.checked" class="checkbox_d"></a-checkbox>{{ bncs.name }}</a-menu-item>
                 </a-sub-menu>
             </template>
-        <!--<a-menu-item key="allVideo"><cg-icon-svg name="video-one" class="svg_icon_common"></cg-icon-svg>全部视频</a-menu-item>-->
-        <!--<a-menu-item key="partVideo"><cg-icon-svg name="video-two" class="svg_icon_common"></cg-icon-svg>周边视频</a-menu-item>-->
-        <!--<a-menu-item key="jiuyuan"><cg-icon-svg name="menu-section" class="svg_icon_common"></cg-icon-svg>救援队伍</a-menu-item>-->
-        <!--<a-sub-menu><span slot="title"><cg-icon-svg name="zhangpeng" class="svg_icon_common"></cg-icon-svg><span>避难场所</span></span>-->
-            <!--<a-menu-item key="allPlace">全部</a-menu-item>-->
-            <!--<a-menu-item v-for="(item, index) in placeList" :key="item.key">{{ item.name }}</a-menu-item>-->
-        <!--</a-sub-menu>-->
-        <!--<a-menu-item key="equip"><cg-icon-svg name="wuzi" class="svg_icon_common"></cg-icon-svg>物资装备</a-menu-item>-->
-        <!--<a-menu-item key="enterprise"><cg-icon-svg name="jianzhu" class="svg_icon_common"></cg-icon-svg>物资企业</a-menu-item>-->
-        <!--<a-menu-item key="expert"><cg-icon-svg name="zhuanjia" class="svg_icon_common"></cg-icon-svg>专家库</a-menu-item>-->
       </a-menu>
     </a-dropdown>
   </div>
@@ -56,37 +46,16 @@ export default {
     name: 'operation',
     data(){
         return{
+            //应急资源菜单显示
+            visible: false,
+            //应急资源二级菜单显示
+            openKeys:[],
             //是否添加动效
             isAnimationActive: false,
             //组件是否渲染
             isActive: false,
-            //避难场所下的所有类别
-            // placeList:[
-            //   {
-            //     'key':'allPlace',
-            //     'name':'全部',
-            //   },
-            //     {
-            //       'key':'jiuzhuzhan',
-            //       'name':'救助管理站',
-            //     },
-            //     {
-            //       'key':'park',
-            //       'name':'公园'
-            //     },
-            //     {
-            //       'key':'square',
-            //       'name':'广场'
-            //     },
-            //     {
-            //       'key':'greenbelt'
-            //       ,'name':'绿地'
-            //     },
-            //     {'key':'otherbncs','name':'其他避难场所'},
-            //     {'key':'fangkongdong','name':'防空洞'},
-            //     {'key':'fkdxs','name':'防空地下室'},
-            //     {'key':'fkbjzd','name':'防空报警站点'},
-            //     {'key':'othergongshi','name':'其他人防工事'}],
+
+            //应急资源选择类别
           selectType:[{
             key:'allVideo',
             name:'全部视频',
@@ -100,35 +69,60 @@ export default {
             name:'救援队伍',
             icon:'menu-section'
           },{
-            key:'',
+            key:'bncs',
             name:'避难场所',
             icon:'zhangpeng',
-            children:[
-              {
-                'key':'allPlace',
-                'name':'全部',
-              },
-              {
-                'key':'jiuzhuzhan',
-                'name':'救助管理站',
-              },
-              {
-                'key':'park',
-                'name':'公园'
-              },
-              {
-                'key':'square',
-                'name':'广场'
-              },
-              {
-                'key':'greenbelt'
-                ,'name':'绿地'
-              },
-              {'key':'otherbncs','name':'其他避难场所'},
-              {'key':'fangkongdong','name':'防空洞'},
-              {'key':'fkdxs','name':'防空地下室'},
-              {'key':'fkbjzd','name':'防空报警站点'},
-              {'key':'othergongshi','name':'其他人防工事'}]
+            children: [
+                {
+                    'key':'allPlace',
+                    'name':'全部',
+                    'checked': false
+                },
+                {
+                    'key':'jiuzhuzhan',
+                    'name':'救助管理站',
+                    'checked': false
+                },
+                {
+                    'key':'park',
+                    'name':'公园',
+                    'checked': false
+                },
+                {
+                    'key':'square',
+                    'name':'广场',
+                    'checked': false
+                },
+                {
+                    'key':'greenbelt'
+                    ,'name':'绿地',
+                    'checked': false
+                },
+                {
+                    'key':'otherbncs',
+                    'name':'其他避难场所',
+                    'checked': false
+                },
+                {
+                    'key':'fangkongdong',
+                    'name':'防空洞',
+                    'checked': false
+                },
+                {
+                    'key':'fkdxs',
+                    'name':'防空地下室',
+                    'checked': false
+                },
+                {
+                    'key':'fkbjzd',
+                    'name':'防空报警站点',
+                    'checked': false
+                },
+                {
+                    'key':'othergongshi',
+                    'name':'其他人防工事',
+                    'checked': false
+                }]
           },{
             key:'equip',
             name:'物资装备',
@@ -141,7 +135,9 @@ export default {
             key:'expert',
             name:'专家库',
             icon:'zhuanjia'
-          },]
+          }],
+            //已勾选的避难场所
+          checkedPlaceList:[],
         }
     },
     props:{
@@ -168,6 +164,16 @@ export default {
                 },1000);
 
             }
+        },
+        selectType: function(newValue){
+            this.checkedPlaceList = [];
+            let placeList = this.selectType[3].children;
+            for(let i=1;i<placeList.length;i++){
+                if(placeList[i].checked){
+                    this.checkedPlaceList.push(placeList[i].name);
+                }
+            }
+            console.log('this.checkedPlaceList',this.checkedPlaceList);
         }
     },
     mounted(){
@@ -197,11 +203,62 @@ export default {
         clickYCHJBtn(){
             this.$emit('ychjOperate');
         },
+        handleResourceClick(e){
+            this.openKeys = [...e.keyPath];
+            console.log('handleResourceClick openKeys',e,this.openKeys);
+        },
+        clickShowPoints(typeName){
+            console.log('clickShowPoints 000000000000000000000000000000');
+            getTypePoint(typeName).then(points => {
+                const layer = this.mapManager.addVectorLayerByFeatures(points, emergencyPointStyle(typeName), 1)
+            })
+        },
         //在地图上显示不同类型点位
-        showTypePoints(type){
-          getTypePoint(type).then(points => {
-            const layer = this.mapManager.addVectorLayerByFeatures(points, emergencyPointStyle(type), 1)
+        showTypePoints(key){
+            console.log('showTypePoints 111111111111111111111111');
+            let typeName = '公园';
+            let placeList = this.selectType[3].children;
+
+            if(key=='allPlace'){
+                placeList[0].checked = !placeList[0].checked;
+                if(placeList[0].checked){
+                    for(let i=1;i<placeList.length;i++){
+                        placeList[i].checked = true;
+                    }
+                    typeName = placeList[0].name;
+                }
+                else{
+                    for(let i=1;i<placeList.length;i++){
+                        placeList[i].checked = false;
+                    }
+                }
+            }
+            else{
+                for(let i=1;i<placeList.length;i++){
+                    if(placeList[i].key == key){
+                        placeList[i].checked = !placeList[i].checked;
+                        if(placeList[i].checked){
+                            typeName = placeList[i].name;
+                        }
+                    }
+                }
+            }
+          getTypePoint(typeName).then(points => {
+            const layer = this.mapManager.addVectorLayerByFeatures(points, emergencyPointStyle(typeName), 1)
           })
+        },
+        debounce(func, wait) {
+            let timeout;
+            return function () {
+                let context = this;
+                let args = arguments;
+
+                if (timeout) clearTimeout(timeout);
+
+                timeout = setTimeout(() => {
+                    func.apply(context, args)
+                }, wait);
+            }
         }
     },
       computed:{
@@ -295,6 +352,11 @@ export default {
     color: #2b8ff3;
   }
 }
+/deep/.ant-dropdown-menu-item-selected{
+    .svg_icon_common {
+        color: #2b8ff3;
+    }
+}
 /deep/.ant-dropdown-menu-submenu-title:hover {
   background-color: #eaf1fa;
   color: #2b8ff3;
@@ -302,4 +364,7 @@ export default {
     color: #2b8ff3;
   }
 }
+    .checkbox_d{
+        margin-right: 6px;
+    }
 </style>
