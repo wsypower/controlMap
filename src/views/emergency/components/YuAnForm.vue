@@ -211,9 +211,6 @@ export default {
         })
     },
     methods:{
-        ...mapMutations(namespace, [
-          'setDrawEnd',
-        ]),
         ...mapActions('emergency/emergency', ['getAllTypeData','getAllLevelData','addNewEmergencyYuAn']),
         init(){
         },
@@ -223,6 +220,7 @@ export default {
         },
         //选择区域
         changePaintMethod(val,option){
+          let _this = this;
           if(draw){
             this.mapManager.inactivateDraw(draw);
           }
@@ -230,7 +228,8 @@ export default {
           console.log('changePaintMethod',val,option);
           this.$emit('hide');
           draw.on('drawend', function() {
-            this.setDrawEnd(true)
+            _this.mapManager.inactivateDraw(draw);
+            _this.$emit('show');
           })
         },
         //照片上传之前的校验

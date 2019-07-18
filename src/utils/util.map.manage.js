@@ -8,10 +8,8 @@ import { Heatmap as HeatmapLayer } from 'ol/layer'
 import VectorSource from 'ol/source/Vector'
 import GeoJSON from 'ol/format/GeoJSON'
 import Overlay from 'ol/Overlay'
-// import { Draw } from 'ol/interaction'
 import Draw, {createRegularPolygon, createBox} from 'ol/interaction/Draw.js';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';
-import store from '@/store/modules/map/index';
 
 export class MapManager {
   constructor(map) {
@@ -162,21 +160,11 @@ export class MapManager {
     this.map.addLayer(vector)
     return [draw, vector];
   }
-
   /**
    *  @description:取消激活绘制功能
    */
   inactivateDraw(draw) {
     this.map.removeInteraction(draw)
-  }
-  
-  /**
-   * @description:绘制完成事件处理
-   * @author:sijianting
-   * @createDate:2019/7/17 14:45
-   */
-  handleDraw(draw){
-
   }
   /**
    * @description:移除单个图层

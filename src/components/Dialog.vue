@@ -16,13 +16,12 @@
         ></div>
       </div>
       <div class="modal-body" :style="padding">
-        <component v-if="Object.keys(componentId).length>0" :is="componentId" :sourceData="sourceData" @close="closeDialog" @hide="hideDialog"></component>
+        <component v-if="Object.keys(componentId).length>0" :is="componentId" :sourceData="sourceData" @close="closeDialog" @hide="hideDialog" @show="showDialog"></component>
       </div>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapState } from 'vuex';
 export default{
     name: 'customDialog',
     data(){
@@ -92,9 +91,6 @@ export default{
                 paddingLeft: this.bodyPadding[3]||0 + 'px'
             }
         },
-      ...mapState('map', [
-        'drawEnd'
-      ]),
     },
     mounted(){
         //挂载到body上
@@ -107,15 +103,7 @@ export default{
             }
         });
     },
-    watch:{
-      'drawEnd':function(draw){
-        console.log(draw)
-        if(draw==true){
-          this.showModal = true;
-          this.drawEnd=false;
-        }
-      }
-    },
+    watch:{},
     methods:{
         init(){
         },
@@ -145,6 +133,10 @@ export default{
                 console.log('关闭dialog ' + result);
                 _this.closeCallBack&&_this.closeCallBack();
             });
+        },
+        //显示dialog
+        showDialog(){
+          this.showModal = true;
         }
     }
 }
