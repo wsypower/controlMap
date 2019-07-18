@@ -22,6 +22,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapState } from 'vuex';
 export default{
     name: 'customDialog',
     data(){
@@ -90,7 +91,10 @@ export default{
                 paddingBottom: this.bodyPadding[2]||0 + 'px',
                 paddingLeft: this.bodyPadding[3]||0 + 'px'
             }
-        }
+        },
+      ...mapState('map', [
+        'drawEnd'
+      ]),
     },
     mounted(){
         //挂载到body上
@@ -103,6 +107,15 @@ export default{
             }
         });
     },
+    watch:{
+      'drawEnd':function(draw){
+        console.log(draw)
+        if(draw==true){
+          this.showModal = true;
+          this.drawEnd=false;
+        }
+      }
+    },
     methods:{
         init(){
         },
@@ -110,13 +123,13 @@ export default{
         hideDialog(){
             this.isActive = true;
             setTimeout(()=>{
-                this.isActive = false;
-                this.showModal = false;
+              this.isActive = false;
+              this.showModal = false;
             },600);
-
-            setTimeout(()=>{
-                this.showModal = true;
-            },3000);
+            //
+            // setTimeout(()=>{
+            //     this.showModal = true;
+            // },3000);
         },
         //关闭dialog
         closeDialog(){

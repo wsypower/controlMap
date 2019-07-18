@@ -31,7 +31,7 @@
             <template v-for="(item, index) in selectType">
                 <a-menu-item v-if="!item.children" :key="item.key" @click="showTypePoints(item.name)"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>{{item.name}}</a-menu-item>
                 <a-sub-menu v-if="item.children" :key="item.key"><span slot="title"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg><span>{{item.name}}</span></span>
-                    <a-menu-item v-for="(bncs, index) in item.children" :key="bncs.key" @click="showTypePoints(item.name)">{{ bncs.name }}</a-menu-item>
+                    <a-menu-item v-for="(bncs, index) in item.children" :key="bncs.key" @click="showTypePoints(bncs.name)">{{ bncs.name }}</a-menu-item>
                 </a-sub-menu>
             </template>
         <!--<a-menu-item key="allVideo"><cg-icon-svg name="video-one" class="svg_icon_common"></cg-icon-svg>全部视频</a-menu-item>-->
@@ -199,6 +199,7 @@ export default {
         },
         //在地图上显示不同类型点位
         showTypePoints(type){
+          console.log(type);
           getTypePoint(type).then(points => {
             const layer = this.mapManager.addVectorLayerByFeatures(points, emergencyPointStyle(type), 1)
           })
