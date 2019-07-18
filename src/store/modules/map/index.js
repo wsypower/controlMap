@@ -7,16 +7,12 @@
 export default {
   namespaced: true,
   state: {
-    mapManager: null,
-    drawEnd:false
+    mapManager: null
   },
   mutations: {
     setMapManager(state, mapManager) {
       state.mapManager = mapManager;
-    },
-    setDrawEnd(state, drawEnd) {
-      state.drawEnd = drawEnd;
-    },
+    }
   },
   actions: {
 

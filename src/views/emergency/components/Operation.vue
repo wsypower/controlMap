@@ -199,7 +199,6 @@ export default {
         },
         //在地图上显示不同类型点位
         showTypePoints(type){
-          console.log(type);
           getTypePoint(type).then(points => {
             const layer = this.mapManager.addVectorLayerByFeatures(points, emergencyPointStyle(type), 1)
           })
