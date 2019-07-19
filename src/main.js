@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-07-11 15:53:33
+ * @Last Modified time: 2019-07-17 10:12:40
  */
 // Vue
 import Vue from 'vue'
@@ -33,8 +33,10 @@ new Vue({
   created() {
     // 获取userId并登陆
     this.$store.dispatch('cgadmin/account/login').then(() => {
+      console.log(111)
       //登录后获取用户权限
       const role = this.$store.getters['cgadmin/user/role']
+      console.log(role)
       //设置侧边栏菜单
       const menu = menuAside.filter(v => v.role.includes(role))
       this.$store.commit('cgadmin/menu/asideSet', menu)
@@ -43,6 +45,8 @@ new Vue({
     this.$store.commit('cgadmin/menu/asideCollapseSetState', setting.menu.asideCollapse)
   },
   mounted() {
+    // 展示系统信息
+    this.$store.commit('cgadmin/releases/versionShow')
     // 获取并记录用户 UA
     this.$store.commit('cgadmin/ua/get')
   }

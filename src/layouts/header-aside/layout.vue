@@ -12,7 +12,7 @@
         <!-- 主体 右侧上按钮栏 -->
         <div class="container__aside--top">
           <a-button class="container__aside__item" type="primary">1</a-button>
-          <a-button class="container__aside__item" >2</a-button>
+          <a-button class="container__aside__item">2</a-button>
           <a-button class="container__aside__item">3</a-button>
           <a-button class="container__aside__item">4</a-button>
         </div>
@@ -27,7 +27,9 @@
         <div class="container__main">
           <!-- 功能抽屉 -->
           <layout-drawer>
-            <router-view />>
+            <keep-alive :include="keepAlive">
+              <router-view />
+            </keep-alive>
           </layout-drawer>
           <!-- 地图控件注入地址 -->
           <LayoutMap />
@@ -40,6 +42,7 @@
 <script>
 import { LayoutMenu, LayoutDrawer, LayoutHeader } from './components/index'
 import LayoutMap from '@/views/map/index.vue'
+import { mapState } from 'vuex'
 export default {
   name: 'layoutHeaderAside',
   components: {
@@ -48,12 +51,15 @@ export default {
     LayoutMap,
     LayoutHeader
   },
+  computed: {
+    ...mapState('cgadmin', {
+      keepAlive: state => state.page.keepAlive
+    })
+  },
   data() {
     return {}
   },
-  methods: {
-    
-  },
+  methods: {}
 }
 </script>
 

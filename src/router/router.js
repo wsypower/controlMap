@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-16 22:41:45
+ * @Last Modified time: 2019-07-17 10:58:10
  */
 
 /*=============================================
@@ -28,7 +28,9 @@ const frameIn = [
     name: 'layoutHeaderAside',
     redirect: { path: '/section' },
     component: layoutHeaderAside,
-    meta: { title: '管控平台' },
+    meta: {
+      title: '管控平台'
+    },
     children: [
       //测试 => page1
       {
@@ -42,10 +44,12 @@ const frameIn = [
         redirect: { path: '/section/warnList' },
         children: [
           {
+            name: 'warnList',
             path: '/section/warnList',
             meta: {
               title: '人员管控列表',
-              role: ['admin', 'super_editor']
+              role: ['admin', 'super_editor'],
+              cache: true
             },
             component: _import('section/list.vue')
           },

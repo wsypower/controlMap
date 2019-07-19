@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-08 11:11:41
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-05 17:19:34
+ * @Last Modified time: 2019-07-17 10:14:23
  */
 export default {
   namespaced: true,
@@ -12,7 +12,7 @@ export default {
   },
   getters: {
     role: state => {
-      return state.info.name.role
+      return state.info.name && state.info.name.role
     }
   },
   actions: {

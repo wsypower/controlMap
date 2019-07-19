@@ -58,7 +58,6 @@ export default {
     menuItemCange(item) {
       //当前menu伸缩状态
       let asideCollapse = this.asideCollapse
-      console.log(this.asideCollapse)
       return new Promise(resolve => {
         if (asideCollapse) {
           this.asideCollapseSet(false)

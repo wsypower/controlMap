@@ -1,14 +1,14 @@
 <template>
-  <div class="page">
-    <cg-container scroll>
-      <div style="width:100%;height:1000px;">测试页面切换滚动条重新置顶</div>
-    </cg-container>
-  </div>
+  <div class="page"></div>
 </template>
 
 <script>
+import { storagePointData } from '@/api/account/login'
 export default {
-  name: 'page2'
+  name: 'page2',
+  data() {
+    return {}
+  },
 }
 </script>
 

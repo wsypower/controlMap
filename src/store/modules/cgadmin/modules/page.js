@@ -21,8 +21,14 @@ export default {
      * @param {Object} state vuex state
      * @param {Object} param 从路由钩子的 to 对象上获取 { fullPath } 路由信息
      */
-    open({ commit }, { fullPath }) {
+    open({ commit }, { name, meta, fullPath }) {
+      const isCache = get(meta, 'cache', false)
+      console.log(isCache)
       return new Promise(resolve => {
+        // 如果这个页面需要缓存 将其添加到缓存设置
+        if (isCache) {
+          commit('keepAlivePush', name)
+        }
         // 设置当前页
         commit('currentSet', fullPath)
         resolve()
