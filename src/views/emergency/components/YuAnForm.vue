@@ -5,91 +5,56 @@
         <a-row style="height:100%">
           <a-col :span="12" style="height:100%">
             <cg-container scroll>
-              <a-form-item
-                label="类型"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                <a-select
-                    v-decorator="['typeId',config]"
-                    placeholder="请选择"
-                    style="width: 277px">
-                  <a-select-option
-                          v-for="(item,index) in typeList"
-                          :value="item.id"
-                          :key="item.id">
-                      {{item.name}}
+              <a-form-item label="类型" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+                <a-select v-decorator="['typeId', config]" placeholder="请选择" style="width: 277px">
+                  <a-select-option v-for="(item, index) in typeList" :value="item.id" :key="item.id">
+                    {{ item.name }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
-              <a-form-item
-                label="等级"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                <a-select
-                          v-decorator="['levelId',config]"
-                          placeholder="请选择"
-                          style="width: 277px">
-                  <a-select-option
-                          v-for="(item,index) in levelList"
-                          :value="item.id"
-                          :key="item.id">
-                      {{item.name}}
+              <a-form-item label="等级" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+                <a-select v-decorator="['levelId', config]" placeholder="请选择" style="width: 277px">
+                  <a-select-option v-for="(item, index) in levelList" :value="item.id" :key="item.id">
+                    {{ item.name }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
-              <a-form-item
-                label="时间"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                  <a-range-picker
-                          v-decorator="['rangeDay', config]"
-                          :disabledDate="disabledDate"
-                          format="YYYY-MM-DD"
-                          style="width: 277px"
-                  />
+              <a-form-item label="时间" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+                <a-range-picker
+                  v-decorator="['rangeDay', config]"
+                  :disabledDate="disabledDate"
+                  format="YYYY-MM-DD"
+                  style="width: 277px"
+                />
               </a-form-item>
-              <a-form-item
-                label="位置"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                <a-input v-decorator="['position',config]"
-                         placeholder="请输入" style="width: 277px" />
+              <a-form-item label="位置" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+                <a-input v-decorator="['position', config]" placeholder="请输入" style="width: 277px" />
               </a-form-item>
-              <a-form-item
-                label="信息"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                <a-textarea v-decorator="['description',config]"
-                        placeholder="请输入" :rows="2" :autosize="{minRows: 2, maxRows: 2}" style="width: 277px" />
+              <a-form-item label="信息" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+                <a-textarea
+                  v-decorator="['description', config]"
+                  placeholder="请输入"
+                  :rows="2"
+                  :autosize="{ minRows: 2, maxRows: 2 }"
+                  style="width: 277px"
+                />
               </a-form-item>
-              <a-form-item
-                label="区域"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                <a-select v-decorator="['areaId',config]"
-                          placeholder="请选择" style="width: 277px" @change="changePaintMethod">
-                  <a-select-option
-                          v-for="(item,index) in areaList"
-                          :value="item.id"
-                          :key="item.id">
-                      {{item.name}}
+              <a-form-item label="区域" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+                <a-select
+                  v-decorator="['areaId', config]"
+                  placeholder="请选择"
+                  style="width: 277px"
+                  @change="changePaintMethod"
+                >
+                  <a-select-option v-for="(item, index) in areaList" :value="item.id" :key="item.id">
+                    {{ item.name }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
             </cg-container>
           </a-col>
           <a-col :span="12">
-            <a-form-item
-              label="照片"
-              :label-col="{ span: 5 }"
-              :wrapper-col="{ span: 12 }"
-            >
+            <a-form-item label="照片" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
               <a-upload
                 name="file"
                 listType="picture-card"
@@ -104,11 +69,7 @@
                 <div v-else class="upload-btn"></div>
               </a-upload>
             </a-form-item>
-            <a-form-item
-              label="附件"
-              :label-col="{ span: 5 }"
-              :wrapper-col="{ span: 12 }"
-            >
+            <a-form-item label="附件" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
               <a-upload
                 name="file"
                 :multiple="false"
@@ -117,12 +78,17 @@
                 @change="handleFileChange"
               >
                 <a-button style="width: 277px;">
-                  <a-icon type="upload" /> 上传附件<a-icon style="margin-left: 20px;" v-if="fileLoading" type="loading"/>
+                  <a-icon type="upload" /> 上传附件<a-icon
+                    style="margin-left: 20px;"
+                    v-if="fileLoading"
+                    type="loading"
+                  />
                 </a-button>
               </a-upload>
-              <div v-if="fileList.length>0" class="upload-file-panel" flex="main:justify cross:center">
-                <div v-for="(file,index) in fileList" class="file-item" flex="cross:center">
-                  <span>{{file.basefile.oldName}}</span><a-icon type="close" @click="deleteFile(index)"/>
+              <div v-if="fileList.length > 0" class="upload-file-panel" flex="main:justify cross:center">
+                <div v-for="(file, index) in fileList" class="file-item" flex="cross:center">
+                  <span>{{ file.basefile.oldName }}</span
+                  ><a-icon type="close" @click="deleteFile(index)" />
                 </div>
               </div>
             </a-form-item>
@@ -138,13 +104,21 @@
 <script type="text/ecmascript-6">
 import moment from 'moment';
 import { mapActions,mapState } from 'vuex';
-import { mapMutations } from 'vuex'
+import WFS from 'ol/format/WFS';
+import Feature from 'ol/Feature';
+import MultiPolygon from 'ol/geom/MultiPolygon';
+import { fromCircle } from 'ol/geom/Polygon'
+import { getCenter } from 'ol/extent'
+import { postFeature } from '@/api/map/map'
 let draw;
-const namespace = 'map'
 export default {
     name: 'yuanForm',
     data(){
         return{
+           drawFeature:null,//绘制区域
+           drawType:0,//绘制区域类型
+           mapCenter:null,//绘制区域中心点位坐标
+           mapId:null,
            form: this.$form.createForm(this),
             //校验配置
             config: {rules: [{ required: true, message: '请选择' }]},
@@ -219,20 +193,23 @@ export default {
             return current && current < moment().endOf('day');
         },
         //选择区域
-        changePaintMethod(val,option){
-          let _this = this;
+        changePaintMethod(val){
+          const _this = this;
           if(draw){
             this.mapManager.inactivateDraw(draw);
           }
           console.log('====激活绘制====')
-          const draw = this.mapManager.activateDraw(val);
-          console.log('changePaintMethod',val,option);
+          draw = this.mapManager.activateDraw(val);
+          this.drawType=val;
           this.$emit('hide');
           draw.on('drawend', function(e) {
             _this.mapManager.inactivateDraw(draw);
             _this.$emit('show');
-            console.log('====绘制完成====')
-            console.log(e.feature.getProperties());
+            _this.drawFeature=e.feature;
+            const mapExtent = e.feature.getGeometry().getExtent();
+            _this.mapCenter= getCenter(mapExtent);
+            debugger;
+            _this.addDraw();
           })
         },
         //照片上传之前的校验
@@ -274,6 +251,45 @@ export default {
         deleteFile(index){
             this.fileList.splice(index,1);
         },
+        //获取随机绘制图形id
+        getMapId(){
+          return Number(Math.random().toString().substr(3,6) + Date.now()).toString(36);
+        },
+        //保存绘制图形数据到gis数据库
+        addDraw(){
+          let feature;
+          if(this.drawType==2) {
+            const polygon = fromCircle(this.drawFeature.getGeometry(), 32,90);
+            let mutiPolygon = new MultiPolygon({});
+            mutiPolygon.appendPolygon(polygon);
+            feature = new Feature({
+              geometry: mutiPolygon
+            })
+          }
+          else{
+            feature=this.drawFeature;
+          }
+            let prop=feature.getProperties();
+            prop["the_geom"]=prop["geometry"];
+            this.mapId=this.getMapId();
+            prop["mapid"]=this.mapId;
+            feature.setProperties(prop);
+            const format = new WFS();
+            const xml = format.writeTransaction([feature], null, null, {
+              featureNS: "http://www.haining.com",//该图层所在工作空间的uri
+              featurePrefix: "haining",//工作空间名称0
+              featureType: "预案区域",//图层名称
+            });
+            const serializer = new XMLSerializer();
+            // 将参数转换为xml格式数据
+            const featString = serializer.serializeToString(xml);
+            postFeature(featString).then((res) => {
+              var insertNum=res.children[0].children[0].children[0].textContent;
+              if(insertNum>0){
+                console.log('===保存成功====');
+              }
+            })
+        },
         //提交表单
         handleSubmit(e){
             e.preventDefault();
@@ -289,7 +305,6 @@ export default {
                     values.id = this.sourceData.id;
                 }
                 //编辑时状态status是否需要改变
-
                 values.imageStr = this.image.basefile.newPath + '|' + this.image.basefile.oldName;
                 let fileStr = '';
                 for(let i=0;i<this.fileList.length;i++){
@@ -350,23 +365,23 @@ export default {
       .upload-btn {
         width: 100%;
         height: 100%;
-        background: url("~@img/picture-upload.png") no-repeat;
+        background: url('~@img/picture-upload.png') no-repeat;
         background-size: 100% 100%;
       }
-      img{
+      img {
         max-width: 100%;
       }
     }
-    .upload-file-panel{
+    .upload-file-panel {
       height: 40px;
       width: 277px;
-      .file-item{
+      .file-item {
         width: 133px;
         height: 30px;
-        background-color: rgba(43,144,243,.2);
+        background-color: rgba(43, 144, 243, 0.2);
         border-radius: 4px;
-        span{
-          display:inline-block;
+        span {
+          display: inline-block;
           padding-left: 20px;
           width: 110px;
           text-overflow: ellipsis;
@@ -376,10 +391,10 @@ export default {
           line-height: 30px;
           color: #2b90f3;
         }
-        i{
-          color:#2b90f3;
+        i {
+          color: #2b90f3;
           cursor: pointer;
-          &:hover{
+          &:hover {
             color: #1761f3;
           }
         }
