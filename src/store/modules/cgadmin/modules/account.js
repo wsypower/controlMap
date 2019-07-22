@@ -11,13 +11,14 @@ export default {
      * @param {Object} param context
      * @param {Object} param route {Object} 登录成功后定向的路由对象 任何 vue-router 支持的格式
      */
-    login({ dispatch, rootGetters }) {
+    login({ dispatch, rootGetters, commit }) {
       return new Promise(resolve => {
         //获取url参数对象
         const UrlParameters = util.getURLParameters()
         //判断参数是不是key是不是userId
         const isUserId = has(UrlParameters, 'userId')
         if (!isUserId) {
+          console.log('meiyou isUserId')
           dispatch('logout')
           return false
         }
@@ -35,6 +36,7 @@ export default {
               },
               { root: true }
             )
+            commit('cgadmin/page/SpinningRefresh', null, { root: true })
             // 结束
             resolve(res)
           })
@@ -51,14 +53,15 @@ export default {
      * @param {Object} param confirm {Boolean} 是否需要确认
      */
     logout({ dispatch }) {
-      // 跳转路由
-      router.replace({
-        name: '401'
-      })
       // 删除cookie
       util.cookies.remove('userId')
       // 清空 vuex 用户信息
       dispatch('cgadmin/user/set', {}, { root: true })
+      // 跳转路由
+      console.log('跳转401')
+      router.replace({
+        name: '401'
+      })
     }
   }
 }

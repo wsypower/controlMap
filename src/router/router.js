@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-17 10:58:10
+ * @Last Modified time: 2019-07-19 19:04:34
  */
 
 /*=============================================
@@ -26,7 +26,7 @@ const frameIn = [
   {
     path: '/',
     name: 'layoutHeaderAside',
-    redirect: { path: '/section' },
+    // redirect: { path: '/section' },
     component: layoutHeaderAside,
     meta: {
       title: '管控平台'
@@ -147,7 +147,7 @@ const frameOut = []
 /* 没有权限-401 */
 const errorPage = [
   {
-    path: '*',
+    path: '/401',
     name: '401',
     component: _import('error/401')
   }

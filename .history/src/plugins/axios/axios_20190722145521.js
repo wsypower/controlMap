@@ -3,8 +3,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-12 15:19:30
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-07-22 14:55:49
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-07-22 14:54:35
  */
 /*=============================================
 =                    axios                    =
@@ -13,7 +13,6 @@ import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
 import { message } from 'ant-design-vue'
-import { resolve } from '../../../webstorm.config'
 import util from '@/utils/util'
 import store from '@/store'
 /*=============================================
@@ -116,6 +115,7 @@ service.interceptors.request.use(
 =============================================*/
 service.interceptors.response.use(
   /*----------  对响应数据进行的操作  ----------*/
+s
   /* 正确响应数据 => response */
   response => {
     // dataAxios 是 axios 返回数据中的 data

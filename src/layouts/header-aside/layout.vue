@@ -3,38 +3,40 @@
   <div class="layout__group">
     <!-- 主体内容 -->
     <div class="layout__content">
-      <!-- 顶栏 -->
-      <layout-header />
-      <!-- 主体 -->
-      <div class="container" flex>
-        <!-- 主体 左侧边栏 -->
-        <layout-menu />
-        <!-- 主体 右侧上按钮栏 -->
-        <div class="container__aside--top">
-          <a-button class="container__aside__item" type="primary">1</a-button>
-          <a-button class="container__aside__item">2</a-button>
-          <a-button class="container__aside__item">3</a-button>
-          <a-button class="container__aside__item">4</a-button>
-        </div>
-        <!-- 主体 右侧下按钮栏 -->
-        <div class="container__aside--bottom" flex="dir:top cross:top">
-          <a-button class="container__aside__item">1</a-button>
-          <a-button class="container__aside__item">2</a-button>
-          <a-button class="container__aside__item">3</a-button>
-          <a-button class="container__aside__item">4</a-button>
-        </div>
+      <a-spin tip="Loading..." size="large" :spinning="Spinning" :indicator="indicator">
+        <!-- 顶栏 -->
+        <layout-header />
         <!-- 主体 -->
-        <div class="container__main">
-          <!-- 功能抽屉 -->
-          <layout-drawer>
-            <keep-alive :include="keepAlive">
-              <router-view />
-            </keep-alive>
-          </layout-drawer>
-          <!-- 地图控件注入地址 -->
-          <LayoutMap />
+        <div class="container" flex>
+          <!-- 主体 左侧边栏 -->
+          <layout-menu />
+          <!-- 主体 右侧上按钮栏 -->
+          <div class="container__aside--top">
+            <a-button class="container__aside__item" type="primary">1</a-button>
+            <a-button class="container__aside__item">2</a-button>
+            <a-button class="container__aside__item">3</a-button>
+            <a-button class="container__aside__item">4</a-button>
+          </div>
+          <!-- 主体 右侧下按钮栏 -->
+          <div class="container__aside--bottom" flex="dir:top cross:top">
+            <a-button class="container__aside__item">1</a-button>
+            <a-button class="container__aside__item">2</a-button>
+            <a-button class="container__aside__item">3</a-button>
+            <a-button class="container__aside__item">4</a-button>
+          </div>
+          <!-- 主体 -->
+          <div class="container__main">
+            <!-- 功能抽屉 -->
+            <layout-drawer>
+              <keep-alive :include="keepAlive">
+                <router-view />
+              </keep-alive>
+            </layout-drawer>
+            <!-- 地图控件注入地址 -->
+            <LayoutMap />
+          </div>
         </div>
-      </div>
+      </a-spin>
     </div>
   </div>
 </template>
@@ -53,8 +55,12 @@ export default {
   },
   computed: {
     ...mapState('cgadmin', {
-      keepAlive: state => state.page.keepAlive
-    })
+      keepAlive: state => state.page.keepAlive,
+      Spinning: state => state.page.Spinning
+    }),
+    indicator() {
+      return <a-icon type="loading" style="font-size: 24px" spin />
+    }
   },
   data() {
     return {}
@@ -72,6 +78,15 @@ export default {
   &__content {
     @extend %fu;
     position: relative;
+    /* ant-Vue spin修改样式*/
+    /deep/.ant-spin-nested-loading {
+      width: 100%;
+      height: 100%;
+    }
+    /deep/.ant-spin-container {
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 
@@ -79,6 +94,7 @@ export default {
 .container {
   width: 100%;
   height: 100%;
+
   &__main {
     width: calc(100% - 60px);
     height: 100%;

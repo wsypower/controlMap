@@ -3,11 +3,13 @@ import router from '@/router/index'
 
 // 判定是否需要缓存
 //根据 object对象的path路径获取值。 如果解析 value 是 undefined 会以 defaultValue 取代。
-const isKeepAlive = data => get(data, 'meta.cache', false)
+// const isKeepAlive = data => get(data, 'meta.cache', false)
 
 export default {
   namespaced: true,
   state: {
+    //首页加载动效
+    Spinning: true,
     // 当前页面
     current: '',
     // 需要缓存的页面 name
@@ -21,14 +23,16 @@ export default {
      * @param {Object} state vuex state
      * @param {Object} param 从路由钩子的 to 对象上获取 { fullPath } 路由信息
      */
-    open({ commit }, { name, meta, fullPath }) {
-      const isCache = get(meta, 'cache', false)
-      console.log(isCache)
+    open({ state, commit }, { name, meta, fullPath }) {
+      console.log('走跳转页面')
+      // const isCache = get(meta, 'cache', false)
+      // console.log(isCache)
       return new Promise(resolve => {
         // 如果这个页面需要缓存 将其添加到缓存设置
-        if (isCache) {
-          commit('keepAlivePush', name)
-        }
+        // if (isCache) {
+        //   commit('keepAlivePush', name)
+        //   console.log(state.keepAlive)
+        // }
         // 设置当前页
         commit('currentSet', fullPath)
         resolve()
@@ -36,6 +40,9 @@ export default {
     }
   },
   mutations: {
+    SpinningRefresh(state) {
+      state.Spinning = !state.Spinning
+    },
     /**
      * @class keepAlive
      * @description 从已经打开的页面记录中更新需要缓存的页面记录
