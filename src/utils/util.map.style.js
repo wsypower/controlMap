@@ -5,12 +5,36 @@
  */
 import Icon from 'ol/style/Icon'
 import Style from 'ol/style/Style'
+import Fill from 'ol/style/Fill';
+import Stroke from 'ol/style/Stroke';
 
+/**
+ * @description:应急预案应急资源点位样式
+ * @author:sijianting
+ * @createDate:2019/7/22 14:47
+ */
 export function emergencyPointStyle(type) {
   return new Style({
     image: new Icon({
       src: require('@/assets/mapImage/' + type + '.png')
     }),
     anchor: [0.5, 1]
+  })
+}
+
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2019/7/22 15:16
+ */
+export function emergencyAreaStyle() {
+  return new Style({
+    stroke: new Stroke({
+      color: 'rgb(240,113,113)',
+      width: 3
+    }),
+    fill: new Fill({
+      color: 'rgba(80,207,63,.1)'
+    })
   })
 }
