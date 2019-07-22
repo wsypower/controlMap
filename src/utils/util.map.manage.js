@@ -139,7 +139,7 @@ export class MapManager {
       })
     }
     this.map.addInteraction(draw)
-    let vector = new VectorLayer({
+    let drawLayer = new VectorLayer({
       source: source,
       style: new Style({
         fill: new Fill({
@@ -157,8 +157,8 @@ export class MapManager {
         })
       })
     })
-    this.map.addLayer(vector)
-    return [draw, vector];
+    this.map.addLayer(drawLayer)
+    return draw
   }
   /**
    *  @description:取消激活绘制功能

@@ -19,12 +19,14 @@ import WMTS from 'ol/source/WMTS'
 import WMTSTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent'
 import { MapManager } from '@/utils/util.map.manage'
-import LinearRing from 'ol/geom/LinearRing.js';
-import {Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon} from 'ol/geom.js';
+import WFS from 'ol/format/WFS';
+// import LinearRing from 'ol/geom/LinearRing.js';
+// import {Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon} from 'ol/geom.js';
+import { postFeature } from '@/api/map/map'
 
 const namespace = 'map'
 let mapManager
-let drawLayer
+let draw;
 export default {
   data() {
     return {
@@ -42,15 +44,9 @@ export default {
       'setMapManager',
     ]),
     drawArea() {
-      drawLayer = mapManager.activateDraw('LineString', false)
+      draw = mapManager.activateDraw(1);
     },
     drawResult() {
-      const feature=drawLayer.getSource().getFeatures()[0];
-      var parser = new jsts.io.OL3Parser();
-      parser.inject(Point, LineString, LinearRing, Polygon, MultiPoint, MultiLineString, MultiPolygon);
-      var jstsGeom = parser.read(feature.getGeometry());
-      var buffered = jstsGeom.buffer(40);
-      feature.setGeometry(parser.write(buffered));
     },
     initMap() {
       /* 添加影像地图 */

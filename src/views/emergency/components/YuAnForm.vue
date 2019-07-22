@@ -224,12 +224,15 @@ export default {
           if(draw){
             this.mapManager.inactivateDraw(draw);
           }
-          draw = this.mapManager.activateDraw(val)[0];
+          console.log('====激活绘制====')
+          const draw = this.mapManager.activateDraw(val);
           console.log('changePaintMethod',val,option);
           this.$emit('hide');
-          draw.on('drawend', function() {
+          draw.on('drawend', function(e) {
             _this.mapManager.inactivateDraw(draw);
             _this.$emit('show');
+            console.log('====绘制完成====')
+            console.log(e.feature.getProperties());
           })
         },
         //照片上传之前的校验
