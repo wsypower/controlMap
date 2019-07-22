@@ -12,7 +12,7 @@ import request from '@/plugins/axios/axios'
  * @param {String}type
  */
 export function getPoint(type = '全部视频') {
-  type= type=='全部视频'?'视频':type
+  type = type == '全部视频' ? '视频' : type
   return request({
     url: 'http://192.168.1.10:8080/geoserver/guankongceshi/ows',
     method: 'get',
@@ -26,6 +26,29 @@ export function getPoint(type = '全部视频') {
   })
 }
 
+/**
+ * @description: 获取预案区域调用的接口
+ * @author:sijianting
+ */
+export function getEmergencyArea(type = '预案区域') {
+  return request({
+    url: 'http://192.168.1.10:8080/geoserver/haining/ows',
+    method: 'get',
+    params: {
+      service: 'WFS',
+      version: '1.0.0',
+      request: 'GetFeature',
+      typeName: `haining:${type}`,
+      outputFormat: 'application/json'
+    }
+  })
+}
+
+/*
+ * @description: 保存数据到gis数据库接口
+ * @author:sijianting
+ * @param {xml}data
+ * */
 export function postFeature(data) {
   return request({
     url: 'http://192.168.1.10:8080/geoserver/haining/wfs',

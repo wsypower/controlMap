@@ -128,14 +128,14 @@ export class MapManager {
     } else if(type===4) {
       draw = new Draw({
         source,
-        type: 'Polygon',
+        type: 'MultiPolygon',
         freehand: true
       })
     }
     else{
       draw = new Draw({
         source,
-        type: type===2?'Circle':'Polygon'
+        type: type===2?'Circle':'MultiPolygon'
       })
     }
     this.map.addInteraction(draw)
