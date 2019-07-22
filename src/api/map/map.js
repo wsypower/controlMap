@@ -25,3 +25,18 @@ export function getPoint(type = '全部视频') {
     }
   })
 }
+
+export function postFeature(data) {
+  return request({
+    url: 'http://192.168.1.10:8080/geoserver/haining/wfs',
+    method: 'post',
+    headers: { 'Content-Type': 'text/xml ' },
+    transformRequest: [
+      function(data) {
+        // 对 data 进行任意转换处理
+        return data
+      }
+    ],
+    data: `${data}`
+  })
+}

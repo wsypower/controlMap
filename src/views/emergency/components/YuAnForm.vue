@@ -138,13 +138,22 @@
 <script type="text/ecmascript-6">
 import moment from 'moment';
 import { mapActions,mapState } from 'vuex';
-import { mapMutations } from 'vuex'
+import WFS from 'ol/format/WFS';
+import Feature from 'ol/Feature';
+import MultiPolygon from 'ol/geom/MultiPolygon';
+import { fromCircle } from 'ol/geom/Polygon'
+import { getCenter } from 'ol/extent'
+import { postFeature } from '@/api/map/map'
 let draw;
 const namespace = 'map'
 export default {
     name: 'yuanForm',
     data(){
         return{
+           drawFeature:null,//绘制区域
+           drawType:0,//绘制区域类型
+           mapCenter:null,//绘制区域中心点位坐标
+           mapId:null,
            form: this.$form.createForm(this),
             //校验配置
             config: {rules: [{ required: true, message: '请选择' }]},
@@ -224,18 +233,24 @@ export default {
             return current && current < moment().endOf('day');
         },
         //选择区域
-        changePaintMethod(val,option){
-            console.log('changePaintMethod',val,option);
-            this.$emit('hide');
-            let _this = this;
-            if(draw){
-                this.mapManager.inactivateDraw(draw);
-            }
-            draw = this.mapManager.activateDraw(val)[0];
-            draw.on('drawend', function() {
-                _this.mapManager.inactivateDraw(draw);
-                _this.$emit('show');
-            })
+        changePaintMethod(val){
+          const _this = this;
+          if(draw){
+            this.mapManager.inactivateDraw(draw);
+          }
+          console.log('====激活绘制====')
+          draw = this.mapManager.activateDraw(val);
+          this.drawType=val;
+          this.$emit('hide');
+          draw.on('drawend', function(e) {
+            _this.mapManager.inactivateDraw(draw);
+            _this.$emit('show');
+            _this.drawFeature=e.feature;
+            const mapExtent = e.feature.getGeometry().getExtent();
+            _this.mapCenter= getCenter(mapExtent);
+            debugger;
+            _this.addDraw();
+          })
         },
         //照片上传之前的校验
         beforeUpload (file,filelist) {
@@ -275,6 +290,45 @@ export default {
         //删除附件
         deleteFile(index){
             this.fileList.splice(index,1);
+        },
+        //获取随机绘制图形id
+        getMapId(){
+          return Number(Math.random().toString().substr(3,6) + Date.now()).toString(36);
+        },
+        //保存绘制图形数据到gis数据库
+        addDraw(){
+          let feature;
+          if(this.drawType==2) {
+            const polygon = fromCircle(this.drawFeature.getGeometry(), 32,90);
+            let mutiPolygon = new MultiPolygon({});
+            mutiPolygon.appendPolygon(polygon);
+            feature = new Feature({
+              geometry: mutiPolygon
+            })
+          }
+          else{
+            feature=this.drawFeature;
+          }
+            let prop=feature.getProperties();
+            prop["the_geom"]=prop["geometry"];
+            this.mapId=this.getMapId();
+            prop["mapid"]=this.mapId;
+            feature.setProperties(prop);
+            const format = new WFS();
+            const xml = format.writeTransaction([feature], null, null, {
+              featureNS: "http://www.haining.com",//该图层所在工作空间的uri
+              featurePrefix: "haining",//工作空间名称0
+              featureType: "预案区域",//图层名称
+            });
+            const serializer = new XMLSerializer();
+            // 将参数转换为xml格式数据
+            const featString = serializer.serializeToString(xml);
+            postFeature(featString).then((res) => {
+              var insertNum=res.children[0].children[0].children[0].textContent;
+              if(insertNum>0){
+                console.log('===保存成功====');
+              }
+            })
         },
         //提交表单
         handleSubmit(e){
