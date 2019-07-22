@@ -70,7 +70,6 @@ let config = {
   baseURL: process.env.VUE_APP_API,
   timeout: 60 * 100, // 请求超时时间
   // `headers` 是即将被发送的自定义请求头
-  headers: {'Content-Type': 'application/json'},
   //TODO:只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法
   //修改请求数据添加必填项 userId
   transformRequest: [

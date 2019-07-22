@@ -1,11 +1,5 @@
 <template>
   <div id="map">
-    <button class="draw" @click="drawArea">
-      绘制
-    </button>
-    <button class="draw1" @click="drawResult">
-      显示
-    </button>
   </div>
 </template>
 <script>
@@ -19,12 +13,9 @@ import WMTS from 'ol/source/WMTS'
 import WMTSTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent'
 import { MapManager } from '@/utils/util.map.manage'
-import LinearRing from 'ol/geom/LinearRing.js';
-import {Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon} from 'ol/geom.js';
 
 const namespace = 'map'
 let mapManager
-let drawLayer
 export default {
   data() {
     return {
@@ -41,17 +32,6 @@ export default {
     ...mapMutations(namespace, [
       'setMapManager',
     ]),
-    drawArea() {
-      drawLayer = mapManager.activateDraw('LineString', false)
-    },
-    drawResult() {
-      const feature=drawLayer.getSource().getFeatures()[0];
-      var parser = new jsts.io.OL3Parser();
-      parser.inject(Point, LineString, LinearRing, Polygon, MultiPoint, MultiLineString, MultiPolygon);
-      var jstsGeom = parser.read(feature.getGeometry());
-      var buffered = jstsGeom.buffer(40);
-      feature.setGeometry(parser.write(buffered));
-    },
     initMap() {
       /* 添加影像地图 */
       this.map = new Map({
