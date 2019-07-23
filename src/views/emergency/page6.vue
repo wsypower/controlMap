@@ -178,7 +178,7 @@ export default {
     },
 
   methods: {
-    ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn']),
+    ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn','getAllEmergencyPeople']),
     //地图点击事件处理器
     mapClickHandler({ pixel , coordinate}){
       console.log('===点击feature====');
@@ -189,7 +189,6 @@ export default {
         this.yuAnOverlay.setPosition(coordinate)
       }
     },
-    ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn','getAllEmergencyPeople']),
     //获取预案数据
     getDataList() {
       this.showLoading = true;
