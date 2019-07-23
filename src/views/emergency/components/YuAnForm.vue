@@ -286,6 +286,8 @@ export default {
             let pass = false;
             if(this.fileList.length<2){
                 pass = true;
+            }
+            else{
                 this.$message.error('最多上传2个附件！')
             }
             return pass
@@ -383,10 +385,6 @@ export default {
                     values.fileStr = fileStr;
                 }
 
-                values.mapId = this.mapId;
-                values.positionX = this.mapCenter[0];
-                values.positionY = this.mapCenter[1];
-
                 delete values.rangeDay;
 
                 console.log('form value: ', values);
@@ -398,6 +396,9 @@ export default {
                 // }
 
                 this.addDraw(function(){
+                    values.mapId = _this.mapId;
+                    values.positionX = _this.mapCenter[0];
+                    values.positionY = _this.mapCenter[1];
                     _this.addNewEmergencyYuAn(values).then((res) => {
                         console.log('addNewEmergencyYuAn', res);
                         _this.$emit('close');
