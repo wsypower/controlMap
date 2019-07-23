@@ -33,9 +33,8 @@ export async function getAllEmergencyArea() {
  * @createDate:2019/7/22 16:35
  */
 export async function postEmergencyArea(type, feature) {
-  debugger;
   const format = new WFS()
-  let xml
+  let xml;
   const obj = {
     featureNS: 'http://www.haining.com', //该图层所在工作空间的uri
     featurePrefix: 'haining', //工作空间名称0

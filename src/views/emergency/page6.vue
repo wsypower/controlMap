@@ -74,10 +74,15 @@ import FarCall from './components/FarCall.vue'
 import YuAnItem from './components/YuAnItem.vue'
 import YuAnInfo from './components/YuAnInfo.vue'
 import { getAllEmergencyArea,postEmergencyArea } from '@/api/map/service'
+import {emergencyAreaStyle,emergencyCenterStyle} from '@/utils/util.map.style'
+import Feature from 'ol/Feature';
+import Point from 'ol/geom/Point';
 export default {
   name: 'page6',
   data() {
     return {
+      emergencyLayer:null,
+      emergencyCenterLayer:null,
         addPositionClass: false,
       //查询条件
       query: {
@@ -136,7 +141,8 @@ export default {
   },
   computed: {
       ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
-      ...mapState('cgadmin/page', ['current'])
+    ...mapState('cgadmin/page', ['current']),
+    ...mapState('map', ['mapManager']),
   },
   mounted() {
     this.getDataList()
@@ -210,12 +216,6 @@ export default {
       this.sourceData = item;
       this.dialogVisible = true;
     },
-    //删除应急预案区域
-    deleteEmergencyArea(feature){
-      postEmergencyArea('delete', feature ).then((res)=>{
-        console.log(res)
-      })
-    },
     //删除预案
     deleteYuAnItem(item) {
       console.log('deleteYuan', item);
@@ -230,6 +230,10 @@ export default {
         onOk() {
             //需要删除的数据
             const feature = _this.emergencyAreas.filter(p =>p.get('mapid')==item.mapId);
+          //删除应急预案区域
+          postEmergencyArea('delete', feature).then((res)=>{
+            console.log(res)
+          });
             _this.deleteEmergencyYuAn(data).then(res => {
                 console.log(res);
                 _this.getDataList();
@@ -239,16 +243,30 @@ export default {
 
         }
       });
-
     },
-
     //选择某个预案
     clickDataItem(index) {
       console.log('clickDataItem', index);
+      if(this.emergencyLayer) {
+        this.emergencyLayer.getSource().clear();
+      }
+      if(this.emergencyCenterLayer){
+        this.emergencyCenterLayer.getSource().clear();
+      }
       this.activeIndex = index;
+      const data = this.dataArr[index];
+      //过滤当前选择的预案区域
+      const feature = this.emergencyAreas.filter(p => p.get('mapid') == data.mapId);
+      //预案区域图层
+      this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature,emergencyAreaStyle(),2);
+      const point = new Feature({
+        geometry: new Point([parseFloat(data.positionX),parseFloat(data.positionY)])
+      });
+      //预案中心点图标图层
+      this.emergencyCenterLayer=this.mapManager.addVectorLayerByFeatures([point],emergencyCenterStyle(),3);
+      this.mapManager.locateTo([parseFloat(data.positionX),parseFloat(data.positionY)]);
       console.log('this.activeIndex', this.activeIndex);
     },
-
     clickTip(e) {
       this.positionX = e.clientX;
       this.positionY = e.clientY;
