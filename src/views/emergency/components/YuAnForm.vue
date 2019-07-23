@@ -138,12 +138,12 @@
 <script type="text/ecmascript-6">
 import moment from 'moment';
 import { mapActions,mapState } from 'vuex';
-import WFS from 'ol/format/WFS';
 import Feature from 'ol/Feature';
 import MultiPolygon from 'ol/geom/MultiPolygon';
 import { fromCircle } from 'ol/geom/Polygon'
 import { getCenter } from 'ol/extent'
-import { postFeature } from '@/api/map/map'
+// import { postFeature } from '@/api/map/map'
+import { postEmergencyArea } from '@/api/map/service'
 let draw;
 const namespace = 'map'
 export default {
@@ -257,7 +257,6 @@ export default {
             _this.drawFeature=e.feature;
             const mapExtent = e.feature.getGeometry().getExtent();
             _this.mapCenter= getCenter(mapExtent);
-            debugger;
             _this.addDraw();
           })
         },
@@ -306,43 +305,43 @@ export default {
         },
         //保存绘制图形数据到gis数据库
         addDraw(callBack){
-          let feature;
-          if(this.drawType==2) {
-            const polygon = fromCircle(this.drawFeature.getGeometry(), 32,90);
-            let mutiPolygon = new MultiPolygon({});
-            mutiPolygon.appendPolygon(polygon);
-            feature = new Feature({
-              geometry: mutiPolygon
-            })
-          }
-          else{
-            feature=this.drawFeature;
-          }
+            let feature;
+            if(this.drawType==2) {
+              const polygon = fromCircle(this.drawFeature.getGeometry(), 64,90);
+              let mutiPolygon = new MultiPolygon({});
+              mutiPolygon.appendPolygon(polygon);
+              feature = new Feature({
+                geometry: mutiPolygon
+              })
+            }
+            // else if(this.drawType==0||this.drawType==1){
+            //   const polygon = fromCircle(this.drawFeature.getGeometry(), 4,90);
+            //   let mutiPolygon = new MultiPolygon({});
+            //   mutiPolygon.appendPolygon(polygon);
+            //   feature = new Feature({
+            //     geometry: mutiPolygon
+            //   })
+            // }
+            else{
+              feature=this.drawFeature;
+            }
+
             let prop=feature.getProperties();
             prop["the_geom"]=prop["geometry"];
             this.mapId=this.getMapId();
             prop["mapid"]=this.mapId;
             feature.setProperties(prop);
-            const format = new WFS();
-            const xml = format.writeTransaction([feature], null, null, {
-              featureNS: "http://www.haining.com",//该图层所在工作空间的uri
-              featurePrefix: "haining",//工作空间名称0
-              featureType: "预案区域",//图层名称
-            });
-            const serializer = new XMLSerializer();
-            callBack&&callBack();
-            // 将参数转换为xml格式数据
-            // const featString = serializer.serializeToString(xml);
-            // postFeature(featString).then((res) => {
-            //
-            //   var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
-            //   var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
-            //
-            //   if(insertNum>0){
-            //     console.log('===保存成功====');
-            //       callBack&&callBack();
-            //   }
-            // })
+
+            postEmergencyArea('add',feature).then(res=>{
+              console.log(res);
+                  // var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
+                  // var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
+              // var insertNum=res.children[0].children[0].children[0].textContent
+              // if(insertNum>0){
+              //   console.log('===保存成功====');
+                callBack&&callBack();
+              // }
+            })
         },
         //提交表单
         handleSubmit(e){
