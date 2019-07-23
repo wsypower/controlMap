@@ -141,7 +141,6 @@ export default {
   },
   computed: {
       ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
-      ...mapState('cgadmin/page', ['current'])
     ...mapState('cgadmin/page', ['current']),
     ...mapState('map', ['mapManager']),
   },
@@ -231,6 +230,10 @@ export default {
         onOk() {
             //需要删除的数据
             const feature = _this.emergencyAreas.filter(p =>p.get('mapid')==item.mapId);
+          //删除应急预案区域
+          postEmergencyArea('delete', feature).then((res)=>{
+            console.log(res)
+          });
             _this.deleteEmergencyYuAn(data).then(res => {
                 console.log(res);
                 _this.getDataList();
@@ -240,17 +243,6 @@ export default {
 
         }
       });
-
-      //需要删除的区域
-      const feature = this.emergencyAreas.filter(p =>p.get('mapid')==item.mapid);
-      //删除应急预案区域
-      postEmergencyArea('delete', feature).then((res)=>{
-        console.log(res)
-      });
-      this.deleteEmergencyYuAn(data).then(res => {
-        console.log(res);
-        _this.getDataList();
-      })
     },
     //选择某个预案
     clickDataItem(index) {
