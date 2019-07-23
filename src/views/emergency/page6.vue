@@ -87,6 +87,7 @@ export default {
       yuAnOverlay:null,
       emergencyLayer:null,
       emergencyCenterLayer:null,
+        addPositionClass: false,
       //查询条件
       query: {
         searchContent: '', //搜索关键字
@@ -143,6 +144,7 @@ export default {
     YuAnInfo
   },
   computed: {
+      ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
     ...mapState('cgadmin/page', ['current']),
     ...mapState('map', ['mapManager']),
   },
@@ -155,6 +157,26 @@ export default {
     map = this.mapManager.getMap()
     map.on('click', this.mapClickHandler)
   },
+    watch:{
+        asideCollapse: function(val){
+            console.log('asideCollapse 777777',val);
+            this.isActiveOperation = false;
+            //true:展开，false:关闭
+            if(val){
+                setTimeout(()=>{
+                    this.addPositionClass = !val;
+                    this.isActiveOperation = true;
+                },300);
+            }
+            else{
+                this.addPositionClass = !val;
+                setTimeout(()=>{
+                    this.isActiveOperation = true;
+                },300);
+            }
+        }
+    },
+
   methods: {
     ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn']),
     //地图点击事件处理器
@@ -215,19 +237,31 @@ export default {
     },
     //删除预案
     deleteYuAnItem(item) {
-      console.log('deleteYuan', item)
-      let data = { id: item.id }
+      console.log('deleteYuan', item);
+      let data = { id: item.id };
       let _this = this;
-      //需要删除的区域
-      const feature = this.emergencyAreas.filter(p =>p.get('mapid')==item.mapid);
-      //删除应急预案区域
-      postEmergencyArea('delete', feature).then((res)=>{
-        console.log(res)
+      this.$confirm({
+        title: '确定删除这个预案吗？',
+        content: '',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk() {
+            //需要删除的数据
+            const feature = _this.emergencyAreas.filter(p =>p.get('mapid')==item.mapId);
+          //删除应急预案区域
+          postEmergencyArea('delete', feature).then((res)=>{
+            console.log(res)
+          });
+            _this.deleteEmergencyYuAn(data).then(res => {
+                console.log(res);
+                _this.getDataList();
+            })
+        },
+        onCancel() {
+
+        }
       });
-      this.deleteEmergencyYuAn(data).then(res => {
-        console.log(res);
-        _this.getDataList();
-      })
     },
     //选择某个预案
     clickDataItem(index) {
@@ -316,6 +350,10 @@ export default {
   .pagination-panel {
     text-align: right;
     padding: 20px 20px 0px 0px;
+  }
+  .position{
+    left: 380px;
+    top: 20px;
   }
 }
 </style>

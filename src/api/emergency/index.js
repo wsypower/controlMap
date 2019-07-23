@@ -191,7 +191,7 @@ export function addNewEmergencyYuAn(data){
 export function deleteEmergencyYuAn(data){
     console.log('api:deleteEmergencyYuAn',data);
     return request({
-        url: '@test/deleteEmergencyYuAn',
+        url: 'emergencyplan/deleteEmergencyYuAn',
         method: 'post',
         data
     })
