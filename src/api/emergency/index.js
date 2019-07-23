@@ -106,7 +106,7 @@ export function getAllLevelData(data){
 export function getEmergencyYuAnInitData(data){
     console.log('api:getEmergencyYuAnInitData',data);
     return request({
-        url: '@test/getEmergencyYuAnInitData?_t='+ new Date().getTime(),
+        url: 'emergencyplan/getEmergencyYuAnInitData?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
@@ -143,7 +143,7 @@ export function getEmergencyYuAnInitData(data){
 export function getEmergencyYuAnList(data){
     console.log('api：getEmergencyYuAnList',data);
     return request({
-        url: '@test/getEmergencyYuAnList?_t='+ new Date().getTime(),
+        url: 'emergencyplan/getEmergencyYuAnList?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
@@ -171,7 +171,7 @@ export function getEmergencyYuAnList(data){
 export function addNewEmergencyYuAn(data){
     console.log('api:addNewEmergencyYuAn',data);
     return request({
-        url: '@test/addNewEmergencyYuAn',
+        url: 'emergencyplan/addNewEmergencyYuAn',
         method: 'post',
         data
     })

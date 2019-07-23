@@ -7,18 +7,19 @@
             <div class="top" flex="cross: center main:justify">
                 <div class="name-panel">{{ itemData.typeName }}</div>
                 <div class="flag-panel">
-                    <span class="level-panel"
-                        :class="{yanzhong:itemData.levelId == 0,yiban:itemData.levelId == 1}">等级：{{itemData.levelName}}</span>
-                    <span class="status-panel"
-                        :class="{nostart:itemData.statusId == 0,handle:itemData.statusId == 1,complete:itemData.statusId == 2}">{{itemData.statusName}}</span>
+                    <span class="level-panel "
+                        :class="{yanzhong:itemData.levelId == '02',yiban:itemData.levelId == '01'}">等级：{{itemData.levelName}}</span>
+                    <span v-if="itemData.statusId == '1'" class="status-panel nostart">未开始</span>
+                    <span v-if="itemData.statusId == '2'" class="status-panel handle">进行中</span>
+                    <span v-if="itemData.statusId == '3'" class="status-panel complete">已完成</span>
                 </div>
             </div>
             <div class="description-panel">信息：{{ itemData.description }}</div>
             <div class="item-operate">
-                <span class="operate-btn" @click.stop="editYuan(itemData)">
+                <span v-if="itemData.statusId == '1'" class="operate-btn" @click.stop="editYuan(itemData)">
                     <cg-icon-svg name="edit" class="svg_icon_edit"></cg-icon-svg>编辑
                 </span>
-                <span class="operate-btn" @click.stop="deleteYuan(itemData)">
+                <span v-if="itemData.statusId != '2'" class="operate-btn" @click.stop="deleteYuan(itemData)">
                     <cg-icon-svg name="delete" class="svg_icon_delete"></cg-icon-svg>删除
                 </span>
             </div>

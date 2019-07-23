@@ -122,7 +122,7 @@
               </a-upload>
               <div v-if="fileList.length>0" class="upload-file-panel" flex="main:justify cross:center">
                 <div v-for="(file,index) in fileList" class="file-item" flex="cross:center">
-                  <span>{{file.basefile.oldName}}</span><a-icon type="close" @click="deleteFile(index)"/>
+                  <span>{{file.oldName}}</span><a-icon type="close" @click="deleteFile(index)"/>
                 </div>
               </div>
             </a-form-item>
@@ -163,11 +163,11 @@ export default {
             levelList: [],
             //区域数据
             areaList:[
-              {'id':0,'name':'正方形'},
-              {'id':1,'name':'矩形'},
-              {'id':2,'name':'圆形'},
-              {'id':3,'name':'多边形'},
-              {'id':4,'name':'任意面'}],
+              {'id':'0','name':'正方形'},
+              {'id':'1','name':'矩形'},
+              {'id':'2','name':'圆形'},
+              {'id':'3','name':'多边形'},
+              {'id':'4','name':'任意面'}],
             //照片路径，全路径
             imageUrl: '',
             //照片上传后得到的照片对象
@@ -204,21 +204,30 @@ export default {
         //     }
         // })
         this.getEmergencyYuAnInitData().then((res) => {
-            if(res.code==0){
-                _this.typeList = res.data.typeData;
-                _this.levelList = res.data.levelData;
-                _this.form.setFieldsValue({
-                    typeId: _this.sourceData.typeId,
-                    levelId: _this.sourceData.levelId,
-                    rangeDay: _this.sourceData.startDay?[moment(_this.sourceData.startDay, 'YYYY-MM-DD'),moment(_this.sourceData.endDay, 'YYYY-MM-DD')]:undefined,
-                    position: _this.sourceData.position,
-                    description: _this.sourceData.description,
-                    areaId: _this.sourceData.areaId
-                });
-                _this.image = _this.sourceData.image?_this.sourceData.image:{};
-                _this.fileList = _this.sourceData.fileList?_this.sourceData.fileList:[];
-                _this.imageUrl = _this.image.newPath?_this.image.newPath:'';
+              _this.typeList = res.emergency_plan_type;
+              _this.levelList = res.emergency_plan_grade;
+
+            console.log('_this.sourceData',_this.sourceData,moment(_this.sourceData.startDay, 'YYYY-MM-DD'),moment(1567159292614).format());
+            let startDay;
+            let endDay;
+            if(_this.sourceData.startDay){
+                startDay  = moment(parseInt(_this.sourceData.startDay)).format('YYYY-MM-DD');
+             }
+            if(_this.sourceData.endDay){
+                endDay = moment(parseInt(_this.sourceData.endDay)).format('YYYY-MM-DD');
             }
+              _this.form.setFieldsValue({
+                  typeId: _this.sourceData.typeId,
+                  levelId: _this.sourceData.levelId,
+                  rangeDay: _this.sourceData.startDay?[moment(startDay, 'YYYY-MM-DD'),moment(endDay, 'YYYY-MM-DD')]:undefined,
+                  position: _this.sourceData.position,
+                  description: _this.sourceData.description,
+                  areaId: _this.sourceData.areaId
+              });
+
+              _this.image = _this.sourceData.imageStr?JSON.parse(_this.sourceData.imageStr):{};
+              _this.fileList = _this.sourceData.fileStr?JSON.parse(_this.sourceData.fileStr):[];
+              _this.imageUrl = _this.image[0].newPath?_this.image[0].newPath:'';
 
         }).catch((error) => {
             console.log(error)
@@ -271,8 +280,7 @@ export default {
             if (res.file.status === 'done') {
                 let data  = res.file.response.basefile;
                 this.imageUrl = data.newPath;
-                //this.image = data.newPath + '|' + data.oldName;
-                this.image = res.file.response;
+                this.image = {'newPath': data.newPath ,'oldName':data.oldName};
             }
         },
         //附件上传状态改变
@@ -284,7 +292,8 @@ export default {
             console.log('uploadImage handleChange',res.file.response);
             if (res.file.status === 'done') {
                 this.fileLoading = false;
-                this.fileList.push(res.file.response);
+                let data  = res.file.response.basefile;
+                this.fileList.push({'newPath': data.newPath ,'oldName':data.oldName});
             }
         },
         //删除附件
@@ -296,7 +305,7 @@ export default {
           return Number(Math.random().toString().substr(3,6) + Date.now()).toString(36);
         },
         //保存绘制图形数据到gis数据库
-        addDraw(){
+        addDraw(callBack){
           let feature;
           if(this.drawType==2) {
             const polygon = fromCircle(this.drawFeature.getGeometry(), 32,90);
@@ -321,14 +330,19 @@ export default {
               featureType: "预案区域",//图层名称
             });
             const serializer = new XMLSerializer();
+            callBack&&callBack();
             // 将参数转换为xml格式数据
-            const featString = serializer.serializeToString(xml);
-            postFeature(featString).then((res) => {
-              var insertNum=res.children[0].children[0].children[0].textContent;
-              if(insertNum>0){
-                console.log('===保存成功====');
-              }
-            })
+            // const featString = serializer.serializeToString(xml);
+            // postFeature(featString).then((res) => {
+            //
+            //   var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
+            //   var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
+            //
+            //   if(insertNum>0){
+            //     console.log('===保存成功====');
+            //       callBack&&callBack();
+            //   }
+            // })
         },
         //提交表单
         handleSubmit(e){
@@ -337,34 +351,64 @@ export default {
             this.form.validateFields((error, values) => {
                 console.log('error', error);
                 console.log('Received values of form: ', values);
-                if(values.dayTime){
-                    values.dayTime = values.dayTime.format("YYYY-MM-DD")
-                }
-                console.log('form value: ', values);
                 if(this.sourceData.id){
                     values.id = this.sourceData.id;
                 }
-                //编辑时状态status是否需要改变
-
-                values.imageStr = this.image.basefile.newPath + '|' + this.image.basefile.oldName;
-                let fileStr = '';
-                for(let i=0;i<this.fileList.length;i++){
-                    if(i<this.fileList.length-1){
-                        fileStr = this.fileList[i].basefile.newPath + '|' + this.fileList[i].basefile.oldName + ',';
-                    }
-                    else{
-                        fileStr = this.fileList[i].basefile.newPath + '|' + this.fileList[i].basefile.oldName;
-                    }
+                if(values.rangeDay){
+                    values.startDay = values.rangeDay[0]._d.getTime();
+                    values.endDay = values.rangeDay[1]._d.getTime();
                 }
-                values.fileStr = fileStr;
 
-                this.addNewEmergencyYuAn(values).then((res) => {
-                    console.log(res);
-                    if(res.code==0){
-                        _this.$emit('close');
+                if(this.image.newPath){
+                  values.imageStr = this.image.newPath + '|' + this.image.oldName;
+                }
+
+                if(this.fileList.length>0) {
+                    let fileStr = '';
+                    for (let i = 0; i < this.fileList.length; i++) {
+                        if (i < this.fileList.length - 1) {
+                            fileStr += this.fileList[i].newPath + '|' + this.fileList[i].oldName + ',';
+                        }
+                        else {
+                            fileStr += this.fileList[i].newPath + '|' + this.fileList[i].oldName;
+                        }
                     }
-                })
+                    values.fileStr = fileStr;
+                }
+
+                values.mapId = this.mapId;
+                values.positionX = this.mapCenter[0];
+                values.positionY = this.mapCenter[1];
+
+                delete values.rangeDay;
+
+                console.log('form value: ', values);
+                if(this.checkSubmitParams(values)){
+                    this.addNewEmergencyYuAn(values).then((res) => {
+                        console.log('addNewEmergencyYuAn', res);
+                        _this.$emit('close');
+                    })
+                }
+
+                // this.addDraw(function(){
+                //     _this.addNewEmergencyYuAn(values).then((res) => {
+                //         console.log('addNewEmergencyYuAn', res);
+                //         _this.$emit('close');
+                //     })
+                // });
+
             });
+        },
+        checkSubmitParams(params){
+            if(!params.imageStr){
+                message.error('照片必须上传');
+                return false
+            }
+            if(!params.fileStr){
+                message.error('附件必须上传');
+                return false
+            }
+            return true
         }
     },
     computed:{

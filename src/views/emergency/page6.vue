@@ -51,6 +51,7 @@
                 :bodyPadding="bodyPadding"
                 :componentId="dialogComponentId"
                 :sourceData="sourceData"
+                :closeCallBack="getDataList"
         >
         </custom-dialog>
         <tip-modal
@@ -160,7 +161,6 @@
             this.isActiveOperation = true;
         },
         beforeDestroy(){
-            //this.isActiveOperation = false;
         },
         methods:{
             ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList','deleteEmergencyYuAn']),
@@ -168,8 +168,8 @@
             getDataList(){
                 this.showLoading = true;
                 this.getEmergencyYuAnDataList(this.query).then((res) => {
-                    console.log(res);
-                    this.dataArr = res.data;
+                    console.log('res',res);
+                    this.dataArr = res.list;
                     this.totalSize = res.total;
                     this.showLoading = false;
                 })
@@ -213,9 +213,9 @@
                 let _this = this;
                 this.deleteEmergencyYuAn(data).then((res) => {
                     console.log(res);
-                    if(res.code == 0){
+                    // if(res.code == 0){
                         _this.getDataList();
-                    }
+                    // }
                 })
             },
             //选择某个预案

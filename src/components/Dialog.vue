@@ -12,14 +12,14 @@
         <div
           class="close"
           flex="main:center cross:center"
-          @click="closeDialog"
+          @click="closeDialog(false)"
         ></div>
       </div>
       <div class="modal-body" :style="padding">
         <component v-if="Object.keys(componentId).length>0"
                    :is="componentId"
                    :sourceData="sourceData"
-                   @close="closeDialog"
+                   @close="closeDialog(true)"
                    @hide="hideDialog"
                    @show="showDialog">
         </component>
@@ -121,7 +121,7 @@ export default{
             },600);
         },
         //关闭dialog
-        closeDialog(){
+        closeDialog(needCallBack){
             this.isActive = true;
             let _this = this;
             new Promise((resolve, reject)=>{
@@ -132,7 +132,9 @@ export default{
                 },600);
             }).then(function (result) {
                 console.log('关闭dialog ' + result);
-                _this.closeCallBack&&_this.closeCallBack();
+                if(needCallBack){
+                    _this.closeCallBack&&_this.closeCallBack();
+                }
             });
         },
         //显示dialog

@@ -64,10 +64,17 @@ const success = success => {
 }
 //axios默认配置
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+let base_url= '';
+if (process.env.NODE_ENV === 'development') {
+    base_url = 'http://192.168.71.129:8081/api/'
+}
+else{
+    base_url = 'http://192.168.71.129:8081/api/'
+}
 
 //axios config配置
 let config = {
-  baseURL: process.env.VUE_APP_API,
+  baseURL: base_url,
   timeout: 60 * 100, // 请求超时时间
   // `headers` 是即将被发送的自定义请求头
   //TODO:只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法
@@ -121,6 +128,7 @@ service.interceptors.response.use(
 
   /* 正确响应数据 => response */
   response => {
+    console.log('response',response);
       // dataAxios 是 axios 返回数据中的 data
     const dataAxios = response.data
     // 这个状态码是和后端约定的（默认值为防止外部接口没有code，导致值为undefined）
