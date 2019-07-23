@@ -382,19 +382,19 @@ export default {
                 delete values.rangeDay;
 
                 console.log('form value: ', values);
-                if(this.checkSubmitParams(values)){
-                    this.addNewEmergencyYuAn(values).then((res) => {
-                        console.log('addNewEmergencyYuAn', res);
-                        _this.$emit('close');
-                    })
-                }
-
-                // this.addDraw(function(){
-                //     _this.addNewEmergencyYuAn(values).then((res) => {
+                // if(this.checkSubmitParams(values)){
+                //     this.addNewEmergencyYuAn(values).then((res) => {
                 //         console.log('addNewEmergencyYuAn', res);
                 //         _this.$emit('close');
                 //     })
-                // });
+                // }
+
+                this.addDraw(function(){
+                    _this.addNewEmergencyYuAn(values).then((res) => {
+                        console.log('addNewEmergencyYuAn', res);
+                        _this.$emit('close');
+                    })
+                });
 
             });
         },
