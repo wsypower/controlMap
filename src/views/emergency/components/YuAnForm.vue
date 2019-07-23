@@ -146,7 +146,6 @@ import { getCenter } from 'ol/extent'
 // import { postFeature } from '@/api/map/map'
 import { postEmergencyArea } from '@/api/map/service'
 let draw;
-const namespace = 'map'
 export default {
     name: 'yuanForm',
     data(){
@@ -164,8 +163,8 @@ export default {
             levelList: [],
             //区域数据
             areaList:[
-              {'id':'0','name':'正方形'},
-              {'id':'1','name':'矩形'},
+              // {'id':'0','name':'正方形'},
+              // {'id':'1','name':'矩形'},
               {'id':'2','name':'圆形'},
               {'id':'3','name':'多边形'},
               {'id':'4','name':'任意面'}],
@@ -248,12 +247,8 @@ export default {
         //选择区域
         changePaintMethod(val){
           const _this = this;
-          if(draw){
-            this.mapManager.inactivateDraw(draw);
-          }
-          console.log('====激活绘制====')
-          draw = this.mapManager.activateDraw(val);
-          this.drawType=val;
+          draw = this.mapManager.activateDraw(val,draw);
+          this.drawType = val;
           this.$emit('hide');
           draw.on('drawend', function(e) {
             _this.mapManager.inactivateDraw(draw);
@@ -363,7 +358,6 @@ export default {
             this.form.validateFields((error, values) => {
                 console.log('error', error);
                 console.log('Received values of form: ', values);
-
                 if(this.sourceData.id){
                     values.id = this.sourceData.id;
                 }

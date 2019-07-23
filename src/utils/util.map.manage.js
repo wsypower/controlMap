@@ -104,7 +104,7 @@ export class MapManager {
   locateTo(coord) {
     this.map.getView().animate({
       center: coord,
-      zoom: 15,
+      zoom: 13,
       duration: 500
     })
   }
@@ -119,13 +119,13 @@ export class MapManager {
     if(draw){
       this.inactivateDraw(draw)
     }
-    if(type===0 ||type===1) {
+    if(type==='0' ||type==='1') {
       draw = new Draw({
         source,
         type: 'Circle',
-        geometryFunction:type==0?createRegularPolygon(4):createBox()
+        geometryFunction:type=='0'?createRegularPolygon(4):createBox()
       })
-    } else if(type===4) {
+    } else if(type==='4') {
       draw = new Draw({
         source,
         type: 'MultiPolygon',
@@ -135,7 +135,7 @@ export class MapManager {
     else{
       draw = new Draw({
         source,
-        type: type===2?'Circle':'MultiPolygon'
+        type: type === '2' ? 'Circle' : 'MultiPolygon'
       })
     }
     this.map.addInteraction(draw)
