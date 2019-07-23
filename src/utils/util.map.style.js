@@ -23,7 +23,7 @@ export function emergencyPointStyle(type) {
 }
 
 /**
- * @description:
+ * @description:应急预案区域样式
  * @author:sijianting
  * @createDate:2019/7/22 15:16
  */
@@ -36,5 +36,18 @@ export function emergencyAreaStyle() {
     fill: new Fill({
       color: 'rgba(80,207,63,.1)'
     })
+  })
+}
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2019/7/23 14:49
+ */
+export function emergencyCenterStyle() {
+  return new Style({
+    image: new Icon({
+      src: require('@/assets/mapImage/dingwei.png')
+    }),
+    anchor: [0.5, 1]
   })
 }

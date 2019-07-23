@@ -145,7 +145,6 @@ import { getCenter } from 'ol/extent'
 // import { postFeature } from '@/api/map/map'
 import { postEmergencyArea } from '@/api/map/service'
 let draw;
-const namespace = 'map'
 export default {
     name: 'yuanForm',
     data(){
@@ -163,8 +162,8 @@ export default {
             levelList: [],
             //区域数据
             areaList:[
-              {'id':'0','name':'正方形'},
-              {'id':'1','name':'矩形'},
+              // {'id':'0','name':'正方形'},
+              // {'id':'1','name':'矩形'},
               {'id':'2','name':'圆形'},
               {'id':'3','name':'多边形'},
               {'id':'4','name':'任意面'}],
@@ -244,12 +243,8 @@ export default {
         //选择区域
         changePaintMethod(val){
           const _this = this;
-          if(draw){
-            this.mapManager.inactivateDraw(draw);
-          }
-          console.log('====激活绘制====')
-          draw = this.mapManager.activateDraw(val);
-          this.drawType=val;
+          draw = this.mapManager.activateDraw(val,draw);
+          this.drawType = val;
           this.$emit('hide');
           draw.on('drawend', function(e) {
             _this.mapManager.inactivateDraw(draw);
@@ -257,7 +252,6 @@ export default {
             _this.drawFeature=e.feature;
             const mapExtent = e.feature.getGeometry().getExtent();
             _this.mapCenter= getCenter(mapExtent);
-            _this.addDraw();
           })
         },
         //照片上传之前的校验
@@ -314,24 +308,14 @@ export default {
                 geometry: mutiPolygon
               })
             }
-            // else if(this.drawType==0||this.drawType==1){
-            //   const polygon = fromCircle(this.drawFeature.getGeometry(), 4,90);
-            //   let mutiPolygon = new MultiPolygon({});
-            //   mutiPolygon.appendPolygon(polygon);
-            //   feature = new Feature({
-            //     geometry: mutiPolygon
-            //   })
-            // }
             else{
               feature=this.drawFeature;
             }
-
             let prop=feature.getProperties();
             prop["the_geom"]=prop["geometry"];
             this.mapId=this.getMapId();
             prop["mapid"]=this.mapId;
             feature.setProperties(prop);
-
             postEmergencyArea('add',feature).then(res=>{
               console.log(res);
                   // var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
@@ -357,11 +341,9 @@ export default {
                     values.startDay = values.rangeDay[0]._d.getTime();
                     values.endDay = values.rangeDay[1]._d.getTime();
                 }
-
                 if(this.image.newPath){
                   values.imageStr = this.image.newPath + '|' + this.image.oldName;
                 }
-
                 if(this.fileList.length>0) {
                     let fileStr = '';
                     for (let i = 0; i < this.fileList.length; i++) {
@@ -388,7 +370,6 @@ export default {
                 //         _this.$emit('close');
                 //     })
                 // }
-
                 this.addDraw(function(){
                     _this.addNewEmergencyYuAn(values).then((res) => {
                         console.log('addNewEmergencyYuAn', res);
