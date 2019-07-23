@@ -223,7 +223,7 @@ export function deleteEmergencyYuAn(data){
 export function getAllEmergencyPeople(data){
     console.log('api:getAllEmergencyPeople',data);
     return request({
-        url: '@test/getAllEmergencyPeople?_t='+ new Date().getTime(),
+        url: 'emergencyplan/getUserList?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })

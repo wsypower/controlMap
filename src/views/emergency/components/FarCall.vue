@@ -3,14 +3,14 @@
         <div class="ychj-body-content" flex="dir:top">
             <div class="ychj-body-header" flex="cross:center main:justify">
                 <div class="search-panel">
-                    <a-input placeholder="搜索联系人" v-model="query.searchName">
-                        <a-icon slot="prefix" type="search" />
+                    <a-input placeholder="搜索联系人" v-model="query.searchName" @keyup.enter="searchPerson" @blur="searchPerson">
+                        <a-icon slot="prefix" type="search"/>
                     </a-input>
                 </div>
-                <div class="search-btn-panel">
-                    <span :class="{active:query.statusId==1}" @click="changeStatus('online')">在线</span>
-                    <span :class="{active:query.statusId===0}" @click="changeStatus('outline')">离线</span>
-                </div>
+                <!--<div class="search-btn-panel">-->
+                    <!--<span :class="{active:query.statusId==1}" @click="changeStatus('online')">在线</span>-->
+                    <!--<span :class="{active:query.statusId===0}" @click="changeStatus('outline')">离线</span>-->
+                <!--</div>-->
             </div>
             <div class="person-content" flex="main:center cross:center" v-if="showLoading">
                 <a-spin tip="数据加载中...">
@@ -22,175 +22,35 @@
                     <img src="~@img/zanwuyuan.png" />
                 </div>
                 <cg-container scroll v-else>
-                    <a-collapse defaultActiveKey="0" :bordered="false">
-                        <a-collapse-panel v-for="(item,index) in peopleDataList" :key="index">
-                            <template slot="header">
-                                {{item.departmentName}} <span v-if="query.statusId==''">{{item.onlineNum}}/{{item.totalNum}}</span>
-                            </template>
-                            <div class="persons">
-                                <a-col :span="3" v-for="(person,index) in item.peopleList" :key="index">
-                                    <a-checkbox :value="person.id">
-                                        <a-avatar v-if="!person.avatar" icon="user" />
-                                        <a-avatar v-else src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                                        {{person.name}}
+                    <div class="persons">
+                        <a-checkbox-group @change="onChange" :defaultValue="checkedList">
+                            <a-row>
+                                <a-col :span="4" v-for="(person,index) in peopleDataList" :key="index">
+                                    <a-checkbox :value="person.userid">
+                                        <!--<a-avatar v-if="!person.avatar" icon="user" />-->
+                                        <!--<a-avatar v-else src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />-->
+                                        {{person.realname}}
                                     </a-checkbox>
                                 </a-col>
-                            </div>
-                        </a-collapse-panel>
-                        <!--<a-collapse-panel key="1">-->
+                            </a-row>
+                        </a-checkbox-group>
+                    </div>
+                    <!--<a-collapse defaultActiveKey="0" :bordered="false">-->
+                        <!--<a-collapse-panel v-for="(item,index) in peopleDataList" :key="index">-->
                             <!--<template slot="header">-->
-                                <!--专业特级部门 18/20-->
+                                <!--{{item.departmentName}} <span v-if="query.statusId==''">{{item.onlineNum}}/{{item.totalNum}}</span>-->
                             <!--</template>-->
                             <!--<div class="persons">-->
-                                    <!--<a-col :span="3"-->
-                                    <!--&gt;<a-checkbox value="A"-->
-                                    <!--&gt;<a-avatar icon="user" />A</a-checkbox-->
-                                    <!--&gt;</a-col-->
-                                    <!--&gt;-->
-                                    <!--<a-col :span="3"-->
-                                    <!--&gt;<a-checkbox value="B"-->
-                                    <!--&gt;<a-avatar icon="user" />B</a-checkbox-->
-                                    <!--&gt;</a-col-->
-                                    <!--&gt;-->
-                                    <!--<a-col :span="3"-->
-                                    <!--&gt;<a-checkbox value="C"-->
-                                    <!--&gt;<a-avatar icon="user" />C</a-checkbox-->
-                                    <!--&gt;</a-col-->
-                                    <!--&gt;-->
-                                    <!--<a-col :span="3"-->
-                                    <!--&gt;<a-checkbox value="D"-->
-                                    <!--&gt;<a-avatar icon="user" />D</a-checkbox-->
-                                    <!--&gt;</a-col-->
-                                    <!--&gt;-->
-                                    <!--<a-col :span="3"-->
-                                    <!--&gt;<a-checkbox value="E"-->
-                                    <!--&gt;<a-avatar icon="user" />E</a-checkbox-->
-                                    <!--&gt;</a-col-->
-                                    <!--&gt;-->
-                                    <!--<a-col :span="3"-->
-                                    <!--&gt;<a-checkbox value="E"-->
-                                    <!--&gt;<a-avatar icon="user" />E</a-checkbox-->
-                                    <!--&gt;</a-col-->
-                                    <!--&gt;-->
-                                    <!--<a-col :span="3"-->
-                                    <!--&gt;<a-checkbox value="E"-->
-                                    <!--&gt;<a-avatar icon="user" />E</a-checkbox-->
-                                    <!--&gt;</a-col-->
-                                    <!--&gt;-->
-                                    <!--<a-col :span="3"-->
-                                    <!--&gt;<a-checkbox value="E"-->
-                                    <!--&gt;<a-avatar icon="user" />E</a-checkbox-->
-                                    <!--&gt;</a-col-->
-                                    <!--&gt;-->
-                                    <!--<a-col :span="3"-->
-                                    <!--&gt;<a-checkbox value="E"-->
-                                    <!--&gt;<a-avatar icon="user" />E</a-checkbox-->
-                                    <!--&gt;</a-col-->
-                                    <!--&gt;-->
-                                    <!--<a-col :span="3"-->
-                                    <!--&gt;<a-checkbox value="E"-->
-                                    <!--&gt;<a-avatar icon="user" />E</a-checkbox-->
-                                    <!--&gt;</a-col-->
-                                    <!--&gt;-->
+                                <!--<a-col :span="3" v-for="(person,index) in item.peopleList" :key="index">-->
+                                    <!--<a-checkbox :value="person.id">-->
+                                        <!--<a-avatar v-if="!person.avatar" icon="user" />-->
+                                        <!--<a-avatar v-else src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />-->
+                                        <!--{{person.name}}-->
+                                    <!--</a-checkbox>-->
+                                <!--</a-col>-->
                             <!--</div>-->
                         <!--</a-collapse-panel>-->
-                        <!--<a-collapse-panel header="专业一级部门 20/20" key="2">-->
-                            <!--<div class="persons">-->
-                                <!--<div class="item">-->
-                                    <!--<a-col :span="3"><a-checkbox value="A">A</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="B">B</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="C">C</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="D">D</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</a-collapse-panel>-->
-                        <!--<a-collapse-panel header="专业二级部门 12/20" key="3">-->
-                            <!--<div class="persons">-->
-                                <!--<div class="item">-->
-                                    <!--<a-col :span="3"><a-checkbox value="A">A</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="B">B</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="C">C</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="D">D</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</a-collapse-panel>-->
-                        <!--<a-collapse-panel header="专业二级部门 12/20" key="4">-->
-                            <!--<div class="persons">-->
-                                <!--<div class="item">-->
-                                    <!--<a-col :span="3"><a-checkbox value="A">A</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="B">B</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="C">C</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="D">D</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</a-collapse-panel>-->
-                        <!--<a-collapse-panel header="专业二级部门 12/20" key="5">-->
-                            <!--<div class="persons">-->
-                                <!--<div class="item">-->
-                                    <!--<a-col :span="3"><a-checkbox value="A">A</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="B">B</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="C">C</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="D">D</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</a-collapse-panel>-->
-                        <!--<a-collapse-panel header="专业二级部门 12/20" key="6">-->
-                            <!--<div class="persons">-->
-                                <!--<div class="item">-->
-                                    <!--<a-col :span="3"><a-checkbox value="A">A</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="B">B</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="C">C</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="D">D</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</a-collapse-panel>-->
-                        <!--<a-collapse-panel header="专业二级部门 12/20" key="7">-->
-                            <!--<div class="persons">-->
-                                <!--<div class="item">-->
-                                    <!--<a-col :span="3"><a-checkbox value="A">A</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="B">B</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="C">C</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="D">D</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                    <!--<a-col :span="3"><a-checkbox value="E">E</a-checkbox></a-col>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</a-collapse-panel>-->
-                    </a-collapse>
+                    <!--</a-collapse>-->
                 </cg-container>
             </div>
             <div class="footer-operate">
@@ -215,52 +75,85 @@
                 },
                 showLoading: false,
                 peopleDataList:[],
+                checkedList: [],
                 showVideo: false,
                 showAnimation: false
             }
         },
+        props:{
+            //原始数据
+            sourceData:{
+                type: Array,
+                default(){
+                    return []
+                }
+            }
+        },
+
         mounted(){
             this.getPeopleDataList();
         },
         methods:{
-            ...mapActions('emergency/emergency', ['getAllEmergencyPeople']),
+
+            // ...mapActions('emergency/emergency', ['getAllEmergencyPeople']),
             getPeopleDataList(){
                 this.showLoading = true;
-                this.getAllEmergencyPeople(this.query).then((res)=>{
-                    console.log('getAllEmergencyPeople',res);
-                    this.peopleDataList = res.data;
-                    this.showLoading = false;
-                });
+                this.peopleDataList = this.sourceData;
+                for(let i=0;i<this.sourceData.length;i++){
+                     this.checkedList.push(this.sourceData[i].userid);
+                }
+                this.showLoading = false;
             },
-            changeStatus(btnType){
-                console.log('btnType: ' + btnType);
-                if(btnType == 'online'){
-                    if(this.query.statusId == 1){
-                        this.query.statusId = '';
-                    }
-                    else{
-                        this.query.statusId = 1;
+            searchPerson(){
+                this.showLoading = true;
+                this.peopleDataList = [];
+                if(this.query.searchName.trim()==''){
+                    this.peopleDataList = this.sourceData;
+                }
+                else{
+                    for(let i=0;i<this.sourceData.length;i++){
+                        let name = this.sourceData[i].realname;
+                        if(name&&name.indexOf(this.query.searchName)>=0){
+                            this.peopleDataList.push(this.sourceData[i]);
+                        }
                     }
                 }
-                if(btnType == 'outline'){
-                    if(this.query.statusId === 0){
-                        this.query.statusId = '';
-                    }
-                    else{
-                        this.query.statusId = 0;
-                    }
-                }
-                this.getPeopleDataList();
+                this.showLoading = false;
+            },
+            // changeStatus(btnType){
+            //     console.log('btnType: ' + btnType);
+            //     if(btnType == 'online'){
+            //         if(this.query.statusId == 1){
+            //             this.query.statusId = '';
+            //         }
+            //         else{
+            //             this.query.statusId = 1;
+            //         }
+            //     }
+            //     if(btnType == 'outline'){
+            //         if(this.query.statusId === 0){
+            //             this.query.statusId = '';
+            //         }
+            //         else{
+            //             this.query.statusId = 0;
+            //         }
+            //     }
+            //     this.getPeopleDataList();
+            // },
+            onChange (checkedValues) {
+                console.log('checked = ', checkedValues);
+                this.checkedList = checkedValues;
             },
             shipinStart(){
-                this.showVideo = true;
-                this.showAnimation = true;
-                setTimeout(()=>{
-                    this.showAnimation = false;
-                    setTimeout(()=>{
-                        this.showVideo = false;
-                    },600);
-                },1000)
+                console.log('checkedList', this.checkedList);
+                // this.showVideo = true;
+                // this.showAnimation = true;
+                // setTimeout(()=>{
+                //     this.showAnimation = false;
+                //     setTimeout(()=>{
+                //         this.showVideo = false;
+                //     },600);
+                // },1000)
             },
         }
     }
@@ -306,16 +199,24 @@
             }
             .person-content {
                 height: calc(100% - 114px);
-                padding: 0px 20px;
+                //padding: 0px 20px;
                 position: relative;
                 .none-panel{
                     width: 100%;
                     height: 100%;
                 }
+                .persons{
+                    width: 100%;
+                    height: 100%;
+                    padding: 20px 20px;
+                }
+                /deep/.ant-checkbox-group{
+                    width: 100%;
+                }
                 /deep/.ant-collapse-item {
                     border-bottom-width: 0px;
                 }
-                /deep/.ant-col-3 {
+                /deep/.ant-col-4 {
                     margin-bottom: 8px;
                 }
             }

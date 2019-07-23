@@ -82,7 +82,6 @@ export default{
         },
         //dialog给内部组件的原始数据
         sourceData:{
-            type: Object,
             default(){
                 return {}
             }
