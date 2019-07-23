@@ -30,7 +30,7 @@
             <cg-icon-svg name="logo" class="logo__icon"></cg-icon-svg>
           </div>
         </div>
-        <div class="loader_title"></div>
+        <div class="loader_title">杭州天翼智慧城市</div>
       </div>
     </main>
   </div>
@@ -211,6 +211,7 @@ export default {
   &_title {
     width: 100%;
     height: 60px;
+    background-color: red;
   }
 }
 .loadering {

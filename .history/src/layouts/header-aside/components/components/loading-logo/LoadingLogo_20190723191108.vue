@@ -211,6 +211,7 @@ export default {
   &_title {
     width: 100%;
     height: 60px;
+    background-color: red;
   }
 }
 .loadering {

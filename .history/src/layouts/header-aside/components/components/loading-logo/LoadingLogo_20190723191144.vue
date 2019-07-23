@@ -30,7 +30,7 @@
             <cg-icon-svg name="logo" class="logo__icon"></cg-icon-svg>
           </div>
         </div>
-        <div class="loader_title"></div>
+        <div class="loader_title">杭州天翼智慧城市提供服务</div>
       </div>
     </main>
   </div>

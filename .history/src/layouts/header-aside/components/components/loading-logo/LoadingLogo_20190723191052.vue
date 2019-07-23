@@ -185,7 +185,6 @@ export default {
   margin: auto;
   width: 400px;
   padding-top: 180px;
-  padding-bottom: 180px;
   &_overlay {
     width: 180px;
     height: 180px;
@@ -211,6 +210,7 @@ export default {
   &_title {
     width: 100%;
     height: 60px;
+    background-color: red;
   }
 }
 .loadering {

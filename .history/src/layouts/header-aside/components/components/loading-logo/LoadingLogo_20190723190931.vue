@@ -5,7 +5,7 @@
       <!-- <div aria-busy="true" aria-label="Loading, please wait." role="progressbar"></div> -->
     </header>
     <main role="main">
-      <div class="loader" flex="cross:center dir:top main:justify">
+      <div class="loader" flex="main:center">
         <div class="loader_overlay" flex="main:center cross:center">
           <div class="loadering" flex="main:center cross:center">
             <!-- 环绕圈 -->
@@ -185,7 +185,6 @@ export default {
   margin: auto;
   width: 400px;
   padding-top: 180px;
-  padding-bottom: 180px;
   &_overlay {
     width: 180px;
     height: 180px;
@@ -207,11 +206,6 @@ export default {
       color: #5b8bda;
     }
   }
-
-  &_title {
-    width: 100%;
-    height: 60px;
-  }
 }
 .loadering {
   width: 100%;
@@ -225,7 +219,7 @@ $yellow: #0057e7;
 $white: #eee;
 
 // scaling... any units
-$width: 180px;
+$width:180px;
 
 .loader_scroll {
   position: relative;
