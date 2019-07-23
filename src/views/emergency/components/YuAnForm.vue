@@ -113,6 +113,7 @@
                 name="file"
                 :multiple="false"
                 action="http://192.168.71.33:50000/file/file/uploadFileWeb"
+                :beforeUpload="beforeFileUpload"
                 :showUploadList="false"
                 @change="handleFileChange"
               >
@@ -225,9 +226,12 @@ export default {
                   areaId: _this.sourceData.areaId
               });
 
-              _this.image = _this.sourceData.imageStr?JSON.parse(_this.sourceData.imageStr):{};
+              _this.image = _this.sourceData.imageStr?JSON.parse(_this.sourceData.imageStr):[];
               _this.fileList = _this.sourceData.fileStr?JSON.parse(_this.sourceData.fileStr):[];
               _this.imageUrl = _this.image[0].newPath?_this.image[0].newPath:'';
+
+              _this.mapId = _this.sourceData.mapId;
+              _this.mapCenter = [_this.sourceData.positionX,_this.sourceData.positionY];
 
         }).catch((error) => {
             console.log(error)
@@ -271,7 +275,7 @@ export default {
                 this.$message.error('Image must smaller than 2MB!')
             }
             console.log('isLt2M',isLt2M);
-            return true
+            return isLt2M
         },
         //照片上传状态改变
         handleImgChange (res) {
@@ -279,8 +283,17 @@ export default {
             if (res.file.status === 'done') {
                 let data  = res.file.response.basefile;
                 this.imageUrl = data.newPath;
-                this.image = {'newPath': data.newPath ,'oldName':data.oldName};
+                this.image = [{'newPath': data.newPath ,'oldName':data.oldName}];
             }
+        },
+        //附件上传之前的校验
+        beforeFileUpload (file,filelist) {
+            let pass = false;
+            if(this.fileList.length<2){
+                pass = true;
+                this.$message.error('最多上传2个附件！')
+            }
+            return pass
         },
         //附件上传状态改变
         handleFileChange (res) {
@@ -350,6 +363,7 @@ export default {
             this.form.validateFields((error, values) => {
                 console.log('error', error);
                 console.log('Received values of form: ', values);
+
                 if(this.sourceData.id){
                     values.id = this.sourceData.id;
                 }
@@ -358,8 +372,8 @@ export default {
                     values.endDay = values.rangeDay[1]._d.getTime();
                 }
 
-                if(this.image.newPath){
-                  values.imageStr = this.image.newPath + '|' + this.image.oldName;
+                if(this.image.length>0){
+                  values.imageStr = this.image[0].newPath + '|' + this.image[0].oldName;
                 }
 
                 if(this.fileList.length>0) {
