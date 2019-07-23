@@ -189,6 +189,7 @@ export default {
         this.yuAnOverlay.setPosition(coordinate)
       }
     },
+    ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn','getAllEmergencyPeople']),
     //获取预案数据
     getDataList() {
       this.showLoading = true;
@@ -274,7 +275,6 @@ export default {
       }
       this.activeIndex = index;
       const data = this.dataArr[index];
-      this.sourceData=data;
       //过滤当前选择的预案区域
       const feature = this.emergencyAreas.filter(p => p.get('mapid') == data.mapId);
       //预案区域图层
@@ -297,9 +297,18 @@ export default {
     },
     //远程呼叫
     ychjOperation() {
+        this.getAllEmergencyPeople().then(res => {
+            console.log('getAllEmergencyPeople', res);
+            this.openYchjDialog(res);
+        })
+
+    },
+    //人员区域选择后调用此接口
+    openYchjDialog(persons){
       this.dialogComponentId = FarCall;
       this.dWidth = 1200;
       this.dHeight = 644;
+      this.sourceData = persons;
       this.dialogTitle = '远程呼叫';
       this.bodyPadding = [0, 10, 10, 10];
       this.dialogVisible = true;
