@@ -55,6 +55,7 @@
         >
         </custom-dialog>
         <tip-modal
+                ref="yuAnOverlay"
                 :visible.sync="yuAnTipVisible"
                 :positionX="positionX"
                 :positionY="positionY"
@@ -62,6 +63,7 @@
                 :timeStr="timeStr"
                 :componentId="tipComponentId"
                 :info="sourceData"
+                @closeDialog="closeOverlay()"
         ></tip-modal>
     </div>
 </template>
@@ -77,10 +79,12 @@ import { getAllEmergencyArea,postEmergencyArea } from '@/api/map/service'
 import {emergencyAreaStyle,emergencyCenterStyle} from '@/utils/util.map.style'
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
+let map;
 export default {
   name: 'page6',
   data() {
     return {
+      yuAnOverlay:null,
       emergencyLayer:null,
       emergencyCenterLayer:null,
       //查询条件
@@ -144,10 +148,25 @@ export default {
   },
   mounted() {
     this.getDataList()
-      this.isActiveOperation = true;
+    this.isActiveOperation = true;
+    this.yuAnOverlay = this.mapManager.addOverlay({
+      element: this.$refs.yuAnOverlay.$el
+    });
+    map = this.mapManager.getMap()
+    map.on('click', this.mapClickHandler)
   },
   methods: {
     ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn']),
+    //地图点击事件处理器
+    mapClickHandler({ pixel , coordinate}){
+      console.log('===点击feature====');
+      const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
+      console.log(feature);
+      if(feature){
+        console.log('1111')
+        this.yuAnOverlay.setPosition(coordinate)
+      }
+    },
     //获取预案数据
     getDataList() {
       this.showLoading = true;
@@ -221,6 +240,7 @@ export default {
       }
       this.activeIndex = index;
       const data = this.dataArr[index];
+      this.sourceData=data;
       //过滤当前选择的预案区域
       const feature = this.emergencyAreas.filter(p => p.get('mapid') == data.mapId);
       //预案区域图层
@@ -249,6 +269,9 @@ export default {
       this.dialogTitle = '远程呼叫';
       this.bodyPadding = [0, 10, 10, 10];
       this.dialogVisible = true;
+    },
+    closeOverlay(){
+      console.log('===close====')
     }
   }
 }

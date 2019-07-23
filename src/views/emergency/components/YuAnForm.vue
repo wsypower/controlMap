@@ -313,6 +313,7 @@ export default {
             }
             let prop=feature.getProperties();
             prop["the_geom"]=prop["geometry"];
+            debugger;
             this.mapId=this.getMapId();
             prop["mapid"]=this.mapId;
             feature.setProperties(prop);
@@ -356,7 +357,7 @@ export default {
                     }
                     values.fileStr = fileStr;
                 }
-
+                debugger;
                 values.mapId = this.mapId;
                 values.positionX = this.mapCenter[0];
                 values.positionY = this.mapCenter[1];

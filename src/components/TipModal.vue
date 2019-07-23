@@ -1,10 +1,7 @@
 <template>
   <div
     class="tip-content"
-    :style="tipClass"
-    :class="{ active: isActive }"
-    v-if="visible"
-  >
+    :class="{ active: isActive }">
     <div class="tip-header" flex="dir:left cross:center main:justify">
       <div class="tip-title" flex="cross:center">
         <i v-if="iconShow" class="icon"></i>
@@ -32,10 +29,6 @@ export default{
         }
     },
     props:{
-        visible:{
-            type: Boolean,
-            default: false
-        },
         modalWidth: {
             type: Number,
             default: 482
@@ -49,14 +42,6 @@ export default{
             default: function(){
                 return [0,0,0,0]
             }
-        },
-        positionX:{
-            type: Number,
-            default: 0
-        },
-        positionY:{
-            type: Number,
-            default: 0
         },
         title: {
             type: String,
@@ -90,16 +75,16 @@ export default{
         }
     },
     computed:{
-        tipClass: function(){
-            let left = this.positionX-this.modalWidth/2;
-            let top = this.positionY-this.modalHeight -20;
-            return {
-                left: left + 'px',
-                top: top + 'px',
-                width: this.modalWidth + 'px',
-                height:  this.modalHeight + 'px'
-            }
-        },
+        // tipClass: function(){
+        //     let left = this.positionX-this.modalWidth/2;
+        //     let top = this.positionY-this.modalHeight -20;
+        //     return {
+        //         left: left + 'px',
+        //         top: top + 'px',
+        //         width: this.modalWidth + 'px',
+        //         height:  this.modalHeight + 'px'
+        //     }
+        // },
         padding: function(){
             return {
                 paddingTop:  this.bodyPadding[0]||0 + 'px',
@@ -123,15 +108,15 @@ export default{
         });
     },
     watch:{
-        visible: function(value){
-            console.log('active ' + value);
-            if(value){
-                this.init();
-            }
-            else{
-                this.isActive = false;
-            }
-        }
+        // visible: function(value){
+        //     console.log('active ' + value);
+        //     if(value){
+        //         this.init();
+        //     }
+        //     else{
+        //         this.isActive = false;
+        //     }
+        // }
     },
     methods:{
         init(){
@@ -140,18 +125,18 @@ export default{
             });
         },
         closeDialog(){
-            this.isActive = false;
-            let _this = this;
-            new Promise((resolve, reject)=>{
-                setTimeout(()=>{
-                    this.$emit('update:visible', false);
-                    resolve('ok');
-                },1000);
-            }).then(function (result) {
-                console.log('关闭 ' + result);
-                _this.closeCallBack&&_this.closeCallBack();
-            });
-
+          this.$emit('closeDialog')
+            // this.isActive = false;
+            // let _this = this;
+            // new Promise((resolve, reject)=>{
+            //     setTimeout(()=>{
+            //         this.$emit('update:visible', false);
+            //         resolve('ok');
+            //     },1000);
+            // }).then(function (result) {
+            //     console.log('关闭 ' + result);
+            //     _this.closeCallBack&&_this.closeCallBack();
+            // });
         }
     }
 }
