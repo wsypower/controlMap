@@ -7,7 +7,7 @@
   >
     <div class="tip-header" flex="dir:left cross:center main:justify">
       <div class="tip-title" flex="cross:center">
-        <i v-if="iconShow" class="icon"></i>
+        <cg-icon-svg v-if="iconShow" :name="iconName" class="svg_icon_name"></cg-icon-svg>
         <span>{{ title || info.typeName }}</span>
         <span>{{ timeStr || info.dayTime}}</span>
       </div>
@@ -188,12 +188,12 @@ export default{
     .tip-title {
       font-size: 16px;
       color: #ffffff;
-      .icon {
+      .svg_icon_name {
         display: inline-block;
         width: 16px;
         height: 16px;
         //background: url("../assets/images/zhuantifuwu.png") no-repeat;
-        background-size: 100% 100%;
+        /*background-size: 100% 100%;*/
         margin-right: 10px;
       }
       span:nth-child(2) {

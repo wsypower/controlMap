@@ -73,7 +73,7 @@
                 :wrapper-col="{ span: 12 }"
               >
                 <a-select v-decorator="['areaId',config]"
-                          placeholder="请选择" style="width: 277px" @change="changePaintMethod">
+                          placeholder="请选择" style="width: 277px" @select="selectPaintMethod">
                   <a-select-option
                           v-for="(item,index) in areaList"
                           :value="item.id"
@@ -227,7 +227,7 @@ export default {
 
               _this.image = _this.sourceData.imageStr?JSON.parse(_this.sourceData.imageStr):[];
               _this.fileList = _this.sourceData.fileStr?JSON.parse(_this.sourceData.fileStr):[];
-              _this.imageUrl = _this.image[0].newPath?_this.image[0].newPath:'';
+              _this.imageUrl = _this.image[0]?_this.image[0].newPath:'';
 
               _this.mapId = _this.sourceData.mapId;
               _this.mapCenter = [_this.sourceData.positionX,_this.sourceData.positionY];
@@ -245,7 +245,23 @@ export default {
             return current && current < moment().endOf('day');
         },
         //选择区域
-        changePaintMethod(val){
+        // changePaintMethod(val){
+          // const _this = this;
+          // draw = this.mapManager.activateDraw(val,draw);
+          // this.drawType = val;
+          // this.$emit('hide');
+          // draw.on('drawend', function(e) {
+          //   _this.mapManager.inactivateDraw(draw);
+          //   _this.$emit('show');
+          //   _this.drawFeature=e.feature;
+          //   const mapExtent = e.feature.getGeometry().getExtent();
+          //   _this.mapCenter= getCenter(mapExtent);
+          //   _this.addDraw();
+          // })
+        // },
+        //选择区域
+        selectPaintMethod(val,option){
+          console.log('selectPaintMethod',val,option);
           const _this = this;
           draw = this.mapManager.activateDraw(val,draw);
           this.drawType = val;
