@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="tip-content"
-    :class="{ active: isActive }">
+  <div class="tip-content">
     <div class="tip-header" flex="dir:left cross:center main:justify">
       <div class="tip-title" flex="cross:center">
         <i v-if="iconShow" class="icon"></i>
@@ -24,9 +22,7 @@
 export default{
     name: 'tipModal',
     data(){
-        return {
-            isActive: false
-        }
+      return {};
     },
     props:{
         modalWidth: {
@@ -75,16 +71,6 @@ export default{
         }
     },
     computed:{
-        // tipClass: function(){
-        //     let left = this.positionX-this.modalWidth/2;
-        //     let top = this.positionY-this.modalHeight -20;
-        //     return {
-        //         left: left + 'px',
-        //         top: top + 'px',
-        //         width: this.modalWidth + 'px',
-        //         height:  this.modalHeight + 'px'
-        //     }
-        // },
         padding: function(){
             return {
                 paddingTop:  this.bodyPadding[0]||0 + 'px',
@@ -97,46 +83,10 @@ export default{
             return this.iconName && this.iconName.length>0
         }
     },
-    mounted(){
-        this.$nextTick(() => {
-            const body = document.querySelector("body");
-            if (body.append) {
-                body.append(this.$el);
-            } else {
-                body.appendChild(this.$el);
-            }
-        });
-    },
-    watch:{
-        // visible: function(value){
-        //     console.log('active ' + value);
-        //     if(value){
-        //         this.init();
-        //     }
-        //     else{
-        //         this.isActive = false;
-        //     }
-        // }
-    },
+  mounted(){},
     methods:{
-        init(){
-            setTimeout(()=>{
-              this.isActive = true;
-            });
-        },
         closeDialog(){
           this.$emit('closeDialog')
-            // this.isActive = false;
-            // let _this = this;
-            // new Promise((resolve, reject)=>{
-            //     setTimeout(()=>{
-            //         this.$emit('update:visible', false);
-            //         resolve('ok');
-            //     },1000);
-            // }).then(function (result) {
-            //     console.log('关闭 ' + result);
-            //     _this.closeCallBack&&_this.closeCallBack();
-            // });
         }
     }
 }
@@ -150,9 +100,6 @@ export default{
   -o-transition: opacity 1s; /* Opera */
 }
 .tip-content {
-  position: fixed;
-  left: 0px;
-  top: 0px;
   z-index: 10;
   width: 482px;
   height: 224px;
@@ -160,11 +107,6 @@ export default{
   border-radius: 6px;
   box-shadow: -1px 0px 4px 0px rgba(0, 0, 0, 0.12);
   border: solid 1px #dddddd;
-  opacity: 0;
-  transition: opacity 1s;
-  -moz-transition: opacity 1s; /* Firefox 4 */
-  -webkit-transition: opacity 1s; /* Safari 和 Chrome */
-  -o-transition: opacity 1s; /* Opera */
   .tip-header {
     height: 40px;
     width: 100%;

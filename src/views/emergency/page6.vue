@@ -54,17 +54,15 @@
                 :closeCallBack="getDataList"
         >
         </custom-dialog>
-        <tip-modal
-                ref="yuAnOverlay"
-                :visible.sync="yuAnTipVisible"
-                :positionX="positionX"
-                :positionY="positionY"
-                :title="modalTitle"
-                :timeStr="timeStr"
-                :componentId="tipComponentId"
-                :info="sourceData"
-                @closeDialog="closeOverlay()"
-        ></tip-modal>
+        <div hidden>
+            <tip-modal
+                    ref="yuAnOverlay"
+                    :title="modalTitle"
+                    :timeStr="timeStr"
+                    :componentId="tipComponentId"
+                    :info="sourceData"
+                    @closeDialog="closeOverlay()"></tip-modal>
+        </div>
     </div>
 </template>
 
@@ -77,6 +75,8 @@ import YuAnItem from './components/YuAnItem.vue'
 import YuAnInfo from './components/YuAnInfo.vue'
 import { getAllEmergencyArea,postEmergencyArea } from '@/api/map/service'
 import {emergencyAreaStyle,emergencyCenterStyle} from '@/utils/util.map.style'
+import { stampConvertToTime} from '@/utils/util.tool'
+
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 let map;
@@ -122,7 +122,7 @@ export default {
       //dialog弹窗body内组件需要使用的数据
       sourceData: {},
       //tipModal弹窗是否渲染
-      yuAnTipVisible: false,
+      yuAnTipVisible: true,
       //tipModal弹窗显示位置X
       positionX: 0,
       //tipModal弹窗显示位置Y
@@ -130,7 +130,7 @@ export default {
       //tipModal弹窗标题
       modalTitle: '',
       //tipModal弹窗标题上的时间
-      timeStr: '',
+      timeStr: '2019-07-24',
       //tipModal弹窗body内组件
       tipComponentId: {},
       emergencyAreas:null
@@ -149,15 +149,15 @@ export default {
     ...mapState('map', ['mapManager']),
   },
   mounted() {
-    this.getDataList()
+    this.getDataList();
     this.isActiveOperation = true;
     this.yuAnOverlay = this.mapManager.addOverlay({
       element: this.$refs.yuAnOverlay.$el
     });
-    map = this.mapManager.getMap()
-    map.on('click', this.mapClickHandler)
+    map = this.mapManager.getMap();
+    map.on('click', this.mapClickHandler);
   },
-    watch:{
+  watch:{
         asideCollapse: function(val){
             console.log('asideCollapse 777777',val);
             this.isActiveOperation = false;
@@ -176,18 +176,21 @@ export default {
             }
         }
     },
-
   methods: {
     ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn','getAllEmergencyPeople']),
     //地图点击事件处理器
     mapClickHandler({ pixel , coordinate}){
-      console.log('===点击feature====');
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
-      console.log(feature);
       if(feature){
-        console.log('1111')
+        this.tipComponentId=YuAnInfo;
+        this.modalTitle=this.sourceData.typeName;
+        this.timeStr=stampConvertToTime(this.sourceData.startDay) +'-'+ stampConvertToTime(this.sourceData.endDay);
         this.yuAnOverlay.setPosition(coordinate)
       }
+    },
+    //关闭地图弹框
+    closeOverlay(){
+      this.yuAnOverlay.setPosition(undefined);
     },
     //获取预案数据
     getDataList() {
@@ -247,19 +250,25 @@ export default {
         okType: 'danger',
         cancelText: '取消',
         onOk() {
-            //需要删除的数据
-            const feature = _this.emergencyAreas.filter(p =>p.get('mapid')==item.mapId);
-          //删除应急预案区域
-          postEmergencyArea('delete', feature).then((res)=>{
-            console.log(res)
-          });
+          console.log(_this.emergencyCenterLayer);
+          if(_this.emergencyCenterLayer){
+            _this.emergencyCenterLayer.getSource().clear();
+          }
+          //需要删除的数据
+          const feature = _this.emergencyAreas.filter(p =>p.get('id')==item.mapId);
+          debugger;
+          if(feature){
+            //删除应急预案区域
+            postEmergencyArea('delete', feature).then((res)=>{
+              console.log(res)
+            });
+          }
             _this.deleteEmergencyYuAn(data).then(res => {
                 console.log(res);
                 _this.getDataList();
             })
         },
         onCancel() {
-
         }
       });
     },
@@ -274,8 +283,10 @@ export default {
       }
       this.activeIndex = index;
       const data = this.dataArr[index];
+      this.sourceData = data;
+      console.log(this.sourceData);
       //过滤当前选择的预案区域
-      const feature = this.emergencyAreas.filter(p => p.get('mapid') == data.mapId);
+      const feature = this.emergencyAreas.filter(p => p.get('id') == data.mapId);
       //预案区域图层
       this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature,emergencyAreaStyle(),2);
       const point = new Feature({
@@ -300,7 +311,6 @@ export default {
             console.log('getAllEmergencyPeople', res);
             this.openYchjDialog(res);
         })
-
     },
     //人员区域选择后调用此接口
     openYchjDialog(persons){
@@ -311,9 +321,6 @@ export default {
       this.dialogTitle = '远程呼叫';
       this.bodyPadding = [0, 10, 10, 10];
       this.dialogVisible = true;
-    },
-    closeOverlay(){
-      console.log('===close====')
     }
   }
 }

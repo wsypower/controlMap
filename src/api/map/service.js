@@ -45,7 +45,7 @@ export async function postEmergencyArea(type, feature) {
   } else if (type == 'edit') {
     xml = format.writeTransaction(null, [feature], null, obj)
   } else {
-    xml = format.writeTransaction(null, null, [feature], obj)
+    xml = format.writeTransaction(null, null, feature, obj)
   }
   const serializer = new XMLSerializer()
   //将参数转换为xml格式数据
