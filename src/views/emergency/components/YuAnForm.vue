@@ -143,7 +143,6 @@ import Feature from 'ol/Feature';
 import MultiPolygon from 'ol/geom/MultiPolygon';
 import { fromCircle } from 'ol/geom/Polygon'
 import { getCenter } from 'ol/extent'
-// import { postFeature } from '@/api/map/map'
 import { postEmergencyArea } from '@/api/map/service'
 let draw;
 export default {
@@ -339,6 +338,7 @@ export default {
                 geometry: mutiPolygon
               })
             }
+            //保存矩形和正方形，由于目前矩形和正方形保存有困难，暂不支持
             // else if(this.drawType==0||this.drawType==1){
             //   const polygon = fromCircle(this.drawFeature.getGeometry(), 4,90);
             //   let mutiPolygon = new MultiPolygon({});
@@ -380,11 +380,9 @@ export default {
                     values.startDay = values.rangeDay[0]._d.getTime();
                     values.endDay = values.rangeDay[1]._d.getTime();
                 }
-
                 if(this.image.length>0){
                   values.imageStr = this.image[0].newPath + '|' + this.image[0].oldName;
                 }
-
                 if(this.fileList.length>0) {
                     let fileStr = '';
                     for (let i = 0; i < this.fileList.length; i++) {
@@ -397,9 +395,7 @@ export default {
                     }
                     values.fileStr = fileStr;
                 }
-
                 delete values.rangeDay;
-
                 console.log('form value: ', values);
                 // if(this.checkSubmitParams(values)){
                 //     this.addNewEmergencyYuAn(values).then((res) => {

@@ -195,6 +195,7 @@ export default {
     mapClickHandler({ pixel , coordinate}){
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
       if(feature){
+        //给弹框内容赋值
         this.tipComponentId=YuAnInfo;
         this.iconName = 'menu-special';
         this.modalTitle=this.infoData.typeName;
