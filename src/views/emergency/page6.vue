@@ -184,12 +184,13 @@ export default {
       if(feature){
         this.tipComponentId=YuAnInfo;
         this.modalTitle=this.sourceData.typeName;
-        this.timeStr=stampConvertToTime(this.sourceData.startDay) +'-'+ stampConvertToTime(this.sourceData.endDay);
+        this.timeStr=stampConvertToTime(this.sourceData.startDay) +' ~ '+ stampConvertToTime(this.sourceData.endDay);
         this.yuAnOverlay.setPosition(coordinate)
       }
     },
     //关闭地图弹框
     closeOverlay(){
+      debugger;
       this.yuAnOverlay.setPosition(undefined);
     },
     //获取预案数据
