@@ -177,3 +177,18 @@ export class MapManager {
     return this.map;
   }
 }
+
+/**
+ * @description:过滤视频会议人员点位的方法
+ * @author:sijianting
+ * @createDate:2019/7/25 14:56
+ */
+export function filterMeetingPeople(feature, points) {
+  console.log(points);
+  console.log(feature);
+  const geo = feature.getGeometry();
+  const peoples = points.filter(p => {
+    return geo.intersectsCoordinate(p)
+  });
+  return peoples;
+}
