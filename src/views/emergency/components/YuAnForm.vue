@@ -56,7 +56,7 @@
                 :label-col="{ span: 5 }"
                 :wrapper-col="{ span: 12 }"
               >
-                <a-input v-decorator="['position',config]"
+                <a-input v-decorator="['position',configText]"
                          placeholder="请输入" style="width: 277px" />
               </a-form-item>
               <a-form-item
@@ -64,7 +64,7 @@
                 :label-col="{ span: 5 }"
                 :wrapper-col="{ span: 12 }"
               >
-                <a-textarea v-decorator="['description',config]"
+                <a-textarea v-decorator="['description',configText]"
                         placeholder="请输入" :rows="2" :autosize="{minRows: 2, maxRows: 2}" style="width: 277px" />
               </a-form-item>
               <a-form-item
@@ -72,7 +72,11 @@
                 :label-col="{ span: 5 }"
                 :wrapper-col="{ span: 12 }"
               >
-                <a-select v-decorator="['areaId',config]"
+                <div v-if="sourceData.id">
+                  <span style="margin-right: 10px;">{{areaName}}</span>
+                  <a-button type="primary" size="small" @click="editAreaPart">区域微调</a-button>
+                </div>
+                <a-select v-else v-decorator="['areaId',config]"
                           placeholder="请选择" style="width: 277px" @select="selectPaintMethod">
                   <a-select-option
                           v-for="(item,index) in areaList"
@@ -156,6 +160,7 @@ export default {
            form: this.$form.createForm(this),
             //校验配置
             config: {rules: [{ required: true, message: '请选择' }]},
+            configText: {rules: [{ required: true, message: '请输入' }]},
             //类型数据
             typeList: [],
             //等级数据
@@ -167,6 +172,8 @@ export default {
               {'id':'2','name':'圆形'},
               {'id':'3','name':'多边形'},
               {'id':'4','name':'任意面'}],
+            //区域名称
+            areaName: '',
             //照片路径，全路径
             imageUrl: '',
             //照片上传后得到的照片对象
@@ -230,6 +237,8 @@ export default {
 
               _this.mapId = _this.sourceData.mapId;
               _this.mapCenter = [_this.sourceData.positionX,_this.sourceData.positionY];
+              let index = parseInt(_this.sourceData.areaId)-2;
+              _this.areaName =  _this.areaList[index].name;
 
         }).catch((error) => {
             console.log(error)
@@ -272,6 +281,10 @@ export default {
             const mapExtent = e.feature.getGeometry().getExtent();
             _this.mapCenter= getCenter(mapExtent);
           })
+        },
+        //编辑时区域
+        editAreaPart(){
+          console.log('click editAreaPart');
         },
         //照片上传之前的校验
         beforeUpload (file,filelist) {
