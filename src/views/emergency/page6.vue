@@ -310,6 +310,7 @@ export default {
     ychjOperation() {
         this.getAllEmergencyPeople().then(res => {
             console.log('getAllEmergencyPeople', res);
+            console.log('emergencyLayer',this.emergencyLayer.getSource().getFeatures()[0]);
             this.openYchjDialog(res);
         })
     },
