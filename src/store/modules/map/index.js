@@ -7,12 +7,16 @@
 export default {
   namespaced: true,
   state: {
-    mapManager: null
+    mapManager: null,
+    emergencyAllArea: null
   },
   mutations: {
     setMapManager(state, mapManager) {
       state.mapManager = mapManager;
-    }
+    },
+    setEmergencyAllArea(state, emergencyAllArea) {
+      state.emergencyAllArea = emergencyAllArea;
+    },
   },
   actions: {
 

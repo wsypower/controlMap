@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import Operation from './components/Operation.vue'
 import YuAnForm from './components/YuAnForm.vue'
 import FarCall from './components/FarCall.vue'
@@ -180,15 +180,18 @@ export default {
         }
     },
   methods: {
+    ...mapMutations('map', [
+      'setEmergencyAllArea',
+    ]),
     ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn','getAllEmergencyPeople']),
     //地图点击事件处理器
     mapClickHandler({ pixel , coordinate}){
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
-      if(feature){
+      if(feature && feature.get('type')){
         //给弹框内容赋值
         this.tipComponentId=YuAnInfo;
         this.iconName = 'menu-special';
-        this.modalTitle=this.sourceData.typeName;
+        this.modalTitle = this.sourceData.typeName;
         this.timeStr=stampConvertToTime(this.sourceData.startDay) +' ~ '+ stampConvertToTime(this.sourceData.endDay);
         this.yuAnOverlay.setPosition(coordinate)
       }
@@ -199,8 +202,8 @@ export default {
     },
     //获取预案数据
     getDataList() {
-      this.showLoading = true;
-      this.getEmergencyYuAnDataList(this.query).then(res => {
+        this.showLoading = true;
+        this.getEmergencyYuAnDataList(this.query).then(res => {
         console.log(res);
         this.dataArr = res.list;
         this.totalSize = res.total;
@@ -208,7 +211,8 @@ export default {
       });
       //获取预案区域数据
       getAllEmergencyArea().then(points => {
-        this.emergencyAreas=points;
+        this.emergencyAreas = points;
+        this.setEmergencyAllArea(points);
       })
     },
     //搜索关键字查询
@@ -297,6 +301,7 @@ export default {
       const point = new Feature({
         geometry: new Point([parseFloat(data.positionX),parseFloat(data.positionY)])
       });
+      point.set('type', 'center');
       //预案中心点图标图层
       this.emergencyCenterLayer=this.mapManager.addVectorLayerByFeatures([point],emergencyCenterStyle(),3);
       this.mapManager.locateTo([parseFloat(data.positionX),parseFloat(data.positionY)]);
