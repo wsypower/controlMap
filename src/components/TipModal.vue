@@ -110,7 +110,7 @@ export default{
   .tip-header {
     height: 40px;
     width: 100%;
-    padding-left: 20px;
+    padding-left: 10px;
     padding-right: 10px;
     .tip-title {
       font-size: 16px;
@@ -118,9 +118,6 @@ export default{
       .svg_icon_name {
         display: inline-block;
         width: 16px;
-        height: 16px;
-        //background: url("../assets/images/zhuantifuwu.png") no-repeat;
-        /*background-size: 100% 100%;*/
         margin-right: 10px;
       }
       span:nth-child(2) {

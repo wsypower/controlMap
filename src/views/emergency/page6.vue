@@ -57,6 +57,7 @@
         <div hidden>
             <tip-modal
                     ref="yuAnOverlay"
+                    :iconName="iconName"
                     :title="modalTitle"
                     :timeStr="timeStr"
                     :componentId="tipComponentId"
@@ -127,6 +128,8 @@ export default {
       positionX: 0,
       //tipModal弹窗显示位置Y
       positionY: 0,
+      //tipModal弹窗标题上的icon
+      iconName: '',
       //tipModal弹窗标题
       modalTitle: '',
       //tipModal弹窗标题上的时间
@@ -183,6 +186,7 @@ export default {
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
       if(feature){
         this.tipComponentId=YuAnInfo;
+        this.iconName = 'menu-special';
         this.modalTitle=this.sourceData.typeName;
         this.timeStr=stampConvertToTime(this.sourceData.startDay) +'-'+ stampConvertToTime(this.sourceData.endDay);
         this.yuAnOverlay.setPosition(coordinate)
@@ -295,15 +299,6 @@ export default {
       //预案中心点图标图层
       this.emergencyCenterLayer=this.mapManager.addVectorLayerByFeatures([point],emergencyCenterStyle(),3);
       this.mapManager.locateTo([parseFloat(data.positionX),parseFloat(data.positionY)]);
-      console.log('this.activeIndex', this.activeIndex);
-    },
-    clickTip(e) {
-      this.positionX = e.clientX;
-      this.positionY = e.clientY;
-      this.modalTitle = '消防火灾';
-      this.timeStr = '2019-07-12';
-      this.tipComponentId = YuAnInfo;
-      this.yuAnTipVisible = true;
     },
     //远程呼叫
     ychjOperation() {

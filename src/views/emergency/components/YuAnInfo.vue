@@ -1,15 +1,15 @@
 <template>
     <div class="info-body" flex="dir:left main:justify">
         <div class="info-body-left">
-            <img :src="info.photoUrl" />
+            <img :src="JSON.parse(info.imageStr)[0].newPath" />
         </div>
         <div class="info-body-right">
             <div flex="dir:left"><span>位置：</span><span>{{info.position}}</span></div>
-            <div flex="dir:left"><span>等级：</span><span class="level" :class="{yiban: info.levelId==1}">{{info.levelName}}</span></div>
+            <div flex="dir:left"><span>等级：</span><span class="level" :class="{yiban: info.levelId==='01'}">{{info.levelName}}</span></div>
             <div flex="dir:left"><span>详情：</span><span>{{info.description}}</span></div>
-            <p flex="dir:left"><span>附件：</span><span v-for="(file,index) in info.fileList"
+            <p flex="dir:left"><span>附件：</span><span v-for="(file,index) in JSON.parse(info.fileStr)"
                           :key="index"
-                          class="file">{{file.basefile.oldName}}</span></p>
+                          class="file" :title="file.oldName" @click="downloadFile(file.newPath)">{{file.oldName}}</span></p>
         </div>
     </div>
 </template>
@@ -18,31 +18,18 @@
     export default {
         name: 'yuanInfo',
         props:{
-            info1:{
+            info:{
                 type:Object,
                 default(){
-                    return {}
+                    return {
+                        imageStr: [],
+                        fileStr: []
+                    }
                 }
             }
         },
         data(){
             return {
-                info:{
-                    photoUrl: 'http://192.168.71.33:50000//upload/file/2019/07/12/20190712090917893.png',
-                    position: '杭州市西湖区翠园创意园区17号楼，发生A级火灾，西湖区消防大队前往创意园区消灭火灾，于XXXXX',
-                    levelId: 1,
-                    levelName: '一般',
-                    description:'杭州市西湖区翠园创意园区17号楼，发生A级火灾，西湖区消防大队前往创意园区消灭火灾，于XXXXX',
-                    fileList:[{
-                        basefile:{
-                            oldName: 'xhsdhdjdk.xml'
-                        }
-                    },{
-                        basefile:{
-                            oldName: 'shxjskalhd.xml'
-                        }
-                    }]
-                }
             }
         },
         mounted(){
@@ -51,6 +38,9 @@
         methods:{
             init(){
 
+            },
+            downloadFile(fileUrl){
+                window.open(fileUrl);
             }
         }
     }
@@ -119,8 +109,13 @@
                     text-overflow: ellipsis;
                     overflow: hidden;
                     white-space: nowrap;
+                    cursor: pointer;
                     &:last-child{
                         margin-right: 0px;
+                    }
+                    &:hover{
+                        background-color: rgba(43,144,243,.6);
+                        color: #ffffff;
                     }
                 }
             }

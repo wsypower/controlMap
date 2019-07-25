@@ -357,13 +357,13 @@ export default {
             feature.setProperties(prop);
             postEmergencyArea('add',feature).then(res=>{
               console.log(res);
-                  // var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
-                  // var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
-                  // var insertNum=res.children[0].children[0].children[0].textContent
-                  // if(insertNum>0){
-                  //   console.log('===保存成功====');
+              var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
+              var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
+              //var insertNum=res.children[0].children[0].children[0].textContent
+              if(insertNum>0){
+                console.log('===保存成功====');
                 callBack&&callBack();
-              // }
+              }
             })
         },
         //提交表单
