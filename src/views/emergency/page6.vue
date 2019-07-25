@@ -323,15 +323,12 @@ export default {
         }
         else{
             this.getAllEmergencyPeople().then(res => {
+              console.log('getAllEmergencyPeople', res);
+              console.log('emergencyLayer',this.emergencyLayer.getSource().getFeatures()[0]);
                 console.log('getAllEmergencyPeople', res);
                 this.openYchjDialog(res);
             })
         }
-        this.getAllEmergencyPeople().then(res => {
-            console.log('getAllEmergencyPeople', res);
-            console.log('emergencyLayer',this.emergencyLayer.getSource().getFeatures()[0]);
-            this.openYchjDialog(res);
-        })
     },
     //人员区域选择后调用此接口
     openYchjDialog(persons){
