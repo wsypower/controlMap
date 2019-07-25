@@ -57,6 +57,8 @@
         <div hidden>
             <tip-modal
                     ref="yuAnOverlay"
+                    :modalWidth="modalWidth"
+                    :modalHeight="modalHeight"
                     :iconName="iconName"
                     :title="modalTitle"
                     :subTitle="subTitle"
@@ -74,6 +76,7 @@ import YuAnForm from './components/YuAnForm.vue'
 import FarCall from './components/FarCall.vue'
 import YuAnItem from './components/YuAnItem.vue'
 import YuAnInfo from './components/YuAnInfo.vue'
+import UserInfo from './components/UserInfo.vue'
 import { getAllEmergencyArea,postEmergencyArea } from '@/api/map/service'
 import {emergencyAreaStyle,emergencyCenterStyle} from '@/utils/util.map.style'
 import { stampConvertToTime} from '@/utils/util.tool'
@@ -124,6 +127,10 @@ export default {
       sourceData: {},
       //tipModal弹窗是否渲染
       yuAnTipVisible: true,
+      //tipModal弹窗宽
+      modalWidth: 482,
+      //tipModal弹窗高
+      modalHeight: 254,
       //tipModal弹窗显示位置X
       positionX: 0,
       //tipModal弹窗显示位置Y
@@ -146,7 +153,8 @@ export default {
     YuAnForm,
     FarCall,
     YuAnItem,
-    YuAnInfo
+    YuAnInfo,
+    UserInfo
   },
   computed: {
       ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
