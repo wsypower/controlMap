@@ -182,6 +182,7 @@ export default {
     mapClickHandler({ pixel , coordinate}){
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
       if(feature){
+        //给弹框内容赋值
         this.tipComponentId=YuAnInfo;
         this.modalTitle=this.sourceData.typeName;
         this.timeStr=stampConvertToTime(this.sourceData.startDay) +' ~ '+ stampConvertToTime(this.sourceData.endDay);
@@ -190,7 +191,6 @@ export default {
     },
     //关闭地图弹框
     closeOverlay(){
-      debugger;
       this.yuAnOverlay.setPosition(undefined);
     },
     //获取预案数据
