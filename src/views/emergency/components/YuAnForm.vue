@@ -243,6 +243,8 @@ export default {
         }).catch((error) => {
             console.log(error)
         })
+      console.log('=====预案区域=====');
+      console.log(this.emergencyAllArea);
     },
     methods:{
         ...mapActions('emergency/emergency', ['getEmergencyYuAnInitData','addNewEmergencyYuAn']),
@@ -272,6 +274,7 @@ export default {
           console.log('selectPaintMethod',val,option);
           const _this = this;
           draw = this.mapManager.activateDraw(val,draw);
+          // this.mapManager.getMap().un('click',)
           this.drawType = val;
           this.$emit('hide');
           draw.on('drawend', function(e) {
@@ -368,6 +371,12 @@ export default {
             this.mapId=this.getMapId();
             prop["id"]=this.mapId;
             feature.setProperties(prop);
+            debugger;
+            if(this.sourceData.id){
+              let features=[]
+              console.log(features);
+            }
+          else{
             postEmergencyArea('add',feature).then(res=>{
               console.log(res);
               var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
@@ -378,6 +387,7 @@ export default {
                 callBack&&callBack();
               }
             })
+          }
         },
         //提交表单
         handleSubmit(e){
@@ -442,7 +452,8 @@ export default {
     },
     computed:{
       ...mapState('map', [
-        'mapManager'
+        'mapManager',
+        'emergencyAllArea'
       ]),
     }
 }
