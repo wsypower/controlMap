@@ -173,4 +173,7 @@ export class MapManager {
   removeLayer(layer) {
     this.map.removeLayer(layer)
   }
+  getMap(){
+    return this.map;
+  }
 }
