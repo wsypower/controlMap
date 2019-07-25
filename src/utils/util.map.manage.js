@@ -184,11 +184,11 @@ export class MapManager {
  * @createDate:2019/7/25 14:56
  */
 export function filterMeetingPeople(feature, points) {
-  console.log(points);
-  console.log(feature);
   const geo = feature.getGeometry();
   const peoples = points.filter(p => {
-    return geo.intersectsCoordinate(p)
+    if(geo.intersectsCoordinate(p.position)){
+      return p;
+    }
   });
   return peoples;
 }

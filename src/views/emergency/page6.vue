@@ -1,72 +1,77 @@
 <template>
-    <div class="left-message">
-        <div class="left-message-title">
-            预案列表
-        </div>
-        <div class="search-panel">
-            <a-input-search
-                    placeholder="输入关键词搜索"
-                    @search="onSearch"
-                    enterButton="搜 索"
-            ></a-input-search>
-        </div>
-        <div class="search-result">
-            <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
-                <a-spin tip="数据加载中..."></a-spin>
-            </div>
-            <div class="data-panel" v-else>
-                <cg-container scroll v-if="dataArr.length>0" >
-                    <yu-an-item v-for="(item, index) in dataArr"
-                               :itemData="item"
-                               :index="index"
-                               :key="index"
-                               :class="{active: activeIndex==index}"
-                               :isActive="activeIndex==index"
-                               @editYuAnItem="editYuAnItem"
-                               @deleteYuAnItem="deleteYuAnItem"
-                               @onClick="clickDataItem(index)">
-                    </yu-an-item>
-                </cg-container>
-                <div v-else class="none-panel" flex="main:center cross:center">
-                    <img src="~@img/zanwuyuan.png" />
-                </div>
-            </div>
-        </div>
-        <div v-if="dataArr.length>0" class="pagination-panel">
-            <!--<div @click="clickTip">测试点击</div>-->
-            <a-pagination
-                    :total="totalSize"
-                    :showTotal="total => `共 ${total} 条`"
-                    :pageSize="10"
-                    :defaultCurrent="1"
-                    @change="changePagination"
-            />
-        </div>
-        <operation ref="Operate" :class="{position:addPositionClass}" :isActiveOperation="isActiveOperation" @addItem="addItemOperation" @ychjOperate="ychjOperation"></operation>
-        <custom-dialog
-                :visible.sync="dialogVisible"
-                :dWidth="dWidth"
-                :dHeight="dHeight"
-                :dialogTitle="dialogTitle"
-                :bodyPadding="bodyPadding"
-                :componentId="dialogComponentId"
-                :sourceData="sourceData"
-                :closeCallBack="getDataList"
-        >
-        </custom-dialog>
-        <div hidden>
-            <tip-modal
-                    ref="yuAnOverlay"
-                    :modalWidth="modalWidth"
-                    :modalHeight="modalHeight"
-                    :iconName="iconName"
-                    :title="modalTitle"
-                    :subTitle="subTitle"
-                    :componentId="tipComponentId"
-                    :info="infoData"
-                    @closeDialog="closeOverlay()"></tip-modal>
-        </div>
+  <div class="left-message">
+    <div class="left-message-title">
+      预案列表
     </div>
+    <div class="search-panel">
+      <a-input-search placeholder="输入关键词搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
+    </div>
+    <div class="search-result">
+      <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
+        <a-spin tip="数据加载中..."></a-spin>
+      </div>
+      <div class="data-panel" v-else>
+        <cg-container scroll v-if="dataArr.length > 0">
+          <yu-an-item
+            v-for="(item, index) in dataArr"
+            :itemData="item"
+            :index="index"
+            :key="index"
+            :class="{ active: activeIndex == index }"
+            :isActive="activeIndex == index"
+            @editYuAnItem="editYuAnItem"
+            @deleteYuAnItem="deleteYuAnItem"
+            @onClick="clickDataItem(index)"
+          >
+          </yu-an-item>
+        </cg-container>
+        <div v-else class="none-panel" flex="main:center cross:center">
+          <img src="~@img/zanwuyuan.png" />
+        </div>
+      </div>
+    </div>
+    <div v-if="dataArr.length > 0" class="pagination-panel">
+      <!--<div @click="clickTip">测试点击</div>-->
+      <a-pagination
+        :total="totalSize"
+        :showTotal="total => `共 ${total} 条`"
+        :pageSize="10"
+        :defaultCurrent="1"
+        @change="changePagination"
+      />
+    </div>
+    <operation
+      ref="Operate"
+      :class="{ position: addPositionClass }"
+      :isActiveOperation="isActiveOperation"
+      @addItem="addItemOperation"
+      @ychjOperate="ychjOperation"
+    ></operation>
+    <custom-dialog
+      :visible.sync="dialogVisible"
+      :dWidth="dWidth"
+      :dHeight="dHeight"
+      :dialogTitle="dialogTitle"
+      :bodyPadding="bodyPadding"
+      :componentId="dialogComponentId"
+      :sourceData="sourceData"
+      :closeCallBack="getDataList"
+    >
+    </custom-dialog>
+    <div hidden>
+      <tip-modal
+        ref="yuAnOverlay"
+        :modalWidth="modalWidth"
+        :modalHeight="modalHeight"
+        :iconName="iconName"
+        :title="modalTitle"
+        :subTitle="subTitle"
+        :componentId="tipComponentId"
+        :info="infoData"
+        @closeDialog="closeOverlay()"
+      ></tip-modal>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -77,21 +82,23 @@ import FarCall from './components/FarCall.vue'
 import YuAnItem from './components/YuAnItem.vue'
 import YuAnInfo from './components/YuAnInfo.vue'
 import UserInfo from './components/UserInfo.vue'
-import { getAllEmergencyArea,postEmergencyArea } from '@/api/map/service'
-import {emergencyAreaStyle,emergencyCenterStyle} from '@/utils/util.map.style'
-import { stampConvertToTime} from '@/utils/util.tool'
+import { getAllEmergencyArea, postEmergencyArea } from '@/api/map/service'
+import { emergencyAreaStyle, emergencyCenterStyle,emergencyPeopleStyle } from '@/utils/util.map.style'
+import { stampConvertToTime } from '@/utils/util.tool'
+import { filterMeetingPeople } from '@/utils/util.map.manage'
 
-import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
-let map;
+import Feature from 'ol/Feature'
+import Point from 'ol/geom/Point'
+let map
 export default {
   name: 'page6',
   data() {
     return {
-      yuAnOverlay:null,
-      emergencyLayer:null,
-      emergencyCenterLayer:null,
-        addPositionClass: false,
+      peopleLayer: null,
+      yuAnOverlay: null,
+      emergencyLayer: null,
+      emergencyCenterLayer: null,
+      addPositionClass: false,
       //查询条件
       query: {
         searchContent: '', //搜索关键字
@@ -145,7 +152,7 @@ export default {
       tipComponentId: {},
       //tipModal组件内组件的原始数据
       infoData: {},
-      emergencyAreas:null
+      emergencyAreas: null
     }
   },
   components: {
@@ -157,111 +164,114 @@ export default {
     UserInfo
   },
   computed: {
-      ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
+    ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
     ...mapState('cgadmin/page', ['current']),
-    ...mapState('map', ['mapManager']),
+    ...mapState('map', ['mapManager'])
   },
   mounted() {
-    this.getDataList();
-    this.isActiveOperation = true;
+    this.getDataList()
+    this.isActiveOperation = true
     this.yuAnOverlay = this.mapManager.addOverlay({
       element: this.$refs.yuAnOverlay.$el
-    });
-    map = this.mapManager.getMap();
-    map.on('click', this.mapClickHandler);
+    })
+    map = this.mapManager.getMap()
+    map.on('click', this.mapClickHandler)
   },
-  watch:{
-        asideCollapse: function(val){
-            console.log('asideCollapse 777777',val);
-            this.isActiveOperation = false;
-            //true:展开，false:关闭
-            if(val){
-                setTimeout(()=>{
-                    this.addPositionClass = !val;
-                    this.isActiveOperation = true;
-                },300);
-            }
-            else{
-                this.addPositionClass = !val;
-                setTimeout(()=>{
-                    this.isActiveOperation = true;
-                },300);
-            }
-        }
-    },
+  watch: {
+    asideCollapse: function(val) {
+      console.log('asideCollapse 777777', val)
+      this.isActiveOperation = false
+      //true:展开，false:关闭
+      if (val) {
+        setTimeout(() => {
+          this.addPositionClass = !val
+          this.isActiveOperation = true
+        }, 300)
+      } else {
+        this.addPositionClass = !val
+        setTimeout(() => {
+          this.isActiveOperation = true
+        }, 300)
+      }
+    }
+  },
   methods: {
-    ...mapMutations('map', [
-      'setEmergencyAllArea',
-    ]),
-    ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn','getAllEmergencyPeople']),
+    ...mapMutations('map', ['setEmergencyAllArea']),
+    ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn', 'getAllEmergencyPeople']),
     //地图点击事件处理器
-    mapClickHandler({ pixel , coordinate}){
+    mapClickHandler({ pixel, coordinate }) {
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
-      if(feature && feature.get('type')){
-        //给弹框内容赋值
-        this.tipComponentId=YuAnInfo;
-        this.iconName = 'menu-special';
-        this.modalTitle=this.infoData.typeName;
-        this.subTitle=stampConvertToTime(this.infoData.startDay) +'-'+ stampConvertToTime(this.infoData.endDay);
-        this.yuAnOverlay.setPosition(coordinate)
+      if (feature && feature.get('type')) {
+        if(feature.get('type')=='people'){
+          //给弹框内容赋值
+          this.tipComponentId = UserInfo;
+          this.yuAnOverlay.setPosition(coordinate)
+        } else{
+          //给弹框内容赋值
+          this.tipComponentId = YuAnInfo
+          this.iconName = 'menu-special'
+          this.modalTitle = this.infoData.typeName
+          this.subTitle = stampConvertToTime(this.infoData.startDay) + '-' + stampConvertToTime(this.infoData.endDay)
+          this.yuAnOverlay.setPosition(coordinate)
+        }
       }
     },
     //关闭地图弹框
-    closeOverlay(){
-      this.yuAnOverlay.setPosition(undefined);
+    closeOverlay() {
+      this.yuAnOverlay.setPosition(undefined)
     },
     //获取预案数据
     getDataList() {
-        this.showLoading = true;
-        this.getEmergencyYuAnDataList(this.query).then(res => {
-        console.log(res);
-        this.dataArr = res.list;
-        this.totalSize = res.total;
-        this.showLoading = false;
-      });
+      this.showLoading = true
+      this.getEmergencyYuAnDataList(this.query).then(res => {
+        console.log(res)
+        this.dataArr = res.list
+        this.totalSize = res.total
+        this.showLoading = false
+      })
       //获取预案区域数据
       getAllEmergencyArea().then(points => {
-        this.emergencyAreas = points;
-        this.setEmergencyAllArea(points);
+        this.emergencyAreas = points
+        this.setEmergencyAllArea(points)
       })
     },
     //搜索关键字查询
     onSearch(val) {
-      this.query.searchContent = val;
+      this.query.searchContent = val
       this.getDataList()
     },
     //翻页
     changePagination(pageNo, pageSize) {
-      console.log('changePagination', pageNo, pageSize);
-      this.query.pageNo = pageNo;
-      this.getDataList();
+      console.log('changePagination', pageNo, pageSize)
+      this.query.pageNo = pageNo
+      this.getDataList()
     },
     //增加预案
     addItemOperation() {
-      this.dialogComponentId = YuAnForm;
-      this.dWidth = 810;
-      this.dHeight = 450;
-      this.dialogTitle = '新增预案';
-      this.bodyPadding = [0, 10, 10, 10];
-      this.sourceData = {};
+      this.dialogComponentId = YuAnForm
+      this.dWidth = 810
+      this.dHeight = 450
+      this.dialogTitle = '新增预案'
+      this.bodyPadding = [0, 10, 10, 10]
+      this.sourceData = {}
       this.dialogVisible = true
     },
     //编辑预案
     editYuAnItem(item) {
-      console.log('editYuan item', item);
-      this.dialogComponentId = YuAnForm;
-      this.dWidth = 810;
-      this.dHeight = 450;
-      this.dialogTitle = '修改预案';
-      this.bodyPadding = [0, 10, 10, 10];
-      this.sourceData = item;
-      this.dialogVisible = true;
+      console.log('editYuan item', item)
+      this.dialogComponentId = YuAnForm
+      this.dWidth = 810
+      this.dHeight = 450
+      this.dialogTitle = '修改预案'
+      this.bodyPadding = [0, 10, 10, 10]
+      this.sourceData = item
+      this.dialogVisible = true
     },
     //删除预案
     deleteYuAnItem(item) {
-      console.log('deleteYuan', item);
-      let data = { id: item.id };
-      let _this = this;
+      console.log('deleteYuan', item)
+      let data = { id: item.id }
+      let _this = this
       this.$confirm({
         title: '确定删除这个预案吗？',
         content: '',
@@ -269,76 +279,92 @@ export default {
         okType: 'danger',
         cancelText: '取消',
         onOk() {
-          console.log(_this.emergencyCenterLayer);
-          if(_this.emergencyCenterLayer){
-            _this.emergencyCenterLayer.getSource().clear();
+          console.log(_this.emergencyCenterLayer)
+          if (_this.emergencyCenterLayer) {
+            _this.emergencyCenterLayer.getSource().clear()
           }
           //需要删除的数据
-          const feature = _this.emergencyAreas.filter(p =>p.get('id')==item.mapId);
-          debugger;
-          if(feature){
+          const feature = _this.emergencyAreas.filter(p => p.get('id') == item.mapId)
+          debugger
+          if (feature) {
             //删除应急预案区域
-            postEmergencyArea('delete', feature).then((res)=>{
+            postEmergencyArea('delete', feature).then(res => {
               console.log(res)
-            });
-          }
-            _this.deleteEmergencyYuAn(data).then(res => {
-                console.log(res);
-                _this.getDataList();
             })
+          }
+          _this.deleteEmergencyYuAn(data).then(res => {
+            console.log(res)
+            _this.getDataList()
+          })
         },
-        onCancel() {
-        }
-      });
+        onCancel() {}
+      })
     },
     //选择某个预案
     clickDataItem(index) {
-      console.log('clickDataItem', index);
-      if(this.emergencyLayer) {
-        this.emergencyLayer.getSource().clear();
+      console.log('clickDataItem', index)
+      if (this.emergencyLayer) {
+        this.emergencyLayer.getSource().clear()
       }
-      if(this.emergencyCenterLayer){
-        this.emergencyCenterLayer.getSource().clear();
+      if (this.emergencyCenterLayer) {
+        this.emergencyCenterLayer.getSource().clear()
       }
-      this.activeIndex = index;
-      const data = this.dataArr[index];
-      this.infoData = data;
-      console.log(this.sourceData);
+      if(this.peopleLayer){
+        this.peopleLayer.getSource().clear();
+      }
+      this.activeIndex = index
+      const data = this.dataArr[index]
+      this.infoData = data
+      console.log(this.sourceData)
       //过滤当前选择的预案区域
-      const feature = this.emergencyAreas.filter(p => p.get('id') == data.mapId);
+      const feature = this.emergencyAreas.filter(p => p.get('id') == data.mapId)
       //预案区域图层
-      this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature,emergencyAreaStyle(),2);
+      this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature, emergencyAreaStyle(), 2)
       const point = new Feature({
-        geometry: new Point([parseFloat(data.positionX),parseFloat(data.positionY)])
-      });
-      point.set('type', 'center');
+        geometry: new Point([parseFloat(data.positionX), parseFloat(data.positionY)])
+      })
+      point.set('type', 'center')
       //预案中心点图标图层
-      this.emergencyCenterLayer=this.mapManager.addVectorLayerByFeatures([point],emergencyCenterStyle(),3);
-      this.mapManager.locateTo([parseFloat(data.positionX),parseFloat(data.positionY)]);
+      this.emergencyCenterLayer = this.mapManager.addVectorLayerByFeatures([point], emergencyCenterStyle(), 3)
+      this.mapManager.locateTo([parseFloat(data.positionX), parseFloat(data.positionY)])
     },
     //远程呼叫
     ychjOperation() {
-        if(this.activeIndex===null){
-            this.$message.warning('请先选择一个预案');
-        }
-        else{
-            this.getAllEmergencyPeople().then(res => {
-              console.log('getAllEmergencyPeople', res);
-              console.log('emergencyLayer',this.emergencyLayer.getSource().getFeatures()[0]);
-                console.log('getAllEmergencyPeople', res);
-                this.openYchjDialog(res);
+      if (this.activeIndex === null) {
+        this.$message.warning('请先选择一个预案')
+      } else {
+        this.getAllEmergencyPeople().then(res => {
+          const points = res.map(item => {
+            item.position = [parseFloat(item.x), parseFloat(item.y)];
+            return item;
+          })
+          //过滤出应急区域内的点位
+          const peoples = filterMeetingPeople(this.emergencyLayer.getSource().getFeatures()[0], points)
+          const peopleFeatures = peoples.map(people => {
+            let feature = new Feature({
+              geometry: new Point(people.position)
             })
-        }
+            feature.set('userid', people.userid);
+            feature.set('type', 'people');
+            return feature
+          });
+          //创建过滤后的人员点位图层
+          this.peopleLayer = this.mapManager.addVectorLayerByFeatures(peopleFeatures, emergencyPeopleStyle(), 2);
+          //过滤后的人员视频对话
+          this.openYchjDialog(peoples);
+        })
+      }
     },
     //人员区域选择后调用此接口
-    openYchjDialog(persons){
-      this.dialogComponentId = FarCall;
-      this.dWidth = 1200;
-      this.dHeight = 644;
-      this.sourceData = persons;
-      this.dialogTitle = '远程呼叫';
-      this.bodyPadding = [0, 10, 10, 10];
-      this.dialogVisible = true;
+    openYchjDialog(persons) {
+      console.log('==过滤后的人员===', persons);
+      this.dialogComponentId = FarCall
+      this.dWidth = 1200
+      this.dHeight = 644
+      this.sourceData = persons
+      this.dialogTitle = '远程呼叫'
+      this.bodyPadding = [0, 10, 10, 10]
+      this.dialogVisible = true
     }
   }
 }
@@ -384,7 +410,7 @@ export default {
     text-align: right;
     padding: 20px 20px 0px 0px;
   }
-  .position{
+  .position {
     left: 380px;
     top: 20px;
   }

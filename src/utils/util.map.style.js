@@ -39,11 +39,24 @@ export function emergencyAreaStyle() {
   })
 }
 /**
- * @description:
+ * @description:应急预案中心点位样式
  * @author:sijianting
  * @createDate:2019/7/23 14:49
  */
 export function emergencyCenterStyle() {
+  return new Style({
+    image: new Icon({
+      src: require('@/assets/mapImage/dingwei.png')
+    }),
+    anchor: [0.5, 1]
+  })
+}
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2019/7/25 16:53
+ */
+export function emergencyPeopleStyle() {
   return new Style({
     image: new Icon({
       src: require('@/assets/mapImage/dingwei.png')

@@ -371,23 +371,22 @@ export default {
             this.mapId=this.getMapId();
             prop["id"]=this.mapId;
             feature.setProperties(prop);
-            debugger;
             if(this.sourceData.id){
               let features=[]
               console.log(features);
             }
-          else{
-            postEmergencyArea('add',feature).then(res=>{
-              console.log(res);
-              var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
-              var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
-              //var insertNum=res.children[0].children[0].children[0].textContent
-              if(insertNum>0){
-                console.log('===保存成功====');
-                callBack&&callBack();
-              }
-            })
-          }
+            else{
+              postEmergencyArea('add',feature).then(res=>{
+                console.log(res);
+                var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
+                var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
+                //var insertNum=res.children[0].children[0].children[0].textContent
+                if(insertNum>0){
+                  console.log('===保存成功====');
+                  callBack&&callBack();
+                }
+              })
+            }
         },
         //提交表单
         handleSubmit(e){
