@@ -318,10 +318,15 @@ export default {
     },
     //远程呼叫
     ychjOperation() {
-        this.getAllEmergencyPeople().then(res => {
-            console.log('getAllEmergencyPeople', res);
-            this.openYchjDialog(res);
-        })
+        if(this.activeIndex===null){
+            this.$message.warning('请先选择一个预案');
+        }
+        else{
+            this.getAllEmergencyPeople().then(res => {
+                console.log('getAllEmergencyPeople', res);
+                this.openYchjDialog(res);
+            })
+        }
     },
     //人员区域选择后调用此接口
     openYchjDialog(persons){

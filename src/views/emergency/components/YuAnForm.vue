@@ -440,11 +440,11 @@ export default {
         },
         checkSubmitParams(params){
             if(!params.imageStr){
-                message.error('照片必须上传');
+                this.$message.error('照片必须上传！')
                 return false
             }
             if(!params.fileStr){
-                message.error('附件必须上传');
+                this.$message.error('附件必须上传！')
                 return false
             }
             return true
