@@ -59,9 +59,9 @@
                     ref="yuAnOverlay"
                     :iconName="iconName"
                     :title="modalTitle"
-                    :timeStr="timeStr"
+                    :subTitle="subTitle"
                     :componentId="tipComponentId"
-                    :info="sourceData"
+                    :info="infoData"
                     @closeDialog="closeOverlay()"></tip-modal>
         </div>
     </div>
@@ -132,10 +132,12 @@ export default {
       iconName: '',
       //tipModal弹窗标题
       modalTitle: '',
-      //tipModal弹窗标题上的时间
-      timeStr: '2019-07-24',
+      //tipModal弹窗副标题
+      subTitle: '',
       //tipModal弹窗body内组件
       tipComponentId: {},
+      //tipModal组件内组件的原始数据
+      infoData: {},
       emergencyAreas:null
     }
   },
@@ -187,8 +189,8 @@ export default {
       if(feature){
         this.tipComponentId=YuAnInfo;
         this.iconName = 'menu-special';
-        this.modalTitle=this.sourceData.typeName;
-        this.timeStr=stampConvertToTime(this.sourceData.startDay) +'-'+ stampConvertToTime(this.sourceData.endDay);
+        this.modalTitle=this.infoData.typeName;
+        this.subTitle=stampConvertToTime(this.infoData.startDay) +'-'+ stampConvertToTime(this.infoData.endDay);
         this.yuAnOverlay.setPosition(coordinate)
       }
     },
@@ -287,7 +289,7 @@ export default {
       }
       this.activeIndex = index;
       const data = this.dataArr[index];
-      this.sourceData = data;
+      this.infoData = data;
       console.log(this.sourceData);
       //过滤当前选择的预案区域
       const feature = this.emergencyAreas.filter(p => p.get('id') == data.mapId);

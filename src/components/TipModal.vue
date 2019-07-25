@@ -3,8 +3,8 @@
     <div class="tip-header" flex="dir:left cross:center main:justify">
       <div class="tip-title" flex="cross:center">
         <cg-icon-svg v-if="iconShow" :name="iconName" class="svg_icon_name"></cg-icon-svg>
-        <span>{{ title || info.typeName }}</span>
-        <span>{{ timeStr || info.dayTime}}</span>
+        <span>{{ title }}</span>
+        <span>{{ subTitle }}</span>
       </div>
       <div
         class="close"
@@ -47,7 +47,7 @@ export default{
             type: String,
             default: ''
         },
-        timeStr: {
+        subTitle: {
             type: String,
             default: ''
         },
@@ -58,7 +58,6 @@ export default{
             }
         },
         info:{
-            type: Object,
             default(){
                 return {}
             }
