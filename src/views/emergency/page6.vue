@@ -152,7 +152,9 @@ export default {
       tipComponentId: {},
       //tipModal组件内组件的原始数据
       infoData: {},
-      emergencyAreas: null
+      emergencyAreas: null,
+      //远程呼叫所有人员
+      ychjPeopleList:[],
     }
   },
   components: {
@@ -176,7 +178,6 @@ export default {
     })
     map = this.mapManager.getMap()
     map.on('click', this.mapClickHandler)
-    console.log('当前路径：',this.$route.path);
   },
   watch: {
     asideCollapse: function(val) {
@@ -194,21 +195,36 @@ export default {
           this.isActiveOperation = true
         }, 300)
       }
-    },
+    }
   },
   methods: {
     ...mapMutations('map', ['setEmergencyAllArea']),
-    ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn', 'getAllEmergencyPeople']),
+    ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn', 'getAllEmergencyPeople','getPersonInfo']),
     //地图点击事件处理器
     mapClickHandler({ pixel, coordinate }) {
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
       if (feature && feature.get('pointType')) {
         if(feature.get('pointType')=='people'){
           //给弹框内容赋值
-          this.tipComponentId = UserInfo;
-          this.yuAnOverlay.setPosition(coordinate)
+          console.log(feature.get('userid'));
+          this.getPersonInfo({Id:feature.get('userid')}).then(res => {
+              console.log('getPersonInfo',res)
+              // this.modalWidth = 260;
+              // this.modalHeight = 140;
+              // this.$el.querySelector('.tip-content').style.width='260px';
+              // this.$el.querySelector('.tip-content').style.height='140px';
+              this.$refs.yuAnOverlay.$el.style.width='260px';
+              this.$refs.yuAnOverlay.$el.style.height='140px';
+              this.modalTitle = res.realname;
+              this.subTitle = res.isonline ==='0'?'离线':'在线';
+              this.infoData = res;
+              this.tipComponentId = UserInfo;
+              this.yuAnOverlay.setPosition(coordinate)
+          })
         } else{
           //给弹框内容赋值
+          this.$refs.yuAnOverlay.$el.style.width='482px';
+          this.$refs.yuAnOverlay.$el.style.height='254px';
           this.tipComponentId = YuAnInfo
           this.iconName = 'menu-special'
           this.modalTitle = this.infoData.typeName
@@ -303,7 +319,8 @@ export default {
     },
     //选择某个预案
     clickDataItem(index) {
-      console.log('clickDataItem', index)
+      console.log('clickDataItem', index);
+      this.ychjPeopleList = [];
       if (this.emergencyLayer) {
         this.emergencyLayer.getSource().clear()
       }
@@ -334,26 +351,32 @@ export default {
       if (this.activeIndex === null) {
         this.$message.warning('请先选择一个预案')
       } else {
-        this.getAllEmergencyPeople().then(res => {
-          const points = res.map(item => {
-            item.position = [parseFloat(item.x), parseFloat(item.y)];
-            return item;
-          })
-          //过滤出应急区域内的点位
-          const peoples = filterMeetingPeople(this.emergencyLayer.getSource().getFeatures()[0], points)
-          const peopleFeatures = peoples.map(people => {
-            let feature = new Feature({
-              geometry: new Point(people.position)
-            })
-            feature.set('userid', people.userid);
-            feature.set('pointType', 'people');
-            return feature
-          });
-          //创建过滤后的人员点位图层
-          this.peopleLayer = this.mapManager.addVectorLayerByFeatures(peopleFeatures, emergencyPeopleStyle(), 2);
-          //过滤后的人员视频对话
-          this.openYchjDialog(peoples);
-        })
+          if(this.ychjPeopleList.length>0){
+              this.openYchjDialog(this.ychjPeopleList);
+          }
+          else{
+              this.getAllEmergencyPeople().then(res => {
+                  const points = res.map(item => {
+                      item.position = [parseFloat(item.x), parseFloat(item.y)];
+                      return item;
+                  })
+                  //过滤出应急区域内的点位
+                  const peoples = filterMeetingPeople(this.emergencyLayer.getSource().getFeatures()[0], points)
+                  const peopleFeatures = peoples.map(people => {
+                      let feature = new Feature({
+                          geometry: new Point(people.position)
+                      })
+                      feature.set('userid', people.userid);
+                      feature.set('type', 'people');
+                      return feature
+                  });
+                  //创建过滤后的人员点位图层
+                  this.peopleLayer = this.mapManager.addVectorLayerByFeatures(peopleFeatures, emergencyPeopleStyle(), 2);
+                  //过滤后的人员视频对话
+                  this.ychjPeopleList = peoples;
+                  this.openYchjDialog(this.ychjPeopleList);
+              })
+          }
       }
     },
     //人员区域选择后调用此接口
