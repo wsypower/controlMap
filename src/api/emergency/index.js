@@ -228,3 +228,29 @@ export function getAllEmergencyPeople(data){
         params: data
     })
 }
+
+
+/**
+ * @description 根据userId获取人员信息
+ * @author moxuejuan
+ * @date 2019-07-12 10:53:20
+ * @param {String} Id 用户Id
+ * @method：GET
+ * @response：{
+ *     data:[{
+ *         {String} dept: 部门名称
+ *         {String} isonline: 是否在线
+ *         {String} phone：联系电话
+ *         {String} realname：真实姓名
+ *     }]
+ * }
+ */
+
+export function getPersonInfo(data){
+    console.log('api:getPersonInfo',data);
+    return request({
+        url: 'emergencyplan/getUserById?_t='+ new Date().getTime(),
+        method: 'get',
+        params: data
+    })
+}

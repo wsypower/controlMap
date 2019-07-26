@@ -23,12 +23,12 @@
                 </div>
                 <cg-container scroll v-else>
                     <div class="persons">
-                        <a-checkbox-group @change="onChange" :defaultValue="checkedList">
+                        <a-checkbox-group @change="onChange" >
                             <a-row>
                                 <a-col :span="4" v-for="(person,index) in peopleDataList" :key="index">
                                     <a-checkbox :value="person.userid">
                                         <!--<a-avatar v-if="!person.avatar" icon="user" />-->
-                                        <!--<a-avatar v-else src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />-->
+                                        <a-avatar :size="28" style="backgroundColor:#88d0bd" icon="user"/>
                                         {{person.realname}}
                                     </a-checkbox>
                                 </a-col>
@@ -98,9 +98,13 @@
             // ...mapActions('emergency/emergency', ['getAllEmergencyPeople']),
             getPeopleDataList(){
                 this.showLoading = true;
-                this.peopleDataList = this.sourceData;
+                this.peopleDataList = [];
+                //this.peopleDataList = this.sourceData;
                 for(let i=0;i<this.sourceData.length;i++){
-                     this.checkedList.push(this.sourceData[i].userid);
+                     //this.checkedList.push(this.sourceData[i].userid);
+                    if(this.sourceData[i].online===1){
+                        this.peopleDataList.push(this.sourceData[i]);
+                    }
                 }
                 this.showLoading = false;
             },
