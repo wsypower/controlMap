@@ -469,18 +469,6 @@ export default {
                 //         _this.$emit('close');
                 //     })
                 // }
-                if(!this.sourceData.id){
-                  this.addDraw(function(){
-                    values.mapId = _this.mapId;
-                    values.positionX = _this.mapCenter[0];
-                    values.positionY = _this.mapCenter[1];
-                    _this.addNewEmergencyYuAn(values).then((res) => {
-                      console.log('addNewEmergencyYuAn', res);
-                      _this.$emit('close');
-                    })
-                  });
-                }
-
                 if(this.checkSubmitParams(values)) {
                     this.addDraw(function () {
                         values.mapId = _this.mapId;
