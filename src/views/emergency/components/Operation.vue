@@ -56,13 +56,15 @@ export default {
             isActive: false,
 
             //应急资源选择类别
-          selectType:[{
-            key:'allVideo',
-            name:'全部视频',
-            icon:'video-one',
-          },{
+          selectType:[
+          //     {
+          //   key:'allVideo',
+          //   name:'全部视频',
+          //   icon:'video-one',
+          // },
+              {
             key:'partVideo',
-            name:'周边视频',
+            name:'区域视频',
             icon:'video-two'
           },{
             key:'jiuyuan',
@@ -125,15 +127,15 @@ export default {
                 }]
           },{
             key:'equip',
-            name:'物资装备',
+            name:'车载GPS',
             icon:'wuzi'
           },{
             key:'enterprise',
-            name:'物资企业',
+            name:'单兵GPS',
             icon:'jianzhu'
           },{
             key:'expert',
-            name:'专家库',
+            name:'管理人员',
             icon:'zhuanjia'
           }],
             //已勾选的避难场所
