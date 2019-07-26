@@ -9,7 +9,11 @@ import VectorSource from 'ol/source/Vector'
 import GeoJSON from 'ol/format/GeoJSON'
 import Overlay from 'ol/Overlay'
 import Draw, {createRegularPolygon, createBox} from 'ol/interaction/Draw.js';
+import { Modify, Select } from 'ol/interaction.js';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';
+import Feature from 'ol/Feature';
+import MultiPolygon from 'ol/geom/MultiPolygon';
+import { fromCircle } from 'ol/geom/Polygon'
 
 export class MapManager {
   constructor(map) {
@@ -158,13 +162,27 @@ export class MapManager {
       })
     })
     this.map.addLayer(drawLayer)
-    return draw
+    return [draw, drawLayer]
   }
   /**
    *  @description:取消激活绘制功能
    */
   inactivateDraw(draw) {
     this.map.removeInteraction(draw)
+  }
+
+  /**
+   * @description:激活修改地图
+   * @author:sijianting
+   * @createDate:2019/7/26 9:52
+   */
+  activeModifyFeature(modify, modifySource){
+    if(modify){
+      this.inactivateDraw(modify);
+    }
+    modify = new Modify({ source: modifySource});
+    this.map.addInteraction(modify);
+    return modify;
   }
   /**
    * @description:移除单个图层
@@ -191,4 +209,19 @@ export function filterMeetingPeople(feature, points) {
     }
   });
   return peoples;
+}
+
+/**
+ * @description:圆转面保存
+ * @author:sijianting
+ * @createDate:2019/7/26 15:22
+ */
+export function circleToPloygon(feature) {
+  const polygon = fromCircle(feature.getGeometry(), 64,90);
+  let mutiPolygon = new MultiPolygon({});
+  mutiPolygon.appendPolygon(polygon);
+  feature = new Feature({
+    geometry: mutiPolygon
+  })
+  return feature;
 }

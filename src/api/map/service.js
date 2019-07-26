@@ -43,7 +43,7 @@ export async function postEmergencyArea(type, feature) {
   if (type == 'add') {
     xml = format.writeTransaction([feature], null, null, obj)
   } else if (type == 'edit') {
-    xml = format.writeTransaction(feature[0], null, feature[1], obj)
+    xml = format.writeTransaction(null, [feature], null, obj)
   } else {
     xml = format.writeTransaction(null, null, feature, obj)
   }

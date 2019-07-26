@@ -144,17 +144,21 @@
 import moment from 'moment';
 import { mapActions,mapState } from 'vuex';
 import Feature from 'ol/Feature';
-import MultiPolygon from 'ol/geom/MultiPolygon';
-import { fromCircle } from 'ol/geom/Polygon'
 import { getCenter } from 'ol/extent'
+import Circle from 'ol/geom/Circle';
 import { postEmergencyArea } from '@/api/map/service'
+import { emergencyAreaStyle } from '@/utils/util.map.style'
+import {circleToPloygon} from '@/utils/util.map.manage'
 let draw;
 export default {
     name: 'yuanForm',
     data(){
         return{
+           drawLayer:null,
            drawFeature:null,//绘制区域
+           emergencyLayer:null,
            drawType:0,//绘制区域类型
+           modifyType:0,//区域修改类型
            mapCenter:null,//绘制区域中心点位坐标
            mapId:null,
            form: this.$form.createForm(this),
@@ -243,8 +247,7 @@ export default {
         }).catch((error) => {
             console.log(error)
         })
-      console.log('=====预案区域=====');
-      console.log(this.emergencyAllArea);
+        console.log('=====预案区域=====');
     },
     methods:{
         ...mapActions('emergency/emergency', ['getEmergencyYuAnInitData','addNewEmergencyYuAn']),
@@ -273,7 +276,9 @@ export default {
         selectPaintMethod(val,option){
           console.log('selectPaintMethod',val,option);
           const _this = this;
-          draw = this.mapManager.activateDraw(val,draw);
+          const drawResult=this.mapManager.activateDraw(val,draw);
+          draw = drawResult[0];
+          this.drawLayer=drawResult[1];
           // this.mapManager.getMap().un('click',)
           this.drawType = val;
           this.$emit('hide');
@@ -287,7 +292,33 @@ export default {
         },
         //编辑时区域
         editAreaPart(){
-          console.log('click editAreaPart');
+          let modify;
+          this.$emit('hide');
+          const feature = this.emergencyAllArea.filter(p => p.get('id') == this.sourceData.mapId);
+          console.log('====编辑区域起始图形===',feature[0].get('id'));
+          if(feature[0].get('type')==2){
+            const circleFeature =new Feature({
+              geometry:new Circle([feature[0].get('centerX'),feature[0].get('centerY')],feature[0].get('radius'))
+            });
+            //预案区域图层
+            this.emergencyLayer = this.mapManager.addVectorLayerByFeatures([circleFeature], emergencyAreaStyle(), 2);
+            this.modifyType=2;
+          }
+          else{
+            //预案区域图层
+            this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature, emergencyAreaStyle(), 2);
+            this.modifyType=3;
+          }
+          modify = this.mapManager.activeModifyFeature(modify,this.emergencyLayer.getSource());
+          let _this=this;
+          modify.on("modifyend",function (e) {
+            _this.mapManager.inactivateDraw(modify);
+            debugger;
+            var features =e.features.array_;
+            _this.drawFeature=features[0];
+            _this.$emit('show');
+            _this.editDraw();
+          });
         },
         //照片上传之前的校验
         beforeUpload (file,filelist) {
@@ -343,55 +374,69 @@ export default {
         getMapId(){
           return Number(Math.random().toString().substr(3,6) + Date.now()).toString(36);
         },
-        //保存绘制图形数据到gis数据库
+        //保存新增绘制图形数据到gis数据库
         addDraw(callBack){
             let feature;
             if(this.drawType==2) {
-              const polygon = fromCircle(this.drawFeature.getGeometry(), 64,90);
-              let mutiPolygon = new MultiPolygon({});
-              mutiPolygon.appendPolygon(polygon);
-              feature = new Feature({
-                geometry: mutiPolygon
-              })
-            }
-            //保存矩形和正方形，由于目前矩形和正方形保存有困难，暂不支持
-            // else if(this.drawType==0||this.drawType==1){
-            //   const polygon = fromCircle(this.drawFeature.getGeometry(), 4,90);
-            //   let mutiPolygon = new MultiPolygon({});
-            //   mutiPolygon.appendPolygon(polygon);
-            //   feature = new Feature({
-            //     geometry: mutiPolygon
-            //   })
-            // }
-            else{
+              feature=circleToPloygon(this.drawFeature);
+            } else{
               feature = this.drawFeature;
             }
             let prop=feature.getProperties();
-            prop["the_geom"]=prop["geometry"];
+            // prop["the_geom"]=prop["geometry"];
             this.mapId=this.getMapId();
             prop["id"]=this.mapId;
-            feature.setProperties(prop);
-            if(this.sourceData.id){
-              let features=[]
-              console.log(features);
+            if(this.drawType==2){
+              const center=this.drawFeature.getGeometry().getCenter();
+              prop["type"]=2;//圆形
+              prop["centerX"]=center[0];
+              prop["centerY"]=center[1];
+              prop["radius"]=this.drawFeature.getGeometry().getRadius();
             }
             else{
-              postEmergencyArea('add',feature).then(res=>{
+              prop["type"]=3;//多边形
+            }
+            feature.setProperties(prop);
+            postEmergencyArea('add',feature).then(res=>{
                 console.log(res);
                 var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
                 var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
-                //var insertNum=res.children[0].children[0].children[0].textContent
                 if(insertNum>0){
                   console.log('===保存成功====');
                   callBack&&callBack();
                 }
               })
-            }
+        },
+        //保存编辑图形数据到gis数据库
+        editDraw(){
+          let feature;
+          if(this.modifyType==2){
+            feature=circleToPloygon(this.drawFeature);
+            const center=this.drawFeature.getGeometry().getCenter();
+            let prop=feature.getProperties();
+            prop["id"]=this.sourceData.mapId;
+            // prop["the_geom"]=prop["geometry"];
+            prop["type"]=2;//圆形
+            prop["centerX"]=center[0];
+            prop["centerY"]=center[1];
+            prop["radius"]=this.drawFeature.getGeometry().getRadius();
+            feature.setProperties(prop);
+          }
+          else{
+            feature=this.drawFeature;
+          }
+          console.log('====编辑完成后id====',feature.get('id'));
+          postEmergencyArea('edit',feature).then(res=>{
+            console.log(res);
+            const xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
+            console.log(xmlDoc);
+          })
         },
         //提交表单
         handleSubmit(e){
             e.preventDefault();
             let _this = this;
+            // this.emergencyLayer.getSousrce().clear();
             this.form.validateFields((error, values) => {
                 console.log('error', error);
                 console.log('Received values of form: ', values);
@@ -425,16 +470,17 @@ export default {
                 //         _this.$emit('close');
                 //     })
                 // }
-                this.addDraw(function(){
+                if(!this.sourceData.id){
+                  this.addDraw(function(){
                     values.mapId = _this.mapId;
                     values.positionX = _this.mapCenter[0];
                     values.positionY = _this.mapCenter[1];
                     _this.addNewEmergencyYuAn(values).then((res) => {
-                        console.log('addNewEmergencyYuAn', res);
-                        _this.$emit('close');
+                      console.log('addNewEmergencyYuAn', res);
+                      _this.$emit('close');
                     })
-                });
-
+                  });
+                }
             });
         },
         checkSubmitParams(params){

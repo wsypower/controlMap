@@ -176,6 +176,7 @@ export default {
     })
     map = this.mapManager.getMap()
     map.on('click', this.mapClickHandler)
+    console.log('当前路径：',this.$route.path);
   },
   watch: {
     asideCollapse: function(val) {
@@ -193,7 +194,7 @@ export default {
           this.isActiveOperation = true
         }, 300)
       }
-    }
+    },
   },
   methods: {
     ...mapMutations('map', ['setEmergencyAllArea']),
@@ -201,8 +202,8 @@ export default {
     //地图点击事件处理器
     mapClickHandler({ pixel, coordinate }) {
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
-      if (feature && feature.get('type')) {
-        if(feature.get('type')=='people'){
+      if (feature && feature.get('pointType')) {
+        if(feature.get('pointType')=='people'){
           //给弹框内容赋值
           this.tipComponentId = UserInfo;
           this.yuAnOverlay.setPosition(coordinate)
@@ -218,7 +219,7 @@ export default {
     },
     //关闭地图弹框
     closeOverlay() {
-      this.yuAnOverlay.setPosition(undefined)
+      this.yuAnOverlay.setPosition(undefined);
     },
     //获取预案数据
     getDataList() {
@@ -323,7 +324,7 @@ export default {
       const point = new Feature({
         geometry: new Point([parseFloat(data.positionX), parseFloat(data.positionY)])
       })
-      point.set('type', 'center')
+      point.set('pointType', 'center');
       //预案中心点图标图层
       this.emergencyCenterLayer = this.mapManager.addVectorLayerByFeatures([point], emergencyCenterStyle(), 3)
       this.mapManager.locateTo([parseFloat(data.positionX), parseFloat(data.positionY)])
@@ -345,7 +346,7 @@ export default {
               geometry: new Point(people.position)
             })
             feature.set('userid', people.userid);
-            feature.set('type', 'people');
+            feature.set('pointType', 'people');
             return feature
           });
           //创建过滤后的人员点位图层
