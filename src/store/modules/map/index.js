@@ -8,7 +8,8 @@ export default {
   namespaced: true,
   state: {
     mapManager: null,
-    emergencyAllArea: null
+    emergencyAllArea: null,
+    selectEmergencyFeature: null,//当前选中应急预案的要素
   },
   mutations: {
     setMapManager(state, mapManager) {
@@ -16,6 +17,9 @@ export default {
     },
     setEmergencyAllArea(state, emergencyAllArea) {
       state.emergencyAllArea = emergencyAllArea;
+    },
+    setSelectEmergencyFeature(state, selectEmergencyFeature) {
+      state.selectEmergencyFeature = selectEmergencyFeature;
     },
   },
   actions: {

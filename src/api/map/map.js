@@ -63,3 +63,15 @@ export function postFeature(data) {
     data: `${data}`
   })
 }
+
+/**
+ * @description:获取摄像头监控列表接口
+ * @author:sijianting
+ * @createDate:2019/7/29 14:11
+ */
+export function getVideoListApi() {
+  return request({
+    url: 'http://192.168.71.33:8015/api/point/getCamList',
+    method: 'post'
+  });
+}

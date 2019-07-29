@@ -52,14 +52,27 @@ export function emergencyCenterStyle() {
   })
 }
 /**
- * @description:
+ * @description:应急预案呼叫人员样式
  * @author:sijianting
  * @createDate:2019/7/25 16:53
  */
 export function emergencyPeopleStyle() {
   return new Style({
     image: new Icon({
-      src: require('@/assets/mapImage/dingwei.png')
+      src: require('@/assets/mapImage/people-zx.png')
+    }),
+    anchor: [0.5, 1]
+  })
+}
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2019/7/29 16:47
+ */
+export function videoStyle() {
+  return new Style({
+    image: new Icon({
+      src: require('@/assets/mapImage/周边视频.png')
     }),
     anchor: [0.5, 1]
   })

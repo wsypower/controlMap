@@ -86,6 +86,7 @@ import { getAllEmergencyArea, postEmergencyArea } from '@/api/map/service'
 import { emergencyAreaStyle, emergencyCenterStyle,emergencyPeopleStyle } from '@/utils/util.map.style'
 import { stampConvertToTime } from '@/utils/util.tool'
 import { filterMeetingPeople } from '@/utils/util.map.manage'
+import { getCenter } from 'ol/extent'
 
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
@@ -198,7 +199,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('map', ['setEmergencyAllArea']),
+    ...mapMutations('map', ['setEmergencyAllArea', 'setSelectEmergencyFeature']),
     ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn', 'getAllEmergencyPeople','getPersonInfo']),
     //地图点击事件处理器
     mapClickHandler({ pixel, coordinate }) {
@@ -223,8 +224,8 @@ export default {
           })
         } else{
           //给弹框内容赋值
-          this.$refs.yuAnOverlay.$el.style.width='482px';
-          this.$refs.yuAnOverlay.$el.style.height='254px';
+          // this.$refs.yuAnOverlay.$el.style.width='482px';
+          // this.$refs.yuAnOverlay.$el.style.height='254px';
           this.tipComponentId = YuAnInfo
           this.iconName = 'menu-special'
           this.modalTitle = this.infoData.typeName
@@ -275,6 +276,15 @@ export default {
     },
     //编辑预案
     editYuAnItem(item) {
+      if (this.emergencyLayer) {
+        this.emergencyLayer.getSource().clear()
+      }
+      if (this.emergencyCenterLayer) {
+        this.emergencyCenterLayer.getSource().clear()
+      }
+      if(this.peopleLayer){
+        this.peopleLayer.getSource().clear();
+      }
       console.log('editYuan item', item)
       this.dialogComponentId = YuAnForm
       this.dWidth = 810
@@ -333,9 +343,10 @@ export default {
       this.activeIndex = index
       const data = this.dataArr[index]
       this.infoData = data
-      console.log(this.sourceData)
       //过滤当前选择的预案区域
-      const feature = this.emergencyAreas.filter(p => p.get('id') == data.mapId)
+      const feature = this.emergencyAreas.filter(p => p.get('id') == data.mapId);
+      //当前选中要素保存到vuex
+      this.setSelectEmergencyFeature(feature);
       //预案区域图层
       this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature, emergencyAreaStyle(), 2)
       const point = new Feature({
@@ -371,7 +382,7 @@ export default {
                       return feature
                   });
                   //创建过滤后的人员点位图层
-                  this.peopleLayer = this.mapManager.addVectorLayerByFeatures(peopleFeatures, emergencyPeopleStyle(), 2);
+                  this.peopleLayer = this.mapManager.addVectorLayerByFeatures(peopleFeatures, emergencyPeopleStyle(), 4);
                   //过滤后的人员视频对话
                   this.ychjPeopleList = peoples;
                   this.openYchjDialog(this.ychjPeopleList);

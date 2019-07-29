@@ -9,7 +9,7 @@ import VectorSource from 'ol/source/Vector'
 import GeoJSON from 'ol/format/GeoJSON'
 import Overlay from 'ol/Overlay'
 import Draw, {createRegularPolygon, createBox} from 'ol/interaction/Draw.js';
-import { Modify, Select } from 'ol/interaction.js';
+import { Modify } from 'ol/interaction.js';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';
 import Feature from 'ol/Feature';
 import MultiPolygon from 'ol/geom/MultiPolygon';
@@ -108,7 +108,7 @@ export class MapManager {
   locateTo(coord) {
     this.map.getView().animate({
       center: coord,
-      zoom: 13,
+      zoom: 15,
       duration: 500
     })
   }
@@ -197,7 +197,7 @@ export class MapManager {
 }
 
 /**
- * @description:过滤视频会议人员点位的方法
+ * @description:过滤区域内点位的方法
  * @author:sijianting
  * @createDate:2019/7/25 14:56
  */
@@ -225,3 +225,4 @@ export function circleToPloygon(feature) {
   })
   return feature;
 }
+

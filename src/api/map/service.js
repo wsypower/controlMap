@@ -3,9 +3,9 @@
  * @author:sijianting
  * @createDate:2019/7/11 9:18
  **/
-import { getPoint, getEmergencyArea, postFeature } from '@/api/map/map'
+import { getPoint, getEmergencyArea, postFeature, getVideoListApi } from '@/api/map/map'
 import GeoJSON from 'ol/format/GeoJSON'
-import WFS from 'ol/format/WFS';
+import WFS from 'ol/format/WFS'
 
 /**
  * @description：获取不同类型点位数据
@@ -28,13 +28,13 @@ export async function getAllEmergencyArea() {
 }
 
 /**
- * @description:
+ * @description:保存应急预案区域方法
  * @author:sijianting
  * @createDate:2019/7/22 16:35
  */
 export async function postEmergencyArea(type, feature) {
   const format = new WFS()
-  let xml;
+  let xml
   const obj = {
     featureNS: 'http://www.haining.com', //该图层所在工作空间的uri
     featurePrefix: 'haining', //工作空间名称0
@@ -43,6 +43,7 @@ export async function postEmergencyArea(type, feature) {
   if (type == 'add') {
     xml = format.writeTransaction([feature], null, null, obj)
   } else if (type == 'edit') {
+    console.log('==编辑圆形===', feature)
     xml = format.writeTransaction(null, [feature], null, obj)
   } else {
     xml = format.writeTransaction(null, null, feature, obj)
@@ -51,5 +52,19 @@ export async function postEmergencyArea(type, feature) {
   //将参数转换为xml格式数据
   const featString = serializer.serializeToString(xml)
   const result = await postFeature(featString)
-  return result;
+  return result
+}
+
+/**
+ * @description:获取所以摄像头数据并过滤出区域内摄像头
+ * @author:sijianting
+ * @createDate:2019/7/29 15:12
+ */
+export async function getAreaVideo() {
+  const result = await getVideoListApi()
+  const data = result.map(r => {
+    r.position = [parseFloat(r.x84), parseFloat(r.y84)]
+    return r
+  })
+  return data
 }

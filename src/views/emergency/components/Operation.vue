@@ -40,12 +40,16 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapState } from 'vuex'
-import { getTypePoint } from '@/api/map/service'
-import { emergencyPointStyle } from '@/utils/util.map.style'
+import { getTypePoint,getAreaVideo } from '@/api/map/service'
+import { emergencyPointStyle,videoStyle } from '@/utils/util.map.style'
+import { filterMeetingPeople } from '@/utils/util.map.manage'
+import Feature from 'ol/Feature'
+import Point from 'ol/geom/Point'
+
 export default {
     name: 'operation',
     data(){
-        return{
+        return {
             //应急资源菜单显示
             visible: false,
             //应急资源二级菜单显示
@@ -54,7 +58,6 @@ export default {
             isAnimationActive: false,
             //组件是否渲染
             isActive: false,
-
             //应急资源选择类别
           selectType:[
           //     {
@@ -66,11 +69,13 @@ export default {
             key:'partVideo',
             name:'区域视频',
             icon:'video-two'
-          },{
-            key:'jiuyuan',
-            name:'救援队伍',
-            icon:'menu-section'
-          },{
+          },
+          //   {
+          //   key:'jiuyuan',
+          //   name:'救援队伍',
+          //   icon:'menu-section'
+          // },
+            {
             key:'bncs',
             name:'避难场所',
             icon:'zhangpeng',
@@ -210,10 +215,22 @@ export default {
             console.log('handleResourceClick openKeys',e,this.openKeys);
         },
         clickShowPoints(typeName){
-            console.log('clickShowPoints 000000000000000000000000000000');
-            getTypePoint(typeName).then(points => {
-                const layer = this.mapManager.addVectorLayerByFeatures(points, emergencyPointStyle(typeName), 1)
-            })
+            if(typeName=='区域视频'){
+              getAreaVideo().then(res=>{
+                console.log('===获取结果==',res);
+                console.log(this.selectEmergencyFeature[0]);
+                const points = filterMeetingPeople(this.selectEmergencyFeature[0],res);
+                const features =points.map(p =>{
+                  const point = new Feature({
+                    geometry: new Point(p.position)
+                  });
+                  point.set('id',p.id);
+                  return point;
+                })
+                this.selectType[0].layer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
+                // console.log('===处理结果==',this.selectType);
+              })
+            }
         },
         //在地图上显示不同类型点位
         showTypePoints(key){
@@ -262,10 +279,12 @@ export default {
                 }, wait);
             }
         }
+
     },
       computed:{
         ...mapState('map', [
-          'mapManager'
+          'mapManager',
+          'selectEmergencyFeature'
         ]),
       }
 }

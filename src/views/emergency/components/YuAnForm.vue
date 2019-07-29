@@ -159,6 +159,7 @@ export default {
            emergencyLayer:null,
            drawType:0,//绘制区域类型
            modifyType:0,//区域修改类型
+           beforeModifyFeature:null,
            mapCenter:null,//绘制区域中心点位坐标
            mapId:null,
            form: this.$form.createForm(this),
@@ -295,6 +296,7 @@ export default {
           let modify;
           this.$emit('hide');
           const feature = this.emergencyAllArea.filter(p => p.get('id') == this.sourceData.mapId);
+          this.beforeModifyFeature=feature[0];
           console.log('====编辑区域起始图形===',feature[0].get('id'));
           if(feature[0].get('type')==2){
             const circleFeature =new Feature({
@@ -313,7 +315,6 @@ export default {
           let _this=this;
           modify.on("modifyend",function (e) {
             _this.mapManager.inactivateDraw(modify);
-            debugger;
             var features =e.features.array_;
             _this.drawFeature=features[0];
             _this.$emit('show');
@@ -411,16 +412,13 @@ export default {
         editDraw(){
           let feature;
           if(this.modifyType==2){
-            feature=circleToPloygon(this.drawFeature);
-            const center=this.drawFeature.getGeometry().getCenter();
-            let prop=feature.getProperties();
-            prop["id"]=this.sourceData.mapId;
-            // prop["the_geom"]=prop["geometry"];
-            prop["type"]=2;//圆形
-            prop["centerX"]=center[0];
-            prop["centerY"]=center[1];
-            prop["radius"]=this.drawFeature.getGeometry().getRadius();
-            feature.setProperties(prop);
+            const circleFeature = circleToPloygon(this.drawFeature);
+            let beforeProp = this.beforeModifyFeature.getProperties();
+            const prop=circleFeature.getProperties();
+            beforeProp["geometry"]=prop["geometry"];
+            beforeProp["radius"]=this.drawFeature.getGeometry().getRadius();
+            this.beforeModifyFeature.setProperties(beforeProp);
+            feature=this.beforeModifyFeature;
           }
           else{
             feature=this.drawFeature;
@@ -436,6 +434,9 @@ export default {
         handleSubmit(e){
             e.preventDefault();
             let _this = this;
+            if(this.drawLayer){
+              this.drawLayer.getSource().clear();
+            }
             this.form.validateFields((error, values) => {
                 console.log('error', error);
                 console.log('Received values of form: ', values);
@@ -470,15 +471,26 @@ export default {
                 //     })
                 // }
                 if(this.checkSubmitParams(values)) {
+                  if(this.sourceData.id){
+                    values.mapId = _this.mapId;
+                    values.positionX = _this.mapCenter[0];
+                    values.positionY = _this.mapCenter[1];
+                    _this.addNewEmergencyYuAn(values).then((res) => {
+                      console.log('addNewEmergencyYuAn', res);
+                      _this.$emit('close');
+                    })
+                  }
+                  else{
                     this.addDraw(function () {
-                        values.mapId = _this.mapId;
-                        values.positionX = _this.mapCenter[0];
-                        values.positionY = _this.mapCenter[1];
-                        _this.addNewEmergencyYuAn(values).then((res) => {
-                            console.log('addNewEmergencyYuAn', res);
-                            _this.$emit('close');
-                        })
+                      values.mapId = _this.mapId;
+                      values.positionX = _this.mapCenter[0];
+                      values.positionY = _this.mapCenter[1];
+                      _this.addNewEmergencyYuAn(values).then((res) => {
+                        console.log('addNewEmergencyYuAn', res);
+                        _this.$emit('close');
+                      })
                     });
+                  }
                 }
             });
         },
