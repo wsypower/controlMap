@@ -3,7 +3,8 @@
  * @author:sijianting
  * @createDate:2019/7/11 9:18
  **/
-import { getPoint, getEmergencyArea, postFeature, getVideoListApi } from '@/api/map/map'
+import { getPoint, getEmergencyArea, postFeature, getVideoListApi,getResourceListApi,
+  getEquipListApi } from '@/api/map/map'
 import GeoJSON from 'ol/format/GeoJSON'
 import WFS from 'ol/format/WFS'
 
@@ -63,8 +64,51 @@ export async function postEmergencyArea(type, feature) {
 export async function getAreaVideo() {
   const result = await getVideoListApi()
   const data = result.map(r => {
-    r.position = [parseFloat(r.x84), parseFloat(r.y84)]
-    return r
+    if (r.x84.length > 0 && r.y84.length > 0) {
+      r.position = [parseFloat(r.x84), parseFloat(r.y84)]
+      return {
+        id: r.id,
+        position: r.position,
+      }
+    }
   })
   return data
+}
+
+/**
+ * @description:获取不同种类应急资源的数据
+ * @author:sijianting
+ * @createDate:2019/7/30 10:14
+ */
+export async function getTypeResources(type) {
+  const result=await getResourceListApi(type);
+  const data = result.map(r => {
+    if (r.x.length > 0 && r.y.length > 0){
+      r.position = [parseFloat(r.x), parseFloat(r.y)];
+      return {
+        id: r.id,
+        position: r.position,
+      }
+    }
+  });
+  return data;
+}
+
+/**
+ * @description:获取不同种类的物联网设备
+ * @author:sijianting
+ * @createDate:2019/7/30 14:59
+ */
+export async function getTypeEquip(type) {
+  const result = await getEquipListApi(type);
+  const data = result.map(r => {
+    if (r.longitudeY.length > 0 && r.latitudeX.length > 0){
+      r.position = [parseFloat(r.longitudeY), parseFloat(r.latitudeX)];
+      return {
+        id: r.id,
+        position: r.position,
+      }
+    }
+  });
+  return data;
 }

@@ -31,7 +31,7 @@
             <template v-for="(item, index) in selectType">
                 <a-menu-item v-if="!item.children" :key="item.key" @click="clickShowPoints(item,index)"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>{{item.name}}</a-menu-item>
                 <a-sub-menu v-if="item.children" :key="item.key"><span slot="title"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg><span>{{item.name}}</span></span>
-                    <a-menu-item v-for="(bncs, index) in item.children" :key="bncs.key" @click="showTypePoints(bncs.key)"><a-checkbox :checked="bncs.checked" class="checkbox_d"></a-checkbox>{{ bncs.name }}</a-menu-item>
+                    <a-menu-item v-for="(bncs, index) in item.children" :key="bncs.key" @click="showTypePoints(bncs.type)"><a-checkbox :checked="bncs.checked" class="checkbox_d"></a-checkbox>{{ bncs.name }}</a-menu-item>
                 </a-sub-menu>
             </template>
       </a-menu>
@@ -40,8 +40,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapState } from 'vuex'
-import { getTypePoint,getAreaVideo } from '@/api/map/service'
-import { emergencyPointStyle,videoStyle } from '@/utils/util.map.style'
+import { getAreaVideo,getTypeResources,getTypeEquip } from '@/api/map/service'
+import { emergencyPointStyle,videoStyle,emergencyResourceStyle } from '@/utils/util.map.style'
 import { filterMeetingPeople } from '@/utils/util.map.manage'
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
@@ -60,91 +60,57 @@ export default {
             isActive: false,
             //应急资源选择类别
           selectType:[
-          //     {
-          //   key:'allVideo',
-          //   name:'全部视频',
-          //   icon:'video-one',
-          // },
               {
             key:'partVideo',
             name:'区域视频',
             icon:'video-two'
           },
             {
-            key:'jiuyuan',
+            key:'manager',
             name:'管理人员',
             icon:'menu-section'
           },
             {
-            key:'bncs',
-            name:'避难场所',
+            key:'equip',
+            name:'物联设备',
             icon:'zhangpeng',
-            children: [
-                {
-                    'key':'allPlace',
-                    'name':'全部',
-                    'checked': false
-                },
-                {
-                    'key':'jiuzhuzhan',
-                    'name':'救助管理站',
-                    'checked': false
-                },
-                {
-                    'key':'park',
-                    'name':'公园',
-                    'checked': false
-                },
-                {
-                    'key':'square',
-                    'name':'广场',
-                    'checked': false
-                },
-                {
-                    'key':'greenbelt'
-                    ,'name':'绿地',
-                    'checked': false
-                },
-                {
-                    'key':'otherbncs',
-                    'name':'其他避难场所',
-                    'checked': false
-                },
-                {
-                    'key':'fangkongdong',
-                    'name':'防空洞',
-                    'checked': false
-                },
-                {
-                    'key':'fkdxs',
-                    'name':'防空地下室',
-                    'checked': false
-                },
-                {
-                    'key':'fkbjzd',
-                    'name':'防空报警站点',
-                    'checked': false
-                },
-                {
-                    'key':'othergongshi',
-                    'name':'其他人防工事',
-                    'checked': false
+            children: [{
+                'key':'all',
+                'name':'全部',
+                'checked': false,
+                'type':'0'
+                },{
+                'key':'jinggai',
+                'name':'井盖',
+                'checked': false,
+                'type':'3'
+                },{
+                'key':'lajitong',
+                'name':'智慧垃圾桶',
+                'checked': false,
+                'type':'7'
+                },{
+                'key':'shuiwei',
+                'name':'水位',
+                'checked': false,
+                'type':'8'
                 }]
           },{
-            key:'equip',
-            name:'车载GPS',
+            key:'terminal',
+            name:'执法终端',
             icon:'wuzi'
           },{
-            key:'enterprise',
-            name:'单兵GPS',
+            key:'gps',
+            name:'车载卡口gps',
             icon:'jianzhu'
           },{
-            key:'expert',
-            name:'车载卡口GPS',
+            key:'car',
+            name:'市政环卫车辆',
             icon:'zhuanjia'
           }],
             //已勾选的避难场所
           checkedPlaceList:[],
+          emergencyResourceLayer:null
         }
     },
     props:{
@@ -169,7 +135,6 @@ export default {
                 setTimeout(()=>{
                     this.isActive = false;
                 },100);
-
             }
         },
         selectType: function(newValue){
@@ -217,7 +182,6 @@ export default {
         clickShowPoints(item,index){
             if(item.name=='区域视频'){
               getAreaVideo().then(res=>{
-                console.log('===获取结果==',res);
                 console.log(this.selectEmergencyFeature[0]);
                 const points = filterMeetingPeople(this.selectEmergencyFeature[0],res);
                 const features =points.map(p =>{
@@ -226,47 +190,33 @@ export default {
                   });
                   point.set('id',p.id);
                   return point;
-                })
+                });
                 this.selectType[index].layer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
-                // console.log('===处理结果==',this.selectType);
               })
             }
             else{
-
+              //获取其他类型的应急资源
+              getTypeResources(item.key).then( points => {
+                const features =points.map(p =>{
+                  const point = new Feature({
+                    geometry: new Point(p.position)
+                  });
+                  point.set('id',p.id);
+                  return point;
+                });
+                if(this.emergencyResourceLayer){
+                  this.emergencyResourceLayer.getSource().clear();
+                }
+                // this.selectType[index].layer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
+                this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
+              })
             }
         },
         //在地图上显示不同类型点位
-        showTypePoints(key){
-            console.log('showTypePoints 111111111111111111111111');
-            let typeName = '公园';
-            let placeList = this.selectType[3].children;
+        showTypePoints(type){
 
-            if(key=='allPlace'){
-                placeList[0].checked = !placeList[0].checked;
-                if(placeList[0].checked){
-                    for(let i=1;i<placeList.length;i++){
-                        placeList[i].checked = true;
-                    }
-                    typeName = placeList[0].name;
-                }
-                else{
-                    for(let i=1;i<placeList.length;i++){
-                        placeList[i].checked = false;
-                    }
-                }
-            }
-            else{
-                for(let i=1;i<placeList.length;i++){
-                    if(placeList[i].key == key){
-                        placeList[i].checked = !placeList[i].checked;
-                        if(placeList[i].checked){
-                            typeName = placeList[i].name;
-                        }
-                    }
-                }
-            }
-          getTypePoint(typeName).then(points => {
-            const layer = this.mapManager.addVectorLayerByFeatures(points, emergencyPointStyle(typeName), 1)
+          getTypeEquip(type).then(res=>{
+            console.log("====设备信息===",res);
           })
         },
         debounce(func, wait) {
@@ -282,7 +232,6 @@ export default {
                 }, wait);
             }
         }
-
     },
       computed:{
         ...mapState('map', [

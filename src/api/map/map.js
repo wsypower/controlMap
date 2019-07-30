@@ -6,6 +6,8 @@
 
 import request from '@/plugins/axios/axios'
 
+let gisApi = 'http://192.168.1.10:8080/geoserver/';
+let baseApi = 'http://192.168.71.33:8015/api/';
 /**
  * @description: 获取基础点位调用的接口
  * @author:sijianting
@@ -14,7 +16,7 @@ import request from '@/plugins/axios/axios'
 export function getPoint(type = '全部视频') {
   type = type == '全部视频' ? '视频' : type
   return request({
-    url: 'http://192.168.1.10:8080/geoserver/guankongceshi/ows',
+    url: gisApi + 'guankongceshi/ows',
     method: 'get',
     params: {
       service: 'WFS',
@@ -32,7 +34,7 @@ export function getPoint(type = '全部视频') {
  */
 export function getEmergencyArea(type = '预案区域') {
   return request({
-    url: 'http://192.168.1.10:8080/geoserver/haining/ows',
+    url: gisApi + 'haining/ows',
     method: 'get',
     params: {
       service: 'WFS',
@@ -51,7 +53,7 @@ export function getEmergencyArea(type = '预案区域') {
  * */
 export function postFeature(data) {
   return request({
-    url: 'http://192.168.1.10:8080/geoserver/haining/wfs',
+    url: gisApi+'haining/wfs',
     method: 'post',
     headers: { 'Content-Type': 'text/xml ' },
     transformRequest: [
@@ -71,7 +73,38 @@ export function postFeature(data) {
  */
 export function getVideoListApi() {
   return request({
-    url: 'http://192.168.71.33:8015/api/point/getCamList',
+    url: baseApi+'point/getCamList',
+    method: 'post'
+  });
+}
+
+const apiMapping = {
+  manager: 'getManageList',
+  equip:'',
+  terminal:'getArmGPSList',
+  gps:'getHKCarGPSList',
+  car:'getCarGpsList'
+}
+/**
+ * @description:获取应急资源接口
+ * @author:sijianting
+ * @createDate:2019/7/30 10:09
+ */
+export function getResourceListApi(type) {
+  return request({
+    url: baseApi + 'point/' + apiMapping[type],
+    method: 'post'
+  });
+}
+
+/**
+ * @description:获取物联网设备接口
+ * @author:sijianting
+ * @createDate:2019/7/30 14:33
+ */
+export function getEquipListApi(type) {
+  return request({
+    url: baseApi + 'iot/device/list?deviceType='+type,
     method: 'post'
   });
 }
