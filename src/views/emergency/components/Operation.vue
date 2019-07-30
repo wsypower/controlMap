@@ -29,7 +29,7 @@
         </a-button>
         <a-menu slot="overlay" multiple :openKeys.sync="openKeys" @click="handleResourceClick">
             <template v-for="(item, index) in selectType">
-                <a-menu-item v-if="!item.children" :key="item.key" @click="clickShowPoints(item.name)"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>{{item.name}}</a-menu-item>
+                <a-menu-item v-if="!item.children" :key="item.key" @click="clickShowPoints(item,index)"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>{{item.name}}</a-menu-item>
                 <a-sub-menu v-if="item.children" :key="item.key"><span slot="title"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg><span>{{item.name}}</span></span>
                     <a-menu-item v-for="(bncs, index) in item.children" :key="bncs.key" @click="showTypePoints(bncs.key)"><a-checkbox :checked="bncs.checked" class="checkbox_d"></a-checkbox>{{ bncs.name }}</a-menu-item>
                 </a-sub-menu>
@@ -70,11 +70,11 @@ export default {
             name:'区域视频',
             icon:'video-two'
           },
-          //   {
-          //   key:'jiuyuan',
-          //   name:'救援队伍',
-          //   icon:'menu-section'
-          // },
+            {
+            key:'jiuyuan',
+            name:'管理人员',
+            icon:'menu-section'
+          },
             {
             key:'bncs',
             name:'避难场所',
@@ -140,7 +140,7 @@ export default {
             icon:'jianzhu'
           },{
             key:'expert',
-            name:'管理人员',
+            name:'车载卡口GPS',
             icon:'zhuanjia'
           }],
             //已勾选的避难场所
@@ -214,8 +214,8 @@ export default {
             this.openKeys = [...e.keyPath];
             console.log('handleResourceClick openKeys',e,this.openKeys);
         },
-        clickShowPoints(typeName){
-            if(typeName=='区域视频'){
+        clickShowPoints(item,index){
+            if(item.name=='区域视频'){
               getAreaVideo().then(res=>{
                 console.log('===获取结果==',res);
                 console.log(this.selectEmergencyFeature[0]);
@@ -227,9 +227,12 @@ export default {
                   point.set('id',p.id);
                   return point;
                 })
-                this.selectType[0].layer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
+                this.selectType[index].layer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
                 // console.log('===处理结果==',this.selectType);
               })
+            }
+            else{
+
             }
         },
         //在地图上显示不同类型点位
