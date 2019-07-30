@@ -108,8 +108,8 @@ export default {
             name:'市政环卫车辆',
             icon:'zhuanjia'
           }],
-            //已勾选的避难场所
-          checkedPlaceList:[],
+            //已勾选的物联设备
+          checkedWuLianList:[],
           emergencyResourceLayer:null
         }
     },
@@ -136,28 +136,9 @@ export default {
                     this.isActive = false;
                 },100);
             }
-        },
-        selectType: function(newValue){
-            this.checkedPlaceList = [];
-            let placeList = this.selectType[3].children;
-            for(let i=1;i<placeList.length;i++){
-                if(placeList[i].checked){
-                    this.checkedPlaceList.push(placeList[i].name);
-                }
-            }
-            console.log('this.checkedPlaceList',this.checkedPlaceList);
         }
     },
-    mounted(){
-        // this.$nextTick(() => {
-        //     const body = document.querySelector("body");
-        //     if (body.append) {
-        //         body.append(this.$el);
-        //     } else {
-        //         body.appendChild(this.$el);
-        //     }
-        // });
-    },
+    mounted(){},
     methods:{
         //预案操作：目前只有新增预案
         handleOperateClick(value){
@@ -214,23 +195,46 @@ export default {
         },
         //在地图上显示不同类型点位
         showTypePoints(type){
-
-          getTypeEquip(type).then(res=>{
-            console.log("====设备信息===",res);
-          })
-        },
-        debounce(func, wait) {
-            let timeout;
-            return function () {
-                let context = this;
-                let args = arguments;
-
-                if (timeout) clearTimeout(timeout);
-
-                timeout = setTimeout(() => {
-                    func.apply(context, args)
-                }, wait);
+            this.checkedWuLianList = [];
+            let placeList = this.selectType[2].children;
+            if(type==='0'){
+                placeList[0].checked = !placeList[0].checked;
+                if(placeList[0].checked){
+                    for(let i=1;i<placeList.length;i++){
+                        placeList[i].checked = true;
+                        this.checkedWuLianList.push(placeList[i].type);
+                    }
+                }
+                else{
+                    for(let i=1;i<placeList.length;i++){
+                        placeList[i].checked = false;
+                    }
+                }
             }
+            else{
+                for(let i=1;i<placeList.length;i++){
+                    if(placeList[i].type === type){
+                        placeList[i].checked = !placeList[i].checked;
+                    }
+                }
+                let num = 0;
+                for(let j=1;j<placeList.length;j++){
+                    if(placeList[j].checked){
+                        this.checkedWuLianList.push(placeList[j].type);
+                        num++;
+                    }
+                }
+                if(num === placeList.length-1){
+                    placeList[0].checked = true;
+                }
+                else{
+                    placeList[0].checked = false;
+                }
+            }
+            console.log('checkedWuLianList',this.checkedWuLianList);
+          // getTypeEquip(type).then(res=>{
+          //   console.log("====设备信息===",res);
+          // })
         }
     },
       computed:{
