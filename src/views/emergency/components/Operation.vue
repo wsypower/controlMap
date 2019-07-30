@@ -73,7 +73,7 @@ export default {
             {
             key:'equip',
             name:'物联设备',
-            icon:'zhangpeng',
+            icon:'chuanganqi',
             children: [{
                 'key':'all',
                 'name':'全部',
@@ -98,15 +98,15 @@ export default {
           },{
             key:'terminal',
             name:'执法终端',
-            icon:'wuzi'
+            icon:'zhifa'
           },{
             key:'gps',
             name:'车载卡口gps',
-            icon:'jianzhu'
+            icon:'gps'
           },{
             key:'car',
             name:'市政环卫车辆',
-            icon:'zhuanjia'
+            icon:'huoche'
           }],
             //已勾选的物联设备
           checkedWuLianList:[],
@@ -215,6 +215,7 @@ export default {
                 for(let i=1;i<placeList.length;i++){
                     if(placeList[i].type === type){
                         placeList[i].checked = !placeList[i].checked;
+                        break;
                     }
                 }
                 let num = 0;
