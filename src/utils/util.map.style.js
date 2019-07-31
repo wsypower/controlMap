@@ -79,7 +79,7 @@ export function videoStyle() {
 }
 
 /**
- * @description:
+ * @description:应急资源图标
  * @author:sijianting
  * @createDate:2019/7/30 9:49
  */
@@ -87,6 +87,20 @@ export function emergencyResourceStyle(type) {
   return new Style({
     image: new Icon({
       src: require('@/assets/mapImage/' + type + '.png')
+    }),
+    anchor: [0.5, 1]
+  })
+}
+
+/**
+ * @description:物联网设备图标
+ * @author:sijianting
+ * @createDate:2019/7/31 16:37
+ */
+export function emergencyEquipStyle(type) {
+  return new Style({
+    image: new Icon({
+      src: require('@/assets/mapImage/物联设备-' + type + '.png')
     }),
     anchor: [0.5, 1]
   })

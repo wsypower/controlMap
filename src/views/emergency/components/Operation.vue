@@ -41,7 +41,7 @@
 <script type="text/ecmascript-6">
 import { mapState } from 'vuex'
 import { getAreaVideo,getTypeResources,getTypeEquip } from '@/api/map/service'
-import { emergencyPointStyle,videoStyle,emergencyResourceStyle } from '@/utils/util.map.style'
+import { emergencyPointStyle,videoStyle,emergencyResourceStyle,emergencyEquipStyle } from '@/utils/util.map.style'
 import { filterMeetingPeople } from '@/utils/util.map.manage'
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
@@ -83,7 +83,7 @@ export default {
                 'key':'jinggai',
                 'name':'井盖',
                 'checked': false,
-                'type':'3'
+                'type':'3',
                 },{
                 'key':'lajitong',
                 'name':'智慧垃圾桶',
@@ -110,7 +110,19 @@ export default {
           }],
             //已勾选的物联设备
           checkedWuLianList:[],
-          emergencyResourceLayer:null
+          emergencyResourceLayer:null,
+          emergencyVideoLayer:null,
+          equipLayer:[{
+            type:'3',
+            layer:null
+          },{
+            type:'7',
+            layer:null
+          },{
+            type:'8',
+            layer:null
+          },
+          ]
         }
     },
     props:{
@@ -138,7 +150,9 @@ export default {
             }
         }
     },
-    mounted(){},
+    mounted(){
+      this.getEquipPoints();
+    },
     methods:{
         //预案操作：目前只有新增预案
         handleOperateClick(value){
@@ -172,7 +186,7 @@ export default {
                   point.set('id',p.id);
                   return point;
                 });
-                this.selectType[index].layer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
+                this.emergencyVideoLayer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
               })
             }
             else{
@@ -188,13 +202,17 @@ export default {
                 if(this.emergencyResourceLayer){
                   this.emergencyResourceLayer.getSource().clear();
                 }
+                if(this.emergencyVideoLayer){
+                  this.emergencyVideoLayer.getSource().clear();
+                }
                 // this.selectType[index].layer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
                 this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
               })
             }
         },
-        //在地图上显示不同类型点位
+        //在地图上显示不同类型物联网设备点位
         showTypePoints(type){
+          console.log("===设备信息===",this.equipLayer);
             this.checkedWuLianList = [];
             let placeList = this.selectType[2].children;
             if(type==='0'){
@@ -233,9 +251,29 @@ export default {
                 }
             }
             console.log('checkedWuLianList',this.checkedWuLianList);
-          // getTypeEquip(type).then(res=>{
-          //   console.log("====设备信息===",res);
-          // })
+            for(let i=0;i<this.equipLayer.length;i++){
+              if(this.checkedWuLianList.includes(this.equipLayer[i].type)){
+                this.equipLayer[i].layer.setVisible(true);
+              } else{
+                this.equipLayer[i].layer.setVisible(false);
+              }
+            }
+        },
+        getEquipPoints(){
+          for(let i=0;i<this.equipLayer.length;i++){
+            getTypeEquip(this.equipLayer[i].type).then(res=>{
+              console.log('===物联信息-'+this.equipLayer[i].type,res);
+              const features =res.map(p =>{
+                const point = new Feature({
+                  geometry: new Point(p.position)
+                });
+                point.set('id',p.id);
+                return point;
+              });
+              this.equipLayer[i].layer=this.mapManager.addVectorLayerByFeatures(features,emergencyEquipStyle(this.equipLayer[i].type),3);
+              this.equipLayer[i].layer.setVisible(false);
+            })
+          }
         }
     },
       computed:{

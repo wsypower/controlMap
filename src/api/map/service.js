@@ -91,7 +91,7 @@ export async function getTypeResources(type) {
       }
     }
   });
-  return data;
+  return data.filter(Boolean);
 }
 
 /**
@@ -110,5 +110,5 @@ export async function getTypeEquip(type) {
       }
     }
   });
-  return data;
+  return data.filter(Boolean);
 }
