@@ -111,7 +111,6 @@ export default {
             //已勾选的物联设备
           checkedWuLianList:[],
           emergencyResourceLayer:null,
-          emergencyVideoLayer:null,
           equipLayer:[{
             type:'3',
             layer:null
@@ -186,7 +185,7 @@ export default {
                   point.set('id',p.id);
                   return point;
                 });
-                this.emergencyVideoLayer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
+                this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
               })
             }
             else{
@@ -201,9 +200,6 @@ export default {
                 });
                 if(this.emergencyResourceLayer){
                   this.emergencyResourceLayer.getSource().clear();
-                }
-                if(this.emergencyVideoLayer){
-                  this.emergencyVideoLayer.getSource().clear();
                 }
                 // this.selectType[index].layer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
                 this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
