@@ -190,6 +190,9 @@ export default {
                             point.set('id',p.id);
                             return point;
                         });
+                          if(this.emergencyResourceLayer){
+                            this.emergencyResourceLayer.getSource().clear();
+                          }
                         this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
                     })
                 }

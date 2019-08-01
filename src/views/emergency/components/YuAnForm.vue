@@ -315,7 +315,6 @@ export default {
             var features =e.features.array_;
             _this.drawFeature=features[0];
             _this.$emit('show');
-            _this.editDraw();
           });
         },
         //照片上传之前的校验
