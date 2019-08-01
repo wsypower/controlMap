@@ -424,8 +424,8 @@ export default {
           postEmergencyArea('edit',feature).then(res=>{
               console.log('edit map',res);
               var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
-              var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
-              if(insertNum>0){
+              var insertNum = xmlDoc.getElementsByTagName('wfs:SUCCESS');
+              if(insertNum&&insertNum.length>0){
                   console.log('===保存成功====');
                   callBack&&callBack();
               }
