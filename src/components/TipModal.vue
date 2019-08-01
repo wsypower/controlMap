@@ -15,7 +15,7 @@
     <div class="tip-body" :style="padding">
       <component v-if="Object.keys(componentId).length>0" :is="componentId" :info="info"></component>
     </div>
-    <div class="tooltip__arrow"></div>
+    <!--<div class="tooltip__arrow"></div>-->
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -119,7 +119,7 @@ export default{
         width: 16px;
         margin-right: 10px;
       }
-      span:nth-child(2) {
+      span:last-child {
         margin-left: 10px;
       }
     }
@@ -150,7 +150,7 @@ export default{
     width: 50px;
     height: 25px;
     position: absolute;
-    top: 100%;
+    top: 99.5%;
     left: 50%;
     transform: translateX(-50%);
     overflow: hidden;

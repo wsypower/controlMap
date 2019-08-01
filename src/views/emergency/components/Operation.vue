@@ -129,6 +129,10 @@ export default {
         isActiveOperation:{
             type: Boolean,
             default: false
+        },
+        isCheckedTuAn: {
+            type: Boolean,
+            default: false
         }
     },
     watch:{
@@ -175,18 +179,24 @@ export default {
         },
         clickShowPoints(item,index){
             if(item.name=='区域视频'){
-              getAreaVideo().then(res=>{
-                console.log(this.selectEmergencyFeature[0]);
-                const points = filterMeetingPeople(this.selectEmergencyFeature[0],res);
-                const features =points.map(p =>{
-                  const point = new Feature({
-                    geometry: new Point(p.position)
-                  });
-                  point.set('id',p.id);
-                  return point;
-                });
-                this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
-              })
+                if(this.isCheckedTuAn){
+                    getAreaVideo().then(res=>{
+                        console.log(this.selectEmergencyFeature[0]);
+                        const points = filterMeetingPeople(this.selectEmergencyFeature[0],res);
+                        const features =points.map(p =>{
+                            const point = new Feature({
+                                geometry: new Point(p.position)
+                            });
+                            point.set('id',p.id);
+                            return point;
+                        });
+                        this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
+                    })
+                }
+                else{
+                    this.$message.error('请先选择一个预案');
+                }
+
             }
             else{
               //获取其他类型的应急资源

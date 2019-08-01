@@ -44,6 +44,7 @@
       ref="Operate"
       :class="{ position: addPositionClass }"
       :isActiveOperation="isActiveOperation"
+      :isCheckedTuAn="activeIndex!==null"
       @addItem="addItemOperation"
       @ychjOperate="ychjOperation"
     ></operation>
@@ -204,28 +205,26 @@ export default {
     //地图点击事件处理器
     mapClickHandler({ pixel, coordinate }) {
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
+        console.log(feature);
       if (feature && feature.get('pointType')) {
         if(feature.get('pointType')=='people'){
           //给弹框内容赋值
           console.log(feature.get('userid'));
           this.getPersonInfo({Id:feature.get('userid')}).then(res => {
               console.log('getPersonInfo',res)
-              // this.modalWidth = 260;
-              // this.modalHeight = 140;
-              // this.$el.querySelector('.tip-content').style.width='260px';
-              // this.$el.querySelector('.tip-content').style.height='140px';
               this.$refs.yuAnOverlay.$el.style.width='260px';
               this.$refs.yuAnOverlay.$el.style.height='140px';
               this.modalTitle = res.realname;
               this.subTitle = res.isonline ==='0'?'离线':'在线';
+              this.iconName = '';
               this.infoData = res;
               this.tipComponentId = UserInfo;
               this.yuAnOverlay.setPosition(coordinate)
           })
         } else{
           //给弹框内容赋值
-          // this.$refs.yuAnOverlay.$el.style.width='482px';
-          // this.$refs.yuAnOverlay.$el.style.height='254px';
+          this.$refs.yuAnOverlay.$el.style.width='482px';
+          this.$refs.yuAnOverlay.$el.style.height='254px';
           this.tipComponentId = YuAnInfo
           this.iconName = 'menu-special'
           this.modalTitle = this.infoData.typeName
@@ -312,7 +311,6 @@ export default {
           }
           //需要删除的数据
           const feature = _this.emergencyAreas.filter(p => p.get('id') == item.mapId)
-          debugger
           if (feature) {
             //删除应急预案区域
             postEmergencyArea('delete', feature).then(res => {
@@ -378,7 +376,7 @@ export default {
                           geometry: new Point(people.position)
                       })
                       feature.set('userid', people.userid);
-                      feature.set('type', 'people');
+                      feature.set('pointType', 'people');
                       return feature
                   });
                   //创建过滤后的人员点位图层

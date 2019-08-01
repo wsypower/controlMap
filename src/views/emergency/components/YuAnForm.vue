@@ -202,23 +202,11 @@ export default {
     created(){},
     mounted(){
         let _this = this;
-        // let p1 = this.getAllTypeData().then((res) => {
-        //     console.log(res);
-        //     if(res.code==0){
-        //         _this.typeList = res.data;
-        //     }
-        // })
-        // let p2 = this.getAllLevelData().then((res) => {
-        //     console.log(res);
-        //     if(res.code==0){
-        //         _this.levelList = res.data;
-        //     }
-        // })
         this.getEmergencyYuAnInitData().then((res) => {
               _this.typeList = res.emergency_plan_type;
               _this.levelList = res.emergency_plan_grade;
 
-            console.log('_this.sourceData',_this.sourceData,moment(_this.sourceData.startDay, 'YYYY-MM-DD'),moment(1567159292614).format());
+            //console.log('_this.sourceData',_this.sourceData,moment(_this.sourceData.startDay, 'YYYY-MM-DD'),moment(1567159292614).format());
             let startDay;
             let endDay;
             if(_this.sourceData.startDay){
@@ -227,23 +215,31 @@ export default {
             if(_this.sourceData.endDay){
                 endDay = moment(parseInt(_this.sourceData.endDay)).format('YYYY-MM-DD');
             }
-              _this.form.setFieldsValue({
-                  typeId: _this.sourceData.typeId,
-                  levelId: _this.sourceData.levelId,
-                  rangeDay: _this.sourceData.startDay?[moment(startDay, 'YYYY-MM-DD'),moment(endDay, 'YYYY-MM-DD')]:undefined,
-                  position: _this.sourceData.position,
-                  description: _this.sourceData.description,
-                  areaId: _this.sourceData.areaId
-              });
 
-              _this.image = _this.sourceData.imageStr?JSON.parse(_this.sourceData.imageStr):[];
-              _this.fileList = _this.sourceData.fileStr?JSON.parse(_this.sourceData.fileStr):[];
-              _this.imageUrl = _this.image[0]?_this.image[0].newPath:'';
+                _this.form.setFieldsValue({
+                    typeId: _this.sourceData.typeId,
+                    levelId: _this.sourceData.levelId,
+                    rangeDay: _this.sourceData.startDay?[moment(startDay, 'YYYY-MM-DD'),moment(endDay, 'YYYY-MM-DD')]:undefined,
+                    position: _this.sourceData.position,
+                    description: _this.sourceData.description
+                });
 
-              _this.mapId = _this.sourceData.mapId;
-              _this.mapCenter = [_this.sourceData.positionX,_this.sourceData.positionY];
-              let index = parseInt(_this.sourceData.areaId)-2;
-              _this.areaName =  _this.areaList[index].name;
+                _this.image = _this.sourceData.imageStr?JSON.parse(_this.sourceData.imageStr):[];
+                _this.fileList = _this.sourceData.fileStr?JSON.parse(_this.sourceData.fileStr):[];
+                _this.imageUrl = _this.image[0]?_this.image[0].newPath:'';
+
+                _this.mapId = _this.sourceData.mapId;
+                _this.mapCenter = [_this.sourceData.positionX,_this.sourceData.positionY];
+                let index = parseInt(_this.sourceData.areaId)-2;
+                if(_this.sourceData.id||_this.sourceData.id===0){
+                    _this.areaName =  _this.areaList[index].name;
+                }
+                else{
+                    _this.form.setFieldsValue({
+                        areaId: _this.sourceData.areaId
+                    })
+                }
+
 
         }).catch((error) => {
             console.log(error)
@@ -410,7 +406,7 @@ export default {
               })
         },
         //保存编辑图形数据到gis数据库
-        editDraw(){
+        editDraw(callBack){
           let feature;
           if(this.modifyType==2){
             const circleFeature = circleToPloygon(this.drawFeature);
@@ -426,9 +422,13 @@ export default {
           }
           console.log('====编辑完成后id====',feature.get('id'));
           postEmergencyArea('edit',feature).then(res=>{
-            console.log(res);
-            const xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
-            console.log(xmlDoc);
+              console.log('edit map',res);
+              var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
+              var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
+              if(insertNum>0){
+                  console.log('===保存成功====');
+                  callBack&&callBack();
+              }
           })
         },
         //提交表单
@@ -443,6 +443,7 @@ export default {
                 console.log('Received values of form: ', values);
                 if(this.sourceData.id){
                     values.id = this.sourceData.id;
+                    values.areaId = this.sourceData.areaId;
                 }
                 if(values.rangeDay){
                     values.startDay = values.rangeDay[0]._d.getTime();
@@ -473,13 +474,15 @@ export default {
                 // }
                 if(this.checkSubmitParams(values)) {
                   if(this.sourceData.id){
-                    values.mapId = _this.mapId;
-                    values.positionX = _this.mapCenter[0];
-                    values.positionY = _this.mapCenter[1];
-                    _this.addNewEmergencyYuAn(values).then((res) => {
-                      console.log('addNewEmergencyYuAn', res);
-                      _this.$emit('close');
-                    })
+                      this.editDraw(function(){
+                          values.mapId = _this.mapId;
+                          values.positionX = _this.mapCenter[0];
+                          values.positionY = _this.mapCenter[1];
+                          _this.addNewEmergencyYuAn(values).then((res) => {
+                              console.log('addNewEmergencyYuAn', res);
+                              _this.$emit('close');
+                          })
+                      });
                   }
                   else{
                     this.addDraw(function () {

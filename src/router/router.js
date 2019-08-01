@@ -1,7 +1,7 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
- * @Last Modified by: wei.yafei 
+ * @Last Modified by: wei.yafei
  * @Last Modified time: 2019-07-08 12:52:42
  */
 
@@ -26,7 +26,7 @@ const frameIn = [
   {
     path: '/',
     name: 'layoutHeaderAside',
-    redirect: { path: '/section' },
+    redirect: { path: '/emergency' },
     // redirect: to => {
     //   console.log(to)
     //   console.log(VueRouter)
