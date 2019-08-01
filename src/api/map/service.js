@@ -34,16 +34,18 @@ export async function getAllEmergencyArea() {
  * @createDate:2019/7/22 16:35
  */
 export async function postEmergencyArea(type, feature) {
+  debugger;
   const format = new WFS()
   let xml
   const obj = {
     featureNS: 'http://www.haining.com', //该图层所在工作空间的uri
     featurePrefix: 'haining', //工作空间名称0
-    featureType: '预案区域' //图层名称
+    featureType: '预案区域',//图层名称
   }
   if (type == 'add') {
     xml = format.writeTransaction([feature], null, null, obj)
   } else if (type == 'edit') {
+    obj.version = '1.0.0';
     console.log('==编辑圆形===', feature)
     xml = format.writeTransaction(null, [feature], null, obj)
   } else {
