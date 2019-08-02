@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
- * @Last Modified by: wei.yafei  
- * @Last Modified time: 2019-07-19 18:44:38
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-08-02 15:14:50
  */
 // Vue
 import Vue from 'vue'
@@ -19,6 +19,10 @@ import menuAside from '@/menu/aside.js'
 Vue.config.productionTip = false
 // 设置文件
 import setting from '@/setting.js'
+
+//加载时间过滤器(依赖于dayjs)
+import vueFiltersDate from '@/filters/moment/main'
+Vue.use(vueFiltersDate)
 
 //mock => 生产环境(上线前请注释！！！)
 import '@/mock'
