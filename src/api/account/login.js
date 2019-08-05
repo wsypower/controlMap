@@ -1,60 +1,12 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-27 21:26:07
- * @Last Modified by: wei.yafei  
- * @Last Modified time: 2019-07-11 15:14:46
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-07-19 17:05:33
  */
 
 import request from '@/plugins/axios/axios'
 
-/*========================================
-=            request example             =
-=========================================*/
-
-/*----------  post 请求示例 ----------*/
-/**
- * export const AccountLogin = data => {
- *   return request({
- *     url: `@test/login`,
- *     method: 'post',
- *     data
- *   })
- * }
- */
-
-/*----------  get 请求示例  ----------*/
-/**
- *export const Account = id => {
- *    return request({
- *      url: `@test/login`,
- *      method: 'get',
- *      params: {
- *        id
- *      }
- *    })
- * }
- */
-
-/*--------- delete 请求示例  --------*/
-/**
- *export const deleteRole = id => {
- *  return request({
- *    url: `/role/${id}`,
- *    method: 'delete'
- *  })
- *}
- */
-
-/*----------  put 请求示例  ----------*/
-/**
- *export const updateRole = data => {
- *  return request({
- *     url: `/role/${id}`,
- *     method: 'put',
- *     data
- *   })
- * }
- */
 
 /*=====  End of Section comment block  ======*/
 
@@ -71,3 +23,8 @@ export const AccountLogin = data => {
     data
   })
 }
+
+/*=============================================
+=            试例：配置自定义序列化参数           =
+=============================================*/
+

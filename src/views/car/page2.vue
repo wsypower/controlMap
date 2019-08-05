@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { storagePointData } from '@/api/account/login'
 export default {
   name: 'page2',
     data(){

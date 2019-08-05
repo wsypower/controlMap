@@ -3,57 +3,72 @@
   <div class="layout__group">
     <!-- 主体内容 -->
     <div class="layout__content">
-      <!-- 顶栏 -->
-      <layout-header />
-      <!-- 主体 -->
-      <div class="container" flex>
-        <!-- 主体 左侧边栏 -->
-        <layout-menu></layout-menu>
-        <!-- 主体 右侧上按钮栏 -->
-        <div class="container__aside--top">
-          <a-button class="container__aside__item" type="primary">1</a-button>
-          <a-button class="container__aside__item" >2</a-button>
-          <a-button class="container__aside__item">3</a-button>
-          <a-button class="container__aside__item">4</a-button>
-        </div>
-        <!-- 主体 右侧下按钮栏 -->
-        <div class="container__aside--bottom" flex="dir:top cross:top">
-          <a-button class="container__aside__item">1</a-button>
-          <a-button class="container__aside__item">2</a-button>
-          <a-button class="container__aside__item">3</a-button>
-          <a-button class="container__aside__item">4</a-button>
-        </div>
+      <!-- 加载动效 -->
+      <loading>
+        <!-- 顶栏 -->
+        <layout-header />
         <!-- 主体 -->
-        <div class="container__main">
-          <!-- 功能抽屉 -->
-          <layout-drawer>
-              <router-view></router-view>
-          </layout-drawer>
-          <!-- 地图控件注入地址 -->
-          <LayoutMap ref="olMap"></LayoutMap>
+        <div class="container" flex>
+          <!-- 主体 左侧边栏 -->
+          <layout-menu />
+          <!-- 主体 右侧上按钮栏 -->
+          <!-- <div class="container__aside--top">
+            <a-button class="container__aside__item" type="primary">1</a-button>
+            <a-button class="container__aside__item">2</a-button>
+            <a-button class="container__aside__item">3</a-button>
+            <a-button class="container__aside__item">4</a-button>
+          </div> -->
+          <!-- 主体 右侧下按钮栏 -->
+          <div class="container__aside--bottom" flex="dir:top cross:top">
+            <a-button class="container__aside__item">1</a-button>
+            <a-button class="container__aside__item">2</a-button>
+            <a-button class="container__aside__item">3</a-button>
+            <a-button class="container__aside__item">4</a-button>
+          </div>
+          <!-- 主体 -->
+          <div class="container__main">
+            <!-- 功能抽屉 -->
+            <layout-drawer>
+              <keep-alive :include="keepAlive">
+                <router-view />
+              </keep-alive>
+            </layout-drawer>
+            <!-- 地图控件注入地址 -->
+            <LayoutMap />
+          </div>
         </div>
-      </div>
+      </loading>
     </div>
   </div>
 </template>
 
 <script>
-import { LayoutMenu, LayoutDrawer, LayoutHeader } from './components/index'
+
+import { LayoutMenu, LayoutDrawer, LayoutHeader, Loading } from './components/index'
 import LayoutMap from '@/views/map/olMap.vue'
+import { mapState } from 'vuex'
 export default {
   name: 'layoutHeaderAside',
   components: {
     LayoutMenu,
     LayoutDrawer,
     LayoutMap,
-    LayoutHeader
+    LayoutHeader,
+    Loading
   },
   data() {
     return {}
   },
-  methods: {
-
+  computed: {
+    ...mapState('cgadmin', {
+      //缓存页面 ====> keep-alive
+      keepAlive: state => state.page.keepAlive
+    })
   },
+  data() {
+    return {}
+  },
+  methods: {}
 }
 </script>
 
@@ -73,6 +88,7 @@ export default {
 .container {
   width: 100%;
   height: 100%;
+
   &__main {
     width: calc(100% - 60px);
     height: 100%;

@@ -3,7 +3,7 @@
  * @Author: wei.yafei
  * @Date: 2019-07-11 17:31:05
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-07-11 19:54:54
+ * @Last Modified time: 2019-08-02 16:19:33
  */
 
 import dayjs from 'dayjs'
@@ -44,6 +44,8 @@ const P = Day => {
 /*=============================================
 =              moment filters                 =
 =============================================*/
+/* 定义周 */
+const WEEK_DATE = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 export default {
   // ---------- [ dayjs 解析 ] ----------
 
@@ -56,7 +58,8 @@ export default {
   date_year: Day => P(Day).year(),
   date_month: Day => P(Day).month(),
   date_date: Day => P(Day).date(),
-  date_day: Day => P(Day).day(),
+  date_day: Day => WEEK_DATE[P(Day).day()],
+  date_week: Day => WEEK_DATE[P(Day).day()],
   date_hour: Day => P(Day).hour(),
   date_minute: Day => P(Day).minute(),
   date_second: Day => P(Day).second(),
