@@ -34,7 +34,7 @@
               </keep-alive>
             </layout-drawer>
             <!-- 地图控件注入地址 -->
-            <LayoutMap />
+            <LayoutMap ref="olMap"></LayoutMap>
           </div>
         </div>
       </loading>
