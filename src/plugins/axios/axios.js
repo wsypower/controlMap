@@ -66,7 +66,7 @@ const success = success => {
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 let base_url= '';
 if (process.env.NODE_ENV === 'development') {
-    base_url = 'http://192.168.71.33:8015/api/'
+    base_url = 'http://192.168.71.129:8081/api/'
 }
 else{
     base_url = 'http://192.168.71.33:8015/api/'

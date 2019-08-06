@@ -38,12 +38,13 @@ new Vue({
     // 获取userId并登陆
     this.$store
       .dispatch('cgadmin/account/login')
-      .then(() => {
-        console.log(111)
+      .then((res) => {
+        console.log(111,res);
         //登录后获取用户权限
-        const role = this.$store.getters['cgadmin/user/role']
-        console.log(role)
+        // const role = this.$store.getters['cgadmin/user/role']
+        // console.log(role)
         //设置侧边栏菜单
+          const role = 'admin';
         const menu = menuAside.filter(v => v.role.includes(role))
         this.$store.commit('cgadmin/menu/asideSet', menu)
       })
