@@ -24,6 +24,12 @@ import setting from '@/setting.js'
 import vueFiltersDate from '@/filters/moment/main'
 Vue.use(vueFiltersDate)
 
+import { HappyScroll } from 'vue-happy-scroll'
+//自定义组件名
+Vue.component('happy-scroll', HappyScroll)
+// 引入css
+import 'vue-happy-scroll/docs/happy-scroll.css'
+
 //mock => 生产环境(上线前请注释！！！)
 import '@/mock'
 

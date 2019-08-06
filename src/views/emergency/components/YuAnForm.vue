@@ -4,89 +4,96 @@
       <div class="yuan-form">
         <a-row style="height:100%">
           <a-col :span="12" style="height:100%">
-            <cg-container scroll>
-              <a-form-item
-                label="类型"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                <a-select
-                    v-decorator="['typeId',config]"
-                    placeholder="请选择"
-                    style="width: 277px">
-                  <a-select-option
-                          v-for="(item,index) in typeList"
-                          :value="item.id"
-                          :key="item.id">
-                      {{item.name}}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-              <a-form-item
-                label="等级"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                <a-select
-                          v-decorator="['levelId',config]"
-                          placeholder="请选择"
-                          style="width: 277px">
-                  <a-select-option
-                          v-for="(item,index) in levelList"
-                          :value="item.id"
-                          :key="item.id">
-                      {{item.name}}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-              <a-form-item
-                label="时间"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                  <a-range-picker
-                          v-decorator="['rangeDay', config]"
-                          :disabledDate="disabledDate"
-                          format="YYYY-MM-DD"
-                          style="width: 277px"
-                  />
-              </a-form-item>
-              <a-form-item
-                label="位置"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                <a-input v-decorator="['position',configText]"
-                         placeholder="请输入" style="width: 277px" />
-              </a-form-item>
-              <a-form-item
-                label="信息"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                <a-textarea v-decorator="['description',configText]"
-                        placeholder="请输入" :rows="2" :autosize="{minRows: 2, maxRows: 2}" style="width: 277px" />
-              </a-form-item>
-              <a-form-item
-                label="区域"
-                :label-col="{ span: 5 }"
-                :wrapper-col="{ span: 12 }"
-              >
-                <div v-if="sourceData.id">
-                  <span style="margin-right: 10px;">{{areaName}}</span>
-                  <a-button type="primary" size="small" @click="editAreaPart">区域微调</a-button>
+            <!--<cg-container scroll>-->
+            <!--<div style="height: 290px">-->
+              <happy-scroll color="rgba(0,0,0,0.2)" size="5" resize smaller-move-v="end" bigger-move-v="end">
+                <div>
+                  <a-form-item
+                    label="类型"
+                    :label-col="{ span: 5 }"
+                    :wrapper-col="{ span: 12 }"
+                  >
+                    <a-select
+                        v-decorator="['typeId',config]"
+                        placeholder="请选择"
+                        style="width: 277px">
+                      <a-select-option
+                              v-for="(item,index) in typeList"
+                              :value="item.id"
+                              :key="item.id">
+                          {{item.name}}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                  <a-form-item
+                    label="等级"
+                    :label-col="{ span: 5 }"
+                    :wrapper-col="{ span: 12 }"
+                  >
+                    <a-select
+                              v-decorator="['levelId',config]"
+                              placeholder="请选择"
+                              style="width: 277px">
+                      <a-select-option
+                              v-for="(item,index) in levelList"
+                              :value="item.id"
+                              :key="item.id">
+                          {{item.name}}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                  <a-form-item
+                    label="时间"
+                    :label-col="{ span: 5 }"
+                    :wrapper-col="{ span: 12 }"
+                  >
+                      <a-range-picker
+                              v-decorator="['rangeDay', config]"
+                              :placeholder="['开始日期', '结束日期']"
+                              :disabledDate="disabledDate"
+                              format="YYYY-MM-DD"
+                              style="width: 277px"
+                      />
+                  </a-form-item>
+                  <a-form-item
+                    label="位置"
+                    :label-col="{ span: 5 }"
+                    :wrapper-col="{ span: 12 }"
+                  >
+                    <a-input v-decorator="['position',configText]"
+                             placeholder="请输入" style="width: 277px" />
+                  </a-form-item>
+                  <a-form-item
+                    label="信息"
+                    :label-col="{ span: 5 }"
+                    :wrapper-col="{ span: 12 }"
+                  >
+                    <a-textarea v-decorator="['description',configText]"
+                            placeholder="请输入" :rows="2" :autosize="{minRows: 2, maxRows: 2}" style="width: 277px" />
+                  </a-form-item>
+                  <a-form-item
+                    label="区域"
+                    :label-col="{ span: 5 }"
+                    :wrapper-col="{ span: 12 }"
+                  >
+                    <div v-if="sourceData.id">
+                      <span style="margin-right: 10px;">{{areaName}}</span>
+                      <a-button type="primary" size="small" @click="editAreaPart">区域微调</a-button>
+                    </div>
+                    <a-select v-else v-decorator="['areaId',config]"
+                              placeholder="请选择" style="width: 277px" @select="selectPaintMethod">
+                      <a-select-option
+                              v-for="(item,index) in areaList"
+                              :value="item.id"
+                              :key="item.id">
+                          {{item.name}}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
                 </div>
-                <a-select v-else v-decorator="['areaId',config]"
-                          placeholder="请选择" style="width: 277px" @select="selectPaintMethod">
-                  <a-select-option
-                          v-for="(item,index) in areaList"
-                          :value="item.id"
-                          :key="item.id">
-                      {{item.name}}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </cg-container>
+            <!--</cg-container>-->
+              </happy-scroll>
+            <!--</div>-->
           </a-col>
           <a-col :span="12">
             <a-form-item
@@ -142,6 +149,8 @@
 </template>
 <script type="text/ecmascript-6">
 import moment from 'moment';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
 import { mapActions,mapState } from 'vuex';
 import Feature from 'ol/Feature';
 import { getCenter } from 'ol/extent'
@@ -186,7 +195,9 @@ export default {
             //附件上传过程的动效展示
             fileLoading: false,
             //附件上传后得到的附件对象数组
-            fileList:[]
+            fileList:[],
+            //编辑时是否点击区域微调
+            clickAreaEdit: false
         }
     },
     props:{
@@ -289,6 +300,7 @@ export default {
         },
         //编辑时区域
         editAreaPart(){
+            this.clickAreaEdit = true;
           let modify;
           this.$emit('hide');
           const feature = this.emergencyAllArea.filter(p => p.get('id') == this.sourceData.mapId);
@@ -465,23 +477,29 @@ export default {
                 }
                 delete values.rangeDay;
                 console.log('form value: ', values);
-                // if(this.checkSubmitParams(values)){
-                //     this.addNewEmergencyYuAn(values).then((res) => {
-                //         console.log('addNewEmergencyYuAn', res);
-                //         _this.$emit('close');
-                //     })
-                // }
                 if(this.checkSubmitParams(values)) {
                   if(this.sourceData.id){
-                      this.editDraw(function(){
-                          values.mapId = _this.mapId;
-                          values.positionX = _this.mapCenter[0];
-                          values.positionY = _this.mapCenter[1];
-                          _this.addNewEmergencyYuAn(values).then((res) => {
+                      if(this.clickAreaEdit){
+                          this.editDraw(function(){
+                              values.mapId = _this.mapId;
+                              values.positionX = _this.mapCenter[0];
+                              values.positionY = _this.mapCenter[1];
+                              _this.addNewEmergencyYuAn(values).then((res) => {
+                                  console.log('addNewEmergencyYuAn', res);
+                                  _this.$emit('close');
+                              })
+                          });
+                      }
+                      else{
+                          values.mapId = this.sourceData.mapId;
+                          values.positionX = this.sourceData.positionX;
+                          values.positionY = this.sourceData.positionY;
+                          this.addNewEmergencyYuAn(values).then((res) => {
                               console.log('addNewEmergencyYuAn', res);
                               _this.$emit('close');
                           })
-                      });
+                      }
+
                   }
                   else{
                     this.addDraw(function () {
@@ -520,7 +538,7 @@ export default {
 <style lang="scss" scoped>
 .yuan-body {
   width: 100%;
-  height: 100%;
+  height: 390px;
   background-color: #ffffff;
   .yuan-form {
     width: 100%;
@@ -536,7 +554,7 @@ export default {
       padding: 0px;
     }
     /deep/.ant-form-item {
-      margin-bottom: 7px;
+      margin-bottom: 5px;
       textarea.ant-input {
         max-width: unset;
       }

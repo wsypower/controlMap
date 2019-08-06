@@ -19,7 +19,7 @@
             </div>
             <div class="person-content" v-else>
                 <div v-if="peopleDataList.length==0" class="none-panel" flex="main:center cross:center">
-                    <img src="~@img/zanwuyuan.png" />
+                    <img src="~@img/wulianxiren.png" />
                 </div>
                 <cg-container scroll v-else>
                     <div class="persons">
