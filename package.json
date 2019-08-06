@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "svgo -f src/assets/svg-icons/icons --config=src/assets/svg-icons/svgo.yml;vue-cli-service build ",
+    "build": "vue-cli-service build ",
     "build:nomock": "svgo -f src/assets/svg-icons/icons --config=src/assets/svg-icons/svgo.yml;vue-cli-service build --mode nomock",
     "lint": "vue-cli-service lint",
     "createRouter": "vue-cli-service createRouter",
