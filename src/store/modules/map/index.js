@@ -9,7 +9,7 @@ export default {
   state: {
     mapManager: null,
     emergencyAllArea: null,
-    selectEmergencyFeature: null,//当前选中应急预案的要素
+    selectEmergencyFeature: null, //当前选中应急预案的要素
   },
   mutations: {
     setMapManager(state, mapManager) {
@@ -20,7 +20,7 @@ export default {
     },
     setSelectEmergencyFeature(state, selectEmergencyFeature) {
       state.selectEmergencyFeature = selectEmergencyFeature;
-    },
+    }
   },
   actions: {
 
