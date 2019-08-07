@@ -41,7 +41,7 @@
 <script type="text/ecmascript-6">
 import { mapState } from 'vuex'
 import { getAreaVideo,getTypeResources,getTypeEquip } from '@/api/map/service'
-import { emergencyPointStyle,videoStyle,emergencyResourceStyle,emergencyEquipStyle } from '@/utils/util.map.style'
+import { videoStyle,emergencyResourceStyle,emergencyEquipStyle } from '@/utils/util.map.style'
 import { filterMeetingPeople } from '@/utils/util.map.manage'
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
@@ -199,7 +199,6 @@ export default {
                 else{
                     this.$message.error('请先选择一个预案');
                 }
-
             }
             else{
               //获取其他类型的应急资源

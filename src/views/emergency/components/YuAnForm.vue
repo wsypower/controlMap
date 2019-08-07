@@ -287,7 +287,6 @@ export default {
           const drawResult=this.mapManager.activateDraw(val,draw);
           draw = drawResult[0];
           this.drawLayer=drawResult[1];
-          // this.mapManager.getMap().un('click',)
           this.drawType = val;
           this.$emit('hide');
           draw.on('drawend', function(e) {

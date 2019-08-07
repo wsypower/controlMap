@@ -18,9 +18,7 @@ import { fromCircle } from 'ol/geom/Polygon'
 export class MapManager {
   constructor(map) {
     this.map = map
-    this.drawFeature=null;
-    this.drawId=null;
-    this.drawCenter=null;
+    this.drawLayer=null;
   }
   /**
    * @description: 通过url添加矢量图层
@@ -123,6 +121,9 @@ export class MapManager {
     if(draw){
       this.inactivateDraw(draw)
     }
+    if(this.drawLayer){
+      this.drawLayer.getSource().clear();
+    }
     if(type==='0' ||type==='1') {
       draw = new Draw({
         source,
@@ -143,7 +144,7 @@ export class MapManager {
       })
     }
     this.map.addInteraction(draw)
-    let drawLayer = new VectorLayer({
+    this.drawLayer = new VectorLayer({
       source: source,
       style: new Style({
         fill: new Fill({
@@ -161,8 +162,8 @@ export class MapManager {
         })
       })
     })
-    this.map.addLayer(drawLayer)
-    return [draw, drawLayer]
+    this.map.addLayer(this.drawLayer)
+    return [draw, this.drawLayer]
   }
   /**
    *  @description:取消激活绘制功能

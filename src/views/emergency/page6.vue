@@ -265,6 +265,15 @@ export default {
     },
     //增加预案
     addItemOperation() {
+      if(this.emergencyLayer){
+        this.emergencyLayer.getSource().clear();
+      }
+      if (this.emergencyCenterLayer) {
+        this.emergencyCenterLayer.getSource().clear()
+      }
+      if(this.peopleLayer){
+        this.peopleLayer.getSource().clear();
+      }
       this.dialogComponentId = YuAnForm
       this.dWidth = 810
       this.dHeight = 450
@@ -346,10 +355,10 @@ export default {
       //当前选中要素保存到vuex
       this.setSelectEmergencyFeature(feature);
       //预案区域图层
-      this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature, emergencyAreaStyle(), 2)
+      this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature, emergencyAreaStyle(), 2);
       const point = new Feature({
         geometry: new Point([parseFloat(data.positionX), parseFloat(data.positionY)])
-      })
+      });
       point.set('pointType', 'center');
       //预案中心点图标图层
       this.emergencyCenterLayer = this.mapManager.addVectorLayerByFeatures([point], emergencyCenterStyle(), 3)
