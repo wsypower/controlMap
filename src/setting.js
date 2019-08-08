@@ -1,6 +1,6 @@
 export default {
   // 快捷键
-  // 支持快捷键 例如 ctrl+shift+s
+  // 支持快捷键 例如 ctrl+shift+s；
   hotkey: {
     search: {
       open: 's',
