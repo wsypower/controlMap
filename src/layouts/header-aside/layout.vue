@@ -11,30 +11,29 @@
         <div class="container" flex>
           <!-- 主体 左侧边栏 -->
           <layout-menu />
-          <!-- 主体 右侧上按钮栏 -->
-          <!-- <div class="container__aside--top">
-            <a-button class="container__aside__item" type="primary">1</a-button>
-            <a-button class="container__aside__item">2</a-button>
-            <a-button class="container__aside__item">3</a-button>
-            <a-button class="container__aside__item">4</a-button>
-          </div> -->
           <!-- 主体 右侧下按钮栏 -->
-          <div class="container__aside--bottom" flex="dir:top cross:top">
+          <!-- <div class="container__aside--bottom" flex="dir:top cross:top">
             <a-button class="container__aside__item">1</a-button>
             <a-button class="container__aside__item">2</a-button>
             <a-button class="container__aside__item">3</a-button>
             <a-button class="container__aside__item">4</a-button>
-          </div>
+          </div>-->
           <!-- 主体 -->
           <div class="container__main">
-            <!-- 功能抽屉 -->
-            <layout-drawer>
+            <!-- 切换页面 -->
+            <transition name="fade-transverse" mode="out-in">
               <keep-alive :include="keepAlive">
                 <router-view />
               </keep-alive>
-            </layout-drawer>
+            </transition>
+            <!-- 功能抽屉 -->
+            <!-- <layout-drawer>
+              <keep-alive :include="keepAlive">
+                <router-view />
+              </keep-alive>
+            </layout-drawer>-->
             <!-- 地图控件注入地址 -->
-            <LayoutMap />
+            <!-- <LayoutMap /> -->
           </div>
         </div>
       </loading>
@@ -124,5 +123,6 @@ export default {
   width: calc(100% - 60px);
   height: 100%;
   background: rgb(244, 244, 245);
+  overflow: hidden;
 }
 </style>

@@ -27,4 +27,16 @@ export default {
   height: 100%;
   // min-height: 500px;
 }
+#nprogress {
+  .bar {
+    background: rgba(34, 159, 255, 0.7) !important; //自定义颜色
+    z-index: 200000 !important;
+    height: 4px !important;
+  }
+  .peg {
+    background: rgba(34, 159, 255, 0.7) !important; //自定义颜色
+    box-shadow: 0 0 5px rgba(34, 159, 255, 0.7), inset 0 0 5px rgba(58, 161, 250, 0.4) !important;
+    // box-shadow: 0 0 10px $color-primary, 0 0 5px $color-primary !important;
+  }
+}
 </style>

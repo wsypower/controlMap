@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-08-08 14:38:45
+ * @Last Modified time: 2019-08-08 18:29:51
  */
 
 /*=============================================
@@ -26,7 +26,7 @@ const frameIn = [
   {
     path: '/',
     name: 'layoutHeaderAside',
-    // redirect: { path: '/section' },
+    redirect: { path: '/records' },
     component: layoutHeaderAside,
     meta: {
       title: '管控平台'

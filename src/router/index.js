@@ -1,14 +1,14 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 16:56:20
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-08-08 14:33:06
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-08-08 18:20:10
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 //进度条
 import NProgress from 'nprogress'
-import 'nprogress/nprogress'
+import 'nprogress/nprogress.css' // progress bar style
 
 import store from '@/store/index'
 import util from '@/utils/util.js'
@@ -16,7 +16,7 @@ import util from '@/utils/util.js'
 import routes from './router'
 
 Vue.use(VueRouter)
-
+NProgress.configure({ showSpinner: false }) // NProgress Configuration
 /*=============================================
 =           导出路由 在 main.js 里使用           =
 =============================================*/
