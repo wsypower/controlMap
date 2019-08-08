@@ -28,6 +28,7 @@ export default {
         //调用登录接口
         AccountLogin({ userId: userId })
           .then(async res => {
+            console.log('走了登录接口')
             // 设置 vuex 用户信息
             await dispatch(
               'cgadmin/user/set',

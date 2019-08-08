@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 16:56:20
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-07-19 17:57:46
+ * @Last Modified time: 2019-08-08 14:33:06
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -54,7 +54,6 @@ const router = new VueRouter({
 //   }
 // })
 router.beforeEach((to, from, next) => {
-  console.log('走新页面')
   // 进度条
   NProgress.start()
   next()

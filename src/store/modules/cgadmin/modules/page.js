@@ -24,7 +24,6 @@ export default {
      * @param {Object} param 从路由钩子的 to 对象上获取 { fullPath } 路由信息
      */
     open({ state, commit }, { name, meta, fullPath }) {
-      console.log('走跳转页面')
       // const isCache = get(meta, 'cache', false)
       // console.log(isCache)
       return new Promise(resolve => {
