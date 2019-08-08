@@ -8,6 +8,12 @@
           <div class="lists__item" flex="main:center cross:center" @click="clickItem">1</div>
           <div class="lists__item" flex="main:center cross:center" @click="clickItem">3</div>
           <div class="lists__item" flex="main:center cross:center" @click="clickItem">4</div>
+          <div class="lists__item" flex="main:center cross:center" @click="clickItem">4</div>
+          <div class="lists__item" flex="main:center cross:center" @click="clickItem">4</div>
+          <div class="lists__item" flex="main:center cross:center" @click="clickItem">4</div>
+          <div class="lists__item" flex="main:center cross:center" @click="clickItem">4</div>
+          <div class="lists__item" flex="main:center cross:center" @click="clickItem">4</div>
+          <div class="lists__item" flex="main:center cross:center" @click="clickItem">4</div>
         </div>
       </div>
     </cg-container>
