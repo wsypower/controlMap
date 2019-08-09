@@ -11,7 +11,7 @@
         <div class="operate_panel" flex="dir:left cross:center">
           <a-select v-model="query.statusId" @select="handleSelectChange">
             <a-select-option value="">全部</a-select-option>
-            <a-select-option v-for="(item,index) in statusList" :value="item.id">{{item.name}}</a-select-option>
+            <a-select-option v-for="(item,index) in statusList" :value="item.id" :key="index">{{item.name}}</a-select-option>
           </a-select>
           <a-input-search v-model="query.searchContent" placeholder="请输入关键字" @search="searchDataByContent"/>
           <a-button type="primary" @click="searchYuAnData('myYuAn_true')">我的预案</a-button>

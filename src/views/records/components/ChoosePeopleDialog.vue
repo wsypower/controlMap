@@ -2,7 +2,10 @@
     <a-modal title="人员选择" v-model="choosePeopleDialogVisible" width="400px" @cancel="handleCancelForPeople" class="choose-people-dialog">
         <div style="height: 400px;position:relative;" class="yuan_dialog_body">
             <cg-container scroll>
-                <a-tree checkable showIcon v-model="checkedKeys" @check="onCheck" :treeData="treeData">
+                <a-tree checkable showIcon v-model="checkedKeys"
+                        @check="onCheck"
+                        :treeData="treeData"
+                        :defaultCheckedKeys="checkedPeopleKey">
                     <img slot="dept" src="~@img/avatar_dept.png"/>
                     <img slot="male" src="~@img/avatar_boy.png"/>
                     <img slot="female" src="~@img/avatar_girl.png"/>
@@ -16,6 +19,7 @@
     </a-modal>
 </template>
 <script type="text/ecmascript-6">
+  import { mapActions } from 'vuex'
     export default{
       name: 'choosePeopleDialog',
       props:{
@@ -24,6 +28,12 @@
           default: false
         },
         disablePeopleKey:{
+          type: Array,
+          default(){
+            return []
+          }
+        },
+        checkedPeopleKey:{
           type: Array,
           default(){
             return []
@@ -73,102 +83,26 @@
           }
         }
       },
-      mounted(){
-        this.init();
-      },
+      mounted(){},
       methods:{
+        ...mapActions('emergency/common', ['getAllPeopleDataList']),
         init(){
-          this.treeData = [{
-            title: '智慧城管',
-            key: 'chengguan',
-            slots: {
-              icon: 'dept'
-            },
-            children:[{
-              title: '信息采集中心',
-              key: 'xinxi',
-              slots: {
-                icon: 'dept'
-              },
-              children: [{
-                title: '傅建民',
-                key: '0-0-0',
-                slots: {
-                  icon: 'male'
+          this.getAllPeopleDataList().then((res)=>{
+            this.setDisabledKeyToTree(res.data,this.disablePeopleKey);
+            this.treeData = res.data;
+          });
+        },
+        setDisabledKeyToTree(treeData,disabledKey){
+          disabledKey.map(key => {
+            for (let item of treeData) {
+                if(item.key===key){
+                    item.disabled = true;
                 }
-              }, {
-                title: '董亨芳',
-                key: '0-0-1',
-                slots: {
-                  icon: 'female'
+                if (item.children) {
+                    this.setDisabledKeyToTree(item.children,disabledKey)
                 }
-              }, {
-                title: '顾 祎',
-                key: '0-0-2',
-                slots: {
-                  icon: 'male'
-                }
-              }]
-            },{
-              title: '第一中队',
-              key: 'yizhongdui',
-              slots: {
-                icon: 'dept',
-              },
-              children: [{
-                title: '郑波立',
-                key: '0-1-0',
-                slots: {
-                  icon: 'male'
-                }
-              }, {
-                title: '金 涛',
-                key: '0-1-1',
-                slots: {
-                  icon: 'male'
-                }
-              }, {
-                title: '周 军',
-                key: '0-1-2',
-                slots: {
-                  icon: 'male'
-                }
-              }]
-            }]
-          }, {
-            title: '智慧教育',
-            key: 'jiaoyu',
-            slots: {
-              icon: 'dept',
-            },
-            children:[{
-              title: '信息采集中心',
-              key: 'caiji',
-              slots: {
-                icon: 'dept',
-              },
-              children: [{
-                title: '郑 明',
-                key: '1-0-0',
-                slots: {
-                  icon: 'male'
-                }
-              }, {
-                title: '俞 君',
-                key: '1-0-1',
-                slots: {
-                  icon: 'male'
-                }
-              }, {
-                title: '邵群艳',
-                key: '1-0-2',
-                slots: {
-                  icon: 'female'
-                }
-              }]
-            }]
-
-          }];
+            }
+          })
         },
         choosePeople(){
           let data = {

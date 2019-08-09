@@ -42,3 +42,22 @@ export function getYuAnTypeDataList(data){
         params: data
     })
 }
+
+/**
+ * @description 获取所有人员
+ * @author moxuejuan
+ * @date 2019-07-12 10:53:20
+ *  @method：GET
+ * @response：{
+ *     树形结构数据
+ * }
+ */
+
+export function getAllPeopleDataList(data){
+  console.log('api:getAllPeopleDataList',data);
+  return request({
+    url: '@test/getAllPeopleDataList?_t='+ new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}

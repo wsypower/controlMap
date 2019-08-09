@@ -1,10 +1,7 @@
 <template>
-    <a-modal title="保障视图" v-model="mapDialogVisible" width="100%"
-             wrapClassName="bao-zhang-map-dialog-wap"
-             :bodyStyle="{top:0+'px',height: '100%'}"
-             class="bao-zhang-map-dialog"
+    <a-modal title="保障视图" v-model="mapDialogVisible" width="100%" height="100%"
              @cancel="handleCancel">
-        <div class="yuan_dialog_body">
+        <div class="yuan_dialog_body" id="bao_zhang_map" ref="baoZhangBody">
             <div class="operate-panel">
             <a-button type="primary" @click="drawArea">多边形</a-button>
             <a-button type="primary" @click="drawLine">线</a-button>
@@ -47,7 +44,10 @@
           }
         }
       },
-      mounted(){},
+
+      mounted() {
+
+      },
       methods:{
         init(){
 
@@ -77,32 +77,19 @@
   }
 </script>
 <style lang="scss" scoped>
-    .bao-zhang-map-dialog-wap{
-        .bao-zhang-map-dialog{
-            height: 500px;
-            /deep/.ant-modal{
-                top:0;
-                height:100%;
-            }
-            .yuan_dialog_body{
-                height: 500px;
-                width: 100%;
-                position:relative;
-                .operate-panel{
-                    position: absolute;
-                    top: 20px;
-                    right: 20px;
-                    button{
-                        margin-left: 10px;
-                    }
-                }
+    .yuan_dialog_body {
+        height: 500px;
+        width: 100%;
+        position: relative;
+        .operate-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            button {
+                margin-left: 10px;
             }
         }
     }
 
-    /*/deep/.ant-modal{*/
-        /*top:0;*/
-        /*height:100%;*/
-    /*}*/
 
 </style>

@@ -81,37 +81,7 @@ export function deleteEmergencyYuAn(data){
     })
 }
 
-/**
- * @description 获取远程呼叫所有人员
- * @author moxuejuan
- * @date 2019-07-12 10:53:20
- * @param {String} searchName 请求参数：搜索联系人
- * @param {Number} statusId 请求参数：状态Id：是否在线
- *  @method：GET
- * @response：{
- *     data:[{
- *         {String} departmentName: 部门名称
- *         {Number} totalNum: 部门人员总数
- *         {Number} onlineNum：部门人员在线总数
- *         peopleList:[{
- *             {Number} id: 人员的Id
- *             {String} name: 人员名称
- *             {String} avatar：人员头像，全路径
- *             {Number} statusId: 人员状态Id
- *             {String} telNo: 人员视频联络号
- *         }]
- *     }]
- * }
- */
 
-export function getAllEmergencyPeople(data){
-    console.log('api:getAllEmergencyPeople',data);
-    return request({
-        url: 'emergencyplan/getUserList?_t='+ new Date().getTime(),
-        method: 'get',
-        params: data
-    })
-}
 
 
 /**
