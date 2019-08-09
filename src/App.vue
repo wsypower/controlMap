@@ -1,7 +1,9 @@
 <template>
-  <div id="app">
-    <router-view></router-view>
-  </div>
+  <a-locale-provider :locale="locale">
+    <div id="app">
+      <router-view></router-view>
+    </div>
+  </a-locale-provider>
 </template>
 
 <script>
@@ -10,7 +12,7 @@ export default {
   name: 'app',
   data() {
     return {
-      zh_CN
+      locale: zh_CN
     }
   }
 }

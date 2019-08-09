@@ -42,15 +42,12 @@
 </template>
 
 <script>
-import { LayoutMenu, LayoutDrawer, LayoutHeader, Loading } from './components/index'
-import LayoutMap from '@/views/map/index.vue'
+import { LayoutMenu, LayoutHeader, Loading } from './components/index'
 import { mapState } from 'vuex'
 export default {
   name: 'layoutHeaderAside',
   components: {
     LayoutMenu,
-    LayoutDrawer,
-    LayoutMap,
     LayoutHeader,
     Loading
   },
@@ -62,9 +59,6 @@ export default {
       //缓存页面 ====> keep-alive
       keepAlive: state => state.page.keepAlive
     })
-  },
-  data() {
-    return {}
   },
   methods: {}
 }
