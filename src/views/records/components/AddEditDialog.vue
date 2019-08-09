@@ -8,7 +8,7 @@
                             <a-row>
                                 <a-col :span="7">
                                     <a-form-item label="预案名称：" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
-                                        <a-input v-decorator="['name',{rules: [{ required: true, message: 'Please input your note!' }]}]"
+                                        <a-input v-decorator="['name',{rules: [{ required: true, message: '请输入预案名!' }]}]"
                                                  placeholder="请输入预案名称"/>
                                     </a-form-item>
                                 </a-col>
@@ -27,7 +27,7 @@
                                 <a-col :span="11">
                                     <a-form-item label="保障时间：" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
                                         <a-range-picker show-time
-                                                        v-decorator="['dayRange', {rules: [{ type: 'array', required: true, message: 'Please select time!' }]}]"
+                                                        v-decorator="['dayRange', {rules: [{ type: 'array', required: true, message: '请选择保障时间！' }]}]"
                                                         format="YYYY-MM-DD HH:mm:ss"/>
                                     </a-form-item>
                                 </a-col>

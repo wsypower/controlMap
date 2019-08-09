@@ -46,6 +46,21 @@
     </a-modal>
 </template>
 <script type="text/ecmascript-6">
+    const ziyuanColumns = [{
+      title: '保障点位',
+      dataIndex: 'position',
+      width: '20%',
+    }, {
+      title: '人数总计',
+      dataIndex: 'totalNum',
+      width: '20%',
+    }, {
+      title: '保障人员',
+      dataIndex: 'groupPeople'
+    }, {
+      title: '备注',
+      dataIndex: 'remark'
+    }];
     export default{
       name: 'yuAnInfoAndReviewDialog',
       props:{
@@ -63,22 +78,7 @@
       data(){
         return {
           yuAnInfoDialogVisible: false,
-          ziyuanColumns:[{
-            title: '保障点位',
-            dataIndex: 'position',
-            width: '20%',
-          }, {
-            title: '行动组名称',
-            dataIndex: 'groupName',
-            width: '20%',
-          }, {
-            title: '人数总计',
-            dataIndex: 'totalNum',
-            width: '20%',
-          }, {
-            title: '组成员',
-            dataIndex: 'groupPeople'
-          }],
+          ziyuanColumns: ziyuanColumns,
           ziYuanData:[
             {'id':'azxs','groupName':'指挥室','totalNum':5,'position':'A','groupPeople':'田甜甜,张良亮,梁丽,王明明,柳知行','dept':'指挥中心'},
             {'id':'azwe','groupName':'A组','totalNum':8,'position':'B','groupPeople':'田甜甜,张良亮,梁丽,王明明,柳知行,程序猿，码农','dept':'XX大队'},
@@ -126,6 +126,9 @@
       },
       methods:{
         init(){
+            this.getYuAnDataById();
+        },
+        getYuAnDataById(){
 
         },
         agree(){
