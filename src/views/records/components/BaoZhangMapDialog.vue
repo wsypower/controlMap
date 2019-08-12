@@ -2,7 +2,9 @@
     <a-modal ref="baoZhangDialog" title="保障视图" v-model="mapDialogVisible" width="100%"
              @cancel="handleCancel">
         <div class="yuan_dialog_body" id="bao_zhang_map" ref="baoZhangBody">
-            <a-button type="primary" @click="showSetDialog(0)">展示设置弹窗</a-button>
+            <!-- 地图控件注入地址 -->
+            <LayoutMap ref="olMap"></LayoutMap>
+            <a-button type="primary" @click="showSetDialog(0)" class="show-set-button">展示设置弹窗</a-button>
             <div class="set-baozhang-dialog">
                 <div class="set-baozhang-dialog-header" flex="main:justify cross:center">
                     <span>设置保障信息</span>
@@ -49,7 +51,9 @@
                         <a-icon type="down" />
                     </a-button>
                 </a-dropdown>
-                <a-button type="primary" @click="clearDraw">清除选中区域</a-button>
+                <!--<a-button type="primary" @click="clearDraw">清除选中区域</a-button>-->
+                <a-button type="primary" @click="selectGeometry">选择</a-button>
+                <a-button type="primary" @click="clearSelectGeometry">删除选择</a-button>
             </div>
         </div>
 
@@ -60,8 +64,22 @@
     </a-modal>
 </template>
 <script type="text/ecmascript-6">
+  import LayoutMap from '@/views/map/olMap.vue'
+  import { MapManager } from '@/utils/util.map.manage'
+  import VectorLayer from 'ol/layer/Vector'
+  import VectorSource from 'ol/source/Vector'
+  import Select from 'ol/interaction/Select.js';
+  let map;
+  let mapManager;
+  let draw;
+  let source;
+  let vectorLayer;
+  let select;
     export default{
       name: 'baoZhangMapDialog',
+      components: {
+        LayoutMap,
+      },
       props:{
         visible: {
             type: Boolean,
@@ -83,6 +101,11 @@
       data(){
         return {
           mapDialogVisible: false,
+          pointFeatures:[],
+          lineFeatures:[],
+          polygonFeatures:[],
+          drawFeatures:[],
+          selectedFeature:null,
           form: null,
           //一条保障点位的数据
           baoZhangFormData: {
@@ -144,8 +167,13 @@
         this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
       },
       updated(){
-        let height = document.body.clientHeight - 300;
-        this.$refs.baoZhangBody.style.height= height + 'px';
+        this.$nextTick().then(() => {
+          let height = document.body.clientHeight - 300;
+          this.$refs.baoZhangBody.style.height= height + 'px';
+          map = this.$refs.olMap.getMap();
+          mapManager = new MapManager(map);
+        })
+
       },
       methods:{
         init(){
@@ -167,6 +195,61 @@
               console.log('no operation');
           }
         },
+        //获取随机绘制图形id
+        getMapId(){
+          return Number(Math.random().toString().substr(3,6) + Date.now()).toString(36);
+        },
+        //绘制图形
+        drawGeometry(type){
+          if(select){
+            map.removeInteraction(select);
+          }
+          if(!source){
+            source = new VectorSource({ wrapX: false });
+            vectorLayer = new VectorLayer({
+              source: source
+            });
+            map.addLayer(vectorLayer);
+          }
+          if(draw){
+            mapManager.inactivateDraw(draw);
+          }
+          draw = mapManager.activateDraw(type,source);
+          const _this=this;
+          draw.on('drawend', function(e) {
+            e.feature.set('id',_this.getMapId());
+            // if(type=='Point'){
+            //   _this.pointFeatures.push(e.feature)
+            // }
+            // else if(type=='LineString'){
+            //   _this.lineFeatures.push(e.feature)
+            // }
+            // else{
+            //   _this.polygonFeatures.push(e.feature)
+            // }
+          })
+        },
+        //选择图形
+        selectGeometry(){
+          if(draw){
+            mapManager.inactivateDraw(draw);
+          }
+          select = new Select();
+          map.addInteraction(select);
+          const _this=this;
+          select.on('select', function(e) {
+            console.log(e.selected[0]);
+            _this.selectedFeature=e.selected[0];
+          });
+        },
+        //清除选中的图形
+        clearSelectGeometry() {
+          if (vectorLayer) {
+            vectorLayer.getSource().removeFeature(this.selectedFeature);
+            map.removeInteraction(select);
+          }
+        },
+
         showSetDialog(mapId){
           let flag = this.allBaoZhangData.some(item =>{
             return item.mapId === mapId
@@ -235,21 +318,45 @@
         drawDot(){
 
         },
-        clearDraw(){
 
-        },
-        saveMap(){
-            console.log('this.allBaoZhangData',this.allBaoZhangData);
-        },
-        resetMap(){
-          this.allBaoZhangData = [];
-        },
-        handleCancel(){
-          this.allBaoZhangData = [];
+        //保存图形数据
+        saveMap() {
+          this.pointFeatures = [];
+          this.lineFeatures = [];
+          this.polygonFeatures = [];
+          if (draw) {
+            mapManager.inactivateDraw(draw);
+          }
+          const features = vectorLayer.getSource().getFeatures();
+          for (let i = 0; i < features.length; i++) {
+            if (features[i].getGeometry().getType() == 'Point') {
+              this.pointFeatures.push(features[i])
+            }
+            else if (features[i].getGeometry().getType() == 'LineString') {
+              this.lineFeatures.push(features[i])
+            }
+            else {
+              this.polygonFeatures.push(features[i])
+            }
+          }
+          this.drawFeatures=[this.pointFeatures,this.lineFeatures,this.polygonFeatures]
+          console.log('this.allBaoZhangData', this.allBaoZhangData);
+          this.$emit('saveDrawData',this.drawFeatures);
           this.mapDialogVisible = false;
+        },
+
+      resetMap(){
+        this.allBaoZhangData = [];
+        if(vectorLayer){
+          vectorLayer.getSource().clear();
         }
+      },
+      handleCancel(){
+        this.allBaoZhangData = [];
+        this.mapDialogVisible = false;
       }
-  }
+    }
+}
 </script>
 <style lang="scss" scoped>
     .yuan_dialog_body {
@@ -264,12 +371,17 @@
                 margin-left: 10px;
             }
         }
+        .show-set-button{
+            position: absolute;
+            top: 10px;
+        }
         .set-baozhang-dialog{
             position: absolute;
             top: 60px;
             width: 400px;
             height: 300px;
             border: 1px solid #cccccc;
+            background-color: #ffffff;
             border-radius: 6px;
             .set-baozhang-dialog-header{
                 padding: 0px 10px;
@@ -305,7 +417,5 @@
                 }
             }
         }
-    }
-
-
+      }
 </style>

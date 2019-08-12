@@ -98,7 +98,8 @@
                               @choosePeople="choosePeople"></choose-people-dialog>
         <bao-zhang-map-dialog :visible.sync="mapDialogVisible"
                               :sourcePeopleList="sourcePeopleList"
-                              :baoZhangData="baoZhangData"></bao-zhang-map-dialog>
+                              :baoZhangData="baoZhangData"
+                              @saveDrawData="saveDraw"></bao-zhang-map-dialog>
         <choose-review-person-dialog :visible.sync="chooseReViewPersonDialogVisible" @choosePerson="choosePerson"></choose-review-person-dialog>
     </a-modal>
 </template>
@@ -310,6 +311,10 @@
               });
             })
             return resList
+        },
+        //保存地图数据
+        saveDraw(drawFeatures){
+          console.log("==保存===",drawFeatures);
         },
         /*************************选择审核人员弹窗 start*******************************/
         openChooseReviewPersonDialog(){
