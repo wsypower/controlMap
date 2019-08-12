@@ -91,7 +91,7 @@
             <a-button type="primary" :loading="lastLoading" @click="completeCheck">结束审核</a-button>
         </template>
         <choose-people-dialog :visible.sync="choosePeopleDialogVisible" @choosePeople="choosePeople"></choose-people-dialog>
-        <bao-zhang-map-dialog :visible.sync="mapDialogVisible" ></bao-zhang-map-dialog>
+        <bao-zhang-map-dialog :visible.sync="mapDialogVisible" @saveDrawData="saveDraw"></bao-zhang-map-dialog>
         <choose-review-person-dialog :visible.sync="chooseReViewPersonDialogVisible" @choosePerson="choosePerson"></choose-review-person-dialog>
     </a-modal>
 </template>
@@ -258,6 +258,10 @@
         //开启保障视图弹窗
         openBaoZhangMapDialog(){
           this.mapDialogVisible = true;
+        },
+        //保存地图数据
+        saveDraw(drawFeatures){
+          console.log("==保存===",drawFeatures);
         },
         /*************************选择审核人员弹窗 start*******************************/
         openChooseReviewPersonDialog(){

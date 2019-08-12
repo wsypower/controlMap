@@ -30,11 +30,13 @@ import LayoutMap from '@/views/map/olMap.vue'
 import { MapManager } from '@/utils/util.map.manage'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
+import Select from 'ol/interaction/Select.js';
 let map;
 let mapManager;
 let draw;
 let source;
 let vectorLayer;
+let select;
   export default{
     name: 'baoZhangMapDialog',
     components: {
@@ -52,7 +54,8 @@ let vectorLayer;
         pointFeatures:[],
         lineFeatures:[],
         polygonFeatures:[],
-        drawFeatures:[]
+        drawFeatures:[],
+        selectedFeature:null
       }
     },
     updated(){
@@ -91,8 +94,15 @@ let vectorLayer;
       init(){
 
       },
+      //获取随机绘制图形id
+      getMapId(){
+        return Number(Math.random().toString().substr(3,6) + Date.now()).toString(36);
+      },
       //绘制图形
       drawGeometry(type){
+        if(select){
+          map.removeInteraction(select);
+        }
         if(!source){
           source = new VectorSource({ wrapX: false });
           vectorLayer = new VectorLayer({
@@ -106,15 +116,16 @@ let vectorLayer;
         draw = mapManager.activateDraw(type,source);
         const _this=this;
         draw.on('drawend', function(e) {
-          if(type=='Point'){
-            _this.pointFeatures.push(e.feature)
-          }
-          else if(type=='LineString'){
-            _this.lineFeatures.push(e.feature)
-          }
-          else{
-            _this.polygonFeatures.push(e.feature)
-          }
+          e.feature.set('id',_this.getMapId());
+          // if(type=='Point'){
+          //   _this.pointFeatures.push(e.feature)
+          // }
+          // else if(type=='LineString'){
+          //   _this.lineFeatures.push(e.feature)
+          // }
+          // else{
+          //   _this.polygonFeatures.push(e.feature)
+          // }
         })
       },
       //选择图形
@@ -122,25 +133,49 @@ let vectorLayer;
         if(draw){
           mapManager.inactivateDraw(draw);
         }
+        select = new Select();
+        map.addInteraction(select);
+        const _this=this;
+        select.on('select', function(e) {
+          console.log(e.selected[0]);
+          _this.selectedFeature=e.selected[0];
+        });
       },
       //清除选中的图形
       clearSelectGeometry(){
-
+        if(vectorLayer){
+          vectorLayer.getSource().removeFeature(this.selectedFeature);
+          map.removeInteraction(select);
+        }
       },
+      //保存图形数据
       saveMap(){
+        this.pointFeatures=[];
+        this.lineFeatures=[];
+        this.polygonFeatures=[];
         if(draw){
           mapManager.inactivateDraw(draw);
         }
+        const features=vectorLayer.getSource().getFeatures();
+        for(let i=0;i<features.length;i++){
+          if(features[i].getGeometry().getType()=='Point'){
+            this.pointFeatures.push(features[i])
+          }
+          else if(features[i].getGeometry().getType()=='LineString'){
+            this.lineFeatures.push(features[i])
+          }
+          else{
+            this.polygonFeatures.push(features[i])
+          }
+        }
         this.drawFeatures=[this.pointFeatures,this.lineFeatures,this.polygonFeatures]
-        console.log('==drawFeatures==',this.drawFeatures);
+        this.$emit('saveDrawData',this.drawFeatures);
+        this.mapDialogVisible = false;
       },
       resetMap(){
         if(vectorLayer){
           vectorLayer.getSource().clear();
         }
-        this.pointFeatures=[];
-        this.lineFeatures=[];
-        this.polygonFeatures=[];
       },
       handleCancel(){
         this.mapDialogVisible = false;
