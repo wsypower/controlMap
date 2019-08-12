@@ -67,17 +67,20 @@ export class MapManager {
    * @param {Boolean}isFreeHand 是否自由绘制
    * @return {*}
    */
-  activateDraw(type) {
-    debugger;
-    let pointSource = new VectorSource({ wrapX: false });
+  activateDraw(type,source) {
+    // let pointSource = new VectorSource({ wrapX: false });
     let draw;
     // let lineSource= new VectorSource({ wrapX: false });
     // let polygonSource = new VectorSource({ wrapX: false });
     if (type !== 'None') {
       draw = new Draw({
-        source: pointSource,
+        source: source,
         type: type
       });
+      // this.drawLayer = new VectorLayer({
+      //   source: pointSource,
+      // })
+      // this.map.addLayer(this.drawLayer)
       this.map.addInteraction(draw);
     }
     return draw;
