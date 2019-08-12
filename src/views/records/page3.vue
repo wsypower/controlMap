@@ -27,34 +27,39 @@
         <a-spin tip="数据加载中..."></a-spin>
       </div>
       <div class="yuan_list_content" v-if="!dataLoading&&yuanDataList.length>0">
-        <div v-for="(item, index) in yuanDataList" :key="index" class="item">
-          <div class="top"></div>
-          <div class="item_tool_panel">
-            <a-icon v-if="item.statusId<'005'" type="edit" @click="editYuAn(item)"/>
-            <a-icon type="heart" @click="setYuAn(item)"/>
-            <a-icon v-if="item.statusId!='006'" type="delete" @click="deleteYuAn(index)"/>
-          </div>
-          <div class="show_content_panel">
-            <div><span>名称：</span>{{item.name}}</div>
-            <div><span>创建人：</span>{{item.creator}}</div>
-            <div><span>保障时间：</span>{{item.startDayTime}}~{{item.endDayTime}}</div>
-            <div>
-              <span>状态：</span>
-              <span v-if="item.statusId=='001'" class="status blue">待提交</span>
-              <span v-if="item.statusId=='002'" class="status blue">待审核</span>
-              <span v-if="item.statusId=='003'" class="status blue">已通过</span>
-              <span v-if="item.statusId=='004'" class="status blue">已驳回</span>
-              <span v-if="item.statusId=='005'" class="status yellow">未开始</span>
-              <span v-if="item.statusId=='006'" class="status green">进行中</span>
-              <span v-if="item.statusId=='007'" class="status grey">已结束</span>
-              <span v-if="item.statusId=='008'" class="status red">已逾期作废</span>
+        <cg-container scroll>
+          <div class="content_panel">
+            <div v-for="(item, index) in yuanDataList" :key="index" class="item">
+            <div class="top"></div>
+            <div class="item_tool_panel">
+              <a-icon v-if="item.statusId<'005' || item.statusId=='008'" type="edit" @click="editYuAn(item)"/>
+              <a-icon v-if="item.isTemplate" type="heart" theme="filled" @click="setYuAn(item)"/>
+              <a-icon v-else type="heart" @click="setYuAn(item)"/>
+              <a-icon v-if="item.statusId!='006'" type="delete" @click="deleteYuAn(item.id,index)"/>
+            </div>
+            <div class="show_content_panel">
+              <div><span>名称：</span>{{item.name}}</div>
+              <div><span>创建人：</span>{{item.creator}}</div>
+              <div><span>保障时间：</span>{{item.startDayTime}}~{{item.endDayTime}}</div>
+              <div>
+                <span>状态：</span>
+                <span v-if="item.statusId=='001'" class="status blue">待提交</span>
+                <span v-if="item.statusId=='002'" class="status blue">待审核</span>
+                <span v-if="item.statusId=='003'" class="status blue">已通过</span>
+                <span v-if="item.statusId=='004'" class="status blue">已驳回</span>
+                <span v-if="item.statusId=='005'" class="status yellow">未开始</span>
+                <span v-if="item.statusId=='006'" class="status green">进行中</span>
+                <span v-if="item.statusId=='007'" class="status grey">已结束</span>
+                <span v-if="item.statusId=='008'" class="status red">已逾期作废</span>
+              </div>
+            </div>
+            <div class="item_operate_panel" flex="dir:left cross:center main:center">
+              <span @click="openInfoDialog(item)">方案详情</span>
+              <span v-if="item.statusId=='006'" @click="toMonitorPage(item)">实时监测</span>
             </div>
           </div>
-          <div class="item_operate_panel" flex="dir:left cross:center main:center">
-            <span @click="openInfoDialog(item)">方案详情</span>
-            <span v-if="item.statusId=='006'" @click="toMonitorPage(item)">实时监测</span>
           </div>
-        </div>
+        </cg-container>
       </div>
       <div class="no-data" flex="main:center cross:center" v-if="!dataLoading&&yuanDataList.length===0">
         <img src="~@img/zanwuyuan.png" />
@@ -135,7 +140,7 @@
     },
     methods: {
       ...mapActions('emergency/common', ['getStatusDataList']),
-      ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList']),
+      ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList','deleteEmergencyYuAn','setEmergencyYuAnToTemplate']),
       /***************************预案查询区 start****************************/
       resetQuery(){
         this.query = Object.assign({}, this.$options.data().query);
@@ -222,10 +227,13 @@
       },
 
       setYuAn(item){
-        console.log('已设置为模板预案');
+        this.setEmergencyYuAnToTemplate({id:item.id}).then((res)=>{
+          console.log(res);
+          console.log('已设置为模板预案');
+        });
       },
 
-      deleteYuAn(index){
+      deleteYuAn(id,index){
         let _this = this;
         this.$confirm({
           title: '確定删除这个预案吗?',
@@ -234,7 +242,11 @@
           okType: 'danger',
           cancelText: '取消',
           onOk() {
-            _this.yuanDataList.splice(index,1);
+            _this.deleteEmergencyYuAn({id: id}).then((res)=>{
+              console.log(res);
+              _this.yuanDataList.splice(index,1);
+            });
+
           },
           onCancel() {
 
@@ -258,7 +270,10 @@
     width: 100%;
     height: 100%;
     background-color: #f4f4f5;
-    padding: 60px 10px 10px 10px;
+    padding: 70px 10px 10px 10px;
+    /deep/.ant-select-selection{
+      width: 120px;
+    }
   }
   .yuan_list_panel{
     width: 100%;
@@ -287,105 +302,108 @@
     }
     .loading,.no-data{
       width: 100%;
-      height: calc(100% - 100px);
+      height: calc(100% - 160px);
     }
     .yuan_list_content{
       width: 100%;
       height: calc(100% - 100px);
       margin-top: 10px;
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      .item{
-        width: 300px;
-        height:160px;
-        margin-right: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #eeeeee;
-        background-color: #ffffff;
-        position: relative;
-        .top{
-          height: 5px;
-          width: 100%;
-          background-color: #00a4fe;
-          opacity: 0;
-        }
-        .item_tool_panel{
-          position: absolute;
-          right: 10px;
-          top: 8px;
-          display: none;
-          i{
-            margin-left: 10px;
-            cursor: pointer;
-            &:hover{
-              color: #00a4fe;
-            }
+      position: relative;
+      .content_panel {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
+        .item {
+          width: 300px;
+          height: 160px;
+          margin-right: 10px;
+          margin-bottom: 10px;
+          border: 1px solid #eeeeee;
+          background-color: #ffffff;
+          position: relative;
+          .top {
+            height: 5px;
+            width: 100%;
+            background-color: #00a4fe;
+            opacity: 0;
           }
-        }
-        .show_content_panel{
-          width: 100%;
-          padding: 25px 5px 30px 20px;
-          height: 100%;
-          >div{
-            span:first-child{
-              display: inline-block;
-              width: 80px;
-              text-align: left;
-              vertical-align: top;
-            }
-            .status{
-              display: inline-block;
-              padding: 0px 8px;
-              height: 18px;
-              line-height: 18px;
-              font-size: 14px;
-              color: #ffffff;
-              text-align: center;
-              border-radius: 6px;
-              &.red{
-                background-color: #ff0000;
-              }
-              &.yellow{
-                background-color: #ffcc00;
-              }
-              &.green{
-                background-color: #66cc66;
-              }
-              &.blue{
-                background-color: #1761f3;
-              }
-              &.grey{
-                background-color: #6b6b6b;
+          .item_tool_panel {
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            display: none;
+            i {
+              margin-left: 10px;
+              cursor: pointer;
+              &:hover {
+                color: #00a4fe;
               }
             }
           }
-        }
-        .item_operate_panel{
-          position: absolute;
-          bottom: 0px;
-          width:298px;
-          height: 30px;
-          border-top: 1px solid #cccccc;
-          justify-content: space-around;
-          /*opacity: 0;*/
-          display: none;
-          span{
-            cursor: pointer;
-            &:hover{
-              color:#00a4fe;
+          .show_content_panel {
+            width: 100%;
+            padding: 25px 5px 30px 20px;
+            height: 100%;
+            > div {
+              span:first-child {
+                display: inline-block;
+                width: 80px;
+                text-align: left;
+                vertical-align: top;
+              }
+              .status {
+                display: inline-block;
+                padding: 0px 8px;
+                height: 18px;
+                line-height: 18px;
+                font-size: 14px;
+                color: #ffffff;
+                text-align: center;
+                border-radius: 6px;
+                &.red {
+                  background-color: #ff0000;
+                }
+                &.yellow {
+                  background-color: #ffcc00;
+                }
+                &.green {
+                  background-color: #66cc66;
+                }
+                &.blue {
+                  background-color: #1761f3;
+                }
+                &.grey {
+                  background-color: #6b6b6b;
+                }
+              }
             }
           }
-        }
-        &:hover{
-          .top{
-            opacity: 1;
+          .item_operate_panel {
+            position: absolute;
+            bottom: 0px;
+            width: 298px;
+            height: 30px;
+            border-top: 1px solid #cccccc;
+            justify-content: space-around;
+            /*opacity: 0;*/
+            display: none;
+            span {
+              cursor: pointer;
+              &:hover {
+                color: #00a4fe;
+              }
+            }
           }
-          .item_tool_panel{
-            display: block;
-          }
-          .item_operate_panel{
-            display: flex;
+          &:hover {
+            .top {
+              opacity: 1;
+            }
+            .item_tool_panel {
+              display: block;
+            }
+            .item_operate_panel {
+              display: flex;
+            }
           }
         }
       }
@@ -404,8 +422,5 @@
   }
   .ant-tag{
     margin-bottom: 5px;
-  }
-  .ant-select-selection{
-    width: 120px;
   }
 </style>

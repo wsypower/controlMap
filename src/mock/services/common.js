@@ -156,3 +156,49 @@ const getAllPeopleDataList = (options) => {
   )
 }
 Mock.mock(/\/@test\/getAllPeopleDataList/, 'get', getAllPeopleDataList);
+
+
+const getReviewPeopleDataList = (options) => {
+  console.log('getReviewPeopleDataList options',options);
+  const queryParameters = getQueryParameters(options);
+  console.log('getReviewPeopleDataList query',queryParameters);
+  let data = [{
+    id: '0-0-0',
+    name: '傅建民'
+  },{
+    id: '0-0-1',
+    name: '董亨芳'
+  },{
+    id: '0-0-2',
+    name: '顾 祎'
+  },{
+    id: '0-1-0',
+    name: '郑波立'
+  },{
+    id: '0-1-1',
+    name: '金 涛'
+  },{
+    id: '0-1-2',
+    name: '周 军'
+  },{
+    id: '1-0-0',
+    name: '郑 明'
+  },{
+    id: '1-0-1',
+    name: '俞 君'
+  },{
+    id: '1-0-2',
+    name: '邵群艳'
+  }];
+  return builder(
+    {
+      code: 0,
+      data:data,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/getReviewPeopleDataList/, 'get', getReviewPeopleDataList);

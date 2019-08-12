@@ -96,7 +96,9 @@
                               :disablePeopleKey="disablePeopleKey"
                               :checkedPeopleKey="checkedPeopleKey"
                               @choosePeople="choosePeople"></choose-people-dialog>
-        <bao-zhang-map-dialog :visible.sync="mapDialogVisible" ></bao-zhang-map-dialog>
+        <bao-zhang-map-dialog :visible.sync="mapDialogVisible"
+                              :sourcePeopleList="sourcePeopleList"
+                              :baoZhangData="baoZhangData"></bao-zhang-map-dialog>
         <choose-review-person-dialog :visible.sync="chooseReViewPersonDialogVisible" @choosePerson="choosePerson"></choose-review-person-dialog>
     </a-modal>
 </template>
@@ -191,10 +193,13 @@
           disablePeopleKey: [],
 
           mapDialogVisible: false,
+          sourcePeopleList: [],
+          baoZhangData: [],
           chooseReViewPersonDialogVisible: false,
-
-
         }
+      },
+      computed:{
+
       },
       created(){
         this.form = this.$form.createForm(this);
@@ -269,6 +274,7 @@
 
         completeCheck(){
           //调取接口改变预案的状态（已同意->未开始）
+          //setEmergencyYuAnToFinishReview
           this.addEditDialogVisible = false;
         },
         openPeopleDialog(index){
@@ -284,7 +290,26 @@
         },
         //开启保障视图弹窗
         openBaoZhangMapDialog(){
+          this.sourcePeopleList = this.getSourcePeolpleList();
+          console.log('sourcePeopleList',this.sourcePeopleList);
+          this.baoZhangData = [];
           this.mapDialogVisible = true;
+        },
+        //获取保障视图重组后数据
+        getSourcePeolpleList(){
+            let pList = this.submitForm.groupData;
+            let resList = [];
+            pList.forEach((item)=>{
+              let nameList = item.personDisplayList;
+              item.personList.map((i,index)=>{
+                let temp = {
+                  id: i,
+                  name: nameList[index]+ '(' + item.groupName + ')'
+                }
+                resList.push(temp);
+              });
+            })
+            return resList
         },
         /*************************选择审核人员弹窗 start*******************************/
         openChooseReviewPersonDialog(){

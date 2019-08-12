@@ -24,6 +24,12 @@ export default {
   components: {
     menuItem
   },
+  watch: {
+    current(newCurrent, oldCurrent) {
+      const aside = this.aside
+      this.currentAsideSetActive(aside, newCurrent)
+    }
+  },
   computed: {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
     ...mapState('cgadmin/page', ['current'])
@@ -66,6 +72,16 @@ export default {
           this.asideCollapseSet(true), resolve()
         }
       })
+    },
+    /**
+     * @description 点亮当前页或当前页的顶层路径图标
+     * @author weiyafei
+     * @date 2019-08-12-16:59:37
+     * @param {Array} aside 侧边栏
+     * @param {String} current 当前页
+     */
+    currentAsideSetActive(aside, current) {
+      return aside.map((item, arr) => (item.path.includes(current) ? (item.active = true) : (item.active = false)))
     }
   }
 }

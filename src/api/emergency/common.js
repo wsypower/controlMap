@@ -61,3 +61,23 @@ export function getAllPeopleDataList(data){
     params: data
   })
 }
+
+/**
+ * @description 获取所有审核人员
+ * @author moxuejuan
+ * @date 2019-07-12 10:53:20
+ *  @method：GET
+ * @response：{
+ *     {Number} id: 用户Id
+ *     {String} name: 用户名称
+ * }
+ */
+
+export function getReviewPeopleDataList(data){
+  console.log('api:getReviewPeopleDataList',data);
+  return request({
+    url: '@test/getReviewPeopleDataList?_t='+ new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}

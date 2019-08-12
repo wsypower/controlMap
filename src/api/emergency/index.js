@@ -18,9 +18,9 @@ import request from '@/plugins/axios/axios'
  *     {Number} statusId：状态Id
  *     {String} statusName：状态名称
  *     {String} creator: 创建人姓名
- *     {String} startDayTime: 保障开始时间
- *     {String} endDayTime: 保障结束时间
- *
+ *     {Number} startDayTime: 保障开始时间
+ *     {Number} endDayTime: 保障结束时间
+ *     {Boolean} isTemplate: 是否是预案模板
  * }}
  */
 
@@ -61,6 +61,10 @@ export function addNewEmergencyYuAn(data){
     })
 }
 
+
+
+
+
 /**
  * @description 删除某个预案
  * @author moxuejuan
@@ -75,7 +79,7 @@ export function addNewEmergencyYuAn(data){
 export function deleteEmergencyYuAn(data){
     console.log('api:deleteEmergencyYuAn',data);
     return request({
-        url: 'emergencyplan/deleteEmergencyYuAn',
+        url: '@test/deleteEmergencyYuAn',
         method: 'post',
         data
     })
@@ -85,26 +89,115 @@ export function deleteEmergencyYuAn(data){
 
 
 /**
- * @description 根据userId获取人员信息
+ * @description 根据Id获取某个预案详细信息
  * @author moxuejuan
  * @date 2019-07-12 10:53:20
- * @param {String} Id 用户Id
+ * @param {String} Id 预案Id
  * @method：GET
  * @response：{
  *     data:[{
- *         {String} dept: 部门名称
- *         {String} isonline: 是否在线
- *         {String} phone：联系电话
- *         {String} realname：真实姓名
+ *
  *     }]
  * }
  */
 
-export function getPersonInfo(data){
-    console.log('api:getPersonInfo',data);
+export function getEmergencyYuAnById(data){
+    console.log('api:getEmergencyYuAnById',data);
     return request({
-        url: 'emergencyplan/getUserById?_t='+ new Date().getTime(),
+        url: '@test/getEmergencyYuAnById?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
 }
+
+
+/**
+ * @description 审核通过某个预案
+ * @author moxuejuan
+ * @date 2019-08-12 10:53:20
+ * @param {String} Id 预案Id
+ * @method：POST
+ * @response：{
+ *     data:[{
+ *
+ *     }]
+ * }
+ */
+
+export function setEmergencyYuAnToPass(data){
+  console.log('api:setEmergencyYuAnToPass',data);
+  return request({
+    url: '@test/setEmergencyYuAnToPass',
+    method: 'post',
+    data
+  })
+}
+
+
+/**
+ * @description 审核驳回某个预案
+ * @author moxuejuan
+ * @date 2019-08-12 10:53:20
+ * @param {String} Id 预案Id
+ * @param {String} backReason 驳回原因
+ * @method：POST
+ * @response：{
+ *     data:[{
+ *
+ *     }]
+ * }
+ */
+
+export function setEmergencyYuAnToBack(data){
+  console.log('api:setEmergencyYuAnToBack',data);
+  return request({
+    url: '@test/setEmergencyYuAnToBack',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * @description 设置某个预案为模板预案
+ * @author moxuejuan
+ * @date 2019-08-12 10:53:20
+ * @param {String} Id 预案Id
+ * @method：POST
+ * @response：{
+ *     data:[{
+ *
+ *     }]
+ * }
+ */
+
+export function setEmergencyYuAnToTemplate(data){
+  console.log('api:setEmergencyYuAnToTemplate',data);
+  return request({
+    url: '@test/setEmergencyYuAnToTemplate',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * @description 设置某条预案为结束审核
+ * @author moxuejuan
+ * @date 2019-08-12 10:53:20
+ * @param {String} Id 预案Id
+ * @method：POST
+ * @response：{
+ *     data:[{
+ *
+ *     }]
+ * }
+ */
+
+export function setEmergencyYuAnToFinishReview(data){
+  console.log('api:setEmergencyYuAnToFinishReview',data);
+  return request({
+    url: '@test/setEmergencyYuAnToFinishReview',
+    method: 'post',
+    data
+  })
+}
+
