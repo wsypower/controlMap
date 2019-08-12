@@ -35,7 +35,7 @@
                     </cg-container>
                 </div>
                 <div class="set-baozhang-dialog-footer">
-                    <a-button type="primary" size="small" @click="svaeBaoZhangInfo">确定</a-button>
+                    <a-button type="primary" size="small" @click="saveBaoZhangInfo">确定</a-button>
                     <a-button type="primary" size="small" @click="reset">重置</a-button>
                 </div>
             </div>
@@ -114,11 +114,14 @@
             personList: [],
             remark: ''
           },
-          //识别编辑/新增保障点位
+          //识别编辑/新增某个保障点位
           opType: 'add',
+          //编辑时,确定第几个保障点位
           index: 0,
           //某一个保障点位，需要过滤的人员数据
           filterPeopleList: [],
+          //所有的保障点位数据，后续所有操作已这个为基础，最后保存时也已这个作为保存数据
+          //allBaoZhangData有值为编辑，没有值为新增
           allBaoZhangData: []
         }
       },
@@ -163,9 +166,7 @@
       created(){
         this.form = this.$form.createForm(this);
       },
-      mounted() {
-        this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
-      },
+      mounted() {},
       updated(){
         this.$nextTick().then(() => {
           let height = document.body.clientHeight - 300;
@@ -177,7 +178,7 @@
       },
       methods:{
         init(){
-
+          this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
         },
         handleOperateClick(value){
           console.log('handleMenuClick',value);
@@ -249,7 +250,7 @@
             map.removeInteraction(select);
           }
         },
-
+        //双击区域后触发此方法，带出mapId
         showSetDialog(mapId){
           let flag = this.allBaoZhangData.some(item =>{
             return item.mapId === mapId
@@ -280,17 +281,20 @@
             this.baoZhangFormData.remark = temp.remark;
           }
           else{
+            this.filterPeopleList = this.checkedPeopleIdList;
             this.baoZhangFormData.mapId = mapId;
             this.baoZhangFormData.name = '';
             this.baoZhangFormData.personList = [];
             this.baoZhangFormData.remark = '';
           }
         },
+        //人员选择
         handleChange(value) {
           console.log(`Selected: ${value}`,value);
           this.baoZhangFormData.personList = value;
         },
-        svaeBaoZhangInfo(){
+        //保存保障点位设置
+        saveBaoZhangInfo(){
           console.log('this.baoZhangFormData',this.baoZhangFormData)
           if(this.opType == 'edit'){
             this.allBaoZhangData[this.index].name = this.baoZhangFormData.name;
@@ -301,11 +305,13 @@
             this.allBaoZhangData.push(this.baoZhangFormData);
           }
         },
+        //重置保障点位设置
         reset(){
           let mapId = this.baoZhangFormData.mapId;
           this.baoZhangFormData = Object.assign({},this.$options.data()['baoZhangFormData']);
           this.baoZhangFormData.mapId = mapId;
         },
+        //保障点位设置弹窗的左上角关闭
         closeSetDialog(){
             this.reset();
         },
@@ -318,7 +324,6 @@
         drawDot(){
 
         },
-
         //保存图形数据
         saveMap() {
           this.pointFeatures = [];
@@ -344,15 +349,19 @@
           this.$emit('saveDrawData',this.drawFeatures);
           this.mapDialogVisible = false;
         },
-
+        //重置视图
       resetMap(){
         this.allBaoZhangData = [];
         if(vectorLayer){
           vectorLayer.getSource().clear();
         }
       },
+        //关闭保障视图弹窗
       handleCancel(){
         this.allBaoZhangData = [];
+        if(vectorLayer){
+          vectorLayer.getSource().clear();
+        }
         this.mapDialogVisible = false;
       }
     }
