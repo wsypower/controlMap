@@ -11,6 +11,7 @@ import { Tile as TileLayer } from 'ol/layer'
 import WMTS from 'ol/source/WMTS'
 import WMTSTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent'
+import { defaults as interactionDefaults } from 'ol/interaction'
 
 export default {
   data() {
@@ -28,6 +29,10 @@ export default {
       this.map = new Map({
         loadTilesWhileAnimating: true,
         target: 'map',
+        //设置地图鼠标事件，默认的双击改成false
+        interactions: interactionDefaults({
+          doubleClickZoom: false,
+        }),
         view: new View({
           projection: 'EPSG:4326',
           center: [122.22190299972,30.26656000004],

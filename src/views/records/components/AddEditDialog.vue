@@ -107,6 +107,7 @@
   import ChoosePeopleDialog from './ChoosePeopleDialog'
   import ChooseReviewPersonDialog from './ChooseReviewPersonDialog'
   import BaoZhangMapDialog from './BaoZhangMapDialog'
+  import {postEmergencyFeatures} from '@/api/map/service'
   const groupColumns = [{
     title: '组名称',
     dataIndex: 'groupName',
@@ -313,8 +314,23 @@
             return resList
         },
         //保存地图数据
-        saveDraw(drawFeatures){
+        saveDraw(type,drawFeatures){
           console.log("==保存===",drawFeatures);
+          if(this.drawFeatures[0].length>0){
+            postEmergencyFeatures(type,'Point',this.drawFeatures[0]).then(res=>{
+              console.log('==点数据==',res);
+            })
+          }
+          if(this.drawFeatures[1].length>0){
+            postEmergencyFeatures(type,'LineString',this.drawFeatures[1]).then(res=>{
+              console.log('==线数据==',res);
+            })
+          }
+          if(this.drawFeatures[2].length>0){
+            postEmergencyFeatures(type,'Polygon',this.drawFeatures[2]).then(res=>{
+              console.log('==线数据==',res);
+            })
+          }
         },
         /*************************选择审核人员弹窗 start*******************************/
         openChooseReviewPersonDialog(){

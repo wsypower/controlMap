@@ -11,6 +11,7 @@ import { Modify } from 'ol/interaction.js';
 import Feature from 'ol/Feature';
 import MultiPolygon from 'ol/geom/MultiPolygon';
 import { fromCircle } from 'ol/geom/Polygon'
+import Overlay from 'ol/Overlay'
 
 export class MapManager {
   constructor(map) {
@@ -49,6 +50,15 @@ export class MapManager {
     source.addFeatures(features)
     this.map.addLayer(vectorLayer)
     return vectorLayer
+  }
+  /**
+   * @description: 添加弹框
+   * @param {[type]} options [description]
+   */
+  addOverlay(options) {
+    const overlay = new Overlay(options)
+    this.map.addOverlay(overlay)
+    return overlay
   }
   /**
    * @description: 定位
