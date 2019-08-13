@@ -145,6 +145,10 @@
             return res
           },[])
             return resArr
+        },
+        //保障视图是新增还是编辑操作
+        mapOperateType:function(){
+          return this.baoZhangData.length>0?'edit':'add'
         }
       },
       watch:{
@@ -326,6 +330,7 @@
         },
         //保存图形数据
         saveMap() {
+          console.log('新增还是编辑：mapOperateType', this.mapOperateType);
           this.pointFeatures = [];
           this.lineFeatures = [];
           this.polygonFeatures = [];
