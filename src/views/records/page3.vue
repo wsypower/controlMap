@@ -32,17 +32,17 @@
             <div v-for="(item, index) in yuanDataList" :key="index" class="item">
             <div class="top"></div>
             <div class="item_tool_panel">
-              <a-icon v-if="item.statusId<'005' || item.statusId=='008'" type="edit" @click="editYuAn(item)"/>
+              <a-icon v-if="item.statusId<'005' || item.statusId=='008'" type="edit" @click="editYuAn(item.id)"/>
               <a-icon v-if="item.isTemplate" type="heart" theme="filled" @click="setYuAn(item)"/>
-              <a-icon v-else type="heart" @click="setYuAn(item)"/>
+              <a-icon v-else type="heart" color="#fe7a83" @click="setYuAn(item)"/>
               <a-icon v-if="item.statusId!='006'" type="delete" @click="deleteYuAn(item.id,index)"/>
             </div>
             <div class="show_content_panel">
-              <div><span>名称：</span>{{item.name}}</div>
-              <div><span>创建人：</span>{{item.creator}}</div>
-              <div><span>保障时间：</span>{{new Date(item.startDayTime)|date_format('YYYY-MM-DD HH:mm')}}~{{new Date(item.endDayTime)|date_format('YYYY-MM-DD HH:mm')}}</div>
+              <div><span>名称</span><span>：</span>{{item.name}}</div>
+              <div><span>创建人</span><span>：</span>{{item.creator}}</div>
+              <div><span>保障时间</span><span>：</span>{{new Date(item.startDayTime)|date_format('YYYY-MM-DD HH:mm')}}~{{new Date(item.endDayTime)|date_format('YYYY-MM-DD HH:mm')}}</div>
               <div>
-                <span>状态：</span>
+                <span>状态</span><span>：</span>
                 <span v-if="item.statusId=='001'" class="status blue">待提交</span>
                 <span v-if="item.statusId=='002'" class="status blue">待审核</span>
                 <span v-if="item.statusId=='003'" class="status blue">已通过</span>
@@ -75,7 +75,7 @@
                       v-model="query.pageNo"/>
       </div>
     </div>
-    <add-edit-dialog :visible.sync="addYuAnDialogVisible" :dialogTitle="dialogTitle" :yuAnForm="yuAnForm"></add-edit-dialog>
+    <add-edit-dialog :visible.sync="addYuAnDialogVisible" :dialogTitle="dialogTitle" :yuAnId="yuAnId"></add-edit-dialog>
     <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible"></yu-an-info-and-review-dialog>
   </div>
 </template>
@@ -110,23 +110,7 @@
 
         addYuAnDialogVisible: false,
         dialogTitle: '新增预案',
-        yuAnForm:{
-          name: '',
-          typeId: '',
-          startDay: '',
-          endDay: '',
-          description: '',
-          jobGoal: '',
-          jobAssignment: '',
-          jobContent: '',
-          jobRequirements: '',
-          groupData: [{
-            key: 'azxcvbnm',
-            groupName: '',
-            personList: []
-          }]
-        },
-
+        yuAnId: '',
         yuAnInfoDialogVisible: false,
       }
     },
@@ -207,21 +191,8 @@
       },
 
       /***************************对已有预案的操作 start****************************/
-      editYuAn(item){
-        this.yuAnForm.name = item.name;
-        this.yuAnForm.typeId = item.typeId;
-        this.yuAnForm.startDay = item.startDay;
-        this.yuAnForm.endDay = item.endDay;
-        this.yuAnForm.description = item.description;
-        this.yuAnForm.jobGoal = item.jobGoal || 'jagsdjhgjdfhgsafjhskfhgdsf';
-        this.yuAnForm.jobAssignment = item.jobAssignment;
-        this.yuAnForm.jobContent = item.jobContent;
-        this.yuAnForm.jobRequirements = item.jobRequirements;
-        this.yuAnForm.groupData = [{
-          key: 'azxcvbnm',
-          groupName: '',
-          personList: []
-        }];
+      editYuAn(id){
+        this.yuAnId = id;
         this.dialogTitle = '编辑预案';
         this.addYuAnDialogVisible = true;
       },
@@ -321,7 +292,7 @@
       .content_panel {
         display: flex;
         flex-flow: row wrap;
-        justify-content: space-between;
+
         .item {
           width: 350px;
           height: 160px;
@@ -329,11 +300,14 @@
           margin-bottom: 10px;
           border: 1px solid #eeeeee;
           background-color: #ffffff;
+          border-radius: 6px;
           position: relative;
           .top {
             height: 5px;
             width: 100%;
             background-color: #00a4fe;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
             opacity: 0;
           }
           .item_tool_panel {
@@ -345,7 +319,7 @@
               margin-left: 10px;
               cursor: pointer;
               &:hover {
-                color: #00a4fe;
+                color: #fe7a83;
               }
             }
           }
@@ -356,9 +330,16 @@
             > div {
               span:first-child {
                 display: inline-block;
-                width: 80px;
-                text-align: left;
+                width: 60px;
+                height: 24px;
                 vertical-align: top;
+                text-align: justify;
+                &::after {
+                  display: inline-block;
+                  width: 100%;
+                  content: '';
+                  height: 0;
+                }
               }
               .status {
                 display: inline-block;

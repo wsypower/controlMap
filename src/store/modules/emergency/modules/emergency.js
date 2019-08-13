@@ -1,4 +1,5 @@
 import { getEmergencyYuAnList,
+  addNewEmergencyYuAn,
   getEmergencyYuAnById,
   setEmergencyYuAnToPass,
   setEmergencyYuAnToBack,
@@ -23,6 +24,19 @@ export default {
                     })
             })
         },
+      addNewEmergencyYuAn(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          addNewEmergencyYuAn(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
       getEmergencyYuAnById(state,data){
         console.log('store',data);
         return new Promise((resolve, reject) => {

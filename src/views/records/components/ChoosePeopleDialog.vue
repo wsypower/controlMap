@@ -4,8 +4,7 @@
             <cg-container scroll>
                 <a-tree checkable showIcon v-model="checkedKeys"
                         @check="onCheck"
-                        :treeData="treeData"
-                        :defaultCheckedKeys="checkedPeopleKey">
+                        :treeData="treeData">
                     <img slot="dept" src="~@img/avatar_dept.png"/>
                     <img slot="male" src="~@img/avatar_boy.png"/>
                     <img slot="female" src="~@img/avatar_girl.png"/>
@@ -32,38 +31,47 @@
           default(){
             return []
           }
-        },
-        checkedPeopleKey:{
-          type: Array,
-          default(){
-            return []
-          }
         }
       },
       data(){
         return {
           choosePeopleDialogVisible: false,
           treeData: [],
+          peopleList: {},
           checkedKeys: [],
         }
       },
       computed:{
-        peopleList:function(){
-          return {
-            "0-0-0":"傅建民",
-            "0-0-1":"董亨芳",
-            "0-0-2":"顾 祎",
-            "0-1-0":"郑波立",
-            "0-1-1":"金 涛",
-            "0-1-2":"周 军",
-            "1-0-0":"郑 明",
-            "1-0-1":"俞 君",
-            "1-0-2":"邵群艳"
-          }
+        // peopleList:function(){
+        //   return {
+        //     "0-0-0":"傅建民",
+        //     "0-0-1":"董亨芳",
+        //     "0-0-2":"顾 祎",
+        //     "0-1-0":"郑波立",
+        //     "0-1-1":"金 涛",
+        //     "0-1-2":"周 军",
+        //     "1-0-0":"郑 明",
+        //     "1-0-1":"俞 君",
+        //     "1-0-2":"邵群艳"
+        //   }
+        // },
+        checkedPeopleKeys: function(){
+          let arr = this.checkedKeys.reduce((res,item)=>{
+            if(this.peopleList[item]){
+              res.push(item);
+            }
+            return res;
+          },[]);
+          return arr
         },
-        checkedPeople: function(){
-          let arr = this.checkedKeys.reduce((res,item,index)=>{
-            return res.concat(this.peopleList[item])
+        checkedPeopleList: function(){
+          let arr = this.checkedPeopleKeys.reduce((res,item)=>{
+            let temp = {
+              id: item,
+              name: this.peopleList[item]
+            }
+            res.push(temp);
+            return res
           },[]);
           return arr
         }
@@ -89,6 +97,8 @@
         init(){
           this.getAllPeopleDataList().then((res)=>{
             this.setDisabledKeyToTree(res.data,this.disablePeopleKey);
+            this.getPeopleList(res.data,this.peopleList);
+            console.log('this.peopleList',this.peopleList);
             this.treeData = res.data;
           });
         },
@@ -104,12 +114,22 @@
             }
           })
         },
-        choosePeople(){
-          let data = {
-            'key': this.checkedKeys,
-            'name': this.checkedPeople
+        getPeopleList(treeData,obj){
+          for (let item of treeData) {
+            if (item.children) {
+              this.getPeopleList(item.children,obj)
+            }
+            else{
+              obj[item.key] = item.title
+            }
           }
-          this.$emit('choosePeople',data);
+        },
+        choosePeople(){
+          // let data = {
+          //   'key': this.checkedPeopleKeys,
+          //   'name': this.checkedPeopleName
+          // }
+          this.$emit('choosePeople',this.checkedPeopleList);
           this.checkedKeys = [];
           this.choosePeopleDialogVisible = false;
         },

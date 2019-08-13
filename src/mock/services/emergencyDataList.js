@@ -59,8 +59,8 @@ const getEmergencyYuAnById = (options) => {
     creator: '田田',
     reviewUserId: '123',
 
-    startDayTime: 1565347245,
-    endDayTime: 1565433645,
+    startDayTime: 1565665846000,
+    endDayTime: 1565752246000,
     description: '预案描述',
     jobGoal: '工作目标',
     jobAssignment: '任务分配',
@@ -74,20 +74,20 @@ const getEmergencyYuAnById = (options) => {
   let groupDataTemp1 = {
     id: 'xhjsng001',
     groupName: '后勤组',
-    name: '郑 明,郑波立',
-    userId: '1-0-0,0-1-0',
+    personList: [{id:'1-0-0',name:'郑 明'},
+      {id:'0-1-0',name:'郑波立'}]
   };
   let groupDataTemp2 = {
     id: 'xhjsng002',
     groupName: '监管组',
-    name: '周 军',
-    userId: '0-1-2',
+    personList: [{id:'0-1-2',name:'周 军'}]
   };
   let groupDataTemp3 = {
     id: 'xhjsng003',
     groupName: '执行组',
-    name: '金 涛,俞 君,邵群艳',
-    userId: '0-1-1,1-0-1,1-0-2',
+    personList: [{id:'0-1-1',name:'金 涛'},
+      {id:'1-0-1',name:'俞 君'},
+      {id:'1-0-2',name:'邵群艳'}]
   };
   temp.groupData.push(groupDataTemp1);
   temp.groupData.push(groupDataTemp2);

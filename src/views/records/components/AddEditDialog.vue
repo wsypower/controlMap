@@ -16,11 +16,7 @@
                                     <a-form-item label="预案类型：" :label-col="{ span: 10 }" :wrapper-col="{ span: 14}">
                                         <a-select v-decorator="['typeId',{rules: [{ required: true, message: '请选择预案类型！' }]}]"
                                                   placeholder="请选择预案类型" style="width: 140px;">
-                                            <a-select-option value="levelOne">一级预案</a-select-option>
-                                            <a-select-option value="levelTwo">二级预案</a-select-option>
-                                            <a-select-option value="levelThree">三级预案</a-select-option>
-                                            <a-select-option value="baozhang">保障预案</a-select-option>
-                                            <a-select-option value="other">其他预案</a-select-option>
+                                            <a-select-option v-for="(item,index) in yuAnTypeList" :value="item.id" :key="index">{{item.name}}</a-select-option>
                                         </a-select>
                                     </a-form-item>
                                 </a-col>
@@ -69,7 +65,7 @@
                                     </div>
                                 </template>
                                 <span slot="person" slot-scope="text, record, index">
-                                    <a-tag v-for="person in record.personDisplayList" color="blue" :key="person" closable :afterClose="() => closeTag(person,index)">{{person}}</a-tag>
+                                    <a-tag v-for="person in record.checkedPeopleList" color="blue" :key="person.id" closable :afterClose="() => closeTag(person.id,index)">{{person.name}}</a-tag>
                                     <a-button type="primary" size="small" @click="openPeopleDialog(index)">人员选择</a-button>
                                   </span>
                                 <span slot="action" slot-scope="text, record, index">
@@ -104,6 +100,8 @@
     </a-modal>
 </template>
 <script type="text/ecmascript-6">
+  import { mapActions } from 'vuex'
+  import moment from 'moment';
   import ChoosePeopleDialog from './ChoosePeopleDialog'
   import ChooseReviewPersonDialog from './ChooseReviewPersonDialog'
   import BaoZhangMapDialog from './BaoZhangMapDialog'
@@ -115,8 +113,8 @@
     width: '280px'
   }, {
     title: '人员',
-    dataIndex: 'personList',
-    key: 'personList',
+    dataIndex: 'checkedPeopleList',
+    key: 'checkedPeopleList',
     scopedSlots: { customRender: 'person' }
   }, {
     title: '操作',
@@ -141,26 +139,9 @@
           type: String,
           default: '新增预案'
         },
-        yuAnForm:{
-          type: Object,
-          default(){
-            return {
-              name: '',
-              typeId: '',
-              startDay: '',
-              endDay: '',
-              description: '',
-              jobGoal: '',
-              jobAssignment: '',
-              jobContent: '',
-              jobRequirements: '',
-              groupData: [{
-                key: 'azxcvbnm',
-                groupName: '',
-                personList: []
-              }]
-            }
-          }
+        yuAnId:{
+          type: String,
+          default: ''
         }
       },
       data(){
@@ -168,13 +149,13 @@
           addEditDialogVisible: false,
           activeKey: '1',
           form: null,
-
+          yuAnTypeList: [],
           columns: groupColumns,
           rowIndex: null,
-
           submitForm:{
             name: '',
             typeId: '',
+            statusId: '001',
             startDayTime: '',
             endDayTime: '',
             description: '',
@@ -182,7 +163,14 @@
             jobAssignment: '',
             jobContent: '',
             jobRequirements: '',
-            groupData: []
+            groupData: [{
+              key: 'jhhjsddsdds',
+              groupName: '',
+              checkedPeopleList: [],
+              peopleKeyList: []
+            }],
+            baoZhangData: [],
+            reviewUserId: '',
           },
 
           saveLoading: false,
@@ -200,14 +188,14 @@
         }
       },
       computed:{
-
+        operateType(){
+          return this.yuAnId==''?'add':'edit';
+        }
       },
       created(){
         this.form = this.$form.createForm(this);
       },
-      mounted(){
-        this.submitForm = Object.assign(this.submitForm,this.yuAnForm)
-      },
+      mounted(){},
       watch:{
         addEditDialogVisible:function(val){
           if(val){
@@ -224,21 +212,50 @@
         }
       },
       methods:{
+        ...mapActions('emergency/emergency', ['addNewEmergencyYuAn','getEmergencyYuAnById']),
+        ...mapActions('emergency/common', ['getYuAnTypeDataList']),
         init(){
-
+          this.getYuAnTypeDataList().then((res)=>{
+            this.yuAnTypeList = res.data;
+            if(this.operateType=='edit'){
+              this.getEmergencyYuAnById({id:this.yuAnId}).then((res)=>{
+                console.log(res);
+                this.submitForm = Object.assign(this.$options.data()['submitForm'],res.data)
+                console.log('init:submitForm',this.submitForm);
+                this.submitForm.groupData.forEach((item)=>{
+                    if(item.personList&&item.personList.length>0){
+                      item.checkedPeopleList = JSON.parse(JSON.stringify(item.personList));
+                      item.peopleKeyList = item.personList.reduce((r,m)=>{
+                        r.push(m.id);
+                        this.disablePeopleKey.push(m.id);
+                        return r
+                      },[]);
+                    }
+                    else{
+                      item.checkedPeopleList = [];
+                      item.peopleKeyList = [];
+                    }
+                  delete item.personList
+                  })
+                console.log('init handle :this.submitForm',this.submitForm)
+                this.form.setFieldsValue({
+                  typeId: this.submitForm.typeId,
+                  name: this.submitForm.name,
+                  rangeDay: [moment(this.submitForm.startDayTime),moment(this.submitForm.endDayTime)]
+                });
+              });
+            }
+          });
         },
         addGroup(item, index){
           console.log('addGroup',item, index)
           let additem = {
             key: index.toString(),
             groupName: '',
-            personList: []
+            checkedPeopleList: [],
+            peopleKeyList: []
           }
           this.submitForm.groupData.push(additem);
-        },
-        deleteGroup(index){
-          console.log('deleteGroup',index)
-          this.submitForm.groupData.splice(index,1);
         },
         changeGroupName(val,key,colName){
           //console.log('changeGroupName',val,key,colName);
@@ -250,33 +267,14 @@
           }
         },
         closeTag (person,index) {
-          const persons = this.submitForm.groupData[index].personList.filter(item => item !== person);
+          console.log(person,index);
+          const personIds = this.submitForm.groupData[index].peopleKeyList.filter(item => item !== person);
+          const persons = this.submitForm.groupData[index].checkedPeopleList.filter(item => item.id !== person);
+          let i = this.disablePeopleKey.indexOf(person);
+          this.disablePeopleKey.splice(i,1);
           console.log(persons);
-          this.submitForm.groupData[index].personList = persons;
-        },
-        saveDraft(e){
-          e.preventDefault();
-          //调取接口保存的预案状态为未提交
-          this.form.validateFields((err, values) => {
-            if (!err) {
-              console.log('form: value', values);
-              this.submitForm.name = values.name;
-              this.submitForm.typeId = values.typeId;
-              this.submitForm.startDayTime = values.dayRange[0]._d.getTime();
-              this.submitForm.endDayTime = values.dayRange[1]._d.getTime();
-            }
-          });
-          this.saveLoading = true;
-          console.log('saveDraft',this.submitForm);
-          setTimeout(()=>{
-            this.saveLoading = false;
-          },3000)
-        },
-
-        completeCheck(){
-          //调取接口改变预案的状态（已同意->未开始）
-          //setEmergencyYuAnToFinishReview
-          this.addEditDialogVisible = false;
+          this.submitForm.groupData[index].peopleKeyList = personIds;
+          this.submitForm.groupData[index].checkedPeopleList = persons;
         },
         openPeopleDialog(index){
           this.rowIndex = index;
@@ -284,10 +282,22 @@
         },
         choosePeople(data){
           console.log('choosePeople',data);
-          let newData = this.disablePeopleKey.concat(data.key);
-          this.disablePeopleKey = newData;
-          this.submitForm.groupData[this.rowIndex].personList = data.key;
-          this.submitForm.groupData[this.rowIndex].personDisplayList = data.name;
+          data.forEach((item)=>{
+            this.disablePeopleKey.push(item.id);
+            this.submitForm.groupData[this.rowIndex].checkedPeopleList.push(item);
+            this.submitForm.groupData[this.rowIndex].peopleKeyList.push(item.id);
+          })
+          console.log('choosePeople',this.submitForm);
+        },
+        deleteGroup(index){
+          //console.log('deleteGroup',index)
+          let list = this.submitForm.groupData[index].peopleKeyList;
+          list.forEach((key)=>{
+            let i = this.disablePeopleKey.indexOf(key);
+            this.disablePeopleKey.splice(i,1);
+          })
+
+          this.submitForm.groupData.splice(index,1);
         },
         //开启保障视图弹窗
         openBaoZhangMapDialog(){
@@ -301,11 +311,11 @@
             let pList = this.submitForm.groupData;
             let resList = [];
             pList.forEach((item)=>{
-              let nameList = item.personDisplayList;
-              item.personList.map((i,index)=>{
+              let checkedPeopleList = item.checkedPeopleList;
+              checkedPeopleList.map((i)=>{
                 let temp = {
-                  id: i,
-                  name: nameList[index]+ '(' + item.groupName + ')'
+                  id: i.id,
+                  name: i.name+ '(' + item.groupName + ')'
                 }
                 resList.push(temp);
               });
@@ -315,6 +325,31 @@
         //保存地图数据
         saveDraw(drawFeatures){
           console.log("==保存===",drawFeatures);
+        },
+        //保存草稿
+        saveDraft(e){
+          e.preventDefault();
+          //调取接口保存的预案状态为未提交
+          this.form.validateFields((err, values) => {
+            if (!err) {
+              console.log('form: value', values);
+              this.submitForm.name = values.name;
+              this.submitForm.typeId = values.typeId;
+              this.submitForm.startDayTime = values.dayRange[0]._d.getTime();
+              this.submitForm.endDayTime = values.dayRange[1]._d.getTime();
+            }
+          });
+          this.submitForm.groupData.forEach(item =>{
+            delete item.key;
+            delete item.checkedPeopleList;
+            item.personList = item.peopleKeyList;
+            delete item.peopleKeyList;
+          })
+          this.saveLoading = true;
+          console.log('saveDraft',this.submitForm);
+          this.addNewEmergencyYuAn(this.submitForm).then((res)=>{
+            this.saveLoading = false;
+          });
         },
         /*************************选择审核人员弹窗 start*******************************/
         openChooseReviewPersonDialog(){
@@ -330,6 +365,12 @@
           },3000)
         },
         /*************************选择审核人员弹窗 end*******************************/
+        //点击结束审核按钮触发
+        completeCheck(){
+          //调取接口改变预案的状态（已同意->未开始）
+          //setEmergencyYuAnToFinishReview
+          this.addEditDialogVisible = false;
+        },
       }
     }
 </script>
