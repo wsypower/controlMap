@@ -42,9 +42,9 @@
             <div class="operate-panel">
                 <a-dropdown>
                     <a-menu slot="overlay" @click="handleOperateClick">
-                        <a-menu-item key="area">多边形</a-menu-item>
-                        <a-menu-item key="line">线</a-menu-item>
-                        <a-menu-item key="dot">点</a-menu-item>
+                        <a-menu-item key="Point">点</a-menu-item>
+                        <a-menu-item key="LineString">线</a-menu-item>
+                        <a-menu-item key="Polygon">多边形</a-menu-item>
                     </a-menu>
                     <a-button class="op-btn yacz-btn">
                         <span class="memu-title-text">绘图工具</span>
@@ -183,28 +183,9 @@
         init(){
           this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
         },
+        //根据选择绘制图形
         handleOperateClick(value){
           console.log('handleMenuClick',value);
-          switch(value.key){
-            case 'area':
-              this.drawArea();
-              break;
-            case 'line':
-              this.drawLine();
-              break;
-            case 'dot':
-              this.drawDot();
-              break;
-            default:
-              console.log('no operation');
-          }
-        },
-        //获取随机绘制图形id
-        getMapId(){
-          return Number(Math.random().toString().substr(3,6) + Date.now()).toString(36);
-        },
-        //绘制图形
-        drawGeometry(type){
           if(select){
             map.removeInteraction(select);
           }
@@ -218,20 +199,15 @@
           if(draw){
             mapManager.inactivateDraw(draw);
           }
-          draw = mapManager.activateDraw(type,source);
+          draw = mapManager.activateDraw(value.key,source);
           const _this=this;
           draw.on('drawend', function(e) {
             e.feature.set('id',_this.getMapId());
-            // if(type=='Point'){
-            //   _this.pointFeatures.push(e.feature)
-            // }
-            // else if(type=='LineString'){
-            //   _this.lineFeatures.push(e.feature)
-            // }
-            // else{
-            //   _this.polygonFeatures.push(e.feature)
-            // }
           })
+        },
+        //获取随机绘制图形id
+        getMapId(){
+          return Number(Math.random().toString().substr(3,6) + Date.now()).toString(36);
         },
         //选择图形
         selectGeometry(){
