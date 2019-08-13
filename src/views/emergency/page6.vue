@@ -1,64 +1,14 @@
 <template>
   <div class="page">
-    <div v-if="yuAnId" class="view-panel" >
-      <div class="view-content-header">目前有{{totalSize}}个预案正在进行中</div>
-      <div class="loading" v-if="dataLoading" flex="main:center cross:center">
-        <a-spin tip="数据加载中..."></a-spin>
-      </div>
-      <div class="view-content" v-if="!dataLoading&&yuAnList.length>0">
-        <cg-container scroll>
-          <div v-for="(item,index) in yuAnList" :key="index" class="item" flex>
-            <div class="item-left">
-              <pin :content="index+1"></pin>
-            </div>
-            <div class="item-right" flex="dir:top">
-              <div class="title-panel" flex="main:justify cross:center">
-                <span>{{item.name}}</span>
-                <span>进入现场</span>
-              </div>
-              <div class="des-panel">
-                <div>开始时间：{{item.startDayTime}}</div>
-                <div>结束时间：{{item.endDayTime}}</div>
-              </div>
-            </div>
-          </div>
-        </cg-container>
-      </div>
-      <div class="no-data" flex="main:center cross:center" v-if="!dataLoading&&yuAnList.length===0">
-        <img src="~@img/zanwuyuan.png" />
-      </div>
-    </div>
-    <div v-else class="info-panel">
-      <div class="info-panel-header">
-        <span>萧敬腾演唱会方案 指挥现场</span>
-        <span>进行中</span>
-      </div>
-      <div class="online-panel">
-        <p>人员在岗检测</p>
-        <div class="online-content-panel" id="person-monitor">
-
-        </div>
-      </div>
-      <div class="case-panel">
-        <p>案件检测</p>
-        <div class="">
-          <a-radio-group @change="onChangeTab" v-model="caseType">
-            <a-radio-button value="all">案件总计:15</a-radio-button>
-            <a-radio-button value="noHandle">未处理：2</a-radio-button>
-          </a-radio-group>
-        </div>
-        <div class="case-content-panel" id="case-monitor">
-
-        </div>
-      </div>
-    </div>
+    <monitor-yu-an v-if="yuAnId"></monitor-yu-an>
+    <control-yu-ans v-else></control-yu-ans>
     <div class="operate-panel">
-      <div class="quantu">
-        <span @mouseenter="active=true" @mouseleave="active=false">圈图工具</span>
-        <div class="choose-panel" :class="{active: active}">
-          <span @click="drawArea">1</span>
-          <span @click="drawLine">2</span>
-          <span @click="drawDot">3</span>
+      <div class="quantu" @mouseenter="active=true" @mouseleave="active=false">
+        <span>圈图工具</span>
+        <div class="choose-panel" :class="{active: active}" flex="cross:center">
+          <span @click="drawArea" class="area"><cg-icon-svg name="duobianxing" class="svg_icon"></cg-icon-svg></span>
+          <span @click="drawLine" class="line"><cg-icon-svg name="zhexian" class="svg_icon"></cg-icon-svg></span>
+          <span @click="drawDot" class="dot"><cg-icon-svg name="dot" class="svg_icon"></cg-icon-svg></span>
         </div>
       </div>
       <a-button type="primary" >对讲调度</a-button>
@@ -72,61 +22,61 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { mapActions } from 'vuex'
-import Pin from './components/Position'
-const plainOptions = [{ label: '人力资源', value: 'people' },
+  import ControlYuAns from './components/ControlYuAns';
+  import MonitorYuAn from './components/MonitorYuAn';
+  const plainOptions = [{ label: '人力资源', value: 'people' },
   { label: '视频监控', value: 'video' }];
-const allValues = plainOptions.reduce((res,item)=>{
-  res.push(item.value);
-  return res
-},[])
+  const allValues = plainOptions.reduce((res,item)=>{
+    res.push(item.value);
+    return res
+  },[])
 export default {
   name: 'page6',
   components:{
-    Pin
+    ControlYuAns,
+    MonitorYuAn
   },
   data() {
     return {
       yuAnId: null,
-      dataLoading: false,
-      yuAnList: [{
-        name: 'hasjgdjgjhfdas',
-        startDayTime: 1565347245,
-        endDayTime: 1565433645
-      },{
-        name: 'aznmjkeehkjgdsf',
-        startDayTime: 1565347245,
-        endDayTime: 1565433645
-      }],
-      totalSize: 0,
       active: false,
       indeterminate: false,
       checkAll: true,
       plainOptions: plainOptions,
       checkedList: ['people','video'],
-
       caseType: 'all',
     }
   },
+  created(){
+    if(this.$route.query.yuAnId){
+      this.yuAnId = this.$route.query.yuAnId;
+      this.mapIdList = this.$route.query.mapIdList.split(',');
+    }
+    else{
+      this.yuAnId = null;
+      this.mapIdList = [];
+    }
+  },
   mounted() {
-    this.dataLoading = true;
-    this.getEmergencyYuAnDataList({statusId: '005'}).then((res)=>{
-      this.yuAnList = res.data;
-      this.totalSize = res.total;
-      this.dataLoading = false;
-    });
   },
   watch:{
+    '$route.query'(val){
+      console.log('$route.query',val);
+      if(this.$route.query.yuAnId){
+        this.yuAnId = this.$route.query.yuAnId;
+        this.mapIdList = this.$route.query.mapIdList.split(',');
+      }
+      else{
+        this.yuAnId = null;
+        this.mapIdList = [];
+      }
+    },
     checkedList(val){
       console.log(val);
       this.drawMap();
     }
   },
   methods:{
-    ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList']),
-    onChangeTab(){
-
-    },
     onChange (checkedList) {
       this.indeterminate = !!checkedList.length && (checkedList.length < plainOptions.length)
       this.checkAll = checkedList.length === plainOptions.length
@@ -166,102 +116,6 @@ export default {
   background-color: #f4f4f5;
   padding-top: 60px;
   position: relative;
-  .loading,.no-data{
-    width: 100%;
-    height: calc(100% - 160px);
-  }
-  .view-panel{
-    position: absolute;
-    top: 80px;
-    left:20px;
-    width: 300px;
-    height: 600px;
-    border: 1px solid #cccccc;
-    background-color: #ffffff;
-    border-radius: 6px;
-    .view-content-header{
-      height: 40px;
-      font-size: 16px;
-      line-height: 40px;
-      background-color: #00a4fe;
-      color: #ffffff;
-      padding-left: 10px;
-    }
-    .view-content{
-      width: 100%;
-      height: calc(100% - 40px);
-      position: relative;
-      .item{
-        padding: 10px 10px;
-        .item-left{
-          width: 30px;
-        }
-        .item-right{
-          width: 100%;
-          .title-panel{
-            span:first-child{
-              font-size: 14px;
-            }
-            span:last-child{
-              color: #00a4fe;
-              cursor: pointer;
-              &:hover{
-                color: #00a4fe;
-              }
-            }
-          }
-          .des-panel{
-            margin-top: 10px;
-          }
-        }
-      }
-    }
-  }
-  .info-panel{
-    position: absolute;
-    top: 80px;
-    left:20px;
-    width: 300px;
-    height: 600px;
-    border: 1px solid #275bcf;
-    background-color: #275bcf;
-    border-radius: 6px;
-    .info-panel-header{
-      height: 40px;
-      font-size: 16px;
-      line-height: 40px;
-      padding: 0px 10px;
-      span{
-        font-size: 16px;
-        &:first-child{
-          color:#ffffff;
-        }
-        &:last-child{
-          color: #0ca678;
-        }
-      }
-    }
-    .online-panel{
-      p{
-        color: #ffffff;
-        font-size: 14px;
-      }
-      .online-content-panel{
-        width: 100%;
-        height: 200px;
-      }
-    }
-    .case-panel{
-      p{
-        color: #ffffff;
-        font-size: 14px;
-      }
-      .case-content-panel{
-        width: 100%;
-        height: 200px;
-      }
-    }
-  }
   .operate-panel{
     position: absolute;
     left: 330px;
@@ -272,6 +126,8 @@ export default {
       margin-bottom: 10px;
       cursor: pointer;
       position: relative;
+      width: 200px;
+      overflow: hidden;
       >span{
         display:inline-block;
         text-align: center;
@@ -285,19 +141,38 @@ export default {
       }
       .choose-panel{
         position: absolute;
+        height: 100%;
+        background-color: #ffffff;
         z-index: 9;
-        width: 100px;
-        transform: translateX(0px);
+        transform: translateX(-30px);
         transition: transform 0.8s;
         &.active{
           transform: translateX(86px);
         }
         span{
           display:inline-block;
-          width: 32px;
+          width: 28px;
+          height: 28px;
+          line-height: 28px;
           text-align: center;
           vertical-align: middle;
           cursor: pointer;
+          margin: 0px 5px;
+          border-radius: 4px;
+          &.area{
+            background-color: #b19bf6;
+          }
+          &.line{
+            background-color: #42c199;
+          }
+          &.dot{
+            background-color: #fbb76e;
+          }
+          .svg_icon{
+            width: 14px;
+            height: 14px;
+            color:#ffffff;
+          }
         }
       }
     }

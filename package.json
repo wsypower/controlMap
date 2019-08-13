@@ -17,6 +17,7 @@
     "better-scroll": "^1.15.2",
     "core-js": "^2.6.5",
     "dayjs": "^1.8.12",
+    "echarts": "^4.2.1",
     "hotkeys-js": "^3.6.2",
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.11",

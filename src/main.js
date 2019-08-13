@@ -1,7 +1,7 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
- * @Last Modified by: wei.yafei 
+ * @Last Modified by: wei.yafei
  * @Last Modified time: 2019-08-02 15:14:50
  */
 // Vue
@@ -26,6 +26,10 @@ Vue.use(vueFiltersDate)
 
 //mock => 生产环境(上线前请注释！！！)
 import '@/mock'
+
+// 引入echarts
+import echarts from "echarts";
+Vue.prototype.$echarts = echarts;
 
 // 核心插件
 Vue.use(cgAdmin)

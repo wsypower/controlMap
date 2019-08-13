@@ -40,7 +40,7 @@
             <div class="show_content_panel">
               <div><span>名称：</span>{{item.name}}</div>
               <div><span>创建人：</span>{{item.creator}}</div>
-              <div><span>保障时间：</span>{{item.startDayTime}}~{{item.endDayTime}}</div>
+              <div><span>保障时间：</span>{{new Date(item.startDayTime)|date_format('YYYY-MM-DD HH:mm')}}~{{new Date(item.endDayTime)|date_format('YYYY-MM-DD HH:mm')}}</div>
               <div>
                 <span>状态：</span>
                 <span v-if="item.statusId=='001'" class="status blue">待提交</span>
@@ -254,7 +254,16 @@
         });
       },
       toMonitorPage(item){
-        this.$router.push('/emergency');
+        // this.$router.push('/emergency?yuAnId=1452364');
+        this.$router.push(
+          {
+            path:'/emergency',
+            query:{
+              yuAnId: item.id,
+              mapIdList: item.mapIdList.join(',')
+            }
+          }
+        )
       },
       /*******************查看详情+审核 start*************************/
       openInfoDialog(item){
@@ -314,7 +323,7 @@
         flex-flow: row wrap;
         justify-content: space-between;
         .item {
-          width: 300px;
+          width: 350px;
           height: 160px;
           margin-right: 10px;
           margin-bottom: 10px;
@@ -381,7 +390,7 @@
           .item_operate_panel {
             position: absolute;
             bottom: 0px;
-            width: 298px;
+            width: 348px;
             height: 30px;
             border-top: 1px solid #cccccc;
             justify-content: space-around;

@@ -178,7 +178,6 @@
           map = this.$refs.olMap.getMap();
           mapManager = new MapManager(map);
         })
-
       },
       methods:{
         init(){

@@ -5,16 +5,16 @@ const getEmergencyYuAnList = (options) => {
     console.log(options)
     const queryParameters = getQueryParameters(options);
     console.log(queryParameters);
-    let data = [{id:'asxcdxvf1',name: 'xxxx预案方案',creator: '天田甜', reviewUserId:'', startDayTime: 1565347245,endDayTime:1565433645,statusId: '001',statusName:'待提交',isTemplate: false},
-        {id:'asxcdxvf2',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'123', startDayTime: 1565347245,endDayTime:1565433645,statusId: '002',statusName:'待审核',isTemplate: false},
-        {id:'asxcdxvf3',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'aaa', startDayTime: 1565347245,endDayTime:1565433645,statusId: '003',statusName:'已同意',isTemplate: true},
-        {id:'asxcdxvf4',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'bbb', startDayTime: 1565347245,endDayTime:1565433645,statusId: '004',statusName:'已驳回',isTemplate: false},
-        {id:'asxcdxvf5',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565347245,endDayTime:1565433645,statusId: '005',statusName:'未开始',isTemplate: true},
-        {id:'asxcdxvf6',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565347245,endDayTime:1565433645,statusId: '006',statusName:'进行中',isTemplate: false},
-        {id:'asxcdxvf7',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565347245,endDayTime:1565433645,statusId: '007',statusName:'已结束',isTemplate: false},
-        {id:'asxcdxvf8',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ddd', startDayTime: 1565347245,endDayTime:1565433645,statusId: '008',statusName:'已逾期作废',isTemplate: true},
-        {id:'asxcdxvf9',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'eee', startDayTime: 1565347245,endDayTime:1565433645,statusId: '002',statusName:'待审核',isTemplate: false},
-        {id:'asxcdxvf10',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'eee', startDayTime: 1565347245,endDayTime:1565433645,statusId: '002',statusName:'待审核',isTemplate: false}];
+    let data = [{id:'asxcdxvf1',name: 'xxxx预案方案',creator: '天田甜', reviewUserId:'', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '001',statusName:'待提交',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf2',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'123', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '002',statusName:'待审核',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf3',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'aaa', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '003',statusName:'已同意',isTemplate: true,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf4',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'bbb', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '004',statusName:'已驳回',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf5',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '005',statusName:'未开始',isTemplate: true,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf6',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '006',statusName:'进行中',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf7',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '007',statusName:'已结束',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf8',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ddd', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '008',statusName:'已逾期作废',isTemplate: true,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf9',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'eee', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '002',statusName:'待审核',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf10',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'eee', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '002',statusName:'待审核',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']}];
     return builder(
         {
             code: 0,
@@ -204,3 +204,45 @@ const setEmergencyYuAnToFinishReview = (options) => {
   )
 }
 Mock.mock(/\/@test\/setEmergencyYuAnToFinishReview/, 'post', setEmergencyYuAnToFinishReview);
+
+const getMonitorInfoById = (options) => {
+  console.log('getMonitorInfoById options',options);
+  const queryParameters = getQueryParameters(options);
+  console.log('getMonitorInfoById query',queryParameters);
+  let temp = {
+    name: '箫敬腾演唱会',
+    peopleMonitor:{
+      online: 30,
+      offline: 4
+    },
+    caseMonitor:{
+      totalInfo:[
+        {'value': 5,'name':'机动车暂停 5'},
+        {'value': 4,'name':'占道经营 4'},
+        {'value':3,'name':'乱发小广告 3'},
+        {'value':2,'name':'乱张贴 2'},
+        {'value':1,'name':'流动摊贩 1'},
+        {'value':0,'name':'其他 0'}
+      ],
+      noHandleInfo:[
+        {'value': 1,'name':'机动车暂停 1'},
+        {'value': 1,'name':'占道经营 1'},
+        {'value':0,'name':'乱发小广告 0'},
+        {'value':0,'name':'乱张贴 0'},
+        {'value':0,'name':'流动摊贩 0'},
+        {'value':0,'name':'其他 0'}
+      ]
+    }
+  };
+  return builder(
+    {
+      code: 0,
+      data: temp,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/getMonitorInfoById/, 'get', getMonitorInfoById);
