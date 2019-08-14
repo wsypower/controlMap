@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-08-02 15:14:50
+ * @Last Modified time: 2019-08-14 10:55:21
  */
 // Vue
 import Vue from 'vue'
@@ -39,13 +39,18 @@ new Vue({
     this.$store
       .dispatch('cgadmin/account/login')
       .then(() => {
-        console.log(111)
         //登录后获取用户权限
         const role = this.$store.getters['cgadmin/user/role']
-        console.log(role)
         //设置侧边栏菜单
         const menu = menuAside.filter(v => v.role.includes(role))
-        this.$store.commit('cgadmin/menu/asideSet', menu)
+        //当前菜单
+        const currentPage = this.$store.state.cgadmin.page.current
+        //点亮当前页
+        const menuCurrentActive = menu.map(item => {
+          currentPage.includes(item.path) ? (item.active = true) : (item.active = false)
+          return item
+        })
+        this.$store.commit('cgadmin/menu/asideSet', menuCurrentActive)
       })
       .catch(err => {
         console.log(err)

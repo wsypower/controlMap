@@ -28,6 +28,12 @@ export default {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
     ...mapState('cgadmin/page', ['current'])
   },
+  watch: {
+    current(newCurrent, oldCurrent) {
+      const aside = this.aside
+      this.currentAsideSetActive(aside, newCurrent)
+    }
+  },
   methods: {
     ...mapActions('cgadmin/menu', ['asideCollapseSet', 'asideSetItemActive']),
     /**
@@ -37,16 +43,21 @@ export default {
      * @param {Number} index
      * @param {Object} item
      */
+
     menuItemClick(index, item) {
+      console.log('点击了')
       //当前元素设置active设为true，其他设为false
       this.asideSetItemActive(item).then(isCollapse => {
         //TODO:(貌似search更快一点，实际再测试)判断点击页是否是当前页或当前页子页面
         const isPath = this.current.includes(item.path)
-        if (!isPath)
-          this.menuItemCange(item).then(() => {
-            this.$router.replace(item.path)
-          })
-        else this.asideCollapseSet(isCollapse)
+        this.menuItemCange(item).then(() => {
+          this.$router.replace(item.path)
+        })
+        // if (!isPath)
+        //   this.menuItemCange(item).then(() => {
+        //     this.$router.replace(item.path)
+        //   })
+        // else this.asideCollapseSet(isCollapse)
       })
     },
     /**
@@ -66,6 +77,17 @@ export default {
           this.asideCollapseSet(true), resolve()
         }
       })
+    },
+    /**
+     * @description 点亮当前页或当前页的顶层路径图标
+     * @author weiyafei
+     * @date 2019-08-12-16:59:37
+     * @param {Array} aside 侧边栏
+     * @param {String} current 当前页
+     */
+    currentAsideSetActive(aside, current) {
+      //item.path
+      return aside.map((item, arr) => (current.includes(item.path) ? (item.active = true) : (item.active = false)))
     }
   }
 }

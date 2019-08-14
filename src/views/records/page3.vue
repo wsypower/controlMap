@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="content" flex="dir:left main:justify cross:top">
-      <div class="item">111</div>
+      <div class="item" @click="clickHandler">111</div>
       <div class="item">111</div>
       <div class="item">111</div>
       <div class="item">111</div>
@@ -13,7 +13,20 @@
 
 <script>
 export default {
-  name: 'page3'
+  name: 'page3',
+  mounted() {
+    console.log('emergency')
+  },
+  methods: {
+    clickHandler() {
+      this.$router.push({
+        path: '/emergency',
+        query: {
+          id: 123
+        }
+      })
+    }
+  }
 }
 </script>
 

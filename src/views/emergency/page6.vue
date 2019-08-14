@@ -1,14 +1,14 @@
 <template>
   <div class="page">
     <div class="content" flex="dir:left cross:top main:justify">
+      <div class="item">222</div>
+      <!-- <div class="item">111</div>
       <div class="item">111</div>
       <div class="item">111</div>
       <div class="item">111</div>
       <div class="item">111</div>
       <div class="item">111</div>
-      <div class="item">111</div>
-      <div class="item">111</div>
-      <div class="item">111</div>
+      <div class="item">111</div>-->
     </div>
   </div>
 </template>
@@ -23,15 +23,18 @@ export default {
       title: '6666'
     }
   },
-  mounted() {
-    add({
-      add: 1,
-      delete: 2,
-      change: 3,
-      check: 4
-    }).then(re => {
-      console.log(re)
-    })
+  methods: {
+    reload() {
+      this.$router.replace('/refresh')
+    }
+  },
+  beforeRouteUpdate(to, from, next) {
+    const { fullPath } = to
+    if (fullPath === '/emergency') {
+      next()
+      this.reload()
+    }
+    // next()
   }
 }
 </script>
