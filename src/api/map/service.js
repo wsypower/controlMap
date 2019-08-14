@@ -79,7 +79,10 @@ export async function postEmergencyFeatures(drawType, feature) {
     featurePrefix: 'jinkaiqu', //工作空间名称0
     featureType: featureType //图层名称
   }
-  xml = format.writeTransaction(feature.add, feature.update, feature.delete, obj)
+  let addFeature=feature.add.length>0?feature.add:null;
+  let updateFeature=feature.update.length>0?feature.update:null;
+  let deleteFeature =feature.delete.length>0?feature.delete:null;
+  xml = format.writeTransaction(addFeature, updateFeature, deleteFeature, obj)
   const serializer = new XMLSerializer();
   //将参数转换为xml格式数据
   const featString = serializer.serializeToString(xml)

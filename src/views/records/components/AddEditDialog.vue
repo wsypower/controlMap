@@ -381,14 +381,14 @@ const groupColumns = [{
       //保存地图数据
       saveDraw(drawFeatures){
         console.log("==保存===",drawFeatures);
-        if(this.drawFeatures.length>0){
-          postEmergencyFeatures('Point',this.drawFeatures['Point']).then(res=>{
+        if(drawFeatures.length>0){
+          postEmergencyFeatures('Point',drawFeatures['Point']).then(res=>{
             console.log('==点数据==',res);
           });
-          postEmergencyFeatures('LineString',this.drawFeatures['LineString']).then(res=>{
+          postEmergencyFeatures('LineString',drawFeatures['LineString']).then(res=>{
             console.log('==线数据==',res);
           });
-          postEmergencyFeatures('Polygon',this.drawFeatures['Polygon']).then(res=>{
+          postEmergencyFeatures('Polygon',drawFeatures['Polygon']).then(res=>{
             console.log('==线数据==',res);
           });
         }
