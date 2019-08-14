@@ -29,35 +29,36 @@
       <div class="yuan_list_content" v-if="!dataLoading&&yuanDataList.length>0">
         <cg-container scroll>
           <div class="content_panel">
-            <div v-for="(item, index) in yuanDataList" :key="index" class="item">
-            <div class="top"></div>
-            <div class="item_tool_panel">
-              <a-icon v-if="item.statusId<'05' || item.statusId=='08'" type="edit" @click="editYuAn(item.id)"/>
-              <a-icon v-if="item.isTemplate" type="heart" theme="filled" @click="setYuAn(item)"/>
-              <a-icon v-else type="heart" color="#fe7a83" @click="setYuAn(item)"/>
-              <a-icon v-if="item.statusId!='06'" type="delete" @click="deleteYuAn(item.id,index)"/>
-            </div>
-            <div class="show_content_panel">
-              <div><span>名称</span><span>：</span>{{item.name}}</div>
-              <div><span>创建人</span><span>：</span>{{item.creator}}</div>
-              <div><span>保障时间</span><span>：</span>{{new Date(item.startDayTime)|date_format('YYYY-MM-DD HH:mm')}}~{{new Date(item.endDayTime)|date_format('YYYY-MM-DD HH:mm')}}</div>
-              <div>
-                <span>状态</span><span>：</span>
-                <span v-if="item.statusId=='01'" class="status blue">待提交</span>
-                <span v-if="item.statusId=='02'" class="status blue">待审核</span>
-                <span v-if="item.statusId=='03'" class="status blue">已通过</span>
-                <span v-if="item.statusId=='04'" class="status blue">已驳回</span>
-                <span v-if="item.statusId=='05'" class="status yellow">未开始</span>
-                <span v-if="item.statusId=='06'" class="status green">进行中</span>
-                <span v-if="item.statusId=='07'" class="status grey">已结束</span>
-                <span v-if="item.statusId=='08'" class="status red">已逾期作废</span>
+            <div v-for="(item, index) in yuanDataList" :key="item.id" class="item">
+              <div class="top"></div>
+              <div class="item_tool_panel">
+                <a-icon v-if="item.statusId<'05' || item.statusId=='08'" type="edit" @click="editYuAn(item.id)"/>
+                <a-icon v-if="item.isTemplate" type="heart" theme="filled" @click="setYuAn(item)"/>
+                <a-icon v-else type="heart" color="#fe7a83" @click="setYuAn(item)"/>
+                <a-icon v-if="item.statusId!='06'" type="delete" @click="deleteYuAn(item.id,index)"/>
+              </div>
+              <div class="show_content_panel">
+                <div><span>名称</span><span>：</span>{{item.name}}</div>
+                <div><span>创建人</span><span>：</span>{{item.creator}}</div>
+                <div><span>保障时间</span><span>：</span>{{new Date(item.startDayTime)|date_format('YYYY-MM-DD HH:mm')}}~{{new Date(item.endDayTime)|date_format('YYYY-MM-DD HH:mm')}}</div>
+                <div>
+                  <span>状态</span><span>：</span>
+                  <span v-if="item.statusId=='01'" class="status blue">待提交</span>
+                  <span v-if="item.statusId=='02'" class="status blue">待审核</span>
+                  <span v-if="item.statusId=='03'" class="status blue">已通过</span>
+                  <span v-if="item.statusId=='04'" class="status blue">已驳回</span>
+                  <span v-if="item.statusId=='05'" class="status yellow">未开始</span>
+                  <span v-if="item.statusId=='06'" class="status green">进行中</span>
+                  <span v-if="item.statusId=='07'" class="status grey">已结束</span>
+                  <span v-if="item.statusId=='08'" class="status red">已逾期作废</span>
+                </div>
+              </div>
+              <div class="item_operate_panel" flex="dir:left cross:center main:center">
+                <span @click="openInfoDialog(item)">方案详情</span>
+                <span v-if="item.statusId=='006'" @click="toMonitorPage(item)">实时监测</span>
               </div>
             </div>
-            <div class="item_operate_panel" flex="dir:left cross:center main:center">
-              <span @click="openInfoDialog(item)">方案详情</span>
-              <span v-if="item.statusId=='006'" @click="toMonitorPage(item)">实时监测</span>
-            </div>
-          </div>
+            <div v-for="i in buWeiNum" :key="i" class="item"></div>
           </div>
         </cg-container>
       </div>
@@ -67,7 +68,6 @@
 
       <div class="pagination">
         <a-pagination :showTotal="total => `总共 ${total} 条`"
-                      showSizeChanger
                       :pageSize.sync="query.pageSize"
                       @showSizeChange="onShowSizeChange"
                       @change="onPageNoChange"
@@ -75,8 +75,8 @@
                       v-model="query.pageNo"/>
       </div>
     </div>
-    <add-edit-dialog :visible.sync="addYuAnDialogVisible" :dialogTitle="dialogTitle" :yuAnId="yuAnId"></add-edit-dialog>
-    <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible"></yu-an-info-and-review-dialog>
+    <add-edit-dialog :visible.sync="addYuAnDialogVisible" :dialogTitle="dialogTitle" :yuAnId="yuAnId" @refreshList="getTuAnDataList"></add-edit-dialog>
+    <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible" :yuAnId="yuAnId"></yu-an-info-and-review-dialog>
   </div>
 </template>
 
@@ -106,6 +106,8 @@
           pageSize: 10
         },
         yuanDataList:[],
+        buWeiNum: 0,
+        countOneRow: 0,
         totalSize: 0,
 
         addYuAnDialogVisible: false,
@@ -114,18 +116,45 @@
         yuAnInfoDialogVisible: false,
       }
     },
-
+    created(){
+      this.setBaseData();
+    },
     mounted(){
+      let _this = this;
+      window.onresize = function(){
+        _this.setBaseData();
+      }
       this.getStatusDataList().then((res)=>{
         console.log('getStatusDataList',res);
         this.statusList = res;
       });
       this.getTuAnDataList();
     },
+    watch:{
+      countOneRow:function(val){
+        let n = this.yuanDataList.length%val;
+        this.buWeiNum = n==0? 0 : val - n;
+      }
+    },
     methods: {
       ...mapActions('emergency/common', ['getStatusDataList']),
       ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList','deleteEmergencyYuAn','setEmergencyYuAnToTemplate']),
       /***************************预案查询区 start****************************/
+      setBaseData(){
+        let clientWidth =  document.body.clientWidth;
+        if(clientWidth<1600){
+          this.query.pageSize = 15;
+          this.countOneRow = 5;
+        }
+        if(clientWidth>=1600&&clientWidth<=1800){
+          this.query.pageSize = 18;
+          this.countOneRow = 6;
+        }
+        if(clientWidth>1800){
+          this.query.pageSize = 21;
+          this.countOneRow = 7;
+        }
+      },
       resetQuery(){
         this.query = Object.assign({}, this.$options.data().query);
         console.log('resetQuery',this.query);
@@ -135,8 +164,12 @@
         this.dataLoading = true;
         console.log('this.query',this.query);
         this.getEmergencyYuAnDataList(this.query).then((res)=>{
-          this.yuanDataList = res.data;
+          this.yuanDataList = res.list;
           this.totalSize = res.total;
+          if(this.query.pageNo == Math.ceil(this.totalSize/this.query.pageSize)){
+            let n = this.yuanDataList.length%this.countOneRow;
+            this.buWeiNum = n==0? 0 : this.countOneRow - n;
+          }
           this.dataLoading = false;
         })
       },
@@ -239,6 +272,8 @@
       },
       /*******************查看详情+审核 start*************************/
       openInfoDialog(item){
+        console.log('openInfoDialog',item);
+        this.yuAnId = item.id;
         this.yuAnInfoDialogVisible = true;
       },
       /********************查看详情+审核 end************************/

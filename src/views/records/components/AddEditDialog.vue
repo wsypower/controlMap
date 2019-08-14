@@ -1,5 +1,11 @@
 <template>
-  <a-modal :title="dialogTitle" v-model="addEditDialogVisible" class="add-edit-dialog" width="90%">
+  <a-modal :title="dialogTitle" v-model="addEditDialogVisible" class="add-edit-dialog" width="90%" @cancel="handleCancel">
+    <div v-if="operateType == 'add'" class="template-panel">
+      <label>选择模板创建：</label>
+      <a-select v-modal="templateId" placeholder="请选择模板" style="width: 180px;">
+        <a-select-option v-for="(item, index) in templateList" :value="item.id" :key="index">{{item.name }}</a-select-option>
+      </a-select>
+    </div>
     <div class="yuan_dialog_body">
       <cg-container scroll>
         <a-form :form="form">
@@ -202,6 +208,8 @@ const groupColumns = [{
     data(){
       return{
         addEditDialogVisible: false,
+        templateList: [],
+        templateId: '',
         activeKey: '1',
         form: null,
         yuAnTypeList: [],
@@ -269,7 +277,7 @@ const groupColumns = [{
       }
     },
     methods:{
-      ...mapActions('emergency/emergency', ['addNewEmergencyYuAn','getEmergencyYuAnById','setEmergencyYuAnToFinishReview']),
+      ...mapActions('emergency/emergency', ['addNewEmergencyYuAn','getEmergencyYuAnById','setEmergencyYuAnToFinishReview','getTemplateYuAnDataList']),
       ...mapActions('emergency/common', ['getYuAnTypeDataList']),
       init(){
         this.getYuAnTypeDataList().then((res)=>{
@@ -323,9 +331,19 @@ const groupColumns = [{
               });
             });
           }
+          else{
+            this.getTemplateYuAnDataList().then((res)=>{
+              this.templateList = res.data;
+            });
+          }
         });
       },
       reset(){
+        this.form.setFieldsValue({
+          typeId: '',
+          name: '',
+          rangeDay: undefined
+        });
         this.submitForm = Object.assign({},this.$options.data()['submitForm']);
         this.disablePeopleKey = [];
         this.groupData = [{
@@ -428,7 +446,13 @@ const groupColumns = [{
         }
         this.baoZhangData = data.allBaoZhangData;
       },
-      saveData(){
+      saveData(type){
+        if(type=='save'){
+          this.saveLoading = true;
+        }
+        else{
+          this.loading = true;
+        }
         this.form.validateFields((err, values) => {
           if (!err) {
             console.log('form: value', values);
@@ -453,13 +477,20 @@ const groupColumns = [{
             let baoZhangDataStr = JSON.stringify(this.baoZhangData);
             this.submitForm.baoZhangDataStr = baoZhangDataStr;
 
-            this.saveLoading = true;
-            console.log('saveDraft',this.submitForm);
+            console.log('save/submit',this.submitForm);
             this.addNewEmergencyYuAn(this.submitForm).then((res)=>{
               console.log('addNewEmergencyYuAn',res);
-              this.$message.success('新增成功');
-              this.saveLoading = false;
+              this.$notification['success']({
+                message: '成功通知'
+              });
+              if(type=='save'){
+                this.saveLoading = false;
+              }
+              else{
+                this.loading = false;
+              }
               this.reset();
+              this.$emit('refreshList');
               this.addEditDialogVisible = false;
             });
           }
@@ -473,7 +504,7 @@ const groupColumns = [{
         e.preventDefault();
         //调取接口保存的预案状态为未提交
         this.submitForm.statusId = '01';
-        this.saveData();
+        this.saveData('save');
       },
       /*************************选择审核人员弹窗 start*******************************/
       openChooseReviewPersonDialog(){
@@ -483,9 +514,8 @@ const groupColumns = [{
       choosePerson(data){
         console.log('审核人员选择输出',data);
         this.submitForm.reviewUserId = data;
-        this.loading = true;
         this.submitForm.statusId = '02';
-        this.saveData();
+        this.saveData('submit');
       },
       /*************************选择审核人员弹窗 end*******************************/
       //点击结束审核按钮触发
@@ -496,15 +526,23 @@ const groupColumns = [{
           console.log('completeCheck',res);
           this.addEditDialogVisible = false;
         });
-
       },
+
+      handleCancel(){
+        this.reset();
+        this.addEditDialogVisible = false;
+      }
     }
   }
 </script>
 <style lang="scss" scoped>
 .add-edit-dialog {
-  width: 80%;
-  min-width: 1080px;
+  .template-panel{
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
   .yuan_dialog_body {
     height: 500px;
     position: relative;

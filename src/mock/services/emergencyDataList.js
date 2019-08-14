@@ -246,3 +246,25 @@ const getMonitorInfoById = (options) => {
   )
 }
 Mock.mock(/\/@test\/getMonitorInfoById/, 'get', getMonitorInfoById);
+
+const getTemplateYuAnDataList = (options) => {
+  console.log('getTemplateYuAnDataList options',options);
+  const queryParameters = getQueryParameters(options);
+  console.log('getTemplateYuAnDataList query',queryParameters);
+  let data = [{'id':'001','name':'xxxxx'},
+    {'id':'002','name':'yyyy'},
+    {'id':'003','name':'cccccc'},
+    {'id':'004','name':'zzzzz'},
+    {'id':'005','name':'sdfggghgg'}];
+  return builder(
+    {
+      code: 0,
+      data:data,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/getTemplateYuAnDataList/, 'get', getTemplateYuAnDataList);

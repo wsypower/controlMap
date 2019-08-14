@@ -27,7 +27,7 @@ import request from '@/plugins/axios/axios'
 export function getEmergencyYuAnList(data){
     console.log('api：getEmergencyYuAnList',data);
     return request({
-        url: `@test/getEmergencyYuAnList`,
+        url: `plan/getEmergencyYuAnList`,
         method: 'post',
         data
     })
@@ -105,7 +105,7 @@ export function deleteEmergencyYuAn(data){
 export function getEmergencyYuAnById(data){
     console.log('api:getEmergencyYuAnById',data);
     return request({
-        url: '@test/getEmergencyYuAnById?_t='+ new Date().getTime(),
+        url: 'plan/getEmergencyYuAnById?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
@@ -202,3 +202,24 @@ export function setEmergencyYuAnToFinishReview(data){
   })
 }
 
+/**
+ * @description 获取预案模板数据
+ * @author moxuejuan
+ * @date 2019-08-12 10:53:20
+ * @param 无
+ * @method：GET
+ * @response：{
+ *     data:[{
+ *
+ *     }]
+ * }
+ */
+
+export function getTemplateYuAnDataList(data){
+  console.log('api:getTemplateYuAnDataList',data);
+  return request({
+    url: '@test/getTemplateYuAnDataList',
+    method: 'get',
+    params: data
+  })
+}

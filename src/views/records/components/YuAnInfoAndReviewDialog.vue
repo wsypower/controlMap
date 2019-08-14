@@ -69,15 +69,16 @@
       width: '20%',
     }, {
       title: '人数总计',
-      dataIndex: 'totalNum',
-      width: '20%',
+      dataIndex: 'count',
+      width: '10%',
     }, {
       title: '保障人员',
       dataIndex: 'peopleList',
       scopedSlots: { customRender: 'person' }
     }, {
       title: '备注',
-      dataIndex: 'remark'
+      dataIndex: 'remark',
+      width: '20%',
     }];
     const logColumns = [{
       title: '时间',
@@ -105,10 +106,8 @@
           default: false
         },
         yuAnId: {
-          type: Object,
-          default(){
-            return {}
-          }
+          type: String,
+          default: ''
         }
       },
       components:{
@@ -148,17 +147,18 @@
       methods:{
         ...mapActions('emergency/emergency', ['getEmergencyYuAnById','setEmergencyYuAnToPass','setEmergencyYuAnToBack']),
         init(){
+          console.log('init yuAnId: ' + this.yuAnId);
             this.getYuAnDataById();
         },
         getYuAnDataById(){
-            this.getEmergencyYuAnById({id: this.yuAnId}).then((res)=>{
-              this.yuAnInfo = Object.assign({},res.data);
+            this.getEmergencyYuAnById({id: this.yuAnId}).then((result)=>{
+              this.yuAnInfo = Object.assign({},result);
               let tempData = JSON.parse(JSON.stringify(this.yuAnInfo.baoZhangData));
               this.reviewBaoZhangMapData = tempData.reduce((res,item)=>{
                 let peopleList = item.peopleList.reduce((r,i)=>{
                   r.push(i.name + '('+ item.groupName +')')
                   return r
-                });
+                },[]);
                 let temp = {
                   id: item.id,
                   mapId: item.mapId,
