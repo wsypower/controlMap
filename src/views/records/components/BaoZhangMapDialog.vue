@@ -235,7 +235,7 @@
       },
       methods:{
         init(){
-          // this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
+          this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
           //编辑状态下通过图形id获取已保存的图形数据
           if(this.allBaoZhangData.length>0){
             const idList=filterMapId(this.allBaoZhangData);
@@ -380,6 +380,7 @@
           if (vectorLayer) {
             vectorLayer.getSource().removeFeature(this.selectedFeature);
             map.removeInteraction(select);
+            console.log('==removemapip==',this.selectedFeature.get('id'));
           }
         },
         //双击区域后触发此方法，带出mapId
