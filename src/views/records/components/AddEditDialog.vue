@@ -90,7 +90,7 @@
               </a-row>
             </a-collapse-panel>
             <a-collapse-panel header="人员安排" key="2">
-              <a-table :columns="columns" :dataSource="submitForm.groupData" :pagination="false">
+              <a-table :columns="columns" :dataSource="groupData" :pagination="false">
                 <template slot="groupName" slot-scope="text, record, index">
                   <div key="groupName">
                     <a-input :value="text" @change="e => changeGroupName(e.target.value, record.key, 'groupName')" />
@@ -109,14 +109,14 @@
                 </span>
                 <span slot="action" slot-scope="text, record, index">
                   <a-popconfirm
-                    v-if="submitForm.groupData.length > 1"
+                    v-if="groupData.length > 1"
                     title="Sure to delete?"
                     @confirm="() => deleteGroup(index)"
                   >
                     <a-icon type="minus-circle" class="icon_delete" />
                   </a-popconfirm>
                   <a-icon
-                    v-if="index === submitForm.groupData.length - 1"
+                    v-if="index === groupData.length - 1"
                     type="plus-circle"
                     class="icon_add"
                     @click="addGroup(record, index)"
@@ -134,12 +134,11 @@
     <template slot="footer">
       <a-button type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
       <a-button type="primary" :loading="loading" @click="openChooseReviewPersonDialog">提交审核</a-button>
-      <a-button type="primary" :loading="lastLoading" @click="completeCheck">结束审核</a-button>
+      <a-button v-if="submitForm.statusId=='03'" type="primary" :loading="lastLoading" @click="completeCheck">结束审核</a-button>
     </template>
     <choose-people-dialog
       :visible.sync="choosePeopleDialogVisible"
       :disablePeopleKey="disablePeopleKey"
-      :checkedPeopleKey="checkedPeopleKey"
       @choosePeople="choosePeople"
     ></choose-people-dialog>
     <bao-zhang-map-dialog
@@ -219,15 +218,17 @@ const groupColumns = [{
           jobAssignment: '',
           jobContent: '',
           jobRequirements: '',
-          groupData: [{
-            key: 'jhhjsddsdds',
-            groupName: '',
-            checkedPeopleList: [],
-            peopleKeyList: []
-          }],
-          baoZhangData: [],
+          groupDataStr: '',
+          baoZhangDataStr: '',
           reviewUserId: '',
         },
+        groupData: [{
+          key: 'jhhjsddsdds',
+          groupName: '',
+          checkedPeopleList: [],
+          peopleKeyList: []
+        }],
+        baoZhangData: [],
 
         saveLoading: false,
         loading: false,
@@ -239,7 +240,7 @@ const groupColumns = [{
 
         mapDialogVisible: false,
         sourcePeopleList: [],
-        baoZhangData: [],
+
         chooseReViewPersonDialogVisible: false,
       }
     },
@@ -268,7 +269,7 @@ const groupColumns = [{
       }
     },
     methods:{
-      ...mapActions('emergency/emergency', ['addNewEmergencyYuAn','getEmergencyYuAnById']),
+      ...mapActions('emergency/emergency', ['addNewEmergencyYuAn','getEmergencyYuAnById','setEmergencyYuAnToFinishReview']),
       ...mapActions('emergency/common', ['getYuAnTypeDataList']),
       init(){
         this.getYuAnTypeDataList().then((res)=>{
@@ -276,24 +277,45 @@ const groupColumns = [{
           if(this.operateType=='edit'){
             this.getEmergencyYuAnById({id:this.yuAnId}).then((res)=>{
               console.log(res);
+              this.groupData = res.data.groupData.reduce((res,item)=>{
+                let temp={
+                  key: item.id,
+                  groupName: item.groupName,
+                  checkedPeopleList: item.personList,
+                  peopleKeyList: []
+                }
+                temp.peopleKeyList = item.personList.reduce((r,i)=>{
+                  r.push(i.id)
+                  this.disablePeopleKey.push(i.id);
+                  return r
+                },[])
+                res.push(temp)
+                return res
+              })
+
+              this.baoZhangData = res.data.baoZhangData;
+              res.data.baoZhangData.reduce((res,item)=>{
+                let temp = {
+                  id: item.id,
+                  mapId: item.mapId,
+                  name: item.name,
+                  mapType: item.mapType,
+                  personList: [],
+                  remark: item.remark
+                }
+                temp.personList = item.peopleList.reduce((r,i)=>{
+                  r.push(i.id)
+                  return r
+                },[]);
+                res.push(temp)
+                return res
+              });
+              delete res.data.groupData
+              delete res.data.baoZhangData
               this.submitForm = Object.assign(this.$options.data()['submitForm'],res.data)
               console.log('init:submitForm',this.submitForm);
-              this.submitForm.groupData.forEach((item)=>{
-                  if(item.personList&&item.personList.length>0){
-                    item.checkedPeopleList = JSON.parse(JSON.stringify(item.personList));
-                    item.peopleKeyList = item.personList.reduce((r,m)=>{
-                      r.push(m.id);
-                      this.disablePeopleKey.push(m.id);
-                      return r
-                    },[]);
-                  }
-                  else{
-                    item.checkedPeopleList = [];
-                    item.peopleKeyList = [];
-                  }
-                delete item.personList
-                })
-              console.log('init handle :this.submitForm',this.submitForm)
+
+              console.log('init handle :this.groupData',this.groupData)
               this.form.setFieldsValue({
                 typeId: this.submitForm.typeId,
                 name: this.submitForm.name,
@@ -303,6 +325,17 @@ const groupColumns = [{
           }
         });
       },
+      reset(){
+        this.submitForm = Object.assign({},this.$options.data()['submitForm']);
+        this.disablePeopleKey = [];
+        this.groupData = [{
+          key: 'jhhjsddsdds',
+          groupName: '',
+          checkedPeopleList: [],
+          peopleKeyList: []
+        }];
+        this.baoZhangData = [];
+      },
       addGroup(item, index){
         console.log('addGroup',item, index)
         let additem = {
@@ -311,26 +344,26 @@ const groupColumns = [{
           checkedPeopleList: [],
           peopleKeyList: []
         }
-        this.submitForm.groupData.push(additem);
+        this.groupData.push(additem);
       },
       changeGroupName(val,key,colName){
         //console.log('changeGroupName',val,key,colName);
-        const newData = [...this.submitForm.groupData];
+        const newData = [...this.groupData];
         const target = newData.filter(item => key === item.key)[0];
         if (target) {
           target[colName] = val;
-          this.submitForm.groupData = newData;
+          this.groupData = newData;
         }
       },
       closeTag (person,index) {
         console.log(person,index);
-        const personIds = this.submitForm.groupData[index].peopleKeyList.filter(item => item !== person);
-        const persons = this.submitForm.groupData[index].checkedPeopleList.filter(item => item.id !== person);
+        const personIds = this.groupData[index].peopleKeyList.filter(item => item !== person);
+        const persons = this.groupData[index].checkedPeopleList.filter(item => item.id !== person);
         let i = this.disablePeopleKey.indexOf(person);
         this.disablePeopleKey.splice(i,1);
         console.log(persons);
-        this.submitForm.groupData[index].peopleKeyList = personIds;
-        this.submitForm.groupData[index].checkedPeopleList = persons;
+        this.groupData[index].peopleKeyList = personIds;
+        this.groupData[index].checkedPeopleList = persons;
       },
       openPeopleDialog(index){
         this.rowIndex = index;
@@ -340,31 +373,30 @@ const groupColumns = [{
         console.log('choosePeople',data);
         data.forEach((item)=>{
           this.disablePeopleKey.push(item.id);
-          this.submitForm.groupData[this.rowIndex].checkedPeopleList.push(item);
-          this.submitForm.groupData[this.rowIndex].peopleKeyList.push(item.id);
+          this.groupData[this.rowIndex].checkedPeopleList.push(item);
+          this.groupData[this.rowIndex].peopleKeyList.push(item.id);
         })
-        console.log('choosePeople',this.submitForm);
+        console.log('choosePeople groupData',this.groupData);
       },
       deleteGroup(index){
         //console.log('deleteGroup',index)
-        let list = this.submitForm.groupData[index].peopleKeyList;
+        let list = this.groupData[index].peopleKeyList;
         list.forEach((key)=>{
           let i = this.disablePeopleKey.indexOf(key);
           this.disablePeopleKey.splice(i,1);
         })
 
-        this.submitForm.groupData.splice(index,1);
+        this.groupData.splice(index,1);
       },
       //开启保障视图弹窗
       openBaoZhangMapDialog(){
         this.sourcePeopleList = this.getSourcePeolpleList();
         console.log('sourcePeopleList',this.sourcePeopleList);
-        this.baoZhangData = [];
         this.mapDialogVisible = true;
       },
       //获取保障视图重组后数据
       getSourcePeolpleList(){
-          let pList = this.submitForm.groupData;
+          let pList = this.groupData;
           let resList = [];
           pList.forEach((item)=>{
             let checkedPeopleList = item.checkedPeopleList;
@@ -397,12 +429,9 @@ const groupColumns = [{
             console.log('==线数据==',res);
           })
         }
-        this.submitForm.baoZhangData = data.allBaoZhangData;
+        this.baoZhangData = data.allBaoZhangData;
       },
-      //保存草稿
-      saveDraft(e){
-        e.preventDefault();
-        //调取接口保存的预案状态为未提交
+      saveData(){
         this.form.validateFields((err, values) => {
           if (!err) {
             console.log('form: value', values);
@@ -410,39 +439,67 @@ const groupColumns = [{
             this.submitForm.typeId = values.typeId;
             this.submitForm.startDayTime = values.dayRange[0]._d.getTime();
             this.submitForm.endDayTime = values.dayRange[1]._d.getTime();
+
+            let groupDataTemp = JSON.parse(JSON.stringify(this.groupData));
+            groupDataTemp.forEach(item =>{
+              delete item.key;
+              delete item.checkedPeopleList;
+              item.personList = item.peopleKeyList.reduce((r,item)=>{
+                r.push(item)
+                return r
+              },[])
+              delete item.peopleKeyList;
+            })
+            let groupDataStr = JSON.stringify(groupDataTemp);
+            this.submitForm.groupDataStr = groupDataStr;
+
+            let baoZhangDataStr = JSON.stringify(this.baoZhangData);
+            this.submitForm.baoZhangDataStr = baoZhangDataStr;
+
+            this.saveLoading = true;
+            console.log('saveDraft',this.submitForm);
+            this.addNewEmergencyYuAn(this.submitForm).then((res)=>{
+              console.log('addNewEmergencyYuAn',res);
+              this.$message.success('新增成功');
+              this.saveLoading = false;
+              this.reset();
+              this.addEditDialogVisible = false;
+            });
+          }
+          else{
+            this.$message.error('所有必填项都需要填写');
           }
         });
-        this.submitForm.groupData.forEach(item =>{
-          delete item.key;
-          delete item.checkedPeopleList;
-          item.personList = item.peopleKeyList;
-          delete item.peopleKeyList;
-        })
-        this.saveLoading = true;
-        console.log('saveDraft',this.submitForm);
-        this.addNewEmergencyYuAn(this.submitForm).then((res)=>{
-          this.saveLoading = false;
-        });
+      },
+      //保存草稿
+      saveDraft(e){
+        e.preventDefault();
+        //调取接口保存的预案状态为未提交
+        this.submitForm.statusId = '01';
+        this.saveData();
       },
       /*************************选择审核人员弹窗 start*******************************/
       openChooseReviewPersonDialog(){
         this.chooseReViewPersonDialogVisible = true;
       },
+
       choosePerson(data){
-        console.log('choosePerson',data);
+        console.log('审核人员选择输出',data);
+        this.submitForm.reviewUserId = data;
         this.loading = true;
-        console.log('yuAnForm',this.yuAnForm);
-        setTimeout(()=>{
-          this.loading = false;
-          this.addYuAnDialogVisible = false;
-        },3000)
+        this.submitForm.statusId = '02';
+        this.saveData();
       },
       /*************************选择审核人员弹窗 end*******************************/
       //点击结束审核按钮触发
       completeCheck(){
         //调取接口改变预案的状态（已同意->未开始）
         //setEmergencyYuAnToFinishReview
-        this.addEditDialogVisible = false;
+        this.setEmergencyYuAnToFinishReview({id:this.submitForm.id}).then((res)=>{
+          console.log('completeCheck',res);
+          this.addEditDialogVisible = false;
+        });
+
       },
     }
   }

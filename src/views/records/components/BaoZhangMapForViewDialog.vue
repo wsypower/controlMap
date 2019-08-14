@@ -3,64 +3,30 @@
     <div class="yuan_dialog_body" id="bao_zhang_map" ref="baoZhangBody">
       <!-- 地图控件注入地址 -->
       <LayoutMap ref="olMap"></LayoutMap>
-      <!--<a-button type="primary" @click="showSetDialog(0)" class="show-set-button">展示设置弹窗</a-button>-->
       <div hidden>
         <div class="set-baozhang-dialog" ref="infoOverlay">
           <div class="set-baozhang-dialog-header" flex="main:justify cross:center">
-            <span>设置保障信息</span>
+            <span>保障信息</span>
             <a-icon type="close" @click="closeSetDialog" />
           </div>
           <div class="set-baozhang-dialog-body">
             <cg-container scroll>
               <a-form :form="form" style="margin:10px">
                 <a-form-item label="保障点位：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <a-input v-model="baoZhangFormData.name" placeholder="请输入保障点位" />
+                  <span>{{baoZhangFormData.name}}</span>
                 </a-form-item>
-                <a-form-item label="人员选择：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <a-select
-                    mode="multiple"
-                    placeholder="请选择人员"
-                    @change="handleChange"
-                    v-model="baoZhangFormData.personList"
-                  >
-                    <a-select-option v-for="person in peopleList" :key="person.id">
-                      {{ person.name }}
-                    </a-select-option>
-                  </a-select>
+                <a-form-item label="人员：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+                  <span>{{baoZhangFormData.people}}</span>
                 </a-form-item>
                 <a-form-item label="备注：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <a-textarea v-model="baoZhangFormData.remark" placeholder="" :autosize="{ minRows: 2, maxRows: 2 }" />
+                  <span>{{baoZhangFormData.remark}}</span>
                 </a-form-item>
               </a-form>
             </cg-container>
           </div>
-          <div class="set-baozhang-dialog-footer">
-            <a-button type="primary" size="small" @click="saveBaoZhangInfo">确定</a-button>
-            <a-button type="primary" size="small" @click="reset">重置</a-button>
-          </div>
         </div>
       </div>
-      <div class="operate-panel">
-        <a-dropdown>
-          <a-menu slot="overlay" @click="handleOperateClick">
-            <a-menu-item key="Point">点</a-menu-item>
-            <a-menu-item key="LineString">线</a-menu-item>
-            <a-menu-item key="Polygon">多边形</a-menu-item>
-          </a-menu>
-          <a-button class="op-btn yacz-btn">
-            <span class="memu-title-text">绘图工具</span>
-            <a-icon type="down" />
-          </a-button>
-        </a-dropdown>
-        <!--<a-button type="primary" @click="clearDraw">清除选中区域</a-button>-->
-        <a-button type="primary" @click="selectGeometry">选择</a-button>
-        <a-button type="primary" @click="clearSelectGeometry">删除选择</a-button>
-      </div>
     </div>
-    <template slot="footer">
-      <a-button type="primary" @click="saveMap">保存视图</a-button>
-      <a-button @click="resetMap">重置视图</a-button>
-    </template>
   </a-modal>
 </template>
 <script type="text/ecmascript-6">
@@ -78,7 +44,7 @@
   let vectorLayer;
   let select;
     export default{
-      name: 'baoZhangMapDialog',
+      name: 'baoZhangMapForViewDialog',
       components: {
         LayoutMap,
       },
@@ -86,12 +52,6 @@
         visible: {
             type: Boolean,
             default: false
-        },
-        sourcePeopleList:{
-          type: Array,
-          default(){
-            return []
-          }
         },
         baoZhangData:{
           type: Array,
@@ -112,49 +72,20 @@
           form: null,
           //一条保障点位的数据
           baoZhangFormData: {
+            id: '',
             mapId: '',
             name: '',
             mapType:'',
-            personList: [],
+            people: '',
             remark: ''
           },
-          //识别编辑/新增某个保障点位
-          opType: 'add',
+
           //编辑时,确定第几个保障点位
           index: 0,
-          //某一个保障点位，需要过滤的人员数据
-          filterPeopleList: [],
-          //所有的保障点位数据，后续所有操作已这个为基础，最后保存时也已这个作为保存数据
-          //allBaoZhangData有值为编辑，没有值为新增
-          allBaoZhangData: []
         }
       },
       computed:{
-        //所有已选择人员数据
-        checkedPeopleIdList: function(){
-          return this.baoZhangData.reduce((res,item)=>{
-            let temp = item.personList.reduce((r,i)=>{
-              r.push(i.id);
-              return r
-            },[])
-            return res.concat(temp)
-          },[]);
-        },
-        //可选择的人员数据
-        peopleList:function(){
-          console.log('peopleList',this.filterPeopleList);
-          let resArr = this.sourcePeopleList.reduce((res,item)=>{
-            if(!this.filterPeopleList.includes(item.id)){
-              res.push(item)
-            }
-            return res
-          },[])
-            return resArr
-        },
-        //保障视图是新增还是编辑操作
-        mapOperateType:function(){
-          return this.baoZhangData.length>0?'edit':'add'
-        }
+
       },
       watch:{
         mapDialogVisible:function(val){
@@ -194,10 +125,9 @@
       },
       methods:{
         init(){
-          this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
           //编辑状态下通过图形id获取已保存的图形数据
-          if(this.allBaoZhangData.length>0){
-            const mapIdList=this.allBaoZhangData.map(data => {
+          if(this.baoZhangData.length>0){
+            const mapIdList=this.baoZhangData.map(data => {
               return data.mapId;
             })
             let searchId ='(';
@@ -296,125 +226,31 @@
         },
         //双击区域后触发此方法，带出mapId
         showSetDialog(mapId){
-          debugger
-          let flag = this.allBaoZhangData.some(item =>{
-            return item.mapId === mapId
-          });
-          this.opType = flag? 'edit': 'add';
-
-          if(this.opType === 'edit'){
-              let temp = null;
-              for(let i=0;i<this.allBaoZhangData.length;i++){
-                if(this.allBaoZhangData[i].mapId === mapId){
-                  temp = this.allBaoZhangData[i];
-                  this.index = i;
-                }
-              }
-              if(temp.peopleList){
-                let selectList = temp.peopleList.reduce((r,i)=>{
-                  r.push(i.id);
-                  return r
-                },[])
-                this.filterPeopleList = this.checkedPeopleIdList.reduce((res,item)=>{
-                  if(!selectList.includes(item)){
-                    res.push(item)
-                  }
-                  return res
-                },[]);
-              }
-            this.baoZhangFormData.name = temp.name;
-            this.baoZhangFormData.personList = temp.personList;
-            this.baoZhangFormData.remark = temp.remark;
+          let temp = null;
+          for(let i=0;i<this.baoZhangData.length;i++){
+            if(this.baoZhangData[i].mapId === mapId){
+              temp = this.baoZhangData[i];
+              this.index = i;
+            }
           }
-          else{
-            this.filterPeopleList = this.checkedPeopleIdList;
-            this.baoZhangFormData.mapId = mapId;
-            this.baoZhangFormData.name = '';
-            this.baoZhangFormData.personList = [];
-            this.baoZhangFormData.remark = '';
-          }
+          this.baoZhangFormData.id = temp.id;
+          this.baoZhangFormData.name = temp.name;
+          this.baoZhangFormData.people = temp.people;
+          this.baoZhangFormData.remark = temp.remark;
         },
-        //人员选择
-        handleChange(value) {
-          console.log(`Selected: ${value}`,value);
-          this.baoZhangFormData.personList = value;
-        },
-        //保存保障点位设置
-        saveBaoZhangInfo(){
 
-          console.log('this.baoZhangFormData',this.baoZhangFormData);
-          console.log('this.opType',this.opType);
-          if(this.opType == 'edit'){
-            this.allBaoZhangData[this.index].name = this.baoZhangFormData.name;
-            this.allBaoZhangData[this.index].personList = this.baoZhangFormData.personList;
-            this.allBaoZhangData[this.index].remark = this.baoZhangFormData.remark;
-          }
-          else{
-            let temp = JSON.parse(JSON.stringify(this.baoZhangFormData))
-            this.allBaoZhangData.push(temp);
-          }
-          this.baoZhangFormData.personList.forEach((item)=>{
-            this.checkedPeopleIdList.push(item);
-          })
-
-          console.log('saveBaoZhangInfo',this.allBaoZhangData);
-
-          this.infoOverlay.setPosition(undefined);
-        },
         //重置保障点位设置
         reset(){
-          let mapId = this.baoZhangFormData.mapId;
           this.baoZhangFormData = Object.assign({},this.$options.data()['baoZhangFormData']);
-          this.baoZhangFormData.mapId = mapId;
         },
         //保障点位设置弹窗的左上角关闭
         closeSetDialog(){
             this.infoOverlay.setPosition(undefined)
             this.reset();
         },
-        //保存图形数据
-        saveMap() {
-          this.pointFeatures = [];
-          this.lineFeatures = [];
-          this.polygonFeatures = [];
-          if (draw) {
-            mapManager.inactivateDraw(draw);
-          }
-          console.log('新增还是编辑：mapOperateType', this.mapOperateType);
-          if(this.mapOperateType=='add'){
-            const features = vectorLayer.getSource().getFeatures();
-            for (let i = 0; i < features.length; i++) {
-              if (features[i].getGeometry().getType() == 'Point') {
-                this.pointFeatures.push(features[i])
-              }
-              else if (features[i].getGeometry().getType() == 'LineString') {
-                this.lineFeatures.push(features[i])
-              }
-              else {
-                this.polygonFeatures.push(features[i])
-              }
-            }
-            this.drawFeatures=[this.pointFeatures,this.lineFeatures,this.polygonFeatures];
-            let data = {
-              drawFeatures: this.drawFeatures,
-              allBaoZhangData:this.allBaoZhangData
-            }
-            this.$emit('saveDrawData',data);
-          }
-          console.log('this.allBaoZhangData', this.allBaoZhangData);
-          this.mapDialogVisible = false;
-          map.on('dblclick', this.mapClickHandler);
-        },
-        //重置视图
-      resetMap(){
-        this.allBaoZhangData = [];
-        if(vectorLayer){
-          vectorLayer.getSource().clear();
-        }
-      },
+
         //关闭保障视图弹窗
       handleCancel(){
-        this.allBaoZhangData = [];
         if(vectorLayer){
           vectorLayer.getSource().clear();
         }
@@ -442,7 +278,6 @@
   }
   .set-baozhang-dialog {
     position: absolute;
-    /*top: 60px;*/
     width: 400px;
     height: 300px;
     border: 1px solid #cccccc;

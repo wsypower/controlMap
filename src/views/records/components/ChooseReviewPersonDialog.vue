@@ -1,8 +1,14 @@
 <template>
     <a-modal title="选择审核人员" v-model="chooseReViewPersonDialogVisible" width="400px" @cancel="handleCancelForCheck">
         <div class="yuan_dialog_body">
-            <a-select v-model="reviewPerson" style="width: 120px">
-                <a-select-option v-for="(item,index) in reviewPeopleList" :value="item.id" :key="index">{{item.name}}</a-select-option>
+            <span>审核人员：</span>
+            <a-select v-model="reviewPerson"
+                      style="width: 180px"
+                      showSearch
+                      placeholder="请输入或者下拉选择"
+                      optionFilterProp="children"
+                      :filterOption="filterOption">
+                <a-select-option v-for="(item,index) in reviewPeopleList" :value="item.id" :key="index">{{item.realname}}</a-select-option>
             </a-select>
         </div>
         <template slot="footer">
@@ -48,8 +54,11 @@
         ...mapActions('emergency/common', ['getReviewPeopleDataList']),
         init(){
             this.getReviewPeopleDataList().then((res)=>{
-              this.reviewPeopleList = res.data;
+              this.reviewPeopleList = res;
             });
+        },
+        filterOption(input, option) {
+          return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
         },
         choosePerson(){
           console.log('reviewPerson',this.reviewPerson);

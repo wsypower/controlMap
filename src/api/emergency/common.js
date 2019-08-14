@@ -76,7 +76,7 @@ export function getAllPeopleDataList(data){
 export function getReviewPeopleDataList(data){
   console.log('api:getReviewPeopleDataList',data);
   return request({
-    url: '@test/getReviewPeopleDataList?_t='+ new Date().getTime(),
+    url: 'plan/getReviewPeopleDataList?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })
