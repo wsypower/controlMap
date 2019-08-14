@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="content" flex="dir:left cross:top main:justify">
-      <div class="item">222</div>
+      <div class="item" @click="clickHandler">222</div>
       <!-- <div class="item">111</div>
       <div class="item">111</div>
       <div class="item">111</div>
@@ -26,15 +26,21 @@ export default {
   methods: {
     reload() {
       this.$router.replace('/refresh')
+    },
+    clickHandler() {
+      this.$router.push({
+        path: '/emergency',
+        query: {
+          id: 123
+        }
+      })
     }
   },
   beforeRouteUpdate(to, from, next) {
-    const { fullPath } = to
-    if (fullPath === '/emergency') {
-      next()
-      this.reload()
-    }
-    // next()
+    //先刷新页面路劲
+    next()
+    //指向refresh页面，然后再次跳转回本页面，重走页面的生命周期
+    this.reload()
   }
 }
 </script>
