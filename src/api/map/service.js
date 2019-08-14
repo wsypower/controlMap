@@ -55,7 +55,7 @@ export async function getEmergencyFeatures(mapIdList,mapType) {
  * @param feature 保存的图形要素
  * @author: sijianting
  */
-export async function postEmergencyFeatures(type, drawType, feature) {
+export async function postEmergencyFeatures(drawType, feature) {
   debugger
   const format = new WFS()
   let xml
@@ -79,13 +79,10 @@ export async function postEmergencyFeatures(type, drawType, feature) {
     featurePrefix: 'jinkaiqu', //工作空间名称0
     featureType: featureType //图层名称
   }
-  if (type == 'add') {
-    xml = format.writeTransaction(feature, null, null, obj)
-  } else if (type == 'edit') {
-    xml = format.writeTransaction(null, feature, null, obj)
-  } else {
-    xml = format.writeTransaction(null, null, feature, obj)
-  }
+  let addFeature=feature.add.length>0?feature.add:null;
+  let updateFeature=feature.update.length>0?feature.update:null;
+  let deleteFeature =feature.delete.length>0?feature.delete:null;
+  xml = format.writeTransaction(addFeature, updateFeature, deleteFeature, obj)
   const serializer = new XMLSerializer();
   //将参数转换为xml格式数据
   const featString = serializer.serializeToString(xml)

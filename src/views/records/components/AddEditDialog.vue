@@ -413,21 +413,18 @@ const groupColumns = [{
       //保存地图数据
       saveDraw(data){
         console.log("==保存===",data);
-        let type='add';
-        if(data.drawFeatures[0].length>0){
-          postEmergencyFeatures(type,'Point',data.drawFeatures[0]).then(res=>{
+        let drawFeatures = data.drawFeatures;
+        if(drawFeatures.length>0){
+          postEmergencyFeatures('Point',drawFeatures['Point']).then(res=>{
             console.log('==点数据==',res);
-          })
-        }
-        if(data.drawFeatures[1].length>0){
-          postEmergencyFeatures(type,'LineString',data.drawFeatures[1]).then(res=>{
+          });
+          postEmergencyFeatures('LineString',drawFeatures['LineString']).then(res=>{
             console.log('==线数据==',res);
-          })
-        }
-        if(data.drawFeatures[2].length>0){
-          postEmergencyFeatures(type,'Polygon',data.drawFeatures[2]).then(res=>{
+          });
+          postEmergencyFeatures('Polygon',drawFeatures['Polygon']).then(res=>{
+
             console.log('==线数据==',res);
-          })
+          });
         }
         this.baoZhangData = data.allBaoZhangData;
       },

@@ -44,7 +44,8 @@ new Vue({
       .dispatch('cgadmin/account/login')
       .then(() => {
         //登录后获取用户权限
-        const role = this.$store.getters['cgadmin/user/role']
+        //const role = this.$store.getters['cgadmin/user/role']
+        const role = 'admin';
         //设置侧边栏菜单
         const menu = menuAside.filter(v => v.role.includes(role))
         //当前菜单

@@ -5,16 +5,16 @@ const getEmergencyYuAnList = (options) => {
     console.log(options)
     const queryParameters = getQueryParameters(options);
     console.log(queryParameters);
-    let data = [{id:'asxcdxvf1',name: 'xxxx预案方案',creator: '天田甜', reviewUserId:'', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '001',statusName:'待提交',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
-        {id:'asxcdxvf2',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'123', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '002',statusName:'待审核',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
-        {id:'asxcdxvf3',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'aaa', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '003',statusName:'已同意',isTemplate: true,mapIdList:['aaaa,bbbb,ccc']},
-        {id:'asxcdxvf4',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'bbb', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '004',statusName:'已驳回',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
-        {id:'asxcdxvf5',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '005',statusName:'未开始',isTemplate: true,mapIdList:['aaaa,bbbb,ccc']},
-        {id:'asxcdxvf6',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '006',statusName:'进行中',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
-        {id:'asxcdxvf7',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '007',statusName:'已结束',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
-        {id:'asxcdxvf8',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ddd', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '008',statusName:'已逾期作废',isTemplate: true,mapIdList:['aaaa,bbbb,ccc']},
-        {id:'asxcdxvf9',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'eee', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '002',statusName:'待审核',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
-        {id:'asxcdxvf10',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'eee', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '002',statusName:'待审核',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']}];
+    let data = [{id:'asxcdxvf1',name: 'xxxx预案方案',creator: '天田甜', reviewUserId:'', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '01',statusName:'待提交',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf2',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'123', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '02',statusName:'待审核',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf3',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'aaa', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '03',statusName:'已同意',isTemplate: true,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf4',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'bbb', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '04',statusName:'已驳回',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf5',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '05',statusName:'未开始',isTemplate: true,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf6',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '06',statusName:'进行中',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf7',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ccc', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '07',statusName:'已结束',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf8',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'ddd', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '08',statusName:'已逾期作废',isTemplate: true,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf9',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'eee', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '02',statusName:'待审核',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']},
+        {id:'asxcdxvf10',name: 'xxxx预案方案',creator: '天田甜',reviewUserId:'eee', startDayTime: 1565665846000,endDayTime:1565752246000,statusId: '02',statusName:'待审核',isTemplate: false,mapIdList:['aaaa,bbbb,ccc']}];
     return builder(
         {
             code: 0,

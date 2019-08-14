@@ -3,10 +3,10 @@
     <div class="yuan_list_panel" flex="dir:top">
       <div class="yuan_list_panel_header" flex="cross:center main:justify">
         <div class="search_btn_panel">
-          <a-button type="primary" @click="searchYuAnData('type_001')">一级预案</a-button>
-          <a-button type="primary" @click="searchYuAnData('type_002')">二级预案</a-button>
-          <a-button type="primary" @click="searchYuAnData('type_003')">三级预案</a-button>
-          <a-button type="primary" @click="searchYuAnData('template_true')">预案模板</a-button>
+          <a-button type="primary" @click="searchYuAnData('type_01')">一级预案</a-button>
+          <a-button type="primary" @click="searchYuAnData('type_02')">二级预案</a-button>
+          <a-button type="primary" @click="searchYuAnData('type_03')">三级预案</a-button>
+          <a-button type="primary" @click="searchYuAnData('template_0')">预案模板</a-button>
         </div>
         <div class="operate_panel" flex="dir:left cross:center">
           <a-select v-model="query.statusId" @select="handleSelectChange">
@@ -15,7 +15,7 @@
           </a-select>
           <a-input-search v-model="query.searchContent" placeholder="请输入关键字" @search="searchDataByContent"/>
           <a-button type="primary" @click="searchYuAnData('myYuAn_true')">我的预案</a-button>
-          <a-button type="primary" @click="searchYuAnData('myStatus_002')">
+          <a-button type="primary" @click="searchYuAnData('myStatus_02')">
             <a-badge count="5">
               <span class="text">待审核</span>
             </a-badge>
@@ -99,7 +99,7 @@
         query:{
           typeId:'',
           statusId: '',
-          isTemplate: false,
+          isTemplate: '0',
           isMyYuAn: false,
           searchContent: '',
           pageNo: 1,
@@ -151,7 +151,7 @@
             this.query.statusId = ct[1];
             break;
           case 'template':
-            this.query.isTemplate = true;
+            this.query.isTemplate = '1';
             break;
           case 'myYuAn':
             this.query.isMyYuAn = true;
@@ -161,9 +161,10 @@
             this.query.statusId = ct[1];
             break;
           case 'search':
-            let content = param.substring(param.indexOf('_'));
-            this.query.searchContent = content;
+            this.query.searchContent = param.substring(param.indexOf('_')+1);
             break;
+          default:
+            console.log('no search');
         }
         this.getTuAnDataList();
       },
