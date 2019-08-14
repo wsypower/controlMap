@@ -69,10 +69,11 @@
   import VectorLayer from 'ol/layer/Vector'
   import VectorSource from 'ol/source/Vector'
   import Select from 'ol/interaction/Select.js';
+  import { Circle as CircleStyle,Fill, Stroke, Style} from 'ol/style.js';
   import { getEmergencyFeatures } from '@/api/map/service'
   let map;
   let mapManager;
-  let draw;
+  let draw,modify;
   let source;
   let vectorLayer;
   let select;
@@ -113,6 +114,7 @@
           baoZhangFormData: {
             mapId: '',
             name: '',
+            mapType:'',
             personList: [],
             remark: ''
           },
@@ -146,8 +148,9 @@
       computed:{
         //所有已选择人员数据
         checkedPeopleIdList: function(){
+          console.log(this.allBaoZhangData);
           return this.allBaoZhangData.reduce((res,item)=>{
-            let temp = item.peopleList.reduce((r,i)=>{
+            let temp = item.personList.reduce((r,i)=>{
               r.push(i.id);
               return r
             },[])
@@ -188,12 +191,7 @@
       created(){
         this.form = this.$form.createForm(this);
       },
-      mounted() {
-        console.log('==tt2');
-            this.$nextTick().then(() => {
-            console.log('==tt1');
-        })
-      },
+      mounted() {},
       updated(){
         this.$nextTick().then(() => {
           // let height = document.body.clientHeight - 300;
@@ -212,8 +210,8 @@
       },
       methods:{
         init(){
-          // this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
-          //编辑状态下通过图形id获取图形数据
+          this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
+          //编辑状态下通过图形id获取已保存的图形数据
           if(this.allBaoZhangData.length>0){
             const mapIdList=this.allBaoZhangData.map(data => {
               return data.mapId;
@@ -225,16 +223,22 @@
                 searchId+=','
               }
             }
-            searchId+=')';
+            searchId +=')';
             console.log(searchId);
+            if(!source){
+              source = new VectorSource({ wrapX: false });
+            }
             getEmergencyFeatures(searchId,'Point').then(data=>{
               console.log(data);
-            })
+              source.addFeatures(data);
+            });
           }
         },
+        //地图点击事件处理器
         mapClickHandler({ pixel, coordinate }) {
           const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
           if(feature){
+            this.showSetDialog(feature.get('id'));
             this.infoOverlay.setPosition(coordinate);
             console.log('==点击feature==',feature);
           }
@@ -249,7 +253,22 @@
           if(!source){
             source = new VectorSource({ wrapX: false });
             vectorLayer = new VectorLayer({
-              source: source
+              source: source,
+              style: new Style({
+                fill: new Fill({
+                  color: 'rgba(255, 255, 255, 0.3)'
+                }),
+                stroke: new Stroke({
+                  color: '#ffcc33',
+                  width: 2
+                }),
+                image: new CircleStyle({
+                  radius: 7,
+                  fill: new Fill({
+                    color: '#ffcc33'
+                  })
+                })
+              })
             });
             map.addLayer(vectorLayer);
           }
@@ -259,18 +278,17 @@
           draw = mapManager.activateDraw(value.key,source);
           const _this=this;
           draw.on('drawend', function(e) {
-            console.log(e);
             const id=_this.getMapId();
             e.feature.set('id',id);
             _this.showSetDialog(id);
             _this.infoOverlay.setPosition(e.feature.getGeometry().getLastCoordinate());
-          })
+          });
         },
         //获取随机绘制图形id
         getMapId(){
           return Number(Math.random().toString().substr(3,6) + Date.now()).toString(36);
         },
-        //选择图形
+        //选择任一图形要素
         selectGeometry(){
           console.log(this.$refs.infoOverlay.$el);
           map.on('dblclick', this.mapClickHandler);

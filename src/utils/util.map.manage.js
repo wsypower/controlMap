@@ -7,7 +7,7 @@ import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 import GeoJSON from 'ol/format/GeoJSON'
 import Draw from 'ol/interaction/Draw.js';
-import { Modify } from 'ol/interaction.js';
+import { Modify, Snap } from 'ol/interaction.js';
 import Feature from 'ol/Feature';
 import MultiPolygon from 'ol/geom/MultiPolygon';
 import { fromCircle } from 'ol/geom/Polygon'
@@ -72,35 +72,33 @@ export class MapManager {
     })
   }
   /**
-   * @description: 激活绘制功能
+   * @description: 激活绘制图形功能
    * @param {String}type 绘制类型
    * @param {Boolean}isFreeHand 是否自由绘制
    * @return {*}
    */
   activateDraw(type,source) {
-    // let pointSource = new VectorSource({ wrapX: false });
     let draw;
-    // let lineSource= new VectorSource({ wrapX: false });
-    // let polygonSource = new VectorSource({ wrapX: false });
     if (type !== 'None') {
       draw = new Draw({
         source: source,
         type: type
       });
-      // this.drawLayer = new VectorLayer({
-      //   source: pointSource,
-      // })
-      // this.map.addLayer(this.drawLayer)
       this.map.addInteraction(draw);
     }
     return draw;
   }
   /**
-   * @description: 激活点绘制功能
+   * @description: 激活修改图形功能
    * @return {*}
    */
-  activePointDraw(){
-
+  activeModify(source){
+    let modify, snap;
+    modify = new Modify({ source: source});
+    this.map.addInteraction(modify);
+    snap = new Snap({ source: source});
+    this.map.addInteraction(snap);
+    return modify;
   }
   /**
    *  @description:取消激活绘制功能
