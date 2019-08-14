@@ -96,10 +96,10 @@
         ...mapActions('emergency/common', ['getAllPeopleDataList']),
         init(){
           this.getAllPeopleDataList().then((res)=>{
-            this.setDisabledKeyToTree(res.data,this.disablePeopleKey);
-            this.getPeopleList(res.data,this.peopleList);
+            this.setDisabledKeyToTree(res,this.disablePeopleKey);
+            this.getPeopleList(res,this.peopleList);
             console.log('this.peopleList',this.peopleList);
-            this.treeData = res.data;
+            this.treeData = res;
           });
         },
         setDisabledKeyToTree(treeData,disabledKey){
@@ -120,6 +120,7 @@
               this.getPeopleList(item.children,obj)
             }
             else{
+              //console.log(item.key,item.title);
               obj[item.key] = item.title
             }
           }

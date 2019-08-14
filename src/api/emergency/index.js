@@ -60,7 +60,7 @@ export function getEmergencyYuAnList(data){
 export function addNewEmergencyYuAn(data){
     console.log('api:addNewEmergencyYuAn',data);
     return request({
-        url: '@test/addNewEmergencyYuAn',
+        url: 'plan/addNewEmergencyYuAn',
         method: 'post',
         data
     })

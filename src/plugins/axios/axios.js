@@ -3,7 +3,7 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-12 15:19:30
- * @Last Modified by: wei.yafei 
+ * @Last Modified by: wei.yafei
  * @Last Modified time: 2019-07-22 17:21:14
  */
 /*=============================================
@@ -64,10 +64,16 @@ const success = success => {
 }
 //axios默认配置
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-
+let base_url= '';
+if (process.env.NODE_ENV === 'development') {
+  base_url = 'http://192.168.71.154:8080/api/'
+}
+else{
+  base_url = 'http://192.168.71.33:8015/api/'
+}
 //axios config配置
 let config = {
-  baseURL: process.env.VUE_APP_API,
+  baseURL: base_url,
   timeout: 60 * 100, // 请求超时时间
   //TODO:只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法
   //修改请求数据添加必填项 userId

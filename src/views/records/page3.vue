@@ -32,10 +32,10 @@
             <div v-for="(item, index) in yuanDataList" :key="index" class="item">
             <div class="top"></div>
             <div class="item_tool_panel">
-              <a-icon v-if="item.statusId<'005' || item.statusId=='008'" type="edit" @click="editYuAn(item.id)"/>
+              <a-icon v-if="item.statusId<'05' || item.statusId=='08'" type="edit" @click="editYuAn(item.id)"/>
               <a-icon v-if="item.isTemplate" type="heart" theme="filled" @click="setYuAn(item)"/>
               <a-icon v-else type="heart" color="#fe7a83" @click="setYuAn(item)"/>
-              <a-icon v-if="item.statusId!='006'" type="delete" @click="deleteYuAn(item.id,index)"/>
+              <a-icon v-if="item.statusId!='06'" type="delete" @click="deleteYuAn(item.id,index)"/>
             </div>
             <div class="show_content_panel">
               <div><span>名称</span><span>：</span>{{item.name}}</div>
@@ -43,14 +43,14 @@
               <div><span>保障时间</span><span>：</span>{{new Date(item.startDayTime)|date_format('YYYY-MM-DD HH:mm')}}~{{new Date(item.endDayTime)|date_format('YYYY-MM-DD HH:mm')}}</div>
               <div>
                 <span>状态</span><span>：</span>
-                <span v-if="item.statusId=='001'" class="status blue">待提交</span>
-                <span v-if="item.statusId=='002'" class="status blue">待审核</span>
-                <span v-if="item.statusId=='003'" class="status blue">已通过</span>
-                <span v-if="item.statusId=='004'" class="status blue">已驳回</span>
-                <span v-if="item.statusId=='005'" class="status yellow">未开始</span>
-                <span v-if="item.statusId=='006'" class="status green">进行中</span>
-                <span v-if="item.statusId=='007'" class="status grey">已结束</span>
-                <span v-if="item.statusId=='008'" class="status red">已逾期作废</span>
+                <span v-if="item.statusId=='01'" class="status blue">待提交</span>
+                <span v-if="item.statusId=='02'" class="status blue">待审核</span>
+                <span v-if="item.statusId=='03'" class="status blue">已通过</span>
+                <span v-if="item.statusId=='04'" class="status blue">已驳回</span>
+                <span v-if="item.statusId=='05'" class="status yellow">未开始</span>
+                <span v-if="item.statusId=='06'" class="status green">进行中</span>
+                <span v-if="item.statusId=='07'" class="status grey">已结束</span>
+                <span v-if="item.statusId=='08'" class="status red">已逾期作废</span>
               </div>
             </div>
             <div class="item_operate_panel" flex="dir:left cross:center main:center">
@@ -118,7 +118,7 @@
     mounted(){
       this.getStatusDataList().then((res)=>{
         console.log('getStatusDataList',res);
-        this.statusList = res.data;
+        this.statusList = res;
       });
       this.getTuAnDataList();
     },

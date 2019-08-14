@@ -6,8 +6,7 @@
                     <h3>{{yuAnInfo.name}}</h3>
                     <span class="status">{{yuAnInfo.statusName}}</span>
                     <div><span class="attr">创建人：</span><span class="content">{{yuAnInfo.creator}}</span></div>
-                    <div><span class="attr">保障区域：</span><span class="content">金华市体育中心</span></div>
-                    <div><span class="attr">保障时间：</span><span class="content">{{yuAnInfo.startDayTime}}~{{yuAnInfo.endDayTime}}</span></div>
+                    <div><span class="attr">保障时间：</span><span class="content">{{new Date(yuAnInfo.startDayTime)|date_format()}}~{{new Date(yuAnInfo.endDayTime)|date_format()}}</span></div>
                     <div><span class="attr">预案描述：</span><span class="content">{{yuAnInfo.description}}</span></div>
                     <div><span class="attr">工作目标：</span><span class="content">{{yuAnInfo.jobGoal}}</span></div>
                     <div><span class="attr">组织领导及任务分工：</span><span class="content">{{yuAnInfo.jobAssignment}}</span></div>
@@ -23,7 +22,7 @@
                              :pagination="false">
                         <div slot="person" slot-scope="text, record, index">
                             <span v-for="(person,index) in record.peopleList" :key="person.id">
-                                {{index==record.peopleList.length-1?person.name:person.name + ','}}
+                                {{index==record.peopleList.length-1?person.name+'('+person.groupName + ')':person.name + ','}}
                             </span>
                         </div>
                     </a-table>
@@ -108,7 +107,6 @@
           ziyuanColumns: ziyuanColumns,
           logColumns: logColumns,
           yuAnInfo:{},
-
           backDialogVisible: false,
           backReason: ''
         }

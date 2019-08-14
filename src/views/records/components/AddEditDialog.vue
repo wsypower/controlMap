@@ -211,7 +211,7 @@ const groupColumns = [{
         submitForm:{
           name: '',
           typeId: '',
-          statusId: '001',
+          statusId: '01',
           startDayTime: '',
           endDayTime: '',
           description: '',
@@ -272,7 +272,7 @@ const groupColumns = [{
       ...mapActions('emergency/common', ['getYuAnTypeDataList']),
       init(){
         this.getYuAnTypeDataList().then((res)=>{
-          this.yuAnTypeList = res.data;
+          this.yuAnTypeList = res;
           if(this.operateType=='edit'){
             this.getEmergencyYuAnById({id:this.yuAnId}).then((res)=>{
               console.log(res);
@@ -379,24 +379,25 @@ const groupColumns = [{
           return resList
       },
       //保存地图数据
-      saveDraw(drawFeatures){
-        console.log("==保存===",drawFeatures);
+      saveDraw(data){
+        console.log("==保存===",data);
         let type='add';
-        if(this.drawFeatures[0].length>0){
-          postEmergencyFeatures(type,'Point',this.drawFeatures[0]).then(res=>{
+        if(data.drawFeatures[0].length>0){
+          postEmergencyFeatures(type,'Point',data.drawFeatures[0]).then(res=>{
             console.log('==点数据==',res);
           })
         }
-        if(this.drawFeatures[1].length>0){
-          postEmergencyFeatures(type,'LineString',this.drawFeatures[1]).then(res=>{
+        if(data.drawFeatures[1].length>0){
+          postEmergencyFeatures(type,'LineString',data.drawFeatures[1]).then(res=>{
             console.log('==线数据==',res);
           })
         }
-        if(this.drawFeatures[2].length>0){
-          postEmergencyFeatures(type,'Polygon',this.drawFeatures[2]).then(res=>{
+        if(data.drawFeatures[2].length>0){
+          postEmergencyFeatures(type,'Polygon',data.drawFeatures[2]).then(res=>{
             console.log('==线数据==',res);
           })
         }
+        this.submitForm.baoZhangData = data.allBaoZhangData;
       },
       //保存草稿
       saveDraft(e){

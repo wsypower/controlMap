@@ -18,7 +18,7 @@ import request from '@/plugins/axios/axios'
 export function getStatusDataList(data){
     console.log('api:getStatusDataList',data);
     return request({
-        url: '@test/getStatusDataList?_t='+ new Date().getTime(),
+        url: 'plan/getStatusDataList?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
@@ -37,7 +37,7 @@ export function getStatusDataList(data){
 export function getYuAnTypeDataList(data){
     console.log('api:getYuAnTypeDataList',data);
     return request({
-        url: '@test/getYuAnTypeDataList?_t='+ new Date().getTime(),
+        url: 'plan/getYuAnTypeDataList?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
@@ -56,7 +56,7 @@ export function getYuAnTypeDataList(data){
 export function getAllPeopleDataList(data){
   console.log('api:getAllPeopleDataList',data);
   return request({
-    url: '@test/getAllPeopleDataList?_t='+ new Date().getTime(),
+    url: 'plan/getPeopleDataList?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })

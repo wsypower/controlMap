@@ -126,23 +126,7 @@
           filterPeopleList: [],
           //所有的保障点位数据，后续所有操作已这个为基础，最后保存时也已这个作为保存数据
           //allBaoZhangData有值为编辑，没有值为新增
-          allBaoZhangData: [{
-            mapId: '1il1vfiwf2e80',
-            name: '测试',
-            personList: [],
-            remark: '测试'
-          },{
-            mapId: '1215pts3dp6o0',
-            name: '测试',
-            personList: [],
-            remark: '测试'
-          },
-            {
-            mapId: 'owmadp1lelc0',
-            name: '测试',
-            personList: [],
-            remark: '测试'
-          }]
+          allBaoZhangData: []
         }
       },
       computed:{
@@ -401,7 +385,11 @@
               }
             }
             this.drawFeatures=[this.pointFeatures,this.lineFeatures,this.polygonFeatures];
-            this.$emit('saveDrawData',this.drawFeatures);
+            let data = {
+              drawFeatures: this.drawFeatures,
+              allBaoZhangData:this.allBaoZhangData
+            }
+            this.$emit('saveDrawData',data);
           }
           console.log('this.allBaoZhangData', this.allBaoZhangData);
           this.mapDialogVisible = false;
