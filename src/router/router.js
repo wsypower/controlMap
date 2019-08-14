@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-08-08 18:29:51
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-08-13 15:01:38
  */
 
 /*=============================================
@@ -32,6 +32,48 @@ const frameIn = [
       title: '管控平台'
     },
     children: [
+      //测试 => page1
+      {
+        path: '/section',
+        name: 'section',
+        meta: {
+          title: '人员管控',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('section/page1.vue'),
+        redirect: { path: '/section/warnList' },
+        children: [
+          {
+            name: 'warnList',
+            path: '/section/warnList',
+            meta: {
+              title: '人员管控列表',
+              role: ['admin', 'super_editor'],
+              cache: true
+            },
+            component: _import('section/list.vue')
+          },
+          //列表详情
+          {
+            path: '/section/warnDetails',
+            meta: {
+              title: '人员管控详情',
+              role: ['admin', 'super_editor']
+            },
+            component: _import('section/details.vue')
+          }
+        ]
+      },
+      //测试 => page2
+      {
+        path: '/car',
+        name: 'car',
+        meta: {
+          title: '车辆管控',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('car/page2.vue')
+      },
       //测试 => page3
       {
         path: '/records',
@@ -41,6 +83,26 @@ const frameIn = [
           role: ['admin', 'super_editor']
         },
         component: _import('records/page3.vue')
+      },
+      //测试 => page4
+      {
+        path: '/special',
+        name: 'special',
+        meta: {
+          title: '视频',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('special/page4.vue')
+      },
+      //测试 => page5
+      {
+        path: '/video',
+        name: 'video',
+        meta: {
+          title: '专题服务',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('video/page5.vue')
       },
       //测试 => page6
       {

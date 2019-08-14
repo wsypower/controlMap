@@ -80,7 +80,7 @@
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
   import dayjs from 'dayjs'
   import AddEditDialog from './components/AddEditDialog'
   import YuAnInfoAndReviewDialog from './components/YuAnInfoAndReviewDialog'

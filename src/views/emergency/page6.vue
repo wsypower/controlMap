@@ -76,7 +76,16 @@ export default {
       this.drawMap();
     }
   },
+  beforeRouteUpdate(to, from, next) {
+    //先刷新页面路劲
+    next()
+    //指向refresh页面，然后再次跳转回本页面，重走页面的生命周期
+    this.reload()
+  },
   methods:{
+    reload() {
+      this.$router.replace('/refresh')
+    },
     onChange (checkedList) {
       this.indeterminate = !!checkedList.length && (checkedList.length < plainOptions.length)
       this.checkAll = checkedList.length === plainOptions.length

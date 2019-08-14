@@ -43,16 +43,21 @@ export default {
      * @param {Number} index
      * @param {Object} item
      */
+
     menuItemClick(index, item) {
+      console.log('点击了')
       //当前元素设置active设为true，其他设为false
       this.asideSetItemActive(item).then(isCollapse => {
         //TODO:(貌似search更快一点，实际再测试)判断点击页是否是当前页或当前页子页面
         const isPath = this.current.includes(item.path)
-        if (!isPath)
-          this.menuItemCange(item).then(() => {
-            this.$router.replace(item.path)
-          })
-        else this.asideCollapseSet(isCollapse)
+        this.menuItemCange(item).then(() => {
+          this.$router.replace(item.path)
+        })
+        // if (!isPath)
+        //   this.menuItemCange(item).then(() => {
+        //     this.$router.replace(item.path)
+        //   })
+        // else this.asideCollapseSet(isCollapse)
       })
     },
     /**
@@ -81,7 +86,7 @@ export default {
      * @param {String} current 当前页
      */
     currentAsideSetActive(aside, current) {
-      return aside.map((item, arr) => (item.path.includes(current) ? (item.active = true) : (item.active = false)))
+      return aside.map((item, arr) => (current.includes(item.path) ? (item.active = true) : (item.active = false)))
     }
   }
 }

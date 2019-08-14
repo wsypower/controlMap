@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:26
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-08-08 18:32:59
+ * @Last Modified time: 2019-08-13 14:58:54
  */
 // 菜单 侧边栏
 export default [
@@ -42,6 +42,7 @@ export default [
   //   role: ['admin']
   // },
   {
+    // path: '/emergency/456/new',
     path: '/emergency',
     title: '应急指挥',
     icon: 'menu-emergency',
