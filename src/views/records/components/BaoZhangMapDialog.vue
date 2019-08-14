@@ -48,11 +48,11 @@
             <a-menu-item key="Polygon">多边形</a-menu-item>
           </a-menu>
           <a-button class="op-btn yacz-btn">
-            <span class="memu-title-text">绘图工具</span>
-            <a-icon type="down" />
+            <span class="memu-title-text">新增</span>
+            <a-icon type="down"/>
           </a-button>
         </a-dropdown>
-        <!--<a-button type="primary" @click="clearDraw">清除选中区域</a-button>-->
+        <a-button type="primary" @click="editMapFeatures" v-if="this.allBaoZhangData.length>0">编辑</a-button>
         <a-button type="primary" @click="selectGeometry">选择</a-button>
         <a-button type="primary" @click="clearSelectGeometry">删除选择</a-button>
       </div>
@@ -65,7 +65,7 @@
 </template>
 <script type="text/ecmascript-6">
   import LayoutMap from '@/views/map/olMap.vue'
-  import { MapManager } from '@/utils/util.map.manage'
+  import { MapManager,filterMapId } from '@/utils/util.map.manage'
   import VectorLayer from 'ol/layer/Vector'
   import VectorSource from 'ol/source/Vector'
   import Select from 'ol/interaction/Select.js';
@@ -107,7 +107,30 @@
           pointFeatures:[],
           lineFeatures:[],
           polygonFeatures:[],
-          drawFeatures:[],
+          drawFeatures:{
+            'Point': {
+              add:[],
+              update:[],
+              delete:[]
+            },
+            'LineString':{
+              add: [],
+              update:[],
+              delete:[]
+            },
+            'Polygon':{
+              add: [],
+              update:[],
+              delete:[]
+            }
+          },
+          editFeatures:{
+            add:[],
+            update:[],
+            delete:[]
+          },
+          tempChangeFeature:null,
+          tempSource:null,
           selectedFeature:null,
           form: null,
           //一条保障点位的数据
@@ -129,20 +152,22 @@
           allBaoZhangData: [{
             mapId: '1il1vfiwf2e80',
             name: '测试',
+            mapType:'Point',
             personList: [],
             remark: '测试'
           },{
             mapId: '1215pts3dp6o0',
             name: '测试',
+            mapType:'LineString',
             personList: [],
             remark: '测试'
-          },
-            {
+          }, {
             mapId: 'owmadp1lelc0',
             name: '测试',
+            mapType:'Polygon',
             personList: [],
             remark: '测试'
-          }]
+          }],
         }
       },
       computed:{
@@ -169,7 +194,7 @@
         },
         //保障视图是新增还是编辑操作
         mapOperateType:function(){
-          return this.baoZhangData.length>0?'edit':'add'
+          return this.allBaoZhangData.length>0?'edit':'add'
         }
       },
       watch:{
@@ -210,28 +235,50 @@
       },
       methods:{
         init(){
-          this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
+          // this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
           //编辑状态下通过图形id获取已保存的图形数据
           if(this.allBaoZhangData.length>0){
-            const mapIdList=this.allBaoZhangData.map(data => {
-              return data.mapId;
-            })
-            let searchId ='(';
-            for(let i=0;i<mapIdList.length;i++){
-              searchId+="'"+mapIdList[i]+"'";
-              if(i+1<mapIdList.length){
-                searchId+=','
-              }
-            }
-            searchId +=')';
-            console.log(searchId);
+            const idList=filterMapId(this.allBaoZhangData);
+            console.log(idList);
             if(!source){
               source = new VectorSource({ wrapX: false });
+              vectorLayer = new VectorLayer({
+                source: source,
+                style: new Style({
+                  fill: new Fill({
+                    color: 'rgba(255, 255, 255, 0.3)'
+                  }),
+                  stroke: new Stroke({
+                    color: '#ffcc33',
+                    width: 2
+                  }),
+                  image: new CircleStyle({
+                    radius: 7,
+                    fill: new Fill({
+                      color: '#ffcc33'
+                    })
+                  })
+                })
+              });
             }
-            getEmergencyFeatures(searchId,'Point').then(data=>{
-              console.log(data);
+            getEmergencyFeatures(idList[0],'Point').then(data=>{
+              console.log('查询点',data);
               source.addFeatures(data);
             });
+            getEmergencyFeatures(idList[1],'LineString').then(data=>{
+              console.log('查询线',data);
+              source.addFeatures(data);
+            });
+            getEmergencyFeatures(idList[2],'Polygon').then(data=>{
+              console.log('查询面',data);
+              source.addFeatures(data);
+            });
+            const _this=this;
+            setTimeout(()=>{
+              console.log('==source==',source)
+              _this.tempSource=source;
+              map.addLayer(vectorLayer);
+            },500)
           }
         },
         //地图点击事件处理器
@@ -280,8 +327,32 @@
           draw.on('drawend', function(e) {
             const id=_this.getMapId();
             e.feature.set('id',id);
-            _this.showSetDialog(id);
+            _this.showSetDialog(id,e.feature.getGeometry().getType());
             _this.infoOverlay.setPosition(e.feature.getGeometry().getLastCoordinate());
+          });
+        },
+        editMapFeatures(){
+          const _this=this;
+          modify = mapManager.activeModify(source);
+          modify.on("modifyend",function (e) {
+            const type=_this.tempChangeFeature.getGeometry().getType();
+            _this.drawFeatures[type].update.push(_this.tempChangeFeature);
+          });
+          source.on('addfeature', function(e) {
+            e.preventDefault();
+            const type=e.feature.getGeometry().getType();
+            _this.drawFeatures[type].add.push(e.feature);
+          });
+          source.on('changefeature', function(e) {
+            e.preventDefault();
+            _this.tempChangeFeature=e.feature;
+          });
+          source.on('removefeature', function(e) {
+            e.preventDefault();
+            if(_this.tempSource.hasFeature(e.feature)){
+              const type=e.feature.getGeometry().getType();
+              _this.drawFeatures[type].delete.push(e.feature);
+            }
           });
         },
         //获取随机绘制图形id
@@ -291,6 +362,7 @@
         //选择任一图形要素
         selectGeometry(){
           console.log(this.$refs.infoOverlay.$el);
+          map.removeInteraction(modify);
           map.on('dblclick', this.mapClickHandler);
           if(draw){
             mapManager.inactivateDraw(draw);
@@ -311,7 +383,7 @@
           }
         },
         //双击区域后触发此方法，带出mapId
-        showSetDialog(mapId){
+        showSetDialog(mapId,mapType){
           let flag = this.allBaoZhangData.some(item =>{
             return item.mapId === mapId
           });
@@ -345,6 +417,7 @@
             this.filterPeopleList = this.checkedPeopleIdList;
             this.baoZhangFormData.mapId = mapId;
             this.baoZhangFormData.name = '';
+            this.baoZhangFormData.mapType=mapType;
             this.baoZhangFormData.personList = [];
             this.baoZhangFormData.remark = '';
           }
@@ -380,6 +453,7 @@
         },
         //保存图形数据
         saveMap() {
+          console.log('==编辑要素==',this.editFeatures)
           this.pointFeatures = [];
           this.lineFeatures = [];
           this.polygonFeatures = [];
@@ -400,9 +474,28 @@
                 this.polygonFeatures.push(features[i])
               }
             }
-            this.drawFeatures=[this.pointFeatures,this.lineFeatures,this.polygonFeatures];
-            this.$emit('saveDrawData',this.drawFeatures);
+            this.drawFeatures={
+              'Point': {
+                add:this.pointFeatures,
+                update:null,
+                delete:null
+              },
+              'LineString':{
+                add: this.lineFeatures,
+                update:null,
+                delete:null
+              },
+              'Polygon':{
+                add: this.polygonFeatures,
+                update:null,
+                delete:null
+              }
+            };
           }
+          if(this.mapOperateType=='edit'){
+            console.log('==drawFeature==',this.drawFeatures)
+          }
+          this.$emit('saveDrawData',this.drawFeatures);
           console.log('this.allBaoZhangData', this.allBaoZhangData);
           this.mapDialogVisible = false;
           map.on('dblclick', this.mapClickHandler);

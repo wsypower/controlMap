@@ -381,21 +381,16 @@ const groupColumns = [{
       //保存地图数据
       saveDraw(drawFeatures){
         console.log("==保存===",drawFeatures);
-        let type='add';
-        if(this.drawFeatures[0].length>0){
-          postEmergencyFeatures(type,'Point',this.drawFeatures[0]).then(res=>{
+        if(this.drawFeatures.length>0){
+          postEmergencyFeatures('Point',this.drawFeatures['Point']).then(res=>{
             console.log('==点数据==',res);
-          })
-        }
-        if(this.drawFeatures[1].length>0){
-          postEmergencyFeatures(type,'LineString',this.drawFeatures[1]).then(res=>{
+          });
+          postEmergencyFeatures('LineString',this.drawFeatures['LineString']).then(res=>{
             console.log('==线数据==',res);
-          })
-        }
-        if(this.drawFeatures[2].length>0){
-          postEmergencyFeatures(type,'Polygon',this.drawFeatures[2]).then(res=>{
+          });
+          postEmergencyFeatures('Polygon',this.drawFeatures['Polygon']).then(res=>{
             console.log('==线数据==',res);
-          })
+          });
         }
       },
       //保存草稿

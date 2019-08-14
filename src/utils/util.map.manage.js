@@ -146,7 +146,73 @@ export function filterMeetingPeople(feature, points) {
   });
   return peoples;
 }
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2019/8/14 10:57
+ */
+export function filterMapId(data) {
+  //点查询idlist
+  const pointList = data.filter(p => {
+    if(p.mapType=='Point'){
+      return p;
+    }
+  });
+  let searchPointId;
+  if(pointList.length>0){
+    searchPointId ='(';
+    for(let i=0;i<pointList.length;i++){
+      searchPointId+="'"+pointList[i].mapId+"'";
+      if(i+1<pointList.length){
+        searchPointId+=','
+      }
+    }
+    searchPointId +=')';
+  }
+  //线查询idlist
+  const lineList = data.filter(p => {
+    if(p.mapType=='LineString'){
+      return p;
+    }
+  });
+  let searchLineId;
+  if(lineList.length>0){
+    searchLineId ='(';
+    for(let i=0;i<lineList.length;i++){
+      searchLineId+="'"+lineList[i].mapId+"'";
+      if(i+1<lineList.length){
+        searchLineId+=','
+      }
+    }
+    searchLineId +=')';
+  }
+  //面查询idlist
+  const polygonList = data.filter(p => {
+    if(p.mapType=='Polygon'){
+      return p;
+    }
+  });
+  let searchPolygonId;
+  if(polygonList.length>0){
+    searchPolygonId ='(';
+    for(let i=0;i<polygonList.length;i++){
+      searchPolygonId +="'"+polygonList[i].mapId+"'";
+      if(i+1<polygonList.length){
+        searchPolygonId+=','
+      }
+    }
+    searchPolygonId +=')';
+  }
+  return [searchPointId, searchLineId, searchPolygonId];
+}
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2019/8/14 17:24
+ */
+export function filterMapFeature(features) {
 
+}
 /**
  * @description:圆转面保存
  * @author:sijianting
