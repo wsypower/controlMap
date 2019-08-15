@@ -2,7 +2,7 @@
   <a-modal :title="dialogTitle" v-model="addEditDialogVisible" class="add-edit-dialog" width="90%" @cancel="handleCancel">
     <div v-if="operateType == 'add'" class="template-panel">
       <label>选择模板创建：</label>
-      <a-select v-modal="templateId" placeholder="请选择模板" style="width: 180px;">
+      <a-select v-model="templateId" placeholder="请选择模板" style="width: 180px;" @change="handleUserTemplate">
         <a-select-option v-for="(item, index) in templateList" :value="item.id" :key="index">{{item.name }}</a-select-option>
       </a-select>
     </div>
@@ -11,6 +11,9 @@
       <span style="color:#ff4b72">{{submitForm.backReason}}</span>
     </div>
     <div class="yuan_dialog_body">
+      <div v-show="dataLoading" class="loading" flex="main:center cross:center">
+        <a-spin tip="数据加载中..."></a-spin>
+      </div>
       <cg-container scroll>
         <a-form :form="form">
           <a-collapse v-model="activeKey">
@@ -215,6 +218,7 @@ const groupColumns = [{
         addEditDialogVisible: false,
         templateList: [],
         templateId: '',
+        dataLoading: false,
         activeKey: '1',
         form: null,
         yuAnTypeList: [],
@@ -288,69 +292,80 @@ const groupColumns = [{
         this.getYuAnTypeDataList().then((r)=>{
           this.yuAnTypeList = r;
           if(this.operateType=='edit'){
-            this.getEmergencyYuAnById({id:this.yuAnId}).then((result)=>{
-              console.log('getEmergencyYuAnById',result);
-              this.groupData = result.groupData.reduce((res,item)=>{
-                let temp={
-                  key: item.id,
-                  groupName: item.groupName,
-                  checkedPeopleList: item.personList,
-                  peopleKeyList: []
-                }
-                temp.peopleKeyList = item.personList.reduce((r,i)=>{
-                  r.push(i.id)
-                  this.disablePeopleKey.push(i.id);
-                  return r
-                },[])
-                res.push(temp)
-                return res
-              },[])
-
-              this.baoZhangData = result.baoZhangData.reduce((res,item)=>{
-                let temp = {
-                  id: item.id,
-                  mapId: item.mapId,
-                  name: item.name,
-                  mapType: item.mapType,
-                  personList: [],
-                  remark: item.remark
-                }
-                temp.personList = item.peopleList.reduce((r,i)=>{
-                  r.push(i.id)
-                  return r
-                },[]);
-                res.push(temp)
-                return res
-              },[]);
-              delete result.groupData
-              delete result.baoZhangData
-              this.submitForm = Object.assign(this.$options.data()['submitForm'],result)
-              console.log('edit init:submitForm groupData baoZhangData',this.submitForm,this.groupData,this.baoZhangData);
-              // let startTime = util.formatDate(this.submitForm.startDayTime);
-
-
-              let startTime  = moment(this.submitForm.startDayTime).format('YYYY-MM-DD HH:mm:ss');
-              let endTime  = moment(this.submitForm.endDayTime).format('YYYY-MM-DD HH:mm:ss');
-              console.log('startTime endTime',startTime,endTime);
-              this.form.setFieldsValue({
-                typeId: this.submitForm.typeId,
-                name: this.submitForm.name,
-                dayRange: [moment(startTime,'YYYY-MM-DD HH:mm:ss'),moment(startTime,'YYYY-MM-DD HH:mm:ss')]
-              });
-            });
+            this.getYuAnInfoById(this.yuAnId);
           }
           else{
             this.getTemplateYuAnDataList().then((res)=>{
-              this.templateList = res.data;
+              this.templateList = res;
             });
           }
+        });
+      },
+      handleUserTemplate(val){
+        console.log('handleUserTemplate',val);
+        this.getYuAnInfoById(val);
+      },
+      getYuAnInfoById(id){
+        this.dataLoading = true;
+        this.groupData = [];
+        this.baoZhangData = [];
+        this.getEmergencyYuAnById({id:id}).then((result)=>{
+          console.log('getEmergencyYuAnById',result);
+          this.groupData = result.groupData.reduce((res,item)=>{
+            let temp={
+              key: item.id,
+              groupName: item.groupName,
+              checkedPeopleList: item.personList,
+              peopleKeyList: []
+            }
+            temp.peopleKeyList = item.personList.reduce((r,i)=>{
+              r.push(i.id)
+              this.disablePeopleKey.push(i.id);
+              return r
+            },[])
+            res.push(temp)
+            return res
+          },[])
+
+          this.baoZhangData = result.baoZhangData.reduce((res,item)=>{
+            let temp = {
+              id: item.id,
+              mapId: item.mapId,
+              name: item.name,
+              mapType: item.mapType,
+              personList: [],
+              remark: item.remark
+            }
+            temp.personList = item.peopleList.reduce((r,i)=>{
+              r.push(i.id)
+              return r
+            },[]);
+            res.push(temp)
+            return res
+          },[]);
+          delete result.groupData
+          delete result.baoZhangData
+          this.submitForm = Object.assign(this.$options.data()['submitForm'],result)
+          console.log('edit init:submitForm groupData baoZhangData',this.submitForm,this.groupData,this.baoZhangData);
+          // let startTime = util.formatDate(this.submitForm.startDayTime);
+
+
+          let startTime  = moment(this.submitForm.startDayTime).format('YYYY-MM-DD HH:mm:ss');
+          let endTime  = moment(this.submitForm.endDayTime).format('YYYY-MM-DD HH:mm:ss');
+          console.log('startTime endTime',startTime,endTime);
+          this.form.setFieldsValue({
+            typeId: this.submitForm.typeId,
+            name: this.submitForm.name,
+            dayRange: [moment(startTime,'YYYY-MM-DD HH:mm:ss'),moment(startTime,'YYYY-MM-DD HH:mm:ss')]
+          });
+          this.dataLoading = false;
         });
       },
       reset(){
         this.form.setFieldsValue({
           typeId: '',
           name: '',
-          rangeDay: undefined
+          dayRange: undefined
         });
         this.submitForm = Object.assign({},this.$options.data()['submitForm']);
         this.disablePeopleKey = [];
@@ -491,7 +506,7 @@ const groupColumns = [{
             this.addNewEmergencyYuAn(this.submitForm).then((res)=>{
               console.log('addNewEmergencyYuAn',res);
               this.$notification['success']({
-                message: '成功通知'
+                message: '保存成功'
               });
               if(type=='save'){
                 this.saveLoading = false;
@@ -537,9 +552,10 @@ const groupColumns = [{
       //点击结束审核按钮触发
       completeCheck(){
         //调取接口改变预案的状态（已同意->未开始）
-        //setEmergencyYuAnToFinishReview
         this.setEmergencyYuAnToFinishReview({id:this.submitForm.id}).then((res)=>{
           console.log('completeCheck',res);
+          this.$emit('refreshList');
+          this.reset();
           this.addEditDialogVisible = false;
         });
       },
@@ -562,6 +578,15 @@ const groupColumns = [{
   .yuan_dialog_body {
     height: 500px;
     position: relative;
+    .loading{
+      position: absolute;
+      top:0;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index: 10;
+      background-color: rgba(255,255,255,0.8);
+    }
     .icon_delete,
     .icon_add {
       font-size: 18px;

@@ -18,10 +18,41 @@
       <a-checkbox :indeterminate="indeterminate" @change="onCheckAllChange" :checked="checkAll">全部资源</a-checkbox>
       <a-checkbox-group :options="plainOptions" v-model="checkedList" @change="onChange" />
     </div>
+    <div class="person-info-dialog">
+      <div class="person-info-dialog-header" flex="main:justify cross:center">
+        <span>人员信息</span>
+        <a-icon type="close" @click="closeInfoDialog" />
+      </div>
+      <div class="person-info-dialog-body" flex="dir:left">
+          <div class="info-body-left" flex="main:center cross:center">
+            <img src="~@img/avatar_boy.png"/>
+            <!--<img v-else src="~@img/avatar_girl.png"/>-->
+          </div>
+          <div class="info-body-right">
+            <div flex="dir:left cross:center main:justify">
+              <span>王昭君</span>
+              <span>在线</span>
+            </div>
+            <div flex="dir:left cross:center">
+              <cg-icon-svg name="telephone" class="svg_icon_telephone"></cg-icon-svg>
+              <span>15212456321</span>
+            </div>
+            <div flex="dir:left cross:center">
+              <cg-icon-svg name="menu-section" class="svg_icon_section"></cg-icon-svg>
+              <span>信息采集中心</span>
+            </div>
+          </div>
+      </div>
+      <div class="info-body-operation" flex="cross:center">
+        <span @click="handleVideo">远程视频</span>
+        <span @click="handlePhone">远程通话</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import { mapActions } from 'vuex'
   import ControlYuAns from './components/ControlYuAns';
   import MonitorYuAn from './components/MonitorYuAn';
   const plainOptions = [{ label: '人力资源', value: 'people' },
@@ -45,6 +76,9 @@ export default {
       plainOptions: plainOptions,
       checkedList: ['people','video'],
       caseType: 'all',
+      info: {
+
+      }
     }
   },
   created(){
@@ -58,6 +92,7 @@ export default {
     }
   },
   mounted() {
+    this.getUserInfo();
   },
   watch:{
     '$route.query'(val){
@@ -83,6 +118,7 @@ export default {
     this.reload()
   },
   methods:{
+    ...mapActions('cgadmin/account', ['login']),
     reload() {
       this.$router.replace('/refresh')
     },
@@ -98,6 +134,24 @@ export default {
       })
     },
 
+    getUserInfo(){
+      this.login().then((res)=>{
+        console.log('userInfo',res);
+      });
+    },
+    handleVideo(){
+      this.$notification['Warning']({
+        message: '还没有接入插件，无法使用'
+      });
+    },
+    handlePhone(){
+      this.$notification['Warning']({
+        message: '还没有接入插件，无法使用'
+      });
+    },
+    closeInfoDialog(){
+
+    },
     //绘制地图--添加资源显示
     drawMap(){
 
@@ -198,6 +252,72 @@ export default {
     background-color: #ffffff;
     padding: 0px 20px;
     line-height: 30px;
+  }
+  .person-info-dialog{
+    width: 240px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    .person-info-dialog-header{
+      padding: 0px 10px;
+      height: 30px;
+      width: 100%;
+      border-bottom: 1px solid #eee;
+      i {
+        font-size: 16px;
+        cursor: pointer;
+        color: #868e96;
+        &:hover {
+          color: #343434;
+        }
+      }
+    }
+    .person-info-dialog-body{
+      height:80px;
+      width: 100%;
+      .info-body-left{
+        width: 100px;
+        height: 100%;
+        img{
+          width: 50px;
+          height: 50px;
+        }
+      }
+      .info-body-right{
+        padding-top: 5px;
+        >div{
+          font-family: PingFang-SC-Regular;
+          font-size: 13px;
+          color: #333333;
+          line-height: 24px;
+          .svg_icon_telephone,.svg_icon_section{
+            width: 14px;
+            height: 14px;
+            color: #00a5ff;
+            margin-right: 10px;
+          }
+          &:first-child{
+            span:first-child{
+              font-size: 16px;
+              color: #222;
+            }
+          }
+        }
+      }
+    }
+    .info-body-operation{
+      height: 30px;
+      width: 100%;
+      border-top: 1px solid #eee;
+      span{
+        display: inline-block;
+        width: 50%;
+        cursor: pointer;
+        text-align: center;
+        &:hover{
+          color: #00a5ff;
+        }
+      }
+    }
   }
 }
 </style>

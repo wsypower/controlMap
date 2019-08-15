@@ -80,7 +80,7 @@ export function addNewEmergencyYuAn(data){
 export function deleteEmergencyYuAn(data){
     console.log('api:deleteEmergencyYuAn',data);
     return request({
-        url: '@test/deleteEmergencyYuAn',
+        url: 'plan/deleteEmergencyYuAn',
         method: 'post',
         data
     })
@@ -128,7 +128,7 @@ export function getEmergencyYuAnById(data){
 export function setEmergencyYuAnToPass(data){
   console.log('api:setEmergencyYuAnToPass',data);
   return request({
-    url: '@test/setEmergencyYuAnToPass',
+    url: 'plan/setEmergencyYuAnToPass',
     method: 'post',
     data
   })
@@ -159,28 +159,6 @@ export function setEmergencyYuAnToBack(data){
 }
 
 /**
- * @description 设置某个预案为模板预案
- * @author moxuejuan
- * @date 2019-08-12 10:53:20
- * @param {String} Id 预案Id
- * @method：POST
- * @response：{
- *     data:[{
- *
- *     }]
- * }
- */
-
-export function setEmergencyYuAnToTemplate(data){
-  console.log('api:setEmergencyYuAnToTemplate',data);
-  return request({
-    url: '@test/setEmergencyYuAnToTemplate',
-    method: 'post',
-    data
-  })
-}
-
-/**
  * @description 设置某条预案为结束审核
  * @author moxuejuan
  * @date 2019-08-12 10:53:20
@@ -196,7 +174,29 @@ export function setEmergencyYuAnToTemplate(data){
 export function setEmergencyYuAnToFinishReview(data){
   console.log('api:setEmergencyYuAnToFinishReview',data);
   return request({
-    url: '@test/setEmergencyYuAnToFinishReview',
+    url: 'plan/setEmergencyYuAnToFinishReview',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * @description 设置某个预案为模板预案
+ * @author moxuejuan
+ * @date 2019-08-12 10:53:20
+ * @param {String} Id 预案Id
+ * @method：POST
+ * @response：{
+ *     data:[{
+ *
+ *     }]
+ * }
+ */
+
+export function setEmergencyYuAnToTemplate(data){
+  console.log('api:setEmergencyYuAnToTemplate',data);
+  return request({
+    url: 'plan/setEmergencyYuAnToTemplate',
     method: 'post',
     data
   })
@@ -218,7 +218,7 @@ export function setEmergencyYuAnToFinishReview(data){
 export function getTemplateYuAnDataList(data){
   console.log('api:getTemplateYuAnDataList',data);
   return request({
-    url: '@test/getTemplateYuAnDataList',
+    url: 'plan/getTemplateYuAnDataList?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })

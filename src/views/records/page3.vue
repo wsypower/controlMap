@@ -33,8 +33,9 @@
               <div class="top"></div>
               <div class="item_tool_panel" v-if="item.creatorid == userId">
                 <a-icon v-if="(item.statusId!='02'&&item.statusId<'05') || item.statusId=='08'" type="edit" @click="editYuAn(item.id)"/>
-                <a-icon v-if="item.isTemplate" type="heart" theme="filled" @click="setYuAn(item)"/>
-                <a-icon v-else type="heart" color="#fe7a83" @click="setYuAn(item)"/>
+
+                <a-icon v-if="item.isTemplate==='0'" type="heart" color="#fe7a83" @click="setYuAn(item)"/>
+                <a-icon v-else type="heart" theme="filled" @click="setYuAn(item)"/>
                 <a-icon v-if="item.statusId!='02'&&item.statusId!='06'" type="delete" @click="deleteYuAn(item.id,index)"/>
               </div>
               <div class="show_content_panel">
@@ -238,8 +239,13 @@
 
       setYuAn(item){
         this.setEmergencyYuAnToTemplate({id:item.id}).then((res)=>{
-          console.log(res);
-          console.log('已设置为模板预案');
+          if(item.isTemplate==='0'){
+            item.isTemplate = '1';
+          }
+          else{
+            item.isTemplate = '0';
+          }
+
         });
       },
 
@@ -253,8 +259,7 @@
           cancelText: '取消',
           onOk() {
             _this.deleteEmergencyYuAn({id: id}).then((res)=>{
-              console.log(res);
-              _this.yuanDataList.splice(index,1);
+              _this.getTuAnDataList();
             });
 
           },
@@ -264,7 +269,6 @@
         });
       },
       toMonitorPage(item){
-        // this.$router.push('/emergency?yuAnId=1452364');
         this.$router.push(
           {
             path:'/emergency',

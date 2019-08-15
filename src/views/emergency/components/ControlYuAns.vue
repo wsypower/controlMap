@@ -45,8 +45,8 @@
       },
       mounted(){
         this.dataLoading = true;
-        this.getEmergencyYuAnDataList({statusId: '005'}).then((res)=>{
-          this.yuAnList = res.data;
+        this.getEmergencyYuAnDataList({statusId: '06'}).then((res)=>{
+          this.yuAnList = res.list;
           this.totalSize = res.total;
           this.dataLoading = false;
         });

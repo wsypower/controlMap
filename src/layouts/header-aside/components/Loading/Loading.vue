@@ -1,6 +1,6 @@
 <template>
   <div class="spinning">
-    <a-spin :spinning="Spinning" size="large" :indicator="indicator">
+    <a-spin :spinning="false" size="large" :indicator="indicator">
       <slot></slot>
     </a-spin>
   </div>
