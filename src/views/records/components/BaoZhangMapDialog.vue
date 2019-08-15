@@ -412,7 +412,6 @@
         },
         //保存保障点位设置
         saveBaoZhangInfo(){
-
           console.log('this.baoZhangFormData',this.baoZhangFormData);
           console.log('this.opType',this.opType);
           if(this.opType == 'edit'){
