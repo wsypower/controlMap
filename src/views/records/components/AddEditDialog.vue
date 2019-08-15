@@ -1,5 +1,5 @@
 <template>
-  <a-modal :title="dialogTitle" v-model="addEditDialogVisible" class="add-edit-dialog" width="90%" @cancel="handleCancel">
+  <a-modal :title="dialogTitle" v-model="addEditDialogVisible" class="add-edit-dialog" width="90%" :maskClosable="false" @cancel="handleCancel">
     <div v-if="operateType == 'add'" class="template-panel">
       <label>选择模板创建：</label>
       <a-select v-model="templateId" placeholder="请选择模板" style="width: 180px;" @change="handleUserTemplate">
@@ -123,7 +123,7 @@
                 <span slot="action" slot-scope="text, record, index">
                   <a-popconfirm
                     v-if="groupData.length > 1"
-                    title="Sure to delete?"
+                    title="确定删除这个组吗？"
                     @confirm="() => deleteGroup(index)"
                   >
                     <a-icon type="minus-circle" class="icon_delete" />

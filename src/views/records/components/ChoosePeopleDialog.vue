@@ -1,5 +1,8 @@
 <template>
-    <a-modal title="人员选择" v-model="choosePeopleDialogVisible" width="400px" @cancel="handleCancelForPeople" class="choose-people-dialog">
+    <a-modal title="人员选择" v-model="choosePeopleDialogVisible" width="400px"
+             :maskClosable="false"
+             @cancel="handleCancelForPeople"
+             class="choose-people-dialog">
         <div style="height: 400px;position:relative;" class="yuan_dialog_body">
             <cg-container scroll>
                 <a-tree checkable showIcon v-model="checkedKeys"
@@ -42,19 +45,6 @@
         }
       },
       computed:{
-        // peopleList:function(){
-        //   return {
-        //     "0-0-0":"傅建民",
-        //     "0-0-1":"董亨芳",
-        //     "0-0-2":"顾 祎",
-        //     "0-1-0":"郑波立",
-        //     "0-1-1":"金 涛",
-        //     "0-1-2":"周 军",
-        //     "1-0-0":"郑 明",
-        //     "1-0-1":"俞 君",
-        //     "1-0-2":"邵群艳"
-        //   }
-        // },
         checkedPeopleKeys: function(){
           let arr = this.checkedKeys.reduce((res,item)=>{
             if(this.peopleList[item]){

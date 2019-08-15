@@ -1,5 +1,9 @@
 <template>
-    <a-modal title="选择审核人员" v-model="chooseReViewPersonDialogVisible" width="400px" @cancel="handleCancelForCheck">
+    <a-modal title="选择审核人员"
+             v-model="chooseReViewPersonDialogVisible"
+             width="400px"
+             :maskClosable="false"
+             @cancel="handleCancelForCheck">
         <div class="yuan_dialog_body">
             <span>审核人员：</span>
             <a-select v-model="reviewPerson"
