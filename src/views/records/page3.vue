@@ -372,8 +372,7 @@
           {
             path:'/emergency',
             query:{
-              yuAnId: item.id,
-              mapIdList: item.mapIdList.join(',')
+              yuAnId: item.id
             }
           }
         )

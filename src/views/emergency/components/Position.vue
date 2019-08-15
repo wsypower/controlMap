@@ -1,6 +1,6 @@
 <template>
     <div class="icon_position">
-        <cg-icon-svg name="position" class="svg_icon_position" :class="{active: isActive}"></cg-icon-svg>
+        <cg-icon-svg name="position" class="svg_icon_position"></cg-icon-svg>
         <span v-if="content>=0">{{content}}</span>
     </div>
 </template>
@@ -31,7 +31,7 @@
         position: relative;
         .svg_icon_position{
             font-size: 16px;
-            color: #2b90f3;
+            color: inherit;
             width: 100%;
             height: 100%;
             &.active{

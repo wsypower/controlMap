@@ -2,24 +2,63 @@
   <div class="page">
     <!-- 地图控件注入地址 -->
     <LayoutMap ref="olMap"></LayoutMap>
-    <monitor-yu-an v-if="yuAnId"></monitor-yu-an>
-    <control-yu-ans v-else></control-yu-ans>
-    <div class="operate-panel">
-      <div class="quantu" @mouseenter="active=true" @mouseleave="active=false">
-        <span>圈图工具</span>
-        <div class="choose-panel" :class="{active: active}" flex="cross:center">
-          <span @click="drawArea" class="area"><cg-icon-svg name="duobianxing" class="svg_icon"></cg-icon-svg></span>
-          <span @click="drawLine" class="line"><cg-icon-svg name="zhexian" class="svg_icon"></cg-icon-svg></span>
-          <span @click="drawDot" class="dot"><cg-icon-svg name="dot" class="svg_icon"></cg-icon-svg></span>
-        </div>
+    <control-yu-ans :yuAnId="yuAnId"></control-yu-ans>
+    <div class="function__buttons" flex>
+      <div flex="dir:top" class="function__buttons_items">
+        <!-- 圈图工具 -->
+        <a-tooltip placement="left" title="圈图工具">
+          <a-button type="primary" class="function__buttons_item" @click="showDrawer">
+            <a-icon type="highlight" theme="twoTone" />
+          </a-button>
+        </a-tooltip>
+
+        <!-- 对讲调度 -->
+        <a-tooltip placement="left" title="对讲调度">
+          <a-button type="primary" class="function__buttons_item">
+            <a-icon type="message" theme="twoTone" />
+          </a-button>
+        </a-tooltip>
+        <!-- 视频会议 -->
+        <a-tooltip placement="left" title="视频会议">
+          <a-button type="primary" class="function__buttons_item">
+            <a-icon type="video-camera" theme="twoTone" />
+          </a-button>
+        </a-tooltip>
       </div>
-      <a-button type="primary" >对讲调度</a-button>
-      <a-button type="primary" >视频会议</a-button>
     </div>
-    <div class="resource-panel">
+    <div class="resource-panel" flex="cross:center">
       <a-checkbox :indeterminate="indeterminate" @change="onCheckAllChange" :checked="checkAll">全部资源</a-checkbox>
       <a-checkbox-group :options="plainOptions" v-model="checkedList" @change="onChange" />
     </div>
+
+    <!-- 圈图工具抽屉 -->
+    <a-drawer
+            :width="wrapwidth"
+            placement="right"
+            :closable="false"
+            @close="onClose"
+            :visible="visible"
+            :destroyOnClose="true"
+            :maskClosable="false"
+            :mask="false"
+            :z-index="1500"
+            :getContainer="'.function__buttons'"
+            :wrapClassName="'funtion__drawer'"
+    >
+      <cg-container scroll>
+        <div class="choose-panel" :class="{active: active}" flex="dir:top cross:center">
+          <span @click="drawArea" class="area">
+            <cg-icon-svg name="duobianxing" class="svg_icon"></cg-icon-svg>
+          </span>
+          <span @click="drawLine" class="line">
+            <cg-icon-svg name="zhexian" class="svg_icon"></cg-icon-svg>
+          </span>
+          <span @click="drawDot" class="dot">
+            <cg-icon-svg name="dot" class="svg_icon"></cg-icon-svg>
+          </span>
+        </div>
+      </cg-container>
+    </a-drawer>
     <div class="person-info-dialog">
       <div class="person-info-dialog-header" flex="main:justify cross:center">
         <span>人员信息</span>
@@ -63,7 +102,6 @@
   import { mapActions } from 'vuex'
   import LayoutMap from '@/views/map/olMap.vue'
   import ControlYuAns from './components/ControlYuAns';
-  import MonitorYuAn from './components/MonitorYuAn';
   import { MapManager } from '@/utils/util.map.manage';
   import {getAllVideo,getAllPeople} from '@/api/map/service'
   import { peopleStyle,videoStyle } from '@/utils/util.map.style'
@@ -80,12 +118,11 @@ export default {
   name: 'page6',
   components:{
     ControlYuAns,
-    MonitorYuAn,
     LayoutMap
   },
   data() {
     return {
-      yuAnId: null,
+      yuAnId: '',
       active: false,
       indeterminate: false,
       checkAll: true,
@@ -96,22 +133,26 @@ export default {
         'video':null
       },
       caseType: 'all',
-      info: {
-
-      }
+      info: {},
+      visible: true
+    }
+  },
+  computed: {
+    /* 滑动抽屉的宽度 */
+    wrapwidth() {
+      return this.visible ? 50 : 0
     }
   },
   created(){
     if(this.$route.query.yuAnId){
       this.yuAnId = this.$route.query.yuAnId;
-      this.mapIdList = this.$route.query.mapIdList.split(',');
     }
     else{
-      this.yuAnId = null;
-      this.mapIdList = [];
+      this.yuAnId = '';
     }
   },
   mounted() {
+    this.visible = false
     this.$nextTick().then(() => {
       map = this.$refs.olMap.getMap();
       mapManager = new MapManager(map);
@@ -131,11 +172,9 @@ export default {
       console.log('$route.query',val);
       if(this.$route.query.yuAnId){
         this.yuAnId = this.$route.query.yuAnId;
-        this.mapIdList = this.$route.query.mapIdList.split(',');
       }
       else{
-        this.yuAnId = null;
-        this.mapIdList = [];
+        this.yuAnId = '';
       }
     },
     checkedList(val){
@@ -151,6 +190,14 @@ export default {
   },
   methods:{
     ...mapActions('emergency/common', ['getUserInfo']),
+    //抽屉控制
+    showDrawer() {
+      this.visible = !this.visible
+    },
+    //抽屉关闭的回调
+    onClose() {
+      this.visible = false
+    },
     initMapData(){
       getAllVideo().then(data=>{
         this.layerList['video']=mapManager.addVectorLayerByFeatures(data,videoStyle(),2)
@@ -228,85 +275,138 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page {
+  .page {
   width: 100%;
   height: 100%;
   background-color: #f4f4f5;
   padding-top: 60px;
   position: relative;
-  .operate-panel{
+  .operate-panel {
     position: absolute;
-    left: 330px;
+    right: 0px;
     top: 80px;
-    .quantu{
+    .quantu {
       height: 32px;
       line-height: 32px;
       margin-bottom: 10px;
       cursor: pointer;
       position: relative;
       width: 200px;
-      overflow: hidden;
-      >span{
-        display:inline-block;
+      // overflow: hidden;
+      > span {
+        display: inline-block;
         text-align: center;
-          background-color: #1890ff;
-          font-size: 14px;
-          color:#ffffff;
-          padding: 0px 15px;
+        background-color: #1890ff;
+        font-size: 14px;
+        color: #ffffff;
+        padding: 0px 15px;
         border-radius: 4px;
         position: absolute;
         z-index: 10;
       }
-      .choose-panel{
-        position: absolute;
-        height: 100%;
-        background-color: #ffffff;
-        z-index: 9;
-        transform: translateX(-30px);
-        transition: transform 0.8s;
-        &.active{
-          transform: translateX(86px);
-        }
-        span{
-          display:inline-block;
-          width: 28px;
-          height: 28px;
-          line-height: 28px;
-          text-align: center;
-          vertical-align: middle;
-          cursor: pointer;
-          margin: 0px 5px;
-          border-radius: 4px;
-          &.area{
-            background-color: #b19bf6;
-          }
-          &.line{
-            background-color: #42c199;
-          }
-          &.dot{
-            background-color: #fbb76e;
-          }
-          .svg_icon{
-            width: 14px;
-            height: 14px;
-            color:#ffffff;
-          }
-        }
-      }
     }
-    button{
+    button {
       display: block;
       margin-bottom: 10px;
     }
   }
-  .resource-panel{
+  /deep/.ant-checkbox-wrapper {
+    border-right: 1px solid #dddddd;
+    margin-left: 10px;
+    @include last(1) {
+      margin-left: 0;
+      border: none;
+    }
+  }
+  .resource-panel {
     position: absolute;
+    @include center-translate(x);
     top: 80px;
-    left: 600px;
-    height: 30px;
+    height: 40px;
     background-color: #ffffff;
     padding: 0px 20px;
-    line-height: 30px;
+    // line-height: 30px;
+    border-radius: 6px;
+    box-shadow: 3px 3px 6px 2px #d8dbdc73;
+  }
+  .function__buttons {
+    position: absolute;
+    right: 0px;
+    top: 53px;
+    // background-color: red;
+    height: calc(100% - 100px);
+    transition: all 0.4s;
+    min-height: 250px; // width: auto;
+    .function__buttons_items {
+      position: relative;
+      padding-top: 30px;
+      transition: all 0.4s;
+    }
+    .function__buttons_item {
+      width: 40px;
+      height: 40px;
+      background-color: #fff;
+      color: #028efc;
+      box-shadow: 0px 2px 10px 0px rgba(6, 61, 114, 0.2);
+      border-radius: 4px;
+      padding: 0;
+      font-size: 19px;
+      border: none;
+      margin-bottom: 20px;
+      margin-right: 10px;
+      // i {
+      //   font-size: 16px;
+      // }
+      // /deep/.anticon {
+      //   font-size: 16px;
+      // }
+    }
+    /deep/.funtion__drawer {
+      position: relative;
+      transition: all 0.4s;
+      width: auto;
+      padding-top: 30px;
+      .ant-drawer-content-wrapper {
+        position: initial;
+        height: 100%;
+        transition: all 0.3s;
+        margin-right: 5px;
+        border-radius: 5px;
+        .ant-drawer-content {
+          border-radius: 5px;
+        }
+        .choose-panel {
+          width: 100%;
+          padding-top: 10px;
+          span {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            margin: 0px 5px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            &.area {
+              background-color: #b19bf6;
+            }
+            &.line {
+              background-color: #42c199;
+            }
+            &.dot {
+              background-color: #fbb76e;
+            }
+            .svg_icon {
+              width: 14px;
+              height: 14px;
+              color: #ffffff;
+            }
+          }
+        }
+      }
+    }
   }
   .person-info-dialog{
     width: 240px;
@@ -387,6 +487,5 @@ export default {
       cursor: pointer;
     }
   }
-
 }
 </style>

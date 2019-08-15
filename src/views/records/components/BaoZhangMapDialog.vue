@@ -257,6 +257,7 @@
                 })
               });
             }
+            debugger;
             getEmergencyFeatures(idList[0],'Point').then(data=>{
               console.log('查询点',data);
               source.addFeatures(data);
