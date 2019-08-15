@@ -256,18 +256,24 @@
                   })
                 });
               }
-              getEmergencyFeatures(idList[0],'Point').then(data=>{
-                console.log('查询点',data);
-                source.addFeatures(data);
-              });
-              getEmergencyFeatures(idList[1],'LineString').then(data=>{
-                console.log('查询线',data);
-                source.addFeatures(data);
-              });
-              getEmergencyFeatures(idList[2],'Polygon').then(data=>{
-                console.log('查询面',data);
-                source.addFeatures(data);
-              });
+              if(idList[0]){
+                getEmergencyFeatures(idList[0],'Point').then(data=>{
+                  console.log('查询点',data);
+                  source.addFeatures(data);
+                });
+              }
+              if(idList[1]){
+                getEmergencyFeatures(idList[1],'LineString').then(data=>{
+                  console.log('查询线',data);
+                  source.addFeatures(data);
+                });
+              }
+              if(idList[2]){
+                getEmergencyFeatures(idList[2],'Polygon').then(data=>{
+                  console.log('查询面',data);
+                  source.addFeatures(data);
+                });
+              }
               const _this=this;
               setTimeout(()=>{
                 console.log('==source==',source)
