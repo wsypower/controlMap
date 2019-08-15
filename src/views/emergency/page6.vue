@@ -91,6 +91,16 @@ export default {
       checkAll: true,
       plainOptions: plainOptions,
       checkedList: ['people','video'],
+      emergencyList:[
+        {
+          type:'people',
+          layer:null
+        },
+        {
+          type:'video',
+          layer:null
+        }
+      ],
       layerList:{
         'people':null,
         'video':null
@@ -140,7 +150,7 @@ export default {
     },
     checkedList(val){
       console.log(val);
-      this.drawMap();
+      this.drawMap(val);
     }
   },
   beforeRouteUpdate(to, from, next) {
@@ -152,13 +162,11 @@ export default {
   methods:{
     ...mapActions('emergency/common', ['getUserInfo']),
     initMapData(){
-      getAllVideo().then(data=>{
-        this.layerList['video']=mapManager.addVectorLayerByFeatures(data,videoStyle(),2)
-        console.log(data);
-      })
       getAllPeople().then(data=>{
-        console.log(data);
-        this.layerList['people']=mapManager.addVectorLayerByFeatures(data,peopleStyle(),2)
+        this.emergencyList[0].layer=mapManager.addVectorLayerByFeatures(data,peopleStyle(),2)
+      })
+      getAllVideo().then(data=>{
+        this.emergencyList[1].layer=mapManager.addVectorLayerByFeatures(data,videoStyle(),2)
       })
     },
     //地图点击事件处理器
@@ -208,8 +216,14 @@ export default {
 
     },
     //绘制地图--添加资源显示
-    drawMap(){
-
+    drawMap(list){
+      for(let i=0;i<this.emergencyList.length;i++){
+        if(list.includes(this.emergencyList[i].type)){
+          this.emergencyList[i].layer.setVisible(true);
+        } else{
+          this.emergencyList[i].layer.setVisible(false);
+        }
+      }
     },
     //绘制地图--区域多边形
     drawArea(){
