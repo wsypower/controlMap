@@ -32,7 +32,7 @@
             <div v-for="(item, index) in yuanDataList" :key="item.id" class="item">
               <div class="top"></div>
               <div class="item_tool_panel" v-if="item.creatorid == userId">
-                <a-icon v-if="item.statusId<'05' || item.statusId=='08'" type="edit" @click="editYuAn(item.id)"/>
+                <a-icon v-if="(item.statusId!='02'&&item.statusId<'05') || item.statusId=='08'" type="edit" @click="editYuAn(item.id)"/>
                 <a-icon v-if="item.isTemplate" type="heart" theme="filled" @click="setYuAn(item)"/>
                 <a-icon v-else type="heart" color="#fe7a83" @click="setYuAn(item)"/>
                 <a-icon v-if="item.statusId!='02'&&item.statusId!='06'" type="delete" @click="deleteYuAn(item.id,index)"/>

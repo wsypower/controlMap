@@ -200,7 +200,7 @@
 
         clickBack(){
           //调取接口修改状态（待审核->已驳回）
-          this.setEmergencyYuAnToBack({id: this.yuAnId,reason:this.backReason}).then((res)=>{
+          this.setEmergencyYuAnToBack({id: this.yuAnId,backReason:this.backReason}).then((res)=>{
             console.log(res);
             this.backReason = '';
             this.backDialogVisible = false;

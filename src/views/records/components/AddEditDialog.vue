@@ -6,6 +6,10 @@
         <a-select-option v-for="(item, index) in templateList" :value="item.id" :key="index">{{item.name }}</a-select-option>
       </a-select>
     </div>
+    <div v-if="submitForm.statusId == '04'" class="template-panel">
+      <span>驳回原因：</span>
+      <span style="color:#ff4b72">{{submitForm.backReason}}</span>
+    </div>
     <div class="yuan_dialog_body">
       <cg-container scroll>
         <a-form :form="form">
@@ -162,6 +166,7 @@
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
 import moment from 'moment';
+import util from '@/utils/util'
 import ChoosePeopleDialog from './ChoosePeopleDialog'
 import ChooseReviewPersonDialog from './ChooseReviewPersonDialog'
 import BaoZhangMapDialog from './BaoZhangMapDialog'
@@ -248,7 +253,7 @@ const groupColumns = [{
 
         mapDialogVisible: false,
         sourcePeopleList: [],
-
+        drawFeatures: [],
         chooseReViewPersonDialogVisible: false,
       }
     },
@@ -321,11 +326,16 @@ const groupColumns = [{
               delete result.baoZhangData
               this.submitForm = Object.assign(this.$options.data()['submitForm'],result)
               console.log('edit init:submitForm groupData baoZhangData',this.submitForm,this.groupData,this.baoZhangData);
+              // let startTime = util.formatDate(this.submitForm.startDayTime);
 
+
+              let startTime  = moment(this.submitForm.startDayTime).format('YYYY-MM-DD HH:mm:ss');
+              let endTime  = moment(this.submitForm.endDayTime).format('YYYY-MM-DD HH:mm:ss');
+              console.log('startTime endTime',startTime,endTime);
               this.form.setFieldsValue({
                 typeId: this.submitForm.typeId,
                 name: this.submitForm.name,
-                rangeDay: [moment(new Date(this.submitForm.startDayTime)),moment(new Date(this.submitForm.endDayTime))]
+                dayRange: [moment(startTime,'YYYY-MM-DD HH:mm:ss'),moment(startTime,'YYYY-MM-DD HH:mm:ss')]
               });
             });
           }
@@ -429,19 +439,7 @@ const groupColumns = [{
       //保存地图数据
       saveDraw(data){
         console.log("==保存===",data);
-        let drawFeatures = data.drawFeatures;
-        if(drawFeatures.length>0){
-          postEmergencyFeatures('Point',drawFeatures['Point']).then(res=>{
-            console.log('==点数据==',res);
-          });
-          postEmergencyFeatures('LineString',drawFeatures['LineString']).then(res=>{
-            console.log('==线数据==',res);
-          });
-          postEmergencyFeatures('Polygon',drawFeatures['Polygon']).then(res=>{
-
-            console.log('==线数据==',res);
-          });
-        }
+        this.drawFeatures = data.drawFeatures;
         this.baoZhangData = data.allBaoZhangData;
       },
       saveData(type){
@@ -476,6 +474,20 @@ const groupColumns = [{
             this.submitForm.baoZhangDataStr = baoZhangDataStr;
 
             console.log('save/submit',this.submitForm);
+
+            if(this.drawFeatures.length>0){
+              postEmergencyFeatures('Point',this.drawFeatures['Point']).then(res=>{
+                console.log('==点数据==',res);
+              });
+              postEmergencyFeatures('LineString',this.drawFeatures['LineString']).then(res=>{
+                console.log('==线数据==',res);
+              });
+              postEmergencyFeatures('Polygon',this.drawFeatures['Polygon']).then(res=>{
+
+                console.log('==线数据==',res);
+              });
+            }
+
             this.addNewEmergencyYuAn(this.submitForm).then((res)=>{
               console.log('addNewEmergencyYuAn',res);
               this.$notification['success']({
@@ -494,6 +506,12 @@ const groupColumns = [{
           }
           else{
             this.$message.error('所有必填项都需要填写');
+            if(type=='save'){
+              this.saveLoading = false;
+            }
+            else{
+              this.loading = false;
+            }
           }
         });
       },

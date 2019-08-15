@@ -66,4 +66,31 @@ util.open = function(url) {
   document.body.removeChild(document.getElementById('cgadmin-link-temp'))
 }
 
+/**
+ * @description 时间戳格式的转化
+ * @author 莫雪娟
+ * @date 2019-08-15
+ * @param {String} url 地址
+ */
+util.formatDate = function(time, formatStr) {
+  let date = new Date(time);
+  let Y = date.getFullYear();
+  let M = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+  let D = date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate();
+  let h = date.getHours();
+  let m = date.getMinutes();
+  let s = date.getSeconds();
+  formatStr = formatStr || 'YYYY-MM-DD HH:mm:ss';
+  return formatStr.replace(/YYYY|MM|DD|HH|mm|ss/ig, function (matches) {
+    return ({
+      YYYY: Y,
+      MM: M,
+      DD: D,
+      HH: h,
+      mm: m,
+      ss: s
+    })[matches];
+  });
+}
+
 export default util
