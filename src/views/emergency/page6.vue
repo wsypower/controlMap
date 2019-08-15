@@ -1,5 +1,7 @@
 <template>
   <div class="page">
+    <!-- 地图控件注入地址 -->
+    <LayoutMap ref="olMap"></LayoutMap>
     <monitor-yu-an v-if="yuAnId"></monitor-yu-an>
     <control-yu-ans v-else></control-yu-ans>
     <div class="operate-panel">
@@ -16,25 +18,33 @@
     </div>
     <div class="resource-panel">
       <a-checkbox :indeterminate="indeterminate" @change="onCheckAllChange" :checked="checkAll">全部资源</a-checkbox>
-      <a-checkbox-group :options="plainOptions" v-model="checkedList" @change="onChange" />
+      <a-checkbox-group :options="plainOptions" v-model="checkedList" @change="onChange"/>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import LayoutMap from '@/views/map/olMap.vue'
   import ControlYuAns from './components/ControlYuAns';
   import MonitorYuAn from './components/MonitorYuAn';
+  import { MapManager } from '@/utils/util.map.manage';
+  import {getAllVideo,getAllPeople} from '@/api/map/service'
+  import { peopleStyle,videoStyle } from '@/utils/util.map.style'
+
   const plainOptions = [{ label: '人力资源', value: 'people' },
   { label: '视频监控', value: 'video' }];
   const allValues = plainOptions.reduce((res,item)=>{
     res.push(item.value);
     return res
   },[])
+  let map;
+  let mapManager;
 export default {
   name: 'page6',
   components:{
     ControlYuAns,
-    MonitorYuAn
+    MonitorYuAn,
+    LayoutMap
   },
   data() {
     return {
@@ -44,6 +54,10 @@ export default {
       checkAll: true,
       plainOptions: plainOptions,
       checkedList: ['people','video'],
+      layerList:{
+        'people':null,
+        'video':null
+      },
       caseType: 'all',
     }
   },
@@ -58,6 +72,17 @@ export default {
     }
   },
   mounted() {
+    this.$nextTick().then(() => {
+      map = this.$refs.olMap.getMap();
+      mapManager = new MapManager(map);
+      //初始化地图弹框
+      this.infoOverlay = mapManager.addOverlay({
+        element: this.$refs.infoOverlay
+      });
+      //绑定地图双击事件
+      map.on('click', this.mapClickHandler);
+      this.initMapData();
+    })
   },
   watch:{
     '$route.query'(val){
@@ -72,7 +97,7 @@ export default {
       }
     },
     checkedList(val){
-      console.log(val);
+      console.log('==list',val);
       this.drawMap();
     }
   },
@@ -83,6 +108,16 @@ export default {
     this.reload()
   },
   methods:{
+    initMapData(){
+      getAllVideo().then(data=>{
+        this.layerList['video']=mapManager.addVectorLayerByFeatures(data,videoStyle(),2)
+        console.log(data);
+      })
+      getAllPeople().then(data=>{
+        console.log(data);
+        this.layerList['people']=mapManager.addVectorLayerByFeatures(data,peopleStyle(),2)
+      })
+    },
     reload() {
       this.$router.replace('/refresh')
     },

@@ -49,18 +49,6 @@ export function postFeature(data) {
   })
 }
 
-/**
- * @description:获取摄像头监控列表接口
- * @author:sijianting
- * @createDate:2019/7/29 14:11
- */
-export function getVideoListApi() {
-  return request({
-    url: baseApi + 'point/getCamList',
-    method: 'post'
-  })
-}
-
 const apiMapping = {
   manager: 'getManageList',
   equip: '',
@@ -89,5 +77,27 @@ export function getEquipListApi(type) {
   return request({
     url: baseApi + 'iot/device/list?deviceType=' + type,
     method: 'post'
+  })
+}
+/**
+ * @description:获取视频接口
+ * @author:sijianting
+ * @createDate:2019/8/15 14:40
+ */
+export function getVideoListApi() {
+  return request({
+    url: 'http://115.231.81.227:8692/geapi/ge/camera/list.json?token=fa9f4750224743d2d26435636e16956a',
+    method: 'get'
+  })
+}
+/**
+ * @description:获取应急人员接口
+ * @author:sijianting
+ * @createDate:2019/8/15 15:25
+ */
+export function getPeopleListApi() {
+  return request({
+    url: 'http://192.168.71.154:8080/api/gps/onlineUser',
+    method: 'get'
   })
 }

@@ -440,7 +440,6 @@ const groupColumns = [{
             console.log('==线数据==',res);
           });
           postEmergencyFeatures('Polygon',drawFeatures['Polygon']).then(res=>{
-
             console.log('==线数据==',res);
           });
         }

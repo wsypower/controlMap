@@ -129,6 +129,10 @@ service.interceptors.response.use(
     const { code = 111 } = dataAxios
     // 根据 code 进行判断
     switch (code >>> 0) {
+      case 1:
+        // [ 示例 ] code === 111 代表code不存在，为外部接口直接返回结果
+        success(response.config.url)
+        return dataAxios
       case 111:
         // [ 示例 ] code === 111 代表code不存在，为外部接口直接返回结果
         success(response.config.url)
