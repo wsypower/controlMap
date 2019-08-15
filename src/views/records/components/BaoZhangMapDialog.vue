@@ -52,7 +52,7 @@
             <a-icon type="down"/>
           </a-button>
         </a-dropdown>
-        <a-button type="primary" @click="editMapFeatures" v-if="this.allBaoZhangData.length>0">编辑</a-button>
+        <a-button type="primary" @click="editMapFeatures" v-if="this.baoZhangData.length>0">编辑</a-button>
         <a-button type="primary" @click="selectGeometry">选择</a-button>
         <a-button type="primary" @click="clearSelectGeometry">删除选择</a-button>
       </div>
@@ -176,7 +176,7 @@
         },
         //保障视图是新增还是编辑操作
         mapOperateType:function(){
-          return this.allBaoZhangData.length>0?'edit':'add'
+          return this.baoZhangData.length>0?'edit':'add'
         }
       },
       watch:{
@@ -444,6 +444,7 @@
         },
         //保存图形数据
         saveMap() {
+          debugger;
           console.log('==编辑要素==',this.editFeatures)
           this.pointFeatures = [];
           this.lineFeatures = [];
@@ -497,12 +498,12 @@
           map.on('dblclick', this.mapClickHandler);
         },
         //重置视图
-      resetMap(){
-        this.allBaoZhangData = [];
-        if(vectorLayer){
-          vectorLayer.getSource().clear();
-        }
-      },
+        resetMap(){
+          this.allBaoZhangData = [];
+          if(vectorLayer){
+            vectorLayer.getSource().clear();
+          }
+        },
         //关闭保障视图弹窗
       handleCancel(){
         this.allBaoZhangData = [];

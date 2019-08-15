@@ -1,5 +1,7 @@
 <template>
   <div class="page">
+    <!-- 地图控件注入地址 -->
+    <LayoutMap ref="olMap"></LayoutMap>
     <monitor-yu-an v-if="yuAnId"></monitor-yu-an>
     <control-yu-ans v-else></control-yu-ans>
     <div class="operate-panel">
@@ -52,20 +54,29 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { mapActions } from 'vuex'
+  // import { mapActions } from 'vuex'
+  import LayoutMap from '@/views/map/olMap.vue'
   import ControlYuAns from './components/ControlYuAns';
   import MonitorYuAn from './components/MonitorYuAn';
+  import { MapManager } from '@/utils/util.map.manage';
+  import {getAllVideo,getAllPeople} from '@/api/map/service'
+  import { peopleStyle,videoStyle } from '@/utils/util.map.style'
+  import { AccountLogin } from '@/api/account/login'
+
   const plainOptions = [{ label: '人力资源', value: 'people' },
   { label: '视频监控', value: 'video' }];
   const allValues = plainOptions.reduce((res,item)=>{
     res.push(item.value);
     return res
   },[])
+  let map;
+  let mapManager;
 export default {
   name: 'page6',
   components:{
     ControlYuAns,
-    MonitorYuAn
+    MonitorYuAn,
+    LayoutMap
   },
   data() {
     return {
@@ -75,6 +86,10 @@ export default {
       checkAll: true,
       plainOptions: plainOptions,
       checkedList: ['people','video'],
+      layerList:{
+        'people':null,
+        'video':null
+      },
       caseType: 'all',
       info: {
 
@@ -92,7 +107,17 @@ export default {
     }
   },
   mounted() {
-    this.getUserInfoData();
+    this.$nextTick().then(() => {
+      map = this.$refs.olMap.getMap();
+      mapManager = new MapManager(map);
+      //初始化地图弹框
+      this.infoOverlay = mapManager.addOverlay({
+        element: this.$refs.infoOverlay
+      });
+      //绑定地图双击事件
+      map.on('click', this.mapClickHandler);
+      this.initMapData();
+    })
   },
   watch:{
     '$route.query'(val){
@@ -119,6 +144,25 @@ export default {
   },
   methods:{
     ...mapActions('emergency/common', ['getUserInfo']),
+    initMapData(){
+      getAllVideo().then(data=>{
+        this.layerList['video']=mapManager.addVectorLayerByFeatures(data,videoStyle(),2)
+        console.log(data);
+      })
+      getAllPeople().then(data=>{
+        console.log(data);
+        this.layerList['people']=mapManager.addVectorLayerByFeatures(data,peopleStyle(),2)
+      })
+    },
+    //地图点击事件处理器
+    mapClickHandler({ pixel, coordinate }) {
+        const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
+        if(feature){
+          this.getUserInfo(feature.getId());
+          // this.infoOverlay.setPosition(coordinate);
+          console.log('==点击feature==',feature);
+        }
+    },
     reload() {
       this.$router.replace('/refresh')
     },
