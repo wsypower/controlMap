@@ -280,12 +280,12 @@ const groupColumns = [{
       ...mapActions('emergency/emergency', ['addNewEmergencyYuAn','getEmergencyYuAnById','setEmergencyYuAnToFinishReview','getTemplateYuAnDataList']),
       ...mapActions('emergency/common', ['getYuAnTypeDataList']),
       init(){
-        this.getYuAnTypeDataList().then((res)=>{
-          this.yuAnTypeList = res;
+        this.getYuAnTypeDataList().then((r)=>{
+          this.yuAnTypeList = r;
           if(this.operateType=='edit'){
-            this.getEmergencyYuAnById({id:this.yuAnId}).then((res)=>{
-              console.log(res);
-              this.groupData = res.data.groupData.reduce((res,item)=>{
+            this.getEmergencyYuAnById({id:this.yuAnId}).then((result)=>{
+              console.log('getEmergencyYuAnById',result);
+              this.groupData = result.groupData.reduce((res,item)=>{
                 let temp={
                   key: item.id,
                   groupName: item.groupName,
@@ -299,10 +299,9 @@ const groupColumns = [{
                 },[])
                 res.push(temp)
                 return res
-              })
+              },[])
 
-              this.baoZhangData = res.data.baoZhangData;
-              res.data.baoZhangData.reduce((res,item)=>{
+              this.baoZhangData = result.baoZhangData.reduce((res,item)=>{
                 let temp = {
                   id: item.id,
                   mapId: item.mapId,
@@ -317,17 +316,16 @@ const groupColumns = [{
                 },[]);
                 res.push(temp)
                 return res
-              });
-              delete res.data.groupData
-              delete res.data.baoZhangData
-              this.submitForm = Object.assign(this.$options.data()['submitForm'],res.data)
-              console.log('init:submitForm',this.submitForm);
+              },[]);
+              delete result.groupData
+              delete result.baoZhangData
+              this.submitForm = Object.assign(this.$options.data()['submitForm'],result)
+              console.log('edit init:submitForm groupData baoZhangData',this.submitForm,this.groupData,this.baoZhangData);
 
-              console.log('init handle :this.groupData',this.groupData)
               this.form.setFieldsValue({
                 typeId: this.submitForm.typeId,
                 name: this.submitForm.name,
-                rangeDay: [moment(this.submitForm.startDayTime),moment(this.submitForm.endDayTime)]
+                rangeDay: [moment(new Date(this.submitForm.startDayTime)),moment(new Date(this.submitForm.endDayTime))]
               });
             });
           }
@@ -409,7 +407,7 @@ const groupColumns = [{
       //开启保障视图弹窗
       openBaoZhangMapDialog(){
         this.sourcePeopleList = this.getSourcePeolpleList();
-        console.log('sourcePeopleList',this.sourcePeopleList);
+        console.log('打开保障视图需要的数据',this.sourcePeopleList,this.baoZhangData);
         this.mapDialogVisible = true;
       },
       //获取保障视图重组后数据
