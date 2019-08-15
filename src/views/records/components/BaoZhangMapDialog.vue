@@ -200,20 +200,20 @@
       },
       mounted() {},
       updated(){
-        // this.$nextTick().then(() => {
+        this.$nextTick().then(() => {
         //   // let height = document.body.clientHeight - 300;
         //   // this.$refs.baoZhangBody.style.height= height + 'px';
         //   if(!map){
-        //     map = this.$refs.olMap.getMap();
-        //     mapManager = new MapManager(map);
-        //     //初始化地图弹框
-        //     this.infoOverlay = mapManager.addOverlay({
-        //       element: this.$refs.infoOverlay
-        //     });
-        //     //绑定地图双击事件
-        //     map.on('dblclick', this.mapClickHandler);
-        //   }
-        // })
+            // map = this.$refs.olMap.getMap();
+            // mapManager = new MapManager(map);
+            // //初始化地图弹框
+            // this.infoOverlay = mapManager.addOverlay({
+            //   element: this.$refs.infoOverlay
+            // });
+            // //绑定地图双击事件
+            // map.on('dblclick', this.mapClickHandler);
+          // }
+        })
       },
       methods:{
         init(){
@@ -230,52 +230,52 @@
               //绑定地图双击事件
               map.on('dblclick', this.mapClickHandler);
             }
-          })
-          this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
-          //编辑状态下通过图形id获取已保存的图形数据
-          if(this.allBaoZhangData.length>0){
-            const idList=filterMapId(this.allBaoZhangData);
-            console.log(idList);
-            if(!source){
-              source = new VectorSource({ wrapX: false });
-              vectorLayer = new VectorLayer({
-                source: source,
-                style: new Style({
-                  fill: new Fill({
-                    color: 'rgba(255, 255, 255, 0.3)'
-                  }),
-                  stroke: new Stroke({
-                    color: '#ffcc33',
-                    width: 2
-                  }),
-                  image: new CircleStyle({
-                    radius: 7,
+            this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
+            //编辑状态下通过图形id获取已保存的图形数据
+            if(this.allBaoZhangData.length>0){
+              const idList=filterMapId(this.allBaoZhangData);
+              console.log(idList);
+              if(!source){
+                source = new VectorSource({ wrapX: false });
+                vectorLayer = new VectorLayer({
+                  source: source,
+                  style: new Style({
                     fill: new Fill({
-                      color: '#ffcc33'
+                      color: 'rgba(255, 255, 255, 0.3)'
+                    }),
+                    stroke: new Stroke({
+                      color: '#ffcc33',
+                      width: 2
+                    }),
+                    image: new CircleStyle({
+                      radius: 7,
+                      fill: new Fill({
+                        color: '#ffcc33'
+                      })
                     })
                   })
-                })
+                });
+              }
+              getEmergencyFeatures(idList[0],'Point').then(data=>{
+                console.log('查询点',data);
+                source.addFeatures(data);
               });
+              getEmergencyFeatures(idList[1],'LineString').then(data=>{
+                console.log('查询线',data);
+                source.addFeatures(data);
+              });
+              getEmergencyFeatures(idList[2],'Polygon').then(data=>{
+                console.log('查询面',data);
+                source.addFeatures(data);
+              });
+              const _this=this;
+              setTimeout(()=>{
+                console.log('==source==',source)
+                _this.tempSource=source;
+                map.addLayer(vectorLayer);
+              },500)
             }
-            getEmergencyFeatures(idList[0],'Point').then(data=>{
-              console.log('查询点',data);
-              source.addFeatures(data);
-            });
-            getEmergencyFeatures(idList[1],'LineString').then(data=>{
-              console.log('查询线',data);
-              source.addFeatures(data);
-            });
-            getEmergencyFeatures(idList[2],'Polygon').then(data=>{
-              console.log('查询面',data);
-              source.addFeatures(data);
-            });
-            const _this=this;
-            setTimeout(()=>{
-              console.log('==source==',source)
-              _this.tempSource=source;
-              map.addLayer(vectorLayer);
-            },500)
-          }
+          })
         },
         //地图点击事件处理器
         mapClickHandler({ pixel, coordinate }) {
@@ -519,7 +519,7 @@
           }
         },
         //关闭保障视图弹窗
-      handleCancel(){
+        handleCancel(){
         this.allBaoZhangData = [];
         if(vectorLayer){
           vectorLayer.getSource().clear();

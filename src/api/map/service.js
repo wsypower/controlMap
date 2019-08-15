@@ -82,9 +82,18 @@ export async function postEmergencyFeatures(drawType, feature) {
     featurePrefix: 'jinkaiqu', //工作空间名称0
     featureType: featureType //图层名称
   }
-  let addFeature=feature.add.length>0?feature.add:null;
-  let updateFeature=feature.update.length>0?feature.update:null;
-  let deleteFeature =feature.delete.length>0?feature.delete:null;
+  let addFeature=null;
+  let updateFeature=null;
+  let deleteFeature=null;
+  if(feature.add){
+    addFeature=feature.add;
+  }
+  if(feature.update){
+    updateFeature=feature.update;
+  }
+  if(feature.delete){
+    deleteFeature=feature.delete;
+  }
   xml = format.writeTransaction(addFeature, updateFeature, deleteFeature, obj)
   const serializer = new XMLSerializer();
   //将参数转换为xml格式数据

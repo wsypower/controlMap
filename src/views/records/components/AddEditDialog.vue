@@ -494,19 +494,16 @@ const groupColumns = [{
             this.submitForm.baoZhangDataStr = baoZhangDataStr;
 
             console.log('save/submit',this.submitForm);
-
-            if(this.drawFeatures.length>0){
-              postEmergencyFeatures('Point',this.drawFeatures['Point']).then(res=>{
-                console.log('==点数据==',res);
-              });
-              postEmergencyFeatures('LineString',this.drawFeatures['LineString']).then(res=>{
-                console.log('==线数据==',res);
-              });
-              postEmergencyFeatures('Polygon',this.drawFeatures['Polygon']).then(res=>{
-
-                console.log('==线数据==',res);
-              });
-            }
+            debugger;
+            postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
+              console.log('==点数据==', res);
+            });
+            postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
+              console.log('==线数据==', res);
+            });
+            postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
+              console.log('==线数据==', res);
+            });
 
             this.addNewEmergencyYuAn(this.submitForm).then((res)=>{
               console.log('addNewEmergencyYuAn',res);
