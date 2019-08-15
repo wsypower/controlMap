@@ -8,10 +8,13 @@ import {
   postFeature,
   getVideoListApi,
   getResourceListApi,
-  getEquipListApi
+  getEquipListApi,
+  getPeopleListApi
 } from '@/api/map/map'
 import GeoJSON from 'ol/format/GeoJSON'
 import WFS from 'ol/format/WFS'
+import Feature from 'ol/Feature';
+import Point from 'ol/geom/Point';
 
 /**
  * @description：获取不同类型点位数据
@@ -145,4 +148,41 @@ export async function getTypeEquip(type) {
     }
   })
   return data.filter(Boolean)
+}
+
+/**
+ * @description:获取所有视频数据
+ * @author:sijianting
+ * @createDate:2019/8/15 14:46
+ */
+export async function getAllVideo() {
+  const result = await getVideoListApi();
+  const data = result.data.map(r => {
+    if (r.longitude.length > 0 && r.latitude.length > 0) {
+      r.position = [parseFloat(r.longitude), parseFloat(r.latitude)]
+      let feature = new Feature(new Point(r.position));
+      feature.setId(r.mpid);
+      return feature;
+    }
+  })
+  return data;
+}
+
+/**
+ * @description:获取所有应急人员数据
+ * @author:sijianting
+ * @createDate:2019/8/15 15:26
+ */
+export async function getAllPeople() {
+  const result = await getPeopleListApi();
+  console.log('取数据',result);
+  const data = result.map(r => {
+    if (r.x.length > 0 && r.y.length > 0) {
+      r.position = [parseFloat(r.x), parseFloat(r.y)]
+      let feature = new Feature(new Point(r.position));
+      feature.setId(r.userid);
+      return feature;
+    }
+  })
+  return data;
 }
