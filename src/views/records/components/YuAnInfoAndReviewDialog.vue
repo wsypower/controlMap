@@ -156,7 +156,7 @@
               let tempData = JSON.parse(JSON.stringify(this.yuAnInfo.baoZhangData));
               this.reviewBaoZhangMapData = tempData.reduce((res,item)=>{
                 let peopleList = item.peopleList.reduce((r,i)=>{
-                  r.push(i.name + '('+ item.groupName +')')
+                  r.push(i.name + '('+ i.groupName +')')
                   return r
                 },[]);
                 let temp = {
