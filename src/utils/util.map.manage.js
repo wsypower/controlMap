@@ -6,17 +6,24 @@
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 import GeoJSON from 'ol/format/GeoJSON'
-import Draw from 'ol/interaction/Draw.js';
-import { Modify, Snap } from 'ol/interaction.js';
-import Feature from 'ol/Feature';
-import MultiPolygon from 'ol/geom/MultiPolygon';
+import Draw from 'ol/interaction/Draw.js'
+import { Modify, Snap } from 'ol/interaction.js'
+import Feature from 'ol/Feature'
+import MultiPolygon from 'ol/geom/MultiPolygon'
 import { fromCircle } from 'ol/geom/Polygon'
 import Overlay from 'ol/Overlay'
+import Cluster from 'ol/source/Cluster'
+import Icon from 'ol/style/Icon'
+import Style from 'ol/style/Style'
+import Fill from 'ol/style/Fill'
+import Stroke from 'ol/style/Stroke'
+import Circle from 'ol/style/Circle'
+import Text from 'ol/style/Text';
 
 export class MapManager {
   constructor(map) {
-    this.map = map;
-    this.drawLayer = null;
+    this.map = map
+    this.drawLayer = null
   }
   /**
    * @description: 通过geojson格式数据添加矢量图层
@@ -52,6 +59,64 @@ export class MapManager {
     return vectorLayer
   }
   /**
+   * @description:
+   * @author:sijianting
+   * @createDate:2019/8/15 19:16
+   */
+  addClusterLayerByFeatures(features) {
+    const source = new VectorSource({
+      features: features
+    })
+    const clusterSource = new Cluster({
+      distance: 40,
+      source: source
+    })
+    let styleCache = {}
+    const clusters = new VectorLayer({
+      source: clusterSource,
+      style: function(feature) {
+        const size = feature.get('features').length
+        let style = styleCache[size];
+        if (!style) {
+          if (size > 1) {
+            style = [
+              new Style({
+                image: new Circle({
+                  radius: 18,
+                  stroke: new Stroke({
+                    color: '#fff'
+                  }),
+                  fill: new Fill({
+                    color: '#ffcc00'
+                  })
+                }),
+                text: new Text({
+                  text: size.toString(),
+                  font: '16px bold serif',
+                  fill: new Fill({
+                    color: '#000000'
+                  })
+                })
+              })
+            ]
+            styleCache[size] = style
+          } else {
+            style = [
+              new Style({
+                image: new Icon({
+                  src: '@/assets/mapImage/people-zx.png'
+                })
+              })
+            ]
+            styleCache[size] = style
+          }
+        }
+        return style
+      }
+    })
+    this.map.addLayer(clusters)
+  }
+  /**
    * @description: 添加弹框
    * @param {[type]} options [description]
    */
@@ -77,28 +142,28 @@ export class MapManager {
    * @param {Boolean}isFreeHand 是否自由绘制
    * @return {*}
    */
-  activateDraw(type,source) {
-    let draw;
+  activateDraw(type, source) {
+    let draw
     if (type !== 'None') {
       draw = new Draw({
         source: source,
         type: type
-      });
-      this.map.addInteraction(draw);
+      })
+      this.map.addInteraction(draw)
     }
-    return draw;
+    return draw
   }
   /**
    * @description: 激活修改图形功能
    * @return {*}
    */
-  activeModify(source){
-    let modify, snap;
-    modify = new Modify({ source: source});
-    this.map.addInteraction(modify);
-    snap = new Snap({ source: source});
-    this.map.addInteraction(snap);
-    return modify;
+  activeModify(source) {
+    let modify, snap
+    modify = new Modify({ source: source })
+    this.map.addInteraction(modify)
+    snap = new Snap({ source: source })
+    this.map.addInteraction(snap)
+    return modify
   }
   /**
    *  @description:取消激活绘制功能
@@ -112,13 +177,13 @@ export class MapManager {
    * @author:sijianting
    * @createDate:2019/7/26 9:52
    */
-  activeModifyFeature(modify, modifySource){
-    if(modify){
-      this.inactivateDraw(modify);
+  activeModifyFeature(modify, modifySource) {
+    if (modify) {
+      this.inactivateDraw(modify)
     }
-    modify = new Modify({ source: modifySource});
-    this.map.addInteraction(modify);
-    return modify;
+    modify = new Modify({ source: modifySource })
+    this.map.addInteraction(modify)
+    return modify
   }
   /**
    * @description:移除单个图层
@@ -127,8 +192,8 @@ export class MapManager {
   removeLayer(layer) {
     this.map.removeLayer(layer)
   }
-  getMap(){
-    return this.map;
+  getMap() {
+    return this.map
   }
 }
 
@@ -138,13 +203,13 @@ export class MapManager {
  * @createDate:2019/7/25 14:56
  */
 export function filterMeetingPeople(feature, points) {
-  const geo = feature.getGeometry();
+  const geo = feature.getGeometry()
   const peoples = points.filter(p => {
-    if(geo.intersectsCoordinate(p.position)){
-      return p;
+    if (geo.intersectsCoordinate(p.position)) {
+      return p
     }
-  });
-  return peoples;
+  })
+  return peoples
 }
 /**
  * @description:
@@ -154,77 +219,74 @@ export function filterMeetingPeople(feature, points) {
 export function filterMapId(data) {
   //点查询idlist
   const pointList = data.filter(p => {
-    if(p.mapType=='Point'){
-      return p;
+    if (p.mapType == 'Point') {
+      return p
     }
-  });
-  let searchPointId;
-  if(pointList.length>0){
-    searchPointId ='(';
-    for(let i=0;i<pointList.length;i++){
-      searchPointId+="'"+pointList[i].mapId+"'";
-      if(i+1<pointList.length){
-        searchPointId+=','
+  })
+  let searchPointId
+  if (pointList.length > 0) {
+    searchPointId = '('
+    for (let i = 0; i < pointList.length; i++) {
+      searchPointId += "'" + pointList[i].mapId + "'"
+      if (i + 1 < pointList.length) {
+        searchPointId += ','
       }
     }
-    searchPointId +=')';
+    searchPointId += ')'
   }
   //线查询idlist
   const lineList = data.filter(p => {
-    if(p.mapType=='LineString'){
-      return p;
+    if (p.mapType == 'LineString') {
+      return p
     }
-  });
-  let searchLineId;
-  if(lineList.length>0){
-    searchLineId ='(';
-    for(let i=0;i<lineList.length;i++){
-      searchLineId+="'"+lineList[i].mapId+"'";
-      if(i+1<lineList.length){
-        searchLineId+=','
+  })
+  let searchLineId
+  if (lineList.length > 0) {
+    searchLineId = '('
+    for (let i = 0; i < lineList.length; i++) {
+      searchLineId += "'" + lineList[i].mapId + "'"
+      if (i + 1 < lineList.length) {
+        searchLineId += ','
       }
     }
-    searchLineId +=')';
+    searchLineId += ')'
   }
   //面查询idlist
   const polygonList = data.filter(p => {
-    if(p.mapType=='Polygon'){
-      return p;
+    if (p.mapType == 'Polygon') {
+      return p
     }
-  });
-  let searchPolygonId;
-  if(polygonList.length>0){
-    searchPolygonId ='(';
-    for(let i=0;i<polygonList.length;i++){
-      searchPolygonId +="'"+polygonList[i].mapId+"'";
-      if(i+1<polygonList.length){
-        searchPolygonId+=','
+  })
+  let searchPolygonId
+  if (polygonList.length > 0) {
+    searchPolygonId = '('
+    for (let i = 0; i < polygonList.length; i++) {
+      searchPolygonId += "'" + polygonList[i].mapId + "'"
+      if (i + 1 < polygonList.length) {
+        searchPolygonId += ','
       }
     }
-    searchPolygonId +=')';
+    searchPolygonId += ')'
   }
-  return [searchPointId, searchLineId, searchPolygonId];
+  return [searchPointId, searchLineId, searchPolygonId]
 }
 /**
  * @description:
  * @author:sijianting
  * @createDate:2019/8/14 17:24
  */
-export function filterMapFeature(features) {
-
-}
+export function filterMapFeature(features) {}
 /**
  * @description:圆转面保存
  * @author:sijianting
  * @createDate:2019/7/26 15:22
  */
 export function circleToPloygon(feature) {
-  const polygon = fromCircle(feature.getGeometry(), 64,90);
-  let mutiPolygon = new MultiPolygon({});
-  mutiPolygon.appendPolygon(polygon);
+  const polygon = fromCircle(feature.getGeometry(), 64, 90)
+  let mutiPolygon = new MultiPolygon({})
+  mutiPolygon.appendPolygon(polygon)
   feature = new Feature({
     geometry: mutiPolygon
   })
-  return feature;
+  return feature
 }
-
