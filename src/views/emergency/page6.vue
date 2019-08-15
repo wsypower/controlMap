@@ -50,18 +50,23 @@
         <span @click="handlePhone">远程通话</span>
       </div>
     </div>
+    <div class="video-dialog">
+      <div class="close-panel">
+        <a-icon type="close" style="color: #ffffff" @click="closeVideoDialog" />
+      </div>
+      <my-video-player ref="myPlayer"></my-video-player>
+    </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  // import { mapActions } from 'vuex'
+  import { mapActions } from 'vuex'
   import LayoutMap from '@/views/map/olMap.vue'
   import ControlYuAns from './components/ControlYuAns';
   import MonitorYuAn from './components/MonitorYuAn';
   import { MapManager } from '@/utils/util.map.manage';
   import {getAllVideo,getAllPeople} from '@/api/map/service'
   import { peopleStyle,videoStyle } from '@/utils/util.map.style'
-  import { AccountLogin } from '@/api/account/login'
 
   const plainOptions = [{ label: '人力资源', value: 'people' },
   { label: '视频监控', value: 'video' }];
@@ -118,6 +123,8 @@ export default {
       map.on('click', this.mapClickHandler);
       this.initMapData();
     })
+    // this.$refs['myPlayer'].videoSrc = 'rtmp://192.168.10.3:1935/live/pag/192.168.10.2/7302/33092104001320012103/0/MAIN/TCP?checkinfo=ewogICAidGltZSIgOiAiMjAxOTA3MjBUMDkzNzE0WiIsCiAgICJ1cmwiIDogInJ0bXA6Ly8xOTIuMTY4LjEwLjM6MTkzNS9saXZlL3BhZy8xOTIuMTY4LjEwLjIvNzMwMi8zMzA5MjEwNDAwMTMyMDAxMjEwMy8wL01BSU4vVENQIgp9Cg%3D%3D&idinfo=EAAAAAAQAADh9flnMdrvl03BuMSu0R3r6u3NZ06p6V%2BogbhAGOojgXCnScym5Ls3Uf%2BOx6Ctcbc%3D'
+    // this.$refs['myPlayer'].playerOptions.sources[0].src = 'rtmp://192.168.10.3:1935/live/pag/192.168.10.2/7302/33092104001320012103/0/MAIN/TCP?checkinfo=ewogICAidGltZSIgOiAiMjAxOTA3MjBUMDkzNzE0WiIsCiAgICJ1cmwiIDogInJ0bXA6Ly8xOTIuMTY4LjEwLjM6MTkzNS9saXZlL3BhZy8xOTIuMTY4LjEwLjIvNzMwMi8zMzA5MjEwNDAwMTMyMDAxMjEwMy8wL01BSU4vVENQIgp9Cg%3D%3D&idinfo=EAAAAAAQAADh9flnMdrvl03BuMSu0R3r6u3NZ06p6V%2BogbhAGOojgXCnScym5Ls3Uf%2BOx6Ctcbc%3D'
   },
   watch:{
     '$route.query'(val){
@@ -195,6 +202,9 @@ export default {
       });
     },
     closeInfoDialog(){
+
+    },
+    closeVideoDialog(){
 
     },
     //绘制地图--添加资源显示
@@ -364,5 +374,19 @@ export default {
       }
     }
   }
+  .video-dialog{
+    width: 200px;
+    height: 200px;
+    .close-panel{
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      z-index: 10;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+  }
+
 }
 </style>

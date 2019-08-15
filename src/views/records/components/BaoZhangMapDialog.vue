@@ -200,23 +200,37 @@
       },
       mounted() {},
       updated(){
-        this.$nextTick().then(() => {
-          // let height = document.body.clientHeight - 300;
-          // this.$refs.baoZhangBody.style.height= height + 'px';
-          if(!map){
-            map = this.$refs.olMap.getMap();
-            mapManager = new MapManager(map);
-            //初始化地图弹框
-            this.infoOverlay = mapManager.addOverlay({
-              element: this.$refs.infoOverlay
-            });
-            //绑定地图双击事件
-            map.on('dblclick', this.mapClickHandler);
-          }
-        })
+        // this.$nextTick().then(() => {
+        //   // let height = document.body.clientHeight - 300;
+        //   // this.$refs.baoZhangBody.style.height= height + 'px';
+        //   if(!map){
+        //     map = this.$refs.olMap.getMap();
+        //     mapManager = new MapManager(map);
+        //     //初始化地图弹框
+        //     this.infoOverlay = mapManager.addOverlay({
+        //       element: this.$refs.infoOverlay
+        //     });
+        //     //绑定地图双击事件
+        //     map.on('dblclick', this.mapClickHandler);
+        //   }
+        // })
       },
       methods:{
         init(){
+          this.$nextTick().then(() => {
+            // let height = document.body.clientHeight - 300;
+            // this.$refs.baoZhangBody.style.height= height + 'px';
+            if(!map){
+              map = this.$refs.olMap.getMap();
+              mapManager = new MapManager(map);
+              //初始化地图弹框
+              this.infoOverlay = mapManager.addOverlay({
+                element: this.$refs.infoOverlay
+              });
+              //绑定地图双击事件
+              map.on('dblclick', this.mapClickHandler);
+            }
+          })
           this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
           //编辑状态下通过图形id获取已保存的图形数据
           if(this.allBaoZhangData.length>0){

@@ -1,4 +1,25 @@
 import request from '@/plugins/axios/axios'
+
+/**
+ * @description 获取我的待审核的个数
+ * @author moxuejuan
+ * @date 2019-08-15 10:53:20
+ * @param {Number} userId 请求参数
+ * @method：GET
+ * @response：{
+ *     count
+ * }
+ */
+
+export function getCountForMyToCheck(data){
+  console.log('api:getCountForMyToCheck',data);
+  return request({
+    url: 'plan/getCountForMyToCheck',
+    method: 'get',
+    params: data
+  })
+}
+
 /**
  * @description 获取所有已有的应急预案
  * @author moxuejuan

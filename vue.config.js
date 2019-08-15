@@ -104,6 +104,15 @@ module.exports = {
       .end()
     // 重新设置 alias
     config.resolve.alias.set('@', resolve('src')).set('@img', resolve('src/assets/images'))
+    //视频播放需要的依赖配置
+    config.module
+      .rule('swf')
+      .test(/\.swf$/)
+      .use('url-loader')
+      .loader('url-loader')
+      .options({
+        limit: 10000
+      })
   },
   devServer: {
     open: true

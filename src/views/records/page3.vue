@@ -18,7 +18,7 @@
           <a-input-search v-model="query.searchContent" placeholder="请输入关键字" @search="searchDataByContent"/>
           <a-button type="primary" icon="user" @click="searchYuAnData('myYuAn_true')" flex="cross:center">我的预案</a-button>
           <a-button type="primary" icon="bell" class="review" @click="searchYuAnData('myStatus_02')">
-            <a-badge count="5">
+            <a-badge :count="countForMyToCheck">
               <span class="text">待审核</span>
             </a-badge>
           </a-button>
@@ -31,7 +31,7 @@
       <div class="yuan_list_content" v-if="!dataLoading&&yuanDataList.length>0">
         <cg-container scroll>
           <div class="content_panel" flex="main:justify">
-            <div v-for="(item, index) in yuanDataList" :key="index" class="item" flex="dir:top box:justify cross:center">
+            <div v-for="(item, index) in yuanDataList" :key="item.id" class="item" flex="dir:top box:justify cross:center">
               <div class="item__header" flex="cross:center box:first">
                 <div class="avatar"></div>
                 <a-tooltip placement="topLeft" :title="item.name">
@@ -110,11 +110,11 @@
                 <!-- 模板 -->
                 <div class="footer_item" flex="cross:center main:center"
                      v-if="item.isTemplate==='0'" @click="setYuAn(item)">
-                  <a-icon type="heart" fill="#fe7a83" theme="filled" />模板
+                  <a-icon type="heart" theme="filled" />模板
                 </div>
                 <div class="footer_item" flex="cross:center main:center"
                      v-else @click="setYuAn(item)">
-                  <a-icon type="heart" fill="#fe7a83" />模板
+                  <a-icon type="heart" style="color: #FFB5C5;" theme="filled"/>模板
                 </div>
                 <!-- 删除 -->
                 <div class="footer_item" flex="cross:center main:center"
@@ -192,6 +192,7 @@
       return {
         userId: '',
         statusList:[],
+        countForMyToCheck: 0,
         dataLoading: false,
         query:{
           typeId:'',
@@ -226,6 +227,9 @@
         console.log('getStatusDataList',res);
         this.statusList = res;
       });
+      this.getCountForMyToCheck().then((res)=>{
+        this.countForMyToCheck = res;
+      });
       this.getTuAnDataList();
     },
     watch:{
@@ -236,7 +240,8 @@
     },
     methods: {
       ...mapActions('emergency/common', ['getStatusDataList']),
-      ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList','deleteEmergencyYuAn','setEmergencyYuAnToTemplate']),
+      ...mapActions('emergency/emergency', ['getCountForMyToCheck',
+        'getEmergencyYuAnDataList','deleteEmergencyYuAn','setEmergencyYuAnToTemplate']),
       /***************************预案查询区 start****************************/
       setBaseData(){
         let clientWidth =  document.body.clientWidth;

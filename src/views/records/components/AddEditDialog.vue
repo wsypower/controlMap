@@ -472,6 +472,11 @@ const groupColumns = [{
             this.submitForm.startDayTime = values.dayRange[0]._d.getTime();
             this.submitForm.endDayTime = values.dayRange[1]._d.getTime();
 
+            if(type=='submit'){
+              if(!this.checkParams()){
+                return
+              }
+            }
             let groupDataTemp = JSON.parse(JSON.stringify(this.groupData));
             groupDataTemp.forEach(item =>{
               delete item.key;
@@ -520,7 +525,9 @@ const groupColumns = [{
             });
           }
           else{
-            this.$message.error('所有必填项都需要填写');
+            this.$notification['error']({
+              message: '所有必填项都需要填写'
+            });
             if(type=='save'){
               this.saveLoading = false;
             }
@@ -549,6 +556,28 @@ const groupColumns = [{
         this.saveData('submit');
       },
       /*************************选择审核人员弹窗 end*******************************/
+
+      checkParams(){
+        if(new Date().getTime()>this.submitForm.startDayTime){
+          this.$notification['error']({
+            message: '保障时间必须是当前时间之后'
+          });
+          return false
+        }
+        if(this.groupData.length===0){
+          this.$notification['error']({
+            message: '请填写分组数据'
+          });
+          return false
+        }
+        if(this.baoZhangData.length===0){
+          this.$notification['error']({
+            message: '请设置保障视图及点位'
+          });
+          return false
+        }
+        return true
+      },
       //点击结束审核按钮触发
       completeCheck(){
         //调取接口改变预案的状态（已同意->未开始）

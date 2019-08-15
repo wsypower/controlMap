@@ -1,4 +1,5 @@
-import { getEmergencyYuAnList,
+import { getCountForMyToCheck,
+  getEmergencyYuAnList,
   addNewEmergencyYuAn,
   getEmergencyYuAnById,
   setEmergencyYuAnToPass,
@@ -11,7 +12,19 @@ import { getEmergencyYuAnList,
 export default {
     namespaced: true,
     actions: {
-
+      getCountForMyToCheck(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          getCountForMyToCheck(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
         getEmergencyYuAnDataList(state,data) {
             console.log('store',data);
             return new Promise((resolve, reject) => {
