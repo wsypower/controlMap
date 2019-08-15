@@ -31,18 +31,15 @@
 </template>
 <script type="text/ecmascript-6">
   import LayoutMap from '@/views/map/olMap.vue'
-  import { MapManager } from '@/utils/util.map.manage'
+  import { MapManager,filterMapId } from '@/utils/util.map.manage'
   import VectorLayer from 'ol/layer/Vector'
   import VectorSource from 'ol/source/Vector'
-  import Select from 'ol/interaction/Select.js';
   import { Circle as CircleStyle,Fill, Stroke, Style} from 'ol/style.js';
   import { getEmergencyFeatures } from '@/api/map/service'
   let map;
   let mapManager;
-  let draw,modify;
   let source;
   let vectorLayer;
-  let select;
     export default{
       name: 'baoZhangMapForViewDialog',
       components: {
@@ -64,11 +61,6 @@
         return {
           infoOverlay:null,
           mapDialogVisible: false,
-          pointFeatures:[],
-          lineFeatures:[],
-          polygonFeatures:[],
-          drawFeatures:[],
-          selectedFeature:null,
           form: null,
           //一条保障点位的数据
           baoZhangFormData: {
@@ -125,28 +117,54 @@
       },
       methods:{
         init(){
-          console.log('mapForView',this.baoZhangData);
+          console.log('==mapForView',this.baoZhangData);
           //编辑状态下通过图形id获取已保存的图形数据
           if(this.baoZhangData.length>0){
-            const mapIdList=this.baoZhangData.map(data => {
-              return data.mapId;
-            })
-            let searchId ='(';
-            for(let i=0;i<mapIdList.length;i++){
-              searchId+="'"+mapIdList[i]+"'";
-              if(i+1<mapIdList.length){
-                searchId+=','
-              }
-            }
-            searchId +=')';
-            console.log(searchId);
+            debugger;
+            const idList=filterMapId(this.baoZhangData);
+            console.log(idList);
             if(!source){
               source = new VectorSource({ wrapX: false });
+              vectorLayer = new VectorLayer({
+                source: source,
+                style: new Style({
+                  fill: new Fill({
+                    color: 'rgba(255, 255, 255, 0.3)'
+                  }),
+                  stroke: new Stroke({
+                    color: '#ffcc33',
+                    width: 2
+                  }),
+                  image: new CircleStyle({
+                    radius: 7,
+                    fill: new Fill({
+                      color: '#ffcc33'
+                    })
+                  })
+                })
+              });
             }
-            getEmergencyFeatures(searchId,'Point').then(data=>{
-              console.log(data);
-              source.addFeatures(data);
-            });
+            if(idList[0]){
+              getEmergencyFeatures(idList[0],'Point').then(data=>{
+                console.log('查询点',data);
+                source.addFeatures(data);
+              });
+            }
+            if(idList[1]){
+              getEmergencyFeatures(idList[1],'LineString').then(data=>{
+                console.log('查询线',data);
+                source.addFeatures(data);
+              });
+            }
+            if(idList[2]){
+              getEmergencyFeatures(idList[2],'Polygon').then(data=>{
+                console.log('查询面',data);
+                source.addFeatures(data);
+              });
+            }
+            setTimeout(()=>{
+              map.addLayer(vectorLayer);
+            },500)
           }
         },
         //地图点击事件处理器
@@ -156,73 +174,6 @@
             this.showSetDialog(feature.get('id'));
             this.infoOverlay.setPosition(coordinate);
             console.log('==点击feature==',feature);
-          }
-        },
-        //根据选择绘制图形
-        handleOperateClick(value){
-          map.un('dblclick', this.mapClickHandler);
-          console.log('handleMenuClick',value);
-          if(select){
-            map.removeInteraction(select);
-          }
-          if(!source){
-            source = new VectorSource({ wrapX: false });
-            vectorLayer = new VectorLayer({
-              source: source,
-              style: new Style({
-                fill: new Fill({
-                  color: 'rgba(255, 255, 255, 0.3)'
-                }),
-                stroke: new Stroke({
-                  color: '#ffcc33',
-                  width: 2
-                }),
-                image: new CircleStyle({
-                  radius: 7,
-                  fill: new Fill({
-                    color: '#ffcc33'
-                  })
-                })
-              })
-            });
-            map.addLayer(vectorLayer);
-          }
-          if(draw){
-            mapManager.inactivateDraw(draw);
-          }
-          draw = mapManager.activateDraw(value.key,source);
-          const _this=this;
-          draw.on('drawend', function(e) {
-            const id=_this.getMapId();
-            e.feature.set('id',id);
-            _this.showSetDialog(id);
-            _this.infoOverlay.setPosition(e.feature.getGeometry().getLastCoordinate());
-          });
-        },
-        //获取随机绘制图形id
-        getMapId(){
-          return Number(Math.random().toString().substr(3,6) + Date.now()).toString(36);
-        },
-        //选择任一图形要素
-        selectGeometry(){
-          console.log(this.$refs.infoOverlay.$el);
-          map.on('dblclick', this.mapClickHandler);
-          if(draw){
-            mapManager.inactivateDraw(draw);
-          }
-          select = new Select();
-          map.addInteraction(select);
-          const _this=this;
-          select.on('select', function(e) {
-            console.log(e.selected[0]);
-            _this.selectedFeature=e.selected[0];
-          });
-        },
-        //清除选中的图形
-        clearSelectGeometry() {
-          if (vectorLayer) {
-            vectorLayer.getSource().removeFeature(this.selectedFeature);
-            map.removeInteraction(select);
           }
         },
         //双击区域后触发此方法，带出mapId
@@ -249,14 +200,13 @@
             this.infoOverlay.setPosition(undefined)
             this.reset();
         },
-
         //关闭保障视图弹窗
-      handleCancel(){
-        if(vectorLayer){
-          vectorLayer.getSource().clear();
+        handleCancel(){
+          if(vectorLayer){
+            vectorLayer.getSource().clear();
+          }
+          this.mapDialogVisible = false;
         }
-        this.mapDialogVisible = false;
-      }
     }
 }
 </script>
