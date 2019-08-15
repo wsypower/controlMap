@@ -59,7 +59,7 @@
         </div>
       </cg-container>
     </a-drawer>
-    <div class="person-info-dialog">
+    <div class="person-info-dialog" ref="peopleOverlay">
       <div class="person-info-dialog-header" flex="main:justify cross:center">
         <span>人员信息</span>
         <a-icon type="close" @click="closeInfoDialog" />
@@ -89,7 +89,7 @@
         <span @click="handlePhone">远程通话</span>
       </div>
     </div>
-    <div class="video-dialog">
+    <div class="video-dialog" ref="videoOverlay">
       <div class="close-panel">
         <a-icon type="close" style="color: #ffffff" @click="closeVideoDialog" />
       </div>
@@ -122,6 +122,8 @@ export default {
   },
   data() {
     return {
+      peopleOverlay:null,
+      videoOverlay:null,
       yuAnId: '',
       active: false,
       indeterminate: false,
@@ -167,8 +169,11 @@ export default {
       map = this.$refs.olMap.getMap();
       mapManager = new MapManager(map);
       //初始化地图弹框
-      this.infoOverlay = mapManager.addOverlay({
-        element: this.$refs.infoOverlay
+      this.peopleOverlay = mapManager.addOverlay({
+        element: this.$refs.peopleOverlay
+      });
+      this.videoOverlay = mapManager.addOverlay({
+        element: this.$refs.videoOverlay
       });
       //绑定地图双击事件
       map.on('click', this.mapClickHandler);
@@ -220,9 +225,13 @@ export default {
     mapClickHandler({ pixel, coordinate }) {
         const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
         if(feature){
-          this.getUserInfo(feature.getId());
-          // this.infoOverlay.setPosition(coordinate);
-          console.log('==点击feature==',feature);
+          if(feature.get('type')=='people'){
+            this.getUserInfoData(feature.get('id'));
+            this.peopleOverlay.setPosition(coordinate);
+          }
+          else{
+            this.videoOverlay.setPosition(coordinate);
+          }
         }
     },
     reload() {
@@ -239,28 +248,27 @@ export default {
         checkAll: e.target.checked,
       })
     },
-
-    getUserInfoData(){
-      this.getUserInfo({userId:'0129b7e06f9d11e8772ac3324197bfce'}).then((res)=>{
+    getUserInfoData(id){
+      this.getUserInfo({userId:id}).then((res)=>{
         console.log('userInfo',res);
         this.info = Object.assign({},res);
       });
     },
     handleVideo(){
-      this.$notification['Warning']({
+      this.$notification['warning']({
         message: '还没有接入插件，无法使用'
       });
     },
     handlePhone(){
-      this.$notification['Warning']({
+      this.$notification['warning']({
         message: '还没有接入插件，无法使用'
       });
     },
     closeInfoDialog(){
-
+      this.peopleOverlay.setPosition(undefined);
     },
     closeVideoDialog(){
-
+      this.videoOverlay.setPosition(undefined);
     },
     //绘制地图--添加资源显示
     drawMap(list){
@@ -273,6 +281,8 @@ export default {
       }
     },
     realTimeMonitor(item){
+      this.emergencyList[0].layer.getSource().clear();
+      this.emergencyList[1].layer.getSource().clear();
       console.log('==预案数据==',item);
     },
     //绘制地图--区域多边形

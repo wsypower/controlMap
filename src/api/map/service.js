@@ -171,6 +171,8 @@ export async function getAllVideo() {
       r.position = [parseFloat(r.longitude), parseFloat(r.latitude)]
       let feature = new Feature(new Point(r.position));
       feature.setId(r.mpid);
+      feature.set('id',r.mpid);
+      feature.set('type','video');
       return feature;
     }
   })
@@ -190,6 +192,8 @@ export async function getAllPeople() {
       r.position = [parseFloat(r.x), parseFloat(r.y)]
       let feature = new Feature(new Point(r.position));
       feature.setId(r.userid);
+      feature.set('id',r.userid);
+      feature.set('type','people');
       return feature;
     }
   })
