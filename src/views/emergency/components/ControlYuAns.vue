@@ -90,6 +90,7 @@
         gotoMonitor(item,index){
           this.activeIndex = index;
           console.log('gotoMonitor',item);
+          this.$emit('goMonitor',item)
         }
       }
     }

@@ -2,7 +2,7 @@
   <div class="page">
     <!-- 地图控件注入地址 -->
     <LayoutMap ref="olMap"></LayoutMap>
-    <control-yu-ans :yuAnId="yuAnId"></control-yu-ans>
+    <control-yu-ans :yuAnId="yuAnId" @goMonitor="realTimeMonitor"></control-yu-ans>
     <div class="function__buttons" flex>
       <div flex="dir:top" class="function__buttons_items">
         <!-- 圈图工具 -->
@@ -271,6 +271,9 @@ export default {
           this.emergencyList[i].layer.setVisible(false);
         }
       }
+    },
+    realTimeMonitor(item){
+      console.log('==预案数据==',item);
     },
     //绘制地图--区域多边形
     drawArea(){
