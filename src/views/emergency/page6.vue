@@ -30,16 +30,16 @@
           </div>
           <div class="info-body-right">
             <div flex="dir:left cross:center main:justify">
-              <span>王昭君</span>
-              <span>在线</span>
+              <span>{{info.realName}}</span>
+              <span>{{info.online=='0'?'离线':'在线'}}</span>
             </div>
             <div flex="dir:left cross:center">
               <cg-icon-svg name="telephone" class="svg_icon_telephone"></cg-icon-svg>
-              <span>15212456321</span>
+              <span>{{info.phone}}</span>
             </div>
             <div flex="dir:left cross:center">
               <cg-icon-svg name="menu-section" class="svg_icon_section"></cg-icon-svg>
-              <span>信息采集中心</span>
+              <span>{{info.deptName}}</span>
             </div>
           </div>
       </div>
@@ -137,6 +137,7 @@ export default {
     getUserInfo(){
       this.login().then((res)=>{
         console.log('userInfo',res);
+        this.info = Object.assign({},res);
       });
     },
     handleVideo(){
