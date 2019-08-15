@@ -52,7 +52,7 @@
             <a-icon type="down"/>
           </a-button>
         </a-dropdown>
-        <a-button type="primary" @click="editMapFeatures" v-if="this.baoZhangData.length>0">编辑</a-button>
+        <!--<a-button type="primary" @click="editMapFeatures" v-if="this.baoZhangData.length>0">编辑</a-button>-->
         <a-button type="primary" @click="selectGeometry">选择</a-button>
         <a-button type="primary" @click="clearSelectGeometry">删除选择</a-button>
       </div>
@@ -272,6 +272,7 @@
               setTimeout(()=>{
                 console.log('==source==',source)
                 _this.tempSource=source;
+                _this.editMapFeatures();
                 map.addLayer(vectorLayer);
               },500)
             }
