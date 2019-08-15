@@ -54,13 +54,14 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { mapActions } from 'vuex'
+  // import { mapActions } from 'vuex'
   import LayoutMap from '@/views/map/olMap.vue'
   import ControlYuAns from './components/ControlYuAns';
   import MonitorYuAn from './components/MonitorYuAn';
   import { MapManager } from '@/utils/util.map.manage';
   import {getAllVideo,getAllPeople} from '@/api/map/service'
   import { peopleStyle,videoStyle } from '@/utils/util.map.style'
+  import { AccountLogin } from '@/api/account/login'
 
   const plainOptions = [{ label: '人力资源', value: 'people' },
   { label: '视频监控', value: 'video' }];
@@ -143,7 +144,7 @@ export default {
     this.reload()
   },
   methods:{
-    ...mapActions('cgadmin/account', ['login']),
+    // ...mapActions('cgadmin/account', ['login']),
     initMapData(){
       getAllVideo().then(data=>{
         this.layerList['video']=mapManager.addVectorLayerByFeatures(data,videoStyle(),2)
@@ -153,6 +154,15 @@ export default {
         console.log(data);
         this.layerList['people']=mapManager.addVectorLayerByFeatures(data,peopleStyle(),2)
       })
+    },
+    //地图点击事件处理器
+    mapClickHandler({ pixel, coordinate }) {
+        const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
+        if(feature){
+          this.getUserInfo(feature.getId());
+          // this.infoOverlay.setPosition(coordinate);
+          console.log('==点击feature==',feature);
+        }
     },
     reload() {
       this.$router.replace('/refresh')
@@ -168,12 +178,10 @@ export default {
         checkAll: e.target.checked,
       })
     },
-
-    getUserInfo(){
-      this.login().then((res)=>{
-        console.log('userInfo',res);
-        this.info = Object.assign({},res);
-      });
+    getUserInfo(id){
+      AccountLogin({ userId: id }).then(async data=>{
+        console.log(data);
+      })
     },
     handleVideo(){
       this.$notification['Warning']({
