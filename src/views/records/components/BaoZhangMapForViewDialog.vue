@@ -1,6 +1,6 @@
 <template>
   <a-modal ref="baoZhangDialog" title="保障视图" v-model="mapDialogVisible" width="100%" :maskClosable="false" @cancel="handleCancel">
-    <div class="yuan_dialog_body" id="bao_zhang_map" ref="baoZhangBody">
+    <div class="yuan_dialog_body" ref="baoZhangBody">
       <!-- 地图控件注入地址 -->
       <LayoutMap ref="olMap"></LayoutMap>
       <div hidden>

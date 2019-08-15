@@ -152,7 +152,7 @@ export function setEmergencyYuAnToPass(data){
 export function setEmergencyYuAnToBack(data){
   console.log('api:setEmergencyYuAnToBack',data);
   return request({
-    url: '@test/setEmergencyYuAnToBack',
+    url: 'plan/setEmergencyYuAnToBack',
     method: 'post',
     data
   })

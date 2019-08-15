@@ -31,11 +31,11 @@
           <div class="content_panel">
             <div v-for="(item, index) in yuanDataList" :key="item.id" class="item">
               <div class="top"></div>
-              <div class="item_tool_panel">
+              <div class="item_tool_panel" v-if="item.creatorid == userId">
                 <a-icon v-if="item.statusId<'05' || item.statusId=='08'" type="edit" @click="editYuAn(item.id)"/>
                 <a-icon v-if="item.isTemplate" type="heart" theme="filled" @click="setYuAn(item)"/>
                 <a-icon v-else type="heart" color="#fe7a83" @click="setYuAn(item)"/>
-                <a-icon v-if="item.statusId!='06'" type="delete" @click="deleteYuAn(item.id,index)"/>
+                <a-icon v-if="item.statusId!='02'&&item.statusId!='06'" type="delete" @click="deleteYuAn(item.id,index)"/>
               </div>
               <div class="show_content_panel">
                 <div><span>名称</span><span>：</span>{{item.name}}</div>
@@ -76,12 +76,13 @@
       </div>
     </div>
     <add-edit-dialog :visible.sync="addYuAnDialogVisible" :dialogTitle="dialogTitle" :yuAnId="yuAnId" @refreshList="getTuAnDataList"></add-edit-dialog>
-    <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible" :yuAnId="yuAnId"></yu-an-info-and-review-dialog>
+    <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible" :yuAnId="yuAnId" @refreshList="getTuAnDataList"></yu-an-info-and-review-dialog>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import dayjs from 'dayjs'
+  import util from '@/utils/util'
   import AddEditDialog from './components/AddEditDialog'
   import YuAnInfoAndReviewDialog from './components/YuAnInfoAndReviewDialog'
   import { mapActions } from 'vuex'
@@ -94,6 +95,7 @@
     },
     data() {
       return {
+        userId: '',
         statusList:[],
         dataLoading: false,
         query:{
@@ -117,10 +119,11 @@
       }
     },
     created(){
-      this.setBaseData();
+      this.userId = util.cookies.get('userId');
     },
     mounted(){
       let _this = this;
+      this.setBaseData();
       window.onresize = function(){
         _this.setBaseData();
       }
@@ -156,7 +159,9 @@
         }
       },
       resetQuery(){
+        let pageSize = this.query.pageSize;
         this.query = Object.assign({}, this.$options.data().query);
+        this.query.pageSize = pageSize;
         console.log('resetQuery',this.query);
       },
 

@@ -1,6 +1,9 @@
 <template>
     <a-modal title="预案详情" v-model="yuAnInfoDialogVisible" width="1080px" class="yuan-info-dialog">
-        <div style="width:100%; height: 500px;position:relative;background-color: #eee;padding:10px;" class="yuan_dialog_body">
+        <div class="yuan_dialog_body">
+            <div v-show="dataLoading" class="loading" flex="main:center cross:center">
+                <a-spin tip="数据加载中..."></a-spin>
+            </div>
             <cg-container scroll>
                 <div class="part base">
                     <h3>{{yuAnInfo.name}}</h3>
@@ -44,9 +47,12 @@
                 </div>
             </cg-container>
         </div>
-        <template slot="footer" v-if="yuAnInfo.reviewUserId === userId">
-            <a-button type="primary" @click="agree">同意</a-button>
-            <a-button type="primary" @click="back">驳回</a-button>
+        <template slot="footer" >
+            <div v-if="yuAnInfo.statusId=='02'&&yuAnInfo.reviewUserId === userId">
+                <a-button type="primary" @click="agree">同意</a-button>
+                <a-button type="primary" @click="back">驳回</a-button>
+            </div>
+            <div v-else></div>
         </template>
         <a-modal title="填写驳回原因" v-model="backDialogVisible" width="400px" @cancel="handleCancelForBack">
             <div class="back_dialog_body">
@@ -120,6 +126,7 @@
         return {
           userId: '',
           yuAnInfoDialogVisible: false,
+          dataLoading: false,
           ziyuanColumns: ziyuanColumns,
           logColumns: logColumns,
           yuAnInfo:{},
@@ -151,6 +158,7 @@
             this.getYuAnDataById();
         },
         getYuAnDataById(){
+          this.dataLoading = true;
             this.getEmergencyYuAnById({id: this.yuAnId}).then((result)=>{
               this.yuAnInfo = Object.assign({},result);
               let tempData = JSON.parse(JSON.stringify(this.yuAnInfo.baoZhangData));
@@ -170,6 +178,8 @@
                 res.push(temp)
                 return res
               },[]);
+
+              this.dataLoading = false;
             });
         },
         openReViewMap(){
@@ -179,6 +189,7 @@
           //调取接口修改状态（待审核->已同意）
           this.setEmergencyYuAnToPass({id: this.yuAnId}).then((res)=>{
             console.log(res);
+            this.$emit('refreshList');
             this.yuAnInfoDialogVisible = false;
           })
         },
@@ -194,6 +205,7 @@
             this.backReason = '';
             this.backDialogVisible = false;
             this.yuAnInfoDialogVisible = false;
+            this.$emit('refreshList');
           })
         },
 
@@ -207,6 +219,20 @@
 <style lang="scss" scoped>
     .yuan-info-dialog{
         .yuan_dialog_body {
+            width: 100%;
+            height: 500px;
+            background-color: #eee;
+            padding:10px;
+            position: relative;
+            .loading{
+                position: absolute;
+                top:0;
+                left:0;
+                right:0;
+                bottom:0;
+                z-index: 10;
+                background-color: rgba(255,255,255,0.8);
+            }
             .part {
                 margin-bottom: 10px;
                 background-color: #ffffff;
