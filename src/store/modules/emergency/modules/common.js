@@ -1,8 +1,21 @@
-import {getStatusDataList,getYuAnTypeDataList,getAllPeopleDataList, getReviewPeopleDataList} from '@/api/emergency/common.js'
+import {getUserInfo,getStatusDataList,getYuAnTypeDataList,getAllPeopleDataList, getReviewPeopleDataList} from '@/api/emergency/common.js'
 
 export default {
     namespaced: true,
     actions: {
+      getUserInfo(state, data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          getUserInfo(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
         getStatusDataList(state, data) {
             return new Promise((resolve, reject) => {
                 getStatusDataList(data)

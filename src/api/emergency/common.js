@@ -6,6 +6,21 @@
 import request from '@/plugins/axios/axios'
 
 /**
+ * @description 登录获取用户信息和权限
+ * @author weiyafei
+ * @date 2019-06-27-21:25:58
+ * @param {String} userId 请求参数 :用户唯一标识符默认参数）
+ */
+export const getUserInfo = data => {
+  console.log('api:getUserInfo',data);
+  return request({
+    url: `plan/getUserInfo`,
+    method: 'get',
+    params: data
+  })
+}
+
+/**
  * @description 获取所有状态数据
  * @author moxuejuan
  * @date 2019-08-08 14:53:20

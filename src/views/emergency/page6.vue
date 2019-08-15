@@ -92,7 +92,7 @@ export default {
     }
   },
   mounted() {
-    this.getUserInfo();
+    this.getUserInfoData();
   },
   watch:{
     '$route.query'(val){
@@ -118,7 +118,7 @@ export default {
     this.reload()
   },
   methods:{
-    ...mapActions('cgadmin/account', ['login']),
+    ...mapActions('emergency/common', ['getUserInfo']),
     reload() {
       this.$router.replace('/refresh')
     },
@@ -134,8 +134,8 @@ export default {
       })
     },
 
-    getUserInfo(){
-      this.login().then((res)=>{
+    getUserInfoData(){
+      this.getUserInfo({userId:'0129b7e06f9d11e8772ac3324197bfce'}).then((res)=>{
         console.log('userInfo',res);
         this.info = Object.assign({},res);
       });
