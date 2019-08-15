@@ -97,7 +97,7 @@ export function getVideoListApi() {
  */
 export function getPeopleListApi() {
   return request({
-    url: 'http://192.168.71.154:8080/api/gps/onlineUser',
+    url: 'http://192.168.71.33:81/api/gps/onlineUser',
     method: 'get'
   })
 }
