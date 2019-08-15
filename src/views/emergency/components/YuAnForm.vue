@@ -107,7 +107,7 @@
                 class="avatar-uploader"
                 accept=".jpg,.png"
                 :showUploadList="false"
-                action="http://192.168.71.33:50000/file/file/uploadFileWeb"
+                action="http://61.153.37.213:8087/file/file/uploadFileWeb"
                 :beforeUpload="beforeUpload"
                 @change="handleImgChange"
               >

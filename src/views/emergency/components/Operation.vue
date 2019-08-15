@@ -12,13 +12,13 @@
         <a-icon type="down" />
       </a-button>
     </a-dropdown>
-    <a-button class="op-btn ychj-btn" @click="clickYCHJBtn">
-      <i class="icon_ychj">
-        <cg-icon-svg name="shipin" class="svg_icon_shipin"></cg-icon-svg>
-      </i>
-      <span class="memu-title-text">远程呼叫</span>
-      <a-icon type="right" style="font-size: 12px;" />
-    </a-button>
+    <!--<a-button class="op-btn ychj-btn" @click="clickYCHJBtn">-->
+      <!--<i class="icon_ychj">-->
+        <!--<cg-icon-svg name="shipin" class="svg_icon_shipin"></cg-icon-svg>-->
+      <!--</i>-->
+      <!--<span class="memu-title-text">远程呼叫</span>-->
+      <!--<a-icon type="right" style="font-size: 12px;" />-->
+    <!--</a-button>-->
     <a-dropdown v-model="visible">
         <a-button class="op-btn yjzy-btn">
             <i class="icon_yjzy">

@@ -69,7 +69,7 @@ if (process.env.NODE_ENV === 'development') {
     base_url = 'http://192.168.71.33:8015/api/'
 }
 else{
-    base_url = 'http://192.168.71.33:8015/api/'
+    base_url = 'http://61.153.37.214:81/api/'
 }
 //axios config配置
 let config = {
