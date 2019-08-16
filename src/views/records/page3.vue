@@ -227,7 +227,7 @@
         console.log('getStatusDataList',res);
         this.statusList = res;
       });
-      this.getCountForMyToCheck().then((res)=>{
+      this.getCountForMyToCheck({userId: this.userId}).then((res)=>{
         this.countForMyToCheck = res;
       });
       this.getTuAnDataList();

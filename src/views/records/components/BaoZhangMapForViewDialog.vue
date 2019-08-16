@@ -12,13 +12,13 @@
           <div class="set-baozhang-dialog-body">
             <cg-container scroll>
               <a-form :form="form" style="margin:10px">
-                <a-form-item label="保障点位：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+                <a-form-item label="保障点位：" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
                   <span>{{baoZhangFormData.name}}</span>
                 </a-form-item>
-                <a-form-item label="人员：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+                <a-form-item label="人员：" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
                   <span>{{baoZhangFormData.people}}</span>
                 </a-form-item>
-                <a-form-item label="备注：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+                <a-form-item label="备注：" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
                   <span>{{baoZhangFormData.remark}}</span>
                 </a-form-item>
               </a-form>
@@ -230,7 +230,7 @@
   .set-baozhang-dialog {
     position: absolute;
     width: 400px;
-    height: 300px;
+    height: 240px;
     border: 1px solid #cccccc;
     background-color: #ffffff;
     border-radius: 6px;
@@ -265,6 +265,12 @@
       position: relative;
       /deep/.ant-form-item {
         margin-bottom: 6px;
+      }
+      /deep/.ant-form-item-label{
+        line-height: 24px;
+      }
+      /deep/.ant-form-item-control{
+        line-height: 24px;
       }
     }
   }
