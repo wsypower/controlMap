@@ -546,6 +546,7 @@ const groupColumns = [{
         }
         if(this.operateType=='add'){
           this.submitForm.id = '';
+          this.submitForm.isTemplate = '0';
         }
         let groupDataTemp = JSON.parse(JSON.stringify(this.groupData));
         groupDataTemp.forEach(item =>{
