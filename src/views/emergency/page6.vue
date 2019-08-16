@@ -103,10 +103,10 @@
               width="200"
               height="200"
               data-setup="{}"
-              v-if="videoUrl.length"
       >
-        <source :src="videoUrl" type="rtmp/flv"/>
+        <source src="rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000015-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12" type="rtmp/flv"/>
       </video>
+      <!--<embed width="300" height="70" class="openFlash" style="position:absolute;top:130px;left:225px;z-Index:9999;" type="application/x-shockwave-flash">-->
 
     </div>
   </div>
@@ -166,7 +166,7 @@ export default {
       caseType: 'all',
       info: {},
       visible: true,
-      videoUrl: ''
+      videoUrl:'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000882-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12'
     }
   },
   computed: {
@@ -260,11 +260,6 @@ export default {
           }
           else if(feature.get('type')=='video'){
             getVideoById(feature.get('id')).then(data=>{
-
-              console.log(data.data.mediaURL);
-              this.videoUrl='';
-              this.videoUrl = data.data.mediaURL;
-              console.log('videoUrl',this.videoUrl)
               this.videoOverlay.setPosition(coordinate);
             })
           }
