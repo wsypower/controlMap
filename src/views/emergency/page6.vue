@@ -310,7 +310,8 @@ export default {
           getEmergencyFeatures(idList[0],'Point').then(data=>{
             source.addFeatures(data);
             for(let i=0;i<data.length;i++){
-              const filterVideos = filterVideoPoint(data[i],videoFeatures);
+              const geo = data[i].getGeometry();
+              const filterVideos = filterVideoPoint(geo.clone(),videoFeatures);
               if(filterVideos.length>0){
                 this.emergencyList[1].layer.getSource().addFeatures(filterVideos);
               }
@@ -321,7 +322,8 @@ export default {
           getEmergencyFeatures(idList[1],'LineString').then(data=>{
             source.addFeatures(data);
             for(let i=0;i<data.length;i++){
-              const filterVideos = filterVideoPoint(data[i],videoFeatures);
+              const geo = data[i].getGeometry();
+              const filterVideos = filterVideoPoint(geo.clone(),videoFeatures);
               if(filterVideos.length>0){
                 this.emergencyList[1].layer.getSource().addFeatures(filterVideos);
               }
@@ -333,7 +335,7 @@ export default {
           getEmergencyFeatures(idList[2],'Polygon').then(data=>{
             source.addFeatures(data);
             for(let i=0;i<data.length;i++){
-              const filterVideos = filterVideoPoint(data[i],videoFeatures);
+              const filterVideos = filterVideoPoint(data[i].getGeometry(),videoFeatures);
               if(filterVideos.length>0){
                 this.emergencyList[1].layer.getSource().addFeatures(filterVideos);
               }

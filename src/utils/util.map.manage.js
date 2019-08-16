@@ -204,8 +204,8 @@ export class MapManager {
  * @author:sijianting
  * @createDate:2019/7/25 14:56
  */
-export function filterVideoPoint(feature, points) {
-  let geo = feature.getGeometry();
+export function filterVideoPoint(geo, points) {
+  // let geo = feature.getGeometry();
   if(geo.getType()=='Point'||geo.getType()=='LineString'){
     geo = createBuffer(geo);
   }
