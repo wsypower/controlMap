@@ -183,8 +183,6 @@ export default {
       map.on('click', this.mapClickHandler);
       this.initMapData();
     })
-    // this.$refs['myPlayer'].videoSrc = 'rtmp://192.168.10.3:1935/live/pag/192.168.10.2/7302/33092104001320012103/0/MAIN/TCP?checkinfo=ewogICAidGltZSIgOiAiMjAxOTA3MjBUMDkzNzE0WiIsCiAgICJ1cmwiIDogInJ0bXA6Ly8xOTIuMTY4LjEwLjM6MTkzNS9saXZlL3BhZy8xOTIuMTY4LjEwLjIvNzMwMi8zMzA5MjEwNDAwMTMyMDAxMjEwMy8wL01BSU4vVENQIgp9Cg%3D%3D&idinfo=EAAAAAAQAADh9flnMdrvl03BuMSu0R3r6u3NZ06p6V%2BogbhAGOojgXCnScym5Ls3Uf%2BOx6Ctcbc%3D'
-    // this.$refs['myPlayer'].playerOptions.sources[0].src = 'rtmp://192.168.10.3:1935/live/pag/192.168.10.2/7302/33092104001320012103/0/MAIN/TCP?checkinfo=ewogICAidGltZSIgOiAiMjAxOTA3MjBUMDkzNzE0WiIsCiAgICJ1cmwiIDogInJ0bXA6Ly8xOTIuMTY4LjEwLjM6MTkzNS9saXZlL3BhZy8xOTIuMTY4LjEwLjIvNzMwMi8zMzA5MjEwNDAwMTMyMDAxMjEwMy8wL01BSU4vVENQIgp9Cg%3D%3D&idinfo=EAAAAAAQAADh9flnMdrvl03BuMSu0R3r6u3NZ06p6V%2BogbhAGOojgXCnScym5Ls3Uf%2BOx6Ctcbc%3D'
   },
   watch:{
     '$route.query'(val){
@@ -247,6 +245,9 @@ export default {
           else if(feature.get('type')=='video'){
             getVideoById(feature.get('id')).then(data=>{
               console.log(data.data.mediaURL);
+              this.$refs['myPlayer'].videoSrc = data.data.mediaURL;
+              this.$refs['myPlayer'].playerOptions.sources[0].src = data.data.mediaURL;
+
               this.videoOverlay.setPosition(coordinate);
             })
           }
