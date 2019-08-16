@@ -7,7 +7,7 @@
 import request from '@/plugins/axios/axios'
 
 let gisApi = 'http://192.168.1.10:8080/geoserver/'
-let baseApi = 'http://192.168.71.33:8015/api/'
+let baseApi = 'http://60.191.224.129:83/api/'
 /**
  * @description: 获取点数据接口
  * @author:sijianting
@@ -111,7 +111,7 @@ export function getVideoById(id) {
  */
 export function getPeopleListApi() {
   return request({
-    url: 'http://192.168.71.33:81/api/gps/onlineUser',
+    url: 'http://60.191.224.129:83/api/gps/onlineUser',
     method: 'get'
   })
 }

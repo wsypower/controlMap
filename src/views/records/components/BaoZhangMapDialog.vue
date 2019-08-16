@@ -234,7 +234,6 @@
             //绑定地图双击事件
             map.on('dblclick', this.mapClickHandler);
             this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
-            debugger;
             //编辑状态下通过图形id获取已保存的图形数据
             if(this.allBaoZhangData.length>0){
               const idList=filterMapId(this.allBaoZhangData);
@@ -280,7 +279,6 @@
               }
               const _this=this;
               setTimeout(()=>{
-                debugger;
                 console.log('==source==',source);
                 console.log(source.getFeatures());
                 _this.tempSource=source;
@@ -293,7 +291,7 @@
         //地图点击事件处理器
         mapClickHandler({ pixel, coordinate }) {
           const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
-          if(feature){
+          if(feature&&feature.get('id')){
             this.showSetDialog(feature.get('id'));
             this.infoOverlay.setPosition(coordinate);
             console.log('==点击feature==',feature);
@@ -301,7 +299,7 @@
         },
         //根据选择绘制图形
         handleOperateClick(value){
-          // map.un('dblclick', this.mapClickHandler);
+          map.un('dblclick', this.mapClickHandler);
           console.log('handleMenuClick',value);
           if(select){
             map.removeInteraction(select);
@@ -482,7 +480,6 @@
         },
         //保存图形数据
         saveMap() {
-          debugger;
           console.log('==编辑要素==',this.editFeatures)
           this.pointFeatures = [];
           this.lineFeatures = [];
