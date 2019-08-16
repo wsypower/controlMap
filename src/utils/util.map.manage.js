@@ -9,7 +9,7 @@ import GeoJSON from 'ol/format/GeoJSON'
 import Draw from 'ol/interaction/Draw.js'
 import { Modify, Snap } from 'ol/interaction.js'
 import Feature from 'ol/Feature'
-import MultiPolygon from 'ol/geom/MultiPolygon'
+// import MultiPolygon from 'ol/geom/MultiPolygon'
 import { fromCircle } from 'ol/geom/Polygon'
 import Overlay from 'ol/Overlay'
 import Cluster from 'ol/source/Cluster'
@@ -19,6 +19,8 @@ import Fill from 'ol/style/Fill'
 import Stroke from 'ol/style/Stroke'
 import Circle from 'ol/style/Circle'
 import Text from 'ol/style/Text';
+import LinearRing from 'ol/geom/LinearRing.js';
+import {Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon} from 'ol/geom.js';
 
 export class MapManager {
   constructor(map) {
@@ -289,4 +291,22 @@ export function circleToPloygon(feature) {
     geometry: mutiPolygon
   })
   return feature
+}
+/**
+ * @description:通过点或者线生成缓冲区图形
+ * @author:sijianting
+ * @createDate:2019/8/16 10:16
+ */
+export function createBuffer(feature) {
+  var parser = new jsts.io.OL3Parser();
+  parser.inject(Point, LineString, LinearRing, Polygon, MultiPoint, MultiLineString, MultiPolygon);
+  var jstsGeom = parser.read(feature.getGeometry().transform("EPSG:4326", "EPSG:3857"));
+  var buffered = jstsGeom.buffer(40);
+  var olBuffered = parser.write(buffered);
+  var transFormGeo = olBuffered.transform("EPSG:3857","EPSG:4326");
+  // markSource.clear();
+  // markSource.addFeature(new ol.Feature(transFormGeo));
+  feature.setGeometry(transFormGeo);
+  return feature;
+
 }
