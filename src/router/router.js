@@ -1,7 +1,7 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
- * @Last Modified by: wei.yafei 
+ * @Last Modified by: wei.yafei
  * @Last Modified time: 2019-08-13 15:01:38
  */
 
@@ -79,7 +79,7 @@ const frameIn = [
         path: '/records',
         name: 'records',
         meta: {
-          title: '案卷',
+          title: '预案管理',
           role: ['admin', 'super_editor']
         },
         component: _import('records/page3.vue')
@@ -109,7 +109,7 @@ const frameIn = [
         path: '/emergency',
         name: 'emergency',
         meta: {
-          title: '应急指挥',
+          title: '一图指挥',
           role: ['admin', 'super_editor']
         },
         component: _import('emergency/page6.vue')

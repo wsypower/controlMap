@@ -572,19 +572,27 @@ const groupColumns = [{
 
         this.addNewEmergencyYuAn(this.submitForm).then((res)=>{
           console.log('addNewEmergencyYuAn',res);
-          this.$notification['success']({
-            message: '保存成功',
-            style: {
-              width: '200px',
-              marginLeft: `200px`,
-              fontSize: '14px'
-            },
-          });
           if(type=='save'){
             this.saveLoading = false;
+            this.$notification['success']({
+              message: '保存成功',
+              style: {
+                width: '200px',
+                marginLeft: `200px`,
+                fontSize: '14px'
+              },
+            });
           }
           else{
             this.loading = false;
+            this.$notification['success']({
+              message: '提交成功',
+              style: {
+                width: '200px',
+                marginLeft: `200px`,
+                fontSize: '14px'
+              },
+            });
           }
           this.reset();
           this.$emit('refreshList');

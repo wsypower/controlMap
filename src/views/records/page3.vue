@@ -62,7 +62,7 @@
                 </div>
                 <div class="item__content__b" flex="dir:left cross:center main:justify">
                   <div class="item__content__b_left">
-                    <span v-if="item.statusId=='01'" class="status blue" flex="cross:center">
+                    <span v-if="item.statusId=='01'" class="status blue">
                       <a-icon type="info-circle" theme="filled" style="fontSize:12px;transform:scale(0.9);marginRight:3px"/>待提交
                     </span>
                     <span v-if="item.statusId=='02'" class="status blue">

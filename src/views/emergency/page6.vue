@@ -314,6 +314,7 @@ export default {
       });
     },
     realTimeMonitor(item){
+      this.yuAnId = item.id;
       this.emergencyList[0].layer && this.emergencyList[0].layer.getSource().clear();
       this.emergencyList[1].layer && this.emergencyList[1].layer.getSource().clear();
       this.baozhangLayer && this.baozhangLayer.getSource().clear();
