@@ -395,9 +395,34 @@
         },
         //清除选中的图形
         clearSelectGeometry() {
+          Array.prototype.indexOf = function (val) {
+            for (var i = 0; i < this.length; i++) {
+              if (this[i] == val) return i;
+            }
+            return -1;
+          };
+          Array.prototype.remove = function (val) {
+            var index = this.indexOf(val);
+            if (index > -1) {
+              this.splice(index, 1);
+            }
+          };
+          let deleteData;
           if (vectorLayer) {
             vectorLayer.getSource().removeFeature(this.selectedFeature);
             map.removeInteraction(select);
+            for(let i=0;i<this.allBaoZhangData.length;i++){
+              if(this.allBaoZhangData[i].mapId==this.selectedFeature.get('id')){
+                deleteData=this.allBaoZhangData[i];
+              }
+            }
+            const deletePeopleList = deleteData.personList;
+            for(let i=0;i<deletePeopleList.length;i++){
+              this.checkedPeopleIdList.remove(deletePeopleList[i]);
+            }
+            this.allBaoZhangData.remove(deleteData);
+            console.log(this.allBaoZhangData);
+            console.log(this.checkedPeopleIdList)
             console.log('==removemapip==',this.selectedFeature.get('id'));
           }
         },
