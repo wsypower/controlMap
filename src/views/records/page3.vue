@@ -161,7 +161,7 @@
         <img src="~@img/zanwuyuan.png" />
       </div>
 
-      <div class="pagination">
+      <div class="pagination" flex="cross:center main:right" style="paddingRight:17px">
         <a-pagination :showTotal="total => `总共 ${total} 条`"
                       :pageSize.sync="query.pageSize"
                       @showSizeChange="onShowSizeChange"

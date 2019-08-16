@@ -11,14 +11,18 @@
            :destroyOnClose="true"
            @cancel="handleCancel">
     <div v-if="operateType == 'add'" class="template-panel">
-      <label>选择模板创建：</label>
+      <label>
+        <a-icon type="snippets" theme="twoTone" style="marginRight:5px" />选择模板创建：
+      </label>
       <a-select v-model="templateId" placeholder="请选择模板" style="width: 180px;" @change="handleUserTemplate">
         <a-select-option v-for="(item, index) in templateList" :value="item.id" :key="index">{{item.name }}</a-select-option>
       </a-select>
     </div>
-    <div v-if="submitForm.statusId == '04'" class="template-panel">
-      <span>驳回原因：</span>
-      <span style="color:#ff4b72">{{submitForm.backReason}}</span>
+    <div v-if="submitForm.statusId == '04'" class="template-panel turnDown">
+      <span>
+        <a-icon type="close-circle" theme="twoTone" twoToneColor="#F76B6B" style="marginRight:5px"  />驳回原因：
+      </span>
+      <span style="color:#F76B6B">{{submitForm.backReason}}</span>
     </div>
     <div class="yuan_dialog_body">
       <div v-show="dataLoading" class="loading" flex="main:center cross:center">
@@ -698,13 +702,21 @@ const groupColumns = [{
   width: 100%;
   height: 100%;
   .template-panel{
-    padding-bottom: 5px;
     margin-bottom: 10px;
-    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    padding: 8px 0 8px 40px;
+    background-color: #fafafa;
+    border: 1px solid #d9d9d9;
+    border-radius: 5px;
+    color: #028efc;
+    font-size: 16px;
   }
-
+  .turnDown{
+    background-color: #FDE2E2;
+    color: #F76B6B;
+  }
   .yuan_dialog_body {
-    height: 100%;
+    height: calc(100% - 60px);
     position: relative;
     .loading{
       position: absolute;
