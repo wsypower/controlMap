@@ -78,6 +78,7 @@
             this.yuAnList.forEach((item,index)=>{
               if(item.id===this.yuAnId){
                 this.activeIndex = index;
+                this.$emit('goMonitor',item);
               }
             })
           }

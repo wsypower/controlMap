@@ -132,7 +132,7 @@
             <span>
               <a-icon type="profile" theme="twoTone" style="marginRight:5px;" />资源部署
             </span>
-                        <a-tooltip placement="top" title="保证视图">
+                        <a-tooltip placement="top" title="保障视图">
                             <a-button type="primary" shape="circle" icon="security-scan" @click="openReViewMap"></a-button>
                         </a-tooltip>
                     </div>

@@ -153,7 +153,7 @@
                 <!--<span v-if="item.statusId=='006'" @click="toMonitorPage(item)">实时监测</span>-->
               <!--</div>-->
             <!--</div>-->
-            <div v-for="i in buWeiNum" :key="i" class="item"></div>
+            <div v-for="i in buWeiNum" :key="i" class="no_use"></div>
           </div>
         </cg-container>
       </div>
@@ -488,7 +488,12 @@
         display: flex;
         flex-flow: row wrap;
         padding: 20px;
-
+        .no_use{
+          width: 240px;
+          height: 200px;
+          margin-bottom: 25px;
+          background-color: transparent;
+        }
         .item {
           width: 240px;
           height: 200px;
@@ -500,6 +505,7 @@
           box-shadow: 0px 3px 4px 3px #e1e9f5ad;
           cursor: pointer;
           overflow: hidden;
+
           .item__header {
             width: 100%;
             height: 40px;

@@ -260,12 +260,18 @@ export default {
     },
     handleVideo(){
       this.$notification['warning']({
-        message: '还没有接入插件，无法使用'
+        message: '还没有接入插件，无法使用',
+        width: '350px',
+        marginLeft: `50px`,
+        fontSize: '14px'
       });
     },
     handlePhone(){
       this.$notification['warning']({
-        message: '还没有接入插件，无法使用'
+        message: '还没有接入插件，无法使用',
+        width: '350px',
+        marginLeft: `50px`,
+        fontSize: '14px'
       });
     },
     closeInfoDialog(){
@@ -286,12 +292,18 @@ export default {
     },
     startDuiJiangDiaoDu(){
       this.$notification['warning']({
-        message: '还未开发，无法使用'
+        message: '还未开发，无法使用',
+        width: '300px',
+        marginLeft: `100px`,
+        fontSize: '14px'
       });
     },
     startShiPinHuiYi() {
       this.$notification['warning']({
-        message: '还未开发，无法使用'
+        message: '还未开发，无法使用',
+        width: '300px',
+        marginLeft: `100px`,
+        fontSize: '14px'
       });
     },
     realTimeMonitor(item){

@@ -430,7 +430,10 @@ const groupColumns = [{
           e.preventDefault();
           this.$notification['warning']({
             message: '不可删除此成员',
-            description: '该成员在保障点位中存在，请先从保障点位中删除'
+            description: '该成员在保障点位中存在，请先从保障点位中删除',
+            width: '400px',
+            marginLeft: `0px`,
+            fontSize: '14px'
           });
           return
         }
@@ -467,7 +470,10 @@ const groupColumns = [{
           if(flag){
             this.$notification['warning']({
               message: '不可删除此组',
-              description: '该组成员在保障点位中存在，请先从保障点位中删除人员'
+              description: '该组成员在保障点位中存在，请先从保障点位中删除人员',
+              width: '400px',
+              marginLeft: `0px`,
+              fontSize: '14px'
             });
             return
           }
@@ -529,6 +535,9 @@ const groupColumns = [{
         else{
           this.loading = false;
         }
+        if(this.operateType=='add'){
+          this.submitForm.id = '';
+        }
         let groupDataTemp = JSON.parse(JSON.stringify(this.groupData));
         groupDataTemp.forEach(item =>{
           delete item.key;
@@ -560,7 +569,12 @@ const groupColumns = [{
         this.addNewEmergencyYuAn(this.submitForm).then((res)=>{
           console.log('addNewEmergencyYuAn',res);
           this.$notification['success']({
-            message: '保存成功'
+            message: '保存成功',
+            style: {
+              width: '200px',
+              marginLeft: `200px`,
+              fontSize: '14px'
+            },
           });
           if(type=='save'){
             this.saveLoading = false;
@@ -627,19 +641,28 @@ const groupColumns = [{
       checkParams(){
         if(new Date().getTime()>this.submitForm.startDayTime){
           this.$notification['error']({
-            message: '保障时间必须是当前时间之后'
+            message: '保障时间必须是当前时间之后',
+            width: '350px',
+            marginLeft: `50px`,
+            fontSize: '14px'
           });
           return false
         }
         if(this.groupData.length===0){
           this.$notification['error']({
-            message: '请填写分组数据'
+            message: '请填写分组数据',
+            width: '300px',
+            marginLeft: `100px`,
+            fontSize: '14px'
           });
           return false
         }
         if(this.baoZhangData.length===0){
           this.$notification['error']({
-            message: '请设置保障视图及点位'
+            message: '请设置保障视图及点位',
+            width: '300px',
+            marginLeft: `100px`,
+            fontSize: '14px'
           });
           return false
         }
