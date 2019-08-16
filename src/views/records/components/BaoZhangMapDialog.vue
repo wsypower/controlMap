@@ -234,7 +234,6 @@
             //绑定地图双击事件
             map.on('dblclick', this.mapClickHandler);
             this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
-            debugger;
             //编辑状态下通过图形id获取已保存的图形数据
             if(this.allBaoZhangData.length>0){
               const idList=filterMapId(this.allBaoZhangData);
@@ -280,7 +279,6 @@
               }
               const _this=this;
               setTimeout(()=>{
-                debugger;
                 console.log('==source==',source);
                 console.log(source.getFeatures());
                 _this.tempSource=source;
@@ -293,7 +291,7 @@
         //地图点击事件处理器
         mapClickHandler({ pixel, coordinate }) {
           const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
-          if(feature){
+          if(feature&&feature.get('id')){
             this.showSetDialog(feature.get('id'));
             this.infoOverlay.setPosition(coordinate);
             console.log('==点击feature==',feature);
@@ -301,7 +299,7 @@
         },
         //根据选择绘制图形
         handleOperateClick(value){
-          // map.un('dblclick', this.mapClickHandler);
+          map.un('dblclick', this.mapClickHandler);
           console.log('handleMenuClick',value);
           if(select){
             map.removeInteraction(select);
@@ -397,9 +395,34 @@
         },
         //清除选中的图形
         clearSelectGeometry() {
+          Array.prototype.indexOf = function (val) {
+            for (var i = 0; i < this.length; i++) {
+              if (this[i] == val) return i;
+            }
+            return -1;
+          };
+          Array.prototype.remove = function (val) {
+            var index = this.indexOf(val);
+            if (index > -1) {
+              this.splice(index, 1);
+            }
+          };
+          let deleteData;
           if (vectorLayer) {
             vectorLayer.getSource().removeFeature(this.selectedFeature);
             map.removeInteraction(select);
+            for(let i=0;i<this.allBaoZhangData.length;i++){
+              if(this.allBaoZhangData[i].mapId==this.selectedFeature.get('id')){
+                deleteData=this.allBaoZhangData[i];
+              }
+            }
+            const deletePeopleList = deleteData.personList;
+            for(let i=0;i<deletePeopleList.length;i++){
+              this.checkedPeopleIdList.remove(deletePeopleList[i]);
+            }
+            this.allBaoZhangData.remove(deleteData);
+            console.log(this.allBaoZhangData);
+            console.log(this.checkedPeopleIdList)
             console.log('==removemapip==',this.selectedFeature.get('id'));
           }
         },
@@ -482,7 +505,6 @@
         },
         //保存图形数据
         saveMap() {
-          debugger;
           console.log('==编辑要素==',this.editFeatures)
           this.pointFeatures = [];
           this.lineFeatures = [];
