@@ -204,14 +204,17 @@ export class MapManager {
  * @author:sijianting
  * @createDate:2019/7/25 14:56
  */
-export function filterMeetingPeople(feature, points) {
-  const geo = feature.getGeometry()
-  const peoples = points.filter(p => {
-    if (geo.intersectsCoordinate(p.position)) {
+export function filterVideoPoint(geo, points) {
+  // let geo = feature.getGeometry();
+  if(geo.getType()=='Point'||geo.getType()=='LineString'){
+    geo = createBuffer(geo);
+  }
+  const videos = points.filter(p => {
+    if (geo.intersectsCoordinate(p.getGeometry().getCoordinates())) {
       return p
     }
   })
-  return peoples
+  return videos
 }
 /**
  * @description:
@@ -297,17 +300,14 @@ export function circleToPloygon(feature) {
  * @author:sijianting
  * @createDate:2019/8/16 10:16
  */
-export function createBuffer(feature) {
+function createBuffer(geometry) {
   var parser = new jsts.io.OL3Parser();
   parser.inject(Point, LineString, LinearRing, Polygon, MultiPoint, MultiLineString, MultiPolygon);
-  var jstsGeom = parser.read(feature.getGeometry().transform("EPSG:4326", "EPSG:3857"));
-  var buffered = jstsGeom.buffer(40);
+  var jstsGeom = parser.read(geometry.transform("EPSG:4326", "EPSG:3857"));
+  var buffered = jstsGeom.buffer(20);
   var olBuffered = parser.write(buffered);
   var transFormGeo = olBuffered.transform("EPSG:3857","EPSG:4326");
-  // markSource.clear();
-  // markSource.addFeature(new ol.Feature(transFormGeo));
-  feature.setGeometry(transFormGeo);
-  return feature;
+  return transFormGeo;
 }
 
 /**
@@ -316,7 +316,12 @@ export function createBuffer(feature) {
  * @createDate:2019/8/16 10:48
  */
 export function getPointByPeopleList(list) {
-  const features = list.map(r => {
+  let data = [];
+  list.map(arr => {
+    data = data.concat(arr);
+  });
+  console.log('222',data);
+  const features = data.map(r => {
     if (r.x.length > 0 && r.y.length > 0) {
       r.position = [parseFloat(r.x), parseFloat(r.y)]
       let feature = new Feature(new Point(r.position));

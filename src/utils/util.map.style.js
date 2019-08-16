@@ -4,9 +4,7 @@
  * @createDate:2019/7/11 11:16
  */
 import Icon from 'ol/style/Icon'
-import Style from 'ol/style/Style'
-import Fill from 'ol/style/Fill';
-import Stroke from 'ol/style/Stroke';
+import { Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';
 
 /**
  * @description:应急预案区域样式
@@ -48,5 +46,27 @@ export function videoStyle() {
       src: require('@/assets/mapImage/周边视频.png')
     }),
     anchor: [0.5, 1]
+  })
+}
+/**
+ * @description:保障区域样式
+ * @author:sijianting
+ * @createDate:2019/8/16 14:37
+ */
+export function areaStyle() {
+  return new Style({
+    fill: new Fill({
+      color: 'rgba(255, 255, 255, 0.3)'
+    }),
+    stroke: new Stroke({
+      color: '#FF0000',
+      width: 2
+    }),
+    image: new CircleStyle({
+      radius: 7,
+      fill: new Fill({
+        color: '#FF0000'
+      })
+    })
   })
 }
