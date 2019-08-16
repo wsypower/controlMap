@@ -102,8 +102,8 @@
   import { mapActions } from 'vuex'
   import LayoutMap from '@/views/map/olMap.vue'
   import ControlYuAns from './components/ControlYuAns';
-  import { MapManager } from '@/utils/util.map.manage';
-  import {getAllVideo,getAllPeople} from '@/api/map/service'
+  import { MapManager,getPointByPeopleList,filterMapId } from '@/utils/util.map.manage';
+  import {getAllVideo,getAllPeople,getEmergencyFeatures} from '@/api/map/service'
   import { peopleStyle,videoStyle } from '@/utils/util.map.style'
 
   const plainOptions = [{ label: '人力资源', value: 'people' },
@@ -133,10 +133,12 @@ export default {
       emergencyList:[
         {
           type:'people',
+          features:null,
           layer:null
         },
         {
           type:'video',
+          features:null,
           layer:null
         }
       ],
@@ -215,9 +217,11 @@ export default {
     },
     initMapData(){
       getAllPeople().then(data=>{
+        this.emergencyList[0].features=data;
         this.emergencyList[0].layer=mapManager.addVectorLayerByFeatures(data,peopleStyle(),2)
       })
       getAllVideo().then(data=>{
+        this.emergencyList[1].features=data;
         this.emergencyList[1].layer=mapManager.addVectorLayerByFeatures(data,videoStyle(),2)
       })
     },
@@ -285,18 +289,28 @@ export default {
         message: '还未开发，无法使用'
       });
     },
-
     startShiPinHuiYi() {
       this.$notification['warning']({
         message: '还未开发，无法使用'
       });
     },
-
     realTimeMonitor(item){
+      console.log('==预案数据==',item);
       this.yuAnId = item.id;
       this.emergencyList[0].layer.getSource().clear();
       this.emergencyList[1].layer.getSource().clear();
-      console.log('==预案数据==',item);
+      //人员数据过滤,只显示当前预案相关人员
+      const peopleFeatures = getPointByPeopleList(item.peopleList);
+      this.emergencyList[0].layer.getSource().addFeatures(peopleFeatures);
+      //视频数据过滤
+      const videoFeatures = this.emergencyList[1].features;
+      let quyuData=[];
+      const idList=filterMapId(item);
+      if(idList[0]){
+        getEmergencyFeatures(idList[0],'Point').then(data=>{
+          console.log('查询点',data);
+        });
+      }
     },
     //绘制地图--区域多边形
     drawArea(){
