@@ -6,7 +6,7 @@
     <div class="function__buttons" flex>
       <div flex="dir:top" class="function__buttons_items">
         <!-- 圈图工具 -->
-        <a-tooltip placement="left" title="圈图工具">
+        <a-tooltip placement="left" title="圈图工具" v-if="yuAnId!==''">
           <a-button type="primary" class="function__buttons_item" @click="showDrawer">
             <a-icon type="highlight" theme="twoTone" />
           </a-button>
@@ -293,6 +293,7 @@ export default {
     },
 
     realTimeMonitor(item){
+      this.yuAnId = item.id;
       this.emergencyList[0].layer.getSource().clear();
       this.emergencyList[1].layer.getSource().clear();
       console.log('==预案数据==',item);
