@@ -14,13 +14,13 @@
 
         <!-- 对讲调度 -->
         <a-tooltip placement="left" title="对讲调度">
-          <a-button type="primary" class="function__buttons_item">
+          <a-button type="primary" class="function__buttons_item" @click="startDuiJiangDiaoDu">
             <a-icon type="message" theme="twoTone" />
           </a-button>
         </a-tooltip>
         <!-- 视频会议 -->
         <a-tooltip placement="left" title="视频会议">
-          <a-button type="primary" class="function__buttons_item">
+          <a-button type="primary" class="function__buttons_item" @click="startShiPinHuiYi">
             <a-icon type="video-camera" theme="twoTone" />
           </a-button>
         </a-tooltip>
@@ -280,6 +280,18 @@ export default {
         }
       }
     },
+    startDuiJiangDiaoDu(){
+      this.$notification['warning']({
+        message: '还未开发，无法使用'
+      });
+    },
+
+    startShiPinHuiYi() {
+      this.$notification['warning']({
+        message: '还未开发，无法使用'
+      });
+    },
+
     realTimeMonitor(item){
       this.emergencyList[0].layer.getSource().clear();
       this.emergencyList[1].layer.getSource().clear();

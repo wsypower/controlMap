@@ -1,5 +1,5 @@
 <template>
-  <a-modal :title="dialogTitle" v-model="addEditDialogVisible" class="add-edit-dialog" width="90%" @cancel="handleCancel">
+  <a-modal :title="dialogTitle" v-model="addEditDialogVisible" class="add-edit-dialog" width="90%" :maskClosable="false" @cancel="handleCancel">
     <div v-if="operateType == 'add'" class="template-panel">
       <label>选择模板创建：</label>
       <a-select v-model="templateId" placeholder="请选择模板" style="width: 180px;" @change="handleUserTemplate">
@@ -115,7 +115,7 @@
                     color="blue"
                     :key="person.id"
                     closable
-                    :afterClose="() => closeTag(person.id, index)"
+                    @close="($event) => closeTag(person.id, index,$event)"
                     >{{ person.name }}</a-tag
                   >
                   <a-button type="primary" size="small" @click="openPeopleDialog(index)">人员选择</a-button>
@@ -123,7 +123,7 @@
                 <span slot="action" slot-scope="text, record, index">
                   <a-popconfirm
                     v-if="groupData.length > 1"
-                    title="Sure to delete?"
+                    title="确定删除这个组吗？"
                     @confirm="() => deleteGroup(index)"
                   >
                     <a-icon type="minus-circle" class="icon_delete" />
@@ -326,7 +326,7 @@ const groupColumns = [{
             res.push(temp)
             return res
           },[])
-
+          this.sourcePeopleList = this.getSourcePeolpleList();
           this.baoZhangData = result.baoZhangData.reduce((res,item)=>{
             let temp = {
               id: item.id,
@@ -396,8 +396,20 @@ const groupColumns = [{
           this.groupData = newData;
         }
       },
-      closeTag (person,index) {
+      closeTag (person,index,e) {
         console.log(person,index);
+        let arr = this.getPeolpleListInBaoZhangData();
+        let flag = arr.some((item)=>{
+          return item === person
+        });
+        if(flag){
+          e.preventDefault();
+          this.$notification['warning']({
+            message: '不可删除此成员',
+            description: '该成员在保障点位中存在，请先从保障点位中删除'
+          });
+          return
+        }
         const personIds = this.groupData[index].peopleKeyList.filter(item => item !== person);
         const persons = this.groupData[index].checkedPeopleList.filter(item => item.id !== person);
         let i = this.disablePeopleKey.indexOf(person);
@@ -421,7 +433,22 @@ const groupColumns = [{
       },
       deleteGroup(index){
         //console.log('deleteGroup',index)
+
         let list = this.groupData[index].peopleKeyList;
+        let arr = this.getPeolpleListInBaoZhangData();
+        for(let i=0;i<list.length;i++){
+          let flag = arr.some((item)=>{
+            return item === list[i]
+          });
+          if(flag){
+            this.$notification['warning']({
+              message: '不可删除此组',
+              description: '该组成员在保障点位中存在，请先从保障点位中删除人员'
+            });
+            return
+          }
+        }
+
         list.forEach((key)=>{
           let i = this.disablePeopleKey.indexOf(key);
           this.disablePeopleKey.splice(i,1);
@@ -450,6 +477,19 @@ const groupColumns = [{
             });
           })
           return resList
+      },
+
+      //获取保障视图重组后数据
+      getPeolpleListInBaoZhangData(){
+        let pList = this.baoZhangData;
+        let resList = [];
+        pList.forEach((item)=>{
+          let checkedPeopleList = item.personList;
+          checkedPeopleList.map((i)=>{
+            resList.push(i);
+          });
+        })
+        return resList
       },
       //保存地图数据
       saveDraw(data){

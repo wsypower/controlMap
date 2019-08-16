@@ -1,5 +1,5 @@
 <template>
-    <a-modal title="预案详情" v-model="yuAnInfoDialogVisible" width="1080px" class="yuan-info-dialog">
+    <a-modal title="预案详情" v-model="yuAnInfoDialogVisible" width="1080px" class="yuan-info-dialog" :maskClosable="false">
         <div class="yuan_dialog_body">
             <div v-show="dataLoading" class="loading" flex="main:center cross:center">
                 <a-spin tip="数据加载中..."></a-spin>
@@ -54,7 +54,7 @@
             </div>
             <div v-else></div>
         </template>
-        <a-modal title="填写驳回原因" v-model="backDialogVisible" width="400px" @cancel="handleCancelForBack">
+        <a-modal title="填写驳回原因" v-model="backDialogVisible" width="400px" @cancel="handleCancelForBack" :maskClosable="false">
             <div class="back_dialog_body">
                 <p>驳回原因：</p>
                 <a-textarea v-model="backReason" placeholder="填写驳回原因" :autosize="{ minRows: 4, maxRows: 4 }" />

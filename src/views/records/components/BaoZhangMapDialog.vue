@@ -156,23 +156,23 @@
         //所有已选择人员数据
         checkedPeopleIdList: function(){
           return this.baoZhangData.reduce((res,item)=>{
-            let temp = item.personList.reduce((r,i)=>{
-              r.push(i.id);
-              return r
-            },[])
-            return res.concat(temp)
+            item.personList.forEach((id)=>{
+              res.push(id)
+            })
+            return res
           },[]);
         },
         //可选择的人员数据
         peopleList:function(){
-          console.log('peopleList',this.filterPeopleList);
           let resArr = this.sourcePeopleList.reduce((res,item)=>{
             if(!this.filterPeopleList.includes(item.id)){
               res.push(item)
             }
             return res
           },[])
+          console.log('peopleList',this.resArr);
             return resArr
+
         },
         //保障视图是新增还是编辑操作
         mapOperateType:function(){
@@ -401,9 +401,9 @@
                   this.index = i;
                 }
               }
-              if(temp.peopleList){
-                let selectList = temp.peopleList.reduce((r,i)=>{
-                  r.push(i.id);
+              if(temp.personList){
+                let selectList = temp.personList.reduce((r,i)=>{
+                  r.push(i);
                   return r
                 },[])
                 this.filterPeopleList = this.checkedPeopleIdList.reduce((res,item)=>{
