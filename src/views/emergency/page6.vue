@@ -313,6 +313,20 @@ export default {
         fontSize: '14px'
       });
     },
+    getAreaByIdList(idList,type){
+      const source = this.baozhangLayer.getSource();
+      const videoFeatures = this.emergencyList[1].features;
+      getEmergencyFeatures(idList,type).then(data=>{
+        source.addFeatures(data);
+        for(let i=0;i<data.length;i++){
+          const geo = data[i].getGeometry();
+          const filterVideos = filterVideoPoint(geo.clone(),videoFeatures);
+          if(filterVideos.length>0){
+            this.emergencyList[1].layer.getSource().addFeatures(filterVideos);
+          }
+        }
+      });
+    },
     realTimeMonitor(item){
       this.yuAnId = item.id;
       this.emergencyList[0].layer && this.emergencyList[0].layer.getSource().clear();
@@ -322,64 +336,19 @@ export default {
         //获取当前预案区域数据
         const idList = filterMapId(item.baoZhangData);
         this.baozhangLayer=mapManager.addVectorLayerByFeatures([],areaStyle(),2);
-        const source = this.baozhangLayer.getSource();
         //视频数据过滤
-        const videoFeatures = this.emergencyList[1].features;
-        if(idList[0]){
-          getEmergencyFeatures(idList[0],'Point').then(data=>{
-            source.addFeatures(data);
-            for(let i=0;i<data.length;i++){
-              const geo = data[i].getGeometry();
-              const filterVideos = filterVideoPoint(geo.clone(),videoFeatures);
-              if(filterVideos.length>0){
-                this.emergencyList[1].layer.getSource().addFeatures(filterVideos);
-              }
-            }
-          });
-        }
-        if(idList[1]){
-          getEmergencyFeatures(idList[1],'LineString').then(data=>{
-            source.addFeatures(data);
-            for(let i=0;i<data.length;i++){
-              const geo = data[i].getGeometry();
-              const filterVideos = filterVideoPoint(geo.clone(),videoFeatures);
-              if(filterVideos.length>0){
-                this.emergencyList[1].layer.getSource().addFeatures(filterVideos);
-              }
-            }
-            source.addFeatures(data);
-          });
-        }
-        if(idList[2]){
-          getEmergencyFeatures(idList[2],'Polygon').then(data=>{
-            source.addFeatures(data);
-            for(let i=0;i<data.length;i++){
-              const filterVideos = filterVideoPoint(data[i].getGeometry(),videoFeatures);
-              if(filterVideos.length>0){
-                this.emergencyList[1].layer.getSource().addFeatures(filterVideos);
-              }
-            }
-          });
-        }
+        if(idList[0]){this.getAreaByIdList(idList[0],'Point');}
+        if(idList[1]){this.getAreaByIdList(idList[1],'LineString');}
+        if(idList[2]){this.getAreaByIdList(idList[2],'Polygon');}
         //人员数据提取
         let peopleList = [];
         for (let i = 0; i < item.baoZhangData.length; i++) {
-          peopleList.push(item.baoZhangData[i].peopleList)
+          peopleList.push(item.baoZhangData[i].peopleList);
         }
         //人员数据过滤,只显示当前预案相关人员
         const peopleFeatures = getPointByPeopleList(peopleList);
         this.emergencyList[0].layer.getSource().addFeatures(peopleFeatures);
         //视频数据过滤
-        // // const baozhangFeatures = this.baozhangLayer.getSource().getFeatures();
-        // for(let i=0;i<baozhangFeatures.length;i++){
-        //   const filterVideos = filterVideoPoint(baozhangFeatures[i],videoFeatures);
-        //   if(filterVideos.length>0){
-        //     this.emergencyList[1].layer.getSource().addFeatures(filterVideos);
-        //   }
-        // }
-        // const bufferFeature=createBuffer(feature);
-        // source.addFeature(feature);
-        // source.addFeature(bufferFeature);
       }
     },
     //绘制地图--区域多边形
