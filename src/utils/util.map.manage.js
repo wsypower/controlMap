@@ -308,5 +308,23 @@ export function createBuffer(feature) {
   // markSource.addFeature(new ol.Feature(transFormGeo));
   feature.setGeometry(transFormGeo);
   return feature;
+}
 
+/**
+ * @description:通过peoplelist获取相关图形点
+ * @author:sijianting
+ * @createDate:2019/8/16 10:48
+ */
+export function getPointByPeopleList(list) {
+  const features = list.map(r => {
+    if (r.x.length > 0 && r.y.length > 0) {
+      r.position = [parseFloat(r.x), parseFloat(r.y)]
+      let feature = new Feature(new Point(r.position));
+      feature.setId(r.userid);
+      feature.set('id',r.userid);
+      feature.set('type','people');
+      return feature;
+    }
+  });
+  return features.filter(Boolean);
 }
