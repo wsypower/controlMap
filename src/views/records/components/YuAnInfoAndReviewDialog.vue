@@ -1,52 +1,212 @@
 <template>
-    <a-modal title="预案详情" v-model="yuAnInfoDialogVisible" width="1080px" class="yuan-info-dialog" :maskClosable="false">
+    <a-modal title="预案详情"
+             wrapClassName="reviewmodelwrap"
+             v-model="yuAnInfoDialogVisible"
+             :mask="false"
+             :maskClosable="false"
+             width="100%"
+             class="yuan-info-dialog"
+             style="paddingBottom: 0px;margin: 0px;height: 100%;top:0px"
+             :bodyStyle="{height:'calc(100% - 108px)',padding:'0px 20px 20px 20px'}"
+             :destroyOnClose="true">
         <div class="yuan_dialog_body">
             <div v-show="dataLoading" class="loading" flex="main:center cross:center">
                 <a-spin tip="数据加载中..."></a-spin>
             </div>
             <cg-container scroll>
                 <div class="part base">
-                    <h3>{{yuAnInfo.name}}</h3>
-                    <span v-if="yuAnInfo.statusId=='01'" class="status blue">待提交</span>
-                    <span v-if="yuAnInfo.statusId=='02'" class="status blue">待审核</span>
-                    <span v-if="yuAnInfo.statusId=='03'" class="status blue">已通过</span>
-                    <span v-if="yuAnInfo.statusId=='04'" class="status blue">已驳回</span>
-                    <span v-if="yuAnInfo.statusId=='05'" class="status yellow">未开始</span>
-                    <span v-if="yuAnInfo.statusId=='06'" class="status green">进行中</span>
-                    <span v-if="yuAnInfo.statusId=='07'" class="status grey">已结束</span>
-                    <span v-if="yuAnInfo.statusId=='08'" class="status red">已逾期作废</span>
-                    <div><span class="attr">创建人：</span><span class="content">{{yuAnInfo.creator}}</span></div>
-                    <div><span class="attr">保障时间：</span><span class="content">{{new Date(yuAnInfo.startDayTime)|date_format()}}~{{new Date(yuAnInfo.endDayTime)|date_format()}}</span></div>
-                    <div><span class="attr">预案描述：</span><span class="content">{{yuAnInfo.description}}</span></div>
-                    <div><span class="attr">工作目标：</span><span class="content">{{yuAnInfo.jobGoal}}</span></div>
-                    <div><span class="attr">组织领导及任务分工：</span><span class="content">{{yuAnInfo.jobAssignment}}</span></div>
-                    <div><span class="attr">工作内容：</span><span class="content">{{yuAnInfo.jobContent}}</span></div>
-                    <div><span class="attr">工作要求：</span><span class="content">{{yuAnInfo.jobRequirements}}</span></div>
+                    <!-- 案件标题 -->
+                    <div class="part_title" flex="cross:center">
+                        <a-icon type="alert" theme="twoTone" style="marginRight:5px;marginTop:-2px" />
+                        {{yuAnInfo.name}}
+                        <span
+                                v-if="yuAnInfo.statusId=='01'"
+                                class="status blue"
+                                flex="cross:center"
+                        >
+              <a-icon
+                      type="info-circle"
+                      theme="filled"
+                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+              />待提交
+            </span>
+                        <span v-if="yuAnInfo.statusId=='02'" class="status blue">
+              <a-icon
+                      type="pause-circle"
+                      theme="filled"
+                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+              />待审核
+            </span>
+                        <span v-if="yuAnInfo.statusId=='03'" class="status blue">
+              <a-icon
+                      type="check-circle"
+                      theme="filled"
+                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+              />已通过
+            </span>
+                        <span v-if="yuAnInfo.statusId=='04'" class="status blue">
+              <a-icon
+                      type="close-circle"
+                      theme="filled"
+                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+              />已驳回
+            </span>
+                        <span v-if="yuAnInfo.statusId=='05'" class="status yellow">
+              <a-icon
+                      type="minus-circle"
+                      theme="filled"
+                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+              />未开始
+            </span>
+                        <span v-if="yuAnInfo.statusId=='06'" class="status green">
+              <a-icon
+                      type="clock-circle"
+                      theme="filled"
+                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+              />进行中
+            </span>
+                        <span v-if="yuAnInfo.statusId=='07'" class="status grey">
+              <a-icon
+                      type="check-circle"
+                      theme="filled"
+                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+              />已结束
+            </span>
+                        <span v-if="yuAnInfo.statusId=='08'" class="status red">
+              <a-icon
+                      type="warning"
+                      theme="filled"
+                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+              />已逾期作废
+            </span>
+                    </div>
+                    <div class="call__items">
+                        <div class="call__item" flex="cross:center">
+              <span class="attr">
+                <a-icon type="smile" theme="twoTone" />创建人：
+              </span>
+                            <span class="content">{{yuAnInfo.creator}}</span>
+                        </div>
+                        <div class="call__item" flex="cross:center">
+              <span class="attr">
+                <a-icon type="dashboard" theme="twoTone" />保障时间：
+              </span>
+                            <span
+                                    class="content"
+                            >{{new Date(yuAnInfo.startDayTime)|date_format()}}~{{new Date(yuAnInfo.endDayTime)|date_format()}}</span>
+                        </div>
+                        <div class="call__item" flex="cross:center">
+              <span class="attr">
+                <a-icon type="project" theme="twoTone" />预案描述：
+              </span>
+                            <span class="content">{{yuAnInfo.description}}</span>
+                        </div>
+                        <div class="call__item" flex="cross:center">
+              <span class="attr">
+                <a-icon type="bulb" theme="twoTone" />工作目标：
+              </span>
+                            <span class="content">{{yuAnInfo.jobGoal}}</span>
+                        </div>
+                        <div class="call__item" flex="cross:center">
+              <span class="attr">
+                <a-icon type="layout" theme="twoTone" />组织领导及任务分工：
+              </span>
+                            <span class="content">{{yuAnInfo.jobAssignment}}</span>
+                        </div>
+                        <div class="call__item" flex="cross:center">
+              <span class="attr">
+                <a-icon type="fund" theme="twoTone" />工作内容：
+              </span>
+                            <span class="content">{{yuAnInfo.jobContent}}</span>
+                        </div>
+                        <div class="call__item" flex="cross:center">
+              <span class="attr">
+                <a-icon type="save" theme="twoTone" />工作要求：
+              </span>
+                            <span class="content">{{yuAnInfo.jobRequirements}}</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="part ziyuan">
-                    <h3>资源部署</h3>
-                    <a-button type="primary" size="small" @click="openReViewMap">视图</a-button>
-                    <a-table :columns="ziyuanColumns"
-                             :rowKey="record => record.id"
-                             :dataSource="yuAnInfo.baoZhangData"
-                             :pagination="false">
+                    <div class="part_title" flex="cross:center">
+            <span>
+              <a-icon type="profile" theme="twoTone" style="marginRight:5px;" />资源部署
+            </span>
+                        <a-tooltip placement="top" title="保证视图">
+                            <a-button type="primary" shape="circle" icon="security-scan" @click="openReViewMap"></a-button>
+                        </a-tooltip>
+                    </div>
+                    <a-table
+                            bordered
+                            :columns="ziyuanColumns"
+                            :rowKey="record => record.id"
+                            :dataSource="yuAnInfo.baoZhangData"
+                            :pagination="false"
+                    >
                         <div slot="person" slot-scope="text, record, index">
-                            <span v-for="(person,index) in record.peopleList" :key="person.id">
-                                {{index==record.peopleList.length-1?person.name +'('+person.groupName + ')':person.name +'('+person.groupName + '),'}}
-                            </span>
+              <span
+                      v-for="(person,index) in record.peopleList"
+                      :key="person.id"
+              >{{index==record.peopleList.length-1?person.name +'('+person.groupName + ')':person.name +'('+person.groupName + '),'}}</span>
                         </div>
                     </a-table>
                 </div>
                 <div class="part log">
-                    <h3>操作日志</h3>
-                    <a-table :columns="logColumns"
-                             :rowKey="record => record.id"
-                             :dataSource="yuAnInfo.logData"
-                             :pagination="false">
-                    </a-table>
+                    <div class="part_title" flex="cross:center">
+                        <a-icon type="reconciliation" theme="twoTone" style="marginRight:5px;" />操作日志
+                    </div>
+                    <a-table
+                            bordered
+                            :columns="logColumns"
+                            :rowKey="record => record.id"
+                            :dataSource="yuAnInfo.logData"
+                            :pagination="false"
+                    ></a-table>
                 </div>
             </cg-container>
         </div>
+                <!--<div class="part base">-->
+                    <!--<h3>{{yuAnInfo.name}}</h3>-->
+                    <!--<span v-if="yuAnInfo.statusId=='01'" class="status blue">待提交</span>-->
+                    <!--<span v-if="yuAnInfo.statusId=='02'" class="status blue">待审核</span>-->
+                    <!--<span v-if="yuAnInfo.statusId=='03'" class="status blue">已通过</span>-->
+                    <!--<span v-if="yuAnInfo.statusId=='04'" class="status blue">已驳回</span>-->
+                    <!--<span v-if="yuAnInfo.statusId=='05'" class="status yellow">未开始</span>-->
+                    <!--<span v-if="yuAnInfo.statusId=='06'" class="status green">进行中</span>-->
+                    <!--<span v-if="yuAnInfo.statusId=='07'" class="status grey">已结束</span>-->
+                    <!--<span v-if="yuAnInfo.statusId=='08'" class="status red">已逾期作废</span>-->
+                    <!--<div><span class="attr">创建人：</span><span class="content">{{yuAnInfo.creator}}</span></div>-->
+                    <!--<div><span class="attr">保障时间：</span><span class="content">{{new Date(yuAnInfo.startDayTime)|date_format()}}~{{new Date(yuAnInfo.endDayTime)|date_format()}}</span></div>-->
+                    <!--<div><span class="attr">预案描述：</span><span class="content">{{yuAnInfo.description}}</span></div>-->
+                    <!--<div><span class="attr">工作目标：</span><span class="content">{{yuAnInfo.jobGoal}}</span></div>-->
+                    <!--<div><span class="attr">组织领导及任务分工：</span><span class="content">{{yuAnInfo.jobAssignment}}</span></div>-->
+                    <!--<div><span class="attr">工作内容：</span><span class="content">{{yuAnInfo.jobContent}}</span></div>-->
+                    <!--<div><span class="attr">工作要求：</span><span class="content">{{yuAnInfo.jobRequirements}}</span></div>-->
+                <!--</div>-->
+                <!--<div class="part ziyuan">-->
+                    <!--<h3>资源部署</h3>-->
+                    <!--<a-button type="primary" size="small" @click="openReViewMap">视图</a-button>-->
+                    <!--<a-table :columns="ziyuanColumns"-->
+                             <!--:rowKey="record => record.id"-->
+                             <!--:dataSource="yuAnInfo.baoZhangData"-->
+                             <!--:pagination="false">-->
+                        <!--<div slot="person" slot-scope="text, record, index">-->
+                            <!--<span v-for="(person,index) in record.peopleList" :key="person.id">-->
+                                <!--{{index==record.peopleList.length-1?person.name +'('+person.groupName + ')':person.name +'('+person.groupName + '),'}}-->
+                            <!--</span>-->
+                        <!--</div>-->
+                    <!--</a-table>-->
+                <!--</div>-->
+                <!--<div class="part log">-->
+                    <!--<h3>操作日志</h3>-->
+                    <!--<a-table :columns="logColumns"-->
+                             <!--:rowKey="record => record.id"-->
+                             <!--:dataSource="yuAnInfo.logData"-->
+                             <!--:pagination="false">-->
+                    <!--</a-table>-->
+                <!--</div>-->
+            <!--</cg-container>-->
+        <!--</div>-->
         <template slot="footer" >
             <div v-if="yuAnInfo.statusId=='02'&&yuAnInfo.reviewUserId === userId">
                 <a-button type="primary" @click="agree">同意</a-button>
@@ -136,6 +296,12 @@
           backReason: ''
         }
       },
+      computed: {
+        getContainer() {
+          console.log(this.$parent.$refs)
+          return this.$parent.$refs.content
+        }
+      },
       watch:{
         yuAnInfoDialogVisible:function(val){
           if(val){
@@ -217,27 +383,44 @@
     }
 </script>
 <style lang="scss" scoped>
-    .yuan-info-dialog{
+    /deep/.ant-modal-content {
+        height: 100%;
+        /deep/.ant-modal-body {
+            height: 100%;
+        }
+    }
+    .yuan-info-dialog {
+        top: 0px;
+
         .yuan_dialog_body {
             width: 100%;
-            height: 500px;
-            background-color: #eee;
-            padding:10px;
+            height: 100%;
             position: relative;
-            .loading{
-                position: absolute;
-                top:0;
-                left:0;
-                right:0;
-                bottom:0;
-                z-index: 10;
-                background-color: rgba(255,255,255,0.8);
+            background-color: #eee;
+            .part_title {
+                font-size: 18px;
+                font-weight: 600;
+                color: #028efc;
+                height: 70px;
             }
             .part {
-                margin-bottom: 10px;
                 background-color: #ffffff;
                 width: 100%;
-                border-radius: 6px;
+                .call__items {
+                    width: 100%;
+                    padding: 10px 20px 20px 20px;
+                    background-color: rgb(249, 247, 247);
+                    border-radius: 5px;
+                    .call__item {
+                        height: 50px;
+                        border-bottom: 1px dashed rgb(223, 223, 224);
+                        .anticon {
+                            margin-right: 5px;
+                            font-size: 16px;
+                        }
+                    }
+                }
+
                 h3 {
                     height: 30px;
                     line-height: 30px;
@@ -245,11 +428,12 @@
                 &.base {
                     position: relative;
                     .status {
-                        position: absolute;
-                        top: 10px;
-                        right: 10px;
+                        // position: absolute;
+                        // top: 10px;
+                        // right: 10px;
+                        margin-left: 5px;
                         display: inline-block;
-                        padding: 0px 8px;
+                        padding: 2px 8px;
                         background-color: #ffd43b;
                         color: #ffffff;
                         text-align: center;
@@ -257,27 +441,25 @@
                         font-size: 14px;
                         line-height: 20px;
                         &.red {
-                            background-color: #ff0000;
+                            background-color: #f76b6b;
                         }
                         &.yellow {
-                            background-color: #ffcc00;
+                            background-color: #e7a343;
                         }
                         &.green {
-                            background-color: #66cc66;
+                            background-color: #65c346;
                         }
                         &.blue {
-                            background-color: #1761f3;
+                            background-color: #3a9cfc;
                         }
                         &.grey {
-                            background-color: #6b6b6b;
+                            background-color: #909399;
                         }
                     }
                     > div {
-                        border-bottom: 1px solid #eeeeee;
-                        padding: 5px 0px;
                         .attr {
                             display: inline-block;
-                            width: 140px;
+                            width: 187px;
                             color: #888888;
                             text-align: left;
                             vertical-align: top;
@@ -291,11 +473,26 @@
                 &.ziyuan {
                     position: relative;
                     button {
-                        position: absolute;
-                        top: 5px;
-                        right: 10px;
+                        margin-left: 20px;
+                        width: 22px;
+                        height: 22px;
+                        border-radius: 50%;
+                        font-size: 14px;
                     }
                 }
+            }
+        }
+    }
+</style>
+<style lang="scss">
+    .reviewmodelwrap {
+        top: 69px;
+        height: calc(100% - 78px);
+        width: calc(100% - 80px);
+        left: 70px;
+        .yuan-info-dialog {
+            .ant-modal-content {
+                height: 100%;
             }
         }
     }

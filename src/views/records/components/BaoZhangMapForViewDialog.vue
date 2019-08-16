@@ -1,5 +1,15 @@
 <template>
-  <a-modal ref="baoZhangDialog" title="保障视图" v-model="mapDialogVisible" width="100%" :maskClosable="false" @cancel="handleCancel">
+  <a-modal ref="baoZhangDialog"
+           wrapClassName="baoZhangDialogwrap"
+           title="保障视图"
+           v-model="mapDialogVisible"
+           width="80%"
+           :maskClosable="false"
+           @cancel="handleCancel"
+           :bodyStyle="{padding:'0px 5px',borderRadius:'7px',overFlow: 'hidden'}"
+           style="top:57px"
+           :destroyOnClose="true"
+  >
     <div class="yuan_dialog_body" ref="baoZhangBody">
       <!-- 地图控件注入地址 -->
       <LayoutMap ref="olMap"></LayoutMap>
@@ -215,6 +225,7 @@
   height: 500px;
   width: 100%;
   position: relative;
+  background-color: #fff;
   .operate-panel {
     position: absolute;
     top: 20px;
@@ -263,6 +274,7 @@
       width: 100%;
       padding: 10px;
       position: relative;
+      background-color: #fff;
       /deep/.ant-form-item {
         margin-bottom: 6px;
       }
@@ -275,4 +287,29 @@
     }
   }
 }
+</style>
+<style lang='scss'>
+  .baoZhangDialogwrap {
+    .ant-modal-close-x {
+      color: #fff;
+    }
+    .ant-modal-content {
+      background-image: linear-gradient(90deg, #0065ea 0%, #6f62ee 100%);
+      .ant-modal-header {
+        background-image: linear-gradient(90deg, #0065ea 0%, #6f62ee 100%);
+        // color: #fff;
+        border: none;
+        .ant-modal-title {
+          color: #fff;
+          font-size: 18px;
+        }
+      }
+      .ant-modal-footer {
+        border: 1px solid;
+        border-image: linear-gradient(90deg, #0065ea 0%, #6f62ee 100%) 30 30;
+        border-width: 0px 5px 10px 5px;
+        background-color: #fff;
+      }
+    }
+  }
 </style>

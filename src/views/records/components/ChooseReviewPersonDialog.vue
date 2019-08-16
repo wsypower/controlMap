@@ -65,10 +65,17 @@
           return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
         },
         choosePerson(){
-          console.log('reviewPerson',this.reviewPerson);
-          this.$emit('choosePerson',this.reviewPerson);
-          this.reviewPerson = '';
-          this.chooseReViewPersonDialogVisible = false;
+          if(this.reviewPerson === ''){
+            this.$notification['error']({
+              message: '请选择审核人员'
+            });
+          }
+          else{
+            console.log('reviewPerson',this.reviewPerson);
+            this.$emit('choosePerson',this.reviewPerson);
+            this.reviewPerson = '';
+            this.chooseReViewPersonDialogVisible = false;
+          }
         },
         handleCancelForCheck(){
           this.reviewPerson = '';

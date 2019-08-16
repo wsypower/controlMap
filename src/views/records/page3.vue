@@ -325,6 +325,7 @@
       /***************************预案查询区 end****************************/
       addNewYuAn(){
         console.log('addNewYuAn click');
+        this.yuAnId = '';
         this.dialogTitle = '新增预案';
         this.addYuAnDialogVisible = true;
       },

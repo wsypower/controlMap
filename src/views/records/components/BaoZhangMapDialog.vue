@@ -1,6 +1,16 @@
 <template>
-  <a-modal ref="baoZhangDialog" title="保障视图" v-model="mapDialogVisible" width="100%" :maskClosable="false" @cancel="handleCancel">
-    <div class="yuan_dialog_body" id="bao_zhang_map" ref="baoZhangBody">
+  <a-modal ref="baoZhangDialog"
+           title="保障视图"
+           v-model="mapDialogVisible"
+           :maskClosable="false"
+           @cancel="handleCancel"
+           wrapClassName="baoZhangDialogwraps"
+           width="80%"
+           :bodyStyle="{padding:'0px 5px',borderRadius:'7px',overFlow: 'hidden'}"
+           style="top:57px"
+           :destroyOnClose="true"
+  >
+    <div class="yuan_dialog_body" ref="baoZhangBody">
       <!-- 地图控件注入地址 -->
       <LayoutMap ref="olMap"></LayoutMap>
       <!--<a-button type="primary" @click="showSetDialog(0)" class="show-set-button">展示设置弹窗</a-button>-->
@@ -199,22 +209,6 @@
         this.form = this.$form.createForm(this);
       },
       mounted() {},
-      updated(){
-        this.$nextTick().then(() => {
-        //   // let height = document.body.clientHeight - 300;
-        //   // this.$refs.baoZhangBody.style.height= height + 'px';
-        //   if(!map){
-            // map = this.$refs.olMap.getMap();
-            // mapManager = new MapManager(map);
-            // //初始化地图弹框
-            // this.infoOverlay = mapManager.addOverlay({
-            //   element: this.$refs.infoOverlay
-            // });
-            // //绑定地图双击事件
-            // map.on('dblclick', this.mapClickHandler);
-          // }
-        })
-      },
       methods:{
         init(){
           this.$nextTick().then(() => {
@@ -538,9 +532,10 @@
 </script>
 <style lang="scss" scoped>
 .yuan_dialog_body {
-  height: 500px;
+  height: 90%;
   width: 100%;
   position: relative;
+  background-color: #fff;
   .operate-panel {
     position: absolute;
     top: 20px;
@@ -596,4 +591,29 @@
     }
   }
 }
+</style>
+<style lang='scss'>
+  .baoZhangDialogwraps {
+    .ant-modal-close-x {
+      color: #fff;
+    }
+    .ant-modal-content {
+      background-image: linear-gradient(90deg, #0065ea 0%, #6f62ee 100%);
+      .ant-modal-header {
+        background-image: linear-gradient(90deg, #0065ea 0%, #6f62ee 100%);
+        // color: #fff;
+        border: none;
+        .ant-modal-title {
+          color: #fff;
+          font-size: 18px;
+        }
+      }
+      .ant-modal-footer {
+        border: 1px solid;
+        border-image: linear-gradient(90deg,#0065ea 0%, #6f62ee 100%) 30 30;
+        border-width: 0px 5px 10px 5px;
+        background-color: #fff;
+      }
+    }
+  }
 </style>
