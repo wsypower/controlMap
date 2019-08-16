@@ -223,7 +223,7 @@
 </script>
 <style lang="scss" scoped>
 .yuan_dialog_body {
-  height: 500px;
+  height: 90%;
   width: 100%;
   position: relative;
   background-color: #fff;

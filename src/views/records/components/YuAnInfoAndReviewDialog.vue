@@ -22,7 +22,6 @@
                         <span
                                 v-if="yuAnInfo.statusId=='01'"
                                 class="status blue"
-                                flex="cross:center"
                         >
               <a-icon
                       type="info-circle"
