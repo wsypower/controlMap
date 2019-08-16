@@ -383,7 +383,7 @@ const groupColumns = [{
           this.form.setFieldsValue({
             typeId: this.submitForm.typeId,
             name: this.submitForm.name,
-            dayRange: [moment(startTime,'YYYY-MM-DD HH:mm:ss'),moment(startTime,'YYYY-MM-DD HH:mm:ss')]
+            dayRange: [moment(startTime,'YYYY-MM-DD HH:mm:ss'),moment(endTime,'YYYY-MM-DD HH:mm:ss')]
           });
           this.dataLoading = false;
         });

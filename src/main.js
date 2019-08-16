@@ -31,6 +31,11 @@ import '@/mock'
 import echarts from "echarts";
 Vue.prototype.$echarts = echarts;
 
+import Video from 'video.js'
+import 'video.js/dist/video-js.css'
+
+Vue.prototype.$video = Video
+
 // 核心插件
 Vue.use(cgAdmin)
 
