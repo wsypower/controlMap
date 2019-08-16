@@ -171,7 +171,7 @@
       </div>
     </div>
     <add-edit-dialog :visible.sync="addYuAnDialogVisible" :dialogTitle="dialogTitle" :yuAnId="yuAnId" @refreshList="getTuAnDataList"></add-edit-dialog>
-    <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible" :yuAnId="yuAnId" @refreshList="getTuAnDataList"></yu-an-info-and-review-dialog>
+    <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible" :yuAnId="yuAnId" @refreshList="()=>{getTuAnDataList();getToCheckCount();}"></yu-an-info-and-review-dialog>
   </div>
 </template>
 
@@ -227,9 +227,7 @@
         console.log('getStatusDataList',res);
         this.statusList = res;
       });
-      this.getCountForMyToCheck({userId: this.userId}).then((res)=>{
-        this.countForMyToCheck = res;
-      });
+      this.getToCheckCount();
       this.getTuAnDataList();
     },
     watch:{
@@ -278,8 +276,14 @@
           this.dataLoading = false;
         })
       },
+      getToCheckCount(){
+        this.getCountForMyToCheck({userId: this.userId}).then((res)=>{
+          this.countForMyToCheck = res;
+        });
+      },
       searchYuAnData(param){
         this.resetQuery();
+        this.query.statusId = null;
         let ct = param.split('_');
         switch(ct[0]){
           case 'type':

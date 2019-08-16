@@ -265,6 +265,7 @@ const groupColumns = [{
           groupDataStr: '',
           baoZhangDataStr: '',
           reviewUserId: '',
+          isTemplate: '0'
         },
         groupData: [{
           key: 'jhhjsddsdds',
