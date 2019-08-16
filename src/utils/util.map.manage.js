@@ -144,8 +144,8 @@ export class MapManager {
    * @param {Boolean}isFreeHand 是否自由绘制
    * @return {*}
    */
-  activateDraw(type, source) {
-    let draw
+  activateDraw(draw,type, source) {
+    // let draw
     if (type !== 'None') {
       draw = new Draw({
         source: source,

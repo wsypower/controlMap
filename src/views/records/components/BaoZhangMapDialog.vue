@@ -8,8 +8,10 @@
            width="80%"
            :bodyStyle="{padding:'0px 5px',borderRadius:'7px',overFlow: 'hidden'}"
            style="top:57px"
-           :destroyOnClose="true"
+           :destroyOnClose="false"
+           :afterClose="afterClose"
   >
+
     <div class="yuan_dialog_body" ref="baoZhangBody">
       <!-- 地图控件注入地址 -->
       <LayoutMap ref="olMap"></LayoutMap>
@@ -81,6 +83,7 @@
   import Select from 'ol/interaction/Select.js';
   import { Circle as CircleStyle,Fill, Stroke, Style} from 'ol/style.js';
   import { getEmergencyFeatures } from '@/api/map/service'
+  import Draw from 'ol/interaction/Draw.js'
   let map;
   let mapManager;
   let draw,modify;
@@ -195,6 +198,7 @@
             this.init();
           }
           else{
+
             this.$emit('update:visible', false);
           }
         },
@@ -208,22 +212,27 @@
       created(){
         this.form = this.$form.createForm(this);
       },
-      mounted() {},
+      mounted() {
+        console.log(111)
+      },
       methods:{
+        afterClose(){
+            console.log('关闭了')
+        },
         init(){
           this.$nextTick().then(() => {
             // let height = document.body.clientHeight - 300;
             // this.$refs.baoZhangBody.style.height= height + 'px';
-            if(!map){
-              map = this.$refs.olMap.getMap();
-              mapManager = new MapManager(map);
-              //初始化地图弹框
-              this.infoOverlay = mapManager.addOverlay({
-                element: this.$refs.infoOverlay
-              });
-              //绑定地图双击事件
-              map.on('dblclick', this.mapClickHandler);
-            }
+            // this.$refs.olMap.$forceUpdate();
+            map = this.$refs.olMap.getMap();
+            mapManager = new MapManager(map);
+            //初始化地图弹框
+            this.infoOverlay = mapManager.addOverlay({
+              element: this.$refs.infoOverlay
+            });
+            // source=null;
+            //绑定地图双击事件
+            map.on('dblclick', this.mapClickHandler);
             this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
             //编辑状态下通过图形id获取已保存的图形数据
             if(this.allBaoZhangData.length>0){
@@ -289,7 +298,7 @@
         },
         //根据选择绘制图形
         handleOperateClick(value){
-          map.un('dblclick', this.mapClickHandler);
+          // map.un('dblclick', this.mapClickHandler);
           console.log('handleMenuClick',value);
           if(select){
             map.removeInteraction(select);
@@ -316,10 +325,16 @@
             });
             map.addLayer(vectorLayer);
           }
-          if(draw){
-            mapManager.inactivateDraw(draw);
-          }
-          draw = mapManager.activateDraw(value.key,source);
+          // if(draw){
+          //   mapManager.inactivateDraw(draw);
+          // }
+          map.removeInteraction(draw);
+          draw = new Draw({
+            source: source,
+            type: value.key
+          })
+          map.addInteraction(draw);
+          // draw = mapManager.activateDraw(draw,value.key,source);
           const _this=this;
           draw.on('drawend', function(e) {
             const id=_this.getMapId();
@@ -521,11 +536,14 @@
         },
         //关闭保障视图弹窗
         handleCancel(){
-        this.allBaoZhangData = [];
-        if(vectorLayer){
-          vectorLayer.getSource().clear();
-        }
-        this.mapDialogVisible = false;
+          this.allBaoZhangData = [];
+          if(draw){
+            mapManager.inactivateDraw(draw);
+          }
+          if(vectorLayer){
+            vectorLayer.getSource().clear();
+          }
+          this.mapDialogVisible = false;
       }
     }
 }

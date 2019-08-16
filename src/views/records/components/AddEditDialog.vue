@@ -180,8 +180,7 @@
       :visible.sync="choosePeopleDialogVisible"
       :disablePeopleKey="disablePeopleKey"
       @choosePeople="choosePeople"
-    ></choose-people-dialog>
-    <bao-zhang-map-dialog
+    ></choose-people-dialog><bao-zhang-map-dialog
       :visible.sync="mapDialogVisible"
       :sourcePeopleList="sourcePeopleList"
       :baoZhangData="baoZhangData"
