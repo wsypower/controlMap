@@ -212,10 +212,13 @@ export default {
     showDrawer() {
       // this.visible = !this.visible
       this.$notification['warning']({
-        message: '还没开发，无法使用',
-        width: '350px',
-        marginLeft: `50px`,
-        fontSize: '14px'
+        message: '暂未开发，无法使用',
+        description: '敬请期待...',
+        style: {
+          width: '300px',
+          marginLeft: `100px`,
+          fontSize: '14px'
+        }
       });
     },
     //抽屉关闭的回调
@@ -267,18 +270,24 @@ export default {
     },
     handleVideo(){
       this.$notification['warning']({
-        message: '还没有接入插件，无法使用',
-        width: '350px',
-        marginLeft: `50px`,
-        fontSize: '14px'
+        message: '暂未接入插件，无法使用',
+        description: '敬请期待...',
+        style: {
+          width: '300px',
+          marginLeft: `100px`,
+          fontSize: '14px'
+        }
       });
     },
     handlePhone(){
       this.$notification['warning']({
-        message: '还没有接入插件，无法使用',
-        width: '350px',
-        marginLeft: `50px`,
-        fontSize: '14px'
+        message: '暂未接入插件，无法使用',
+        description: '敬请期待...',
+        style: {
+          width: '300px',
+          marginLeft: `100px`,
+          fontSize: '14px'
+        }
       });
     },
     closeInfoDialog(){
@@ -299,18 +308,24 @@ export default {
     },
     startDuiJiangDiaoDu(){
       this.$notification['warning']({
-        message: '还未开发，无法使用',
-        width: '300px',
-        marginLeft: `100px`,
-        fontSize: '14px'
+        message: '暂未开发，无法使用',
+        description: '敬请期待...',
+        style: {
+          width: '300px',
+          marginLeft: `100px`,
+          fontSize: '14px'
+        }
       });
     },
     startShiPinHuiYi() {
       this.$notification['warning']({
-        message: '还未开发，无法使用',
-        width: '300px',
-        marginLeft: `100px`,
-        fontSize: '14px'
+        message: '暂未开发，无法使用',
+        description: '敬请期待...',
+        style: {
+          width: '300px',
+          marginLeft: `100px`,
+          fontSize: '14px'
+        }
       });
     },
     getAreaByIdList(idList,type){
@@ -328,6 +343,7 @@ export default {
       });
     },
     realTimeMonitor(item){
+      this.yuAnId = item.id;
       this.emergencyList[0].layer && this.emergencyList[0].layer.getSource().clear();
       this.emergencyList[1].layer && this.emergencyList[1].layer.getSource().clear();
       this.baozhangLayer && this.baozhangLayer.getSource().clear();

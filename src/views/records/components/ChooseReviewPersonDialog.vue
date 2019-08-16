@@ -67,10 +67,13 @@
         choosePerson(){
           if(this.reviewPerson === ''){
             this.$notification['error']({
-              message: '请选择审核人员',
-              width: '300px',
-              marginLeft: `100px`,
-              fontSize: '14px'
+              message: '未选择审核人员',
+              description: '请检查',
+              style: {
+                width: '300px',
+                marginLeft: `100px`,
+                fontSize: '14px'
+              }
             });
           }
           else{

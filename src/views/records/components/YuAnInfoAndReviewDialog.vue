@@ -22,7 +22,6 @@
                         <span
                                 v-if="yuAnInfo.statusId=='01'"
                                 class="status blue"
-                                flex="cross:center"
                         >
               <a-icon
                       type="info-circle"
@@ -151,18 +150,18 @@
                         </div>
                     </a-table>
                 </div>
-                <div class="part log">
-                    <div class="part_title" flex="cross:center">
-                        <a-icon type="reconciliation" theme="twoTone" style="marginRight:5px;" />操作日志
-                    </div>
-                    <a-table
-                            bordered
-                            :columns="logColumns"
-                            :rowKey="record => record.id"
-                            :dataSource="yuAnInfo.logData"
-                            :pagination="false"
-                    ></a-table>
-                </div>
+                <!--<div class="part log">-->
+                    <!--<div class="part_title" flex="cross:center">-->
+                        <!--<a-icon type="reconciliation" theme="twoTone" style="marginRight:5px;" />操作日志-->
+                    <!--</div>-->
+                    <!--<a-table-->
+                            <!--bordered-->
+                            <!--:columns="logColumns"-->
+                            <!--:rowKey="record => record.id"-->
+                            <!--:dataSource="yuAnInfo.logData"-->
+                            <!--:pagination="false"-->
+                    <!--&gt;</a-table>-->
+                <!--</div>-->
             </cg-container>
         </div>
                 <!--<div class="part base">-->

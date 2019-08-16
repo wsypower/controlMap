@@ -6,9 +6,10 @@
            width="80%"
            :maskClosable="false"
            @cancel="handleCancel"
-           :bodyStyle="{padding:'0px 5px',borderRadius:'7px',overFlow: 'hidden'}"
+           :bodyStyle="{padding:'0px 5px 5px 5px',borderRadius:'7px',overFlow: 'hidden'}"
            style="top:57px"
            :destroyOnClose="true"
+           :footer="null"
   >
     <div class="yuan_dialog_body" ref="baoZhangBody">
       <!-- 地图控件注入地址 -->
@@ -222,7 +223,7 @@
 </script>
 <style lang="scss" scoped>
 .yuan_dialog_body {
-  height: 500px;
+  height: 90%;
   width: 100%;
   position: relative;
   background-color: #fff;

@@ -62,7 +62,7 @@
                 </div>
                 <div class="item__content__b" flex="dir:left cross:center main:justify">
                   <div class="item__content__b_left">
-                    <span v-if="item.statusId=='01'" class="status blue" flex="cross:center">
+                    <span v-if="item.statusId=='01'" class="status blue">
                       <a-icon type="info-circle" theme="filled" style="fontSize:12px;transform:scale(0.9);marginRight:3px"/>待提交
                     </span>
                     <span v-if="item.statusId=='02'" class="status blue">
@@ -171,7 +171,7 @@
       </div>
     </div>
     <add-edit-dialog :visible.sync="addYuAnDialogVisible" :dialogTitle="dialogTitle" :yuAnId="yuAnId" @refreshList="getTuAnDataList"></add-edit-dialog>
-    <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible" :yuAnId="yuAnId" @refreshList="getTuAnDataList"></yu-an-info-and-review-dialog>
+    <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible" :yuAnId="yuAnId" @refreshList="()=>{getTuAnDataList();getToCheckCount();}"></yu-an-info-and-review-dialog>
   </div>
 </template>
 
@@ -227,9 +227,7 @@
         console.log('getStatusDataList',res);
         this.statusList = res;
       });
-      this.getCountForMyToCheck({userId: this.userId}).then((res)=>{
-        this.countForMyToCheck = res;
-      });
+      this.getToCheckCount();
       this.getTuAnDataList();
     },
     watch:{
@@ -278,8 +276,14 @@
           this.dataLoading = false;
         })
       },
+      getToCheckCount(){
+        this.getCountForMyToCheck({userId: this.userId}).then((res)=>{
+          this.countForMyToCheck = res;
+        });
+      },
       searchYuAnData(param){
         this.resetQuery();
+        this.query.statusId = null;
         let ct = param.split('_');
         switch(ct[0]){
           case 'type':
