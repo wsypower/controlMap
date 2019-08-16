@@ -93,15 +93,27 @@
       <div class="close-panel">
         <a-icon type="close" style="color: #ffffff" @click="closeVideoDialog" />
       </div>
-      <!--<my-video-player ref="myPlayer"></my-video-player>-->
-      <video id="myVideo" class="video-js">
-        <source :src="videoUrl" type="video/rtmp/flv">
+      <video
+              id="my-video"
+              style="color:black;width:200px;height:200px"
+              class="video-js"
+              autoplay
+              controls
+              preload="auto"
+              width="200"
+              height="200"
+              data-setup="{}"
+              v-if="videoUrl.length"
+      >
+        <source :src="videoUrl" type="rtmp/flv"/>
       </video>
+
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+
   import { mapActions } from 'vuex'
   import LayoutMap from '@/views/map/olMap.vue'
   import ControlYuAns from './components/ControlYuAns';
@@ -211,21 +223,6 @@ export default {
   },
   methods:{
     ...mapActions('emergency/common', ['getUserInfo']),
-    initVideo() {
-        //初始化视频方法
-        let myPlayer = this.$video('myVideo', {
-          //确定播放器是否具有用户可以与之交互的控件。没有控件，启动视频播放的唯一方法是使用autoplay属性或通过Player API。
-          controls: true,
-          //自动播放属性,muted:静音播放
-          autoplay: "muted",
-          //建议浏览器是否应在<video>加载元素后立即开始下载视频数据。
-          preload: "auto",
-          //设置视频播放器的显示宽度（以像素为单位）
-          width: "200px",
-          //设置视频播放器的显示高度（以像素为单位）
-          height: "200px"
-        });
-    },
     //抽屉控制
     showDrawer() {
       // this.visible = !this.visible
@@ -265,10 +262,9 @@ export default {
             getVideoById(feature.get('id')).then(data=>{
 
               console.log(data.data.mediaURL);
+              this.videoUrl='';
               this.videoUrl = data.data.mediaURL;
-              // this.$refs['myPlayer'].videoSrc = data.data.mediaURL;
-              // this.$refs['myPlayer'].playerOptions.sources[0].src = data.data.mediaURL;
-              this.initVideo();
+              console.log('videoUrl',this.videoUrl)
               this.videoOverlay.setPosition(coordinate);
             })
           }
