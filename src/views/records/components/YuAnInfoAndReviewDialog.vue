@@ -27,56 +27,56 @@
               <a-icon
                       type="info-circle"
                       theme="filled"
-                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+                      style="fontSize:14px;transform:scale(0.9);marginRight:3px"
               />待提交
             </span>
                         <span v-if="yuAnInfo.statusId=='02'" class="status blue">
               <a-icon
                       type="pause-circle"
                       theme="filled"
-                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+                      style="fontSize:14px;transform:scale(0.9);marginRight:3px"
               />待审核
             </span>
                         <span v-if="yuAnInfo.statusId=='03'" class="status blue">
               <a-icon
                       type="check-circle"
                       theme="filled"
-                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+                      style="fontSize:14px;transform:scale(0.9);marginRight:3px"
               />已通过
             </span>
                         <span v-if="yuAnInfo.statusId=='04'" class="status blue">
               <a-icon
                       type="close-circle"
                       theme="filled"
-                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+                      style="fontSize:14px;transform:scale(0.9);marginRight:3px"
               />已驳回
             </span>
                         <span v-if="yuAnInfo.statusId=='05'" class="status yellow">
               <a-icon
                       type="minus-circle"
                       theme="filled"
-                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+                      style="fontSize:14px;transform:scale(0.9);marginRight:3px"
               />未开始
             </span>
                         <span v-if="yuAnInfo.statusId=='06'" class="status green">
               <a-icon
                       type="clock-circle"
                       theme="filled"
-                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+                      style="fontSize:14px;transform:scale(0.9);marginRight:3px"
               />进行中
             </span>
                         <span v-if="yuAnInfo.statusId=='07'" class="status grey">
               <a-icon
                       type="check-circle"
                       theme="filled"
-                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+                      style="fontSize:14px;transform:scale(0.9);marginRight:3px"
               />已结束
             </span>
                         <span v-if="yuAnInfo.statusId=='08'" class="status red">
               <a-icon
                       type="warning"
                       theme="filled"
-                      style="fontSize:12px;transform:scale(0.9);marginRight:3px"
+                      style="fontSize:14px;transform:scale(0.9);marginRight:3px"
               />已逾期作废
             </span>
                     </div>

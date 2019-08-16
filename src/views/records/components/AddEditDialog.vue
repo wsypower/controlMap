@@ -598,15 +598,16 @@ const groupColumns = [{
         this.loading = true;
         this.form.validateFields((err, values) => {
           if (!err) {
-            if(!this.checkParams()){
-              this.loading = false;
-              return
-            }
             console.log('form: value', values);
             this.submitForm.name = values.name;
             this.submitForm.typeId = values.typeId;
             this.submitForm.startDayTime = values.dayRange[0]._d.getTime();
             this.submitForm.endDayTime = values.dayRange[1]._d.getTime();
+            if(!this.checkParams()){
+              this.loading = false;
+              return
+            }
+            this.loading = false;
             this.chooseReViewPersonDialogVisible = true;
           }
           else {
