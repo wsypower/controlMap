@@ -7,7 +7,8 @@ import { getCountForMyToCheck,
   deleteEmergencyYuAn,
   setEmergencyYuAnToTemplate,
   setEmergencyYuAnToFinishReview,
-  getTemplateYuAnDataList} from '@/api/emergency/index.js'
+  getTemplateYuAnDataList,
+  getRunningYuAnList} from '@/api/emergency/index.js'
 
 export default {
     namespaced: true,
@@ -133,6 +134,19 @@ export default {
         console.log('store',data);
         return new Promise((resolve, reject) => {
           getTemplateYuAnDataList(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
+      getRunningYuAnList(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          getRunningYuAnList(data)
             .then(res => {
               resolve(res)
             })

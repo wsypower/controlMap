@@ -72,7 +72,7 @@
       },
       mounted(){
         this.dataLoading = true;
-        this.getEmergencyYuAnDataList({statusId: '06'}).then((res)=>{
+        this.getRunningYuAnList({statusId: '06'}).then((res)=>{
           this.yuAnList = res.list;
           if(this.yuAnId !== ''){
             this.yuAnList.forEach((item,index)=>{
@@ -86,7 +86,7 @@
         });
       },
       methods: {
-        ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList']),
+        ...mapActions('emergency/emergency', ['getRunningYuAnList']),
         gotoMonitor(item,index){
           this.activeIndex = index;
           console.log('gotoMonitor',item);

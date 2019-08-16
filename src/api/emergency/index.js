@@ -244,3 +244,30 @@ export function getTemplateYuAnDataList(data){
     params: data
   })
 }
+
+/**
+ * @description 获取所有正在进行中的预案
+ * @author moxuejuan
+ * @date 2019-08-16 15:53:20
+ * @param {String} statusId 请求参数：预案状态Id（进行中）
+ * @method： POST
+ * @response：{data:{
+ *     {String} id: 预案唯一Id
+ *     {String} name: 预案名称
+ *     {String} creator: 创建人姓名
+ *     {String} creator: 审核人员姓名
+ *     {Number} startDayTime: 保障开始时间
+ *     {Number} endDayTime: 保障结束时间
+ *     {Array} groupData 请求参数：人员安排
+ *     {Array} baoZhangData 请求参数：保障视图
+ * }}
+ */
+
+export function getRunningYuAnList(data){
+  console.log('api：getRunningYuAnList',data);
+  return request({
+    url: `plan/getRunningYuAnList`,
+    method: 'get',
+    params: data
+  })
+}
