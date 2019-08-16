@@ -95,7 +95,7 @@
       </div>
       <!--<my-video-player ref="myPlayer"></my-video-player>-->
       <video id="myVideo" class="video-js">
-        <source :src="videoUrl" type="video/mp4">
+        <source :src="videoUrl" type="video/rtmp/flv">
       </video>
     </div>
   </div>
