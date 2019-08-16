@@ -91,6 +91,20 @@ export function getVideoListApi() {
   })
 }
 /**
+ * @description:
+ * @author:sijianting
+ * @createDate:2019/8/16 21:49
+ */
+export function getVideoById(id) {
+  return request({
+    url: 'http://115.231.81.227:8692/geapi/ge/camera/url?token=fa9f4750224743d2d26435636e16956a',
+    method: 'get',
+    params: {
+      mpid: id
+    }
+  })
+}
+/**
  * @description:获取应急人员接口
  * @author:sijianting
  * @createDate:2019/8/15 15:25

@@ -105,6 +105,7 @@
   import { MapManager,getPointByPeopleList,filterMapId,filterVideoPoint } from '@/utils/util.map.manage';
   import {getAllVideo,getAllPeople,getEmergencyFeatures} from '@/api/map/service'
   import { peopleStyle,videoStyle,areaStyle } from '@/utils/util.map.style'
+  import {getVideoById} from '@/api/map/map'
 
   const plainOptions = [{ label: '人力资源', value: 'people' },
   { label: '视频监控', value: 'video' }];
@@ -244,7 +245,10 @@ export default {
             this.peopleOverlay.setPosition(coordinate);
           }
           else if(feature.get('type')=='video'){
-            this.videoOverlay.setPosition(coordinate);
+            getVideoById(feature.get('id')).then(data=>{
+              console.log(data.data.mediaURL);
+              this.videoOverlay.setPosition(coordinate);
+            })
           }
         }
     },
