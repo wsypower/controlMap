@@ -210,7 +210,13 @@ export default {
     ...mapActions('emergency/common', ['getUserInfo']),
     //抽屉控制
     showDrawer() {
-      this.visible = !this.visible
+      // this.visible = !this.visible
+      this.$notification['warning']({
+        message: '还没开发，无法使用',
+        width: '350px',
+        marginLeft: `50px`,
+        fontSize: '14px'
+      });
     },
     //抽屉关闭的回调
     onClose() {
