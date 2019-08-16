@@ -144,6 +144,7 @@
           },
           tempChangeFeature:null,
           tempSource:null,
+          tempFeatures:null,
           selectedFeature:null,
           form: null,
           //一条保障点位的数据
@@ -207,7 +208,6 @@
             this.mapDialogVisible = true;
           }
         },
-
       },
       created(){
         this.form = this.$form.createForm(this);
@@ -234,6 +234,7 @@
             //绑定地图双击事件
             map.on('dblclick', this.mapClickHandler);
             this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
+            debugger;
             //编辑状态下通过图形id获取已保存的图形数据
             if(this.allBaoZhangData.length>0){
               const idList=filterMapId(this.allBaoZhangData);
@@ -279,7 +280,9 @@
               }
               const _this=this;
               setTimeout(()=>{
-                console.log('==source==',source)
+                debugger;
+                console.log('==source==',source);
+                console.log(source.getFeatures());
                 _this.tempSource=source;
                 _this.editMapFeatures();
                 map.addLayer(vectorLayer);
@@ -361,6 +364,7 @@
           });
           source.on('removefeature', function(e) {
             e.preventDefault();
+            console.log(_this.tempSource.getFeatures());
             if(_this.tempSource.hasFeature(e.feature)){
               const type=e.feature.getGeometry().getType();
               _this.drawFeatures[type].delete.push(e.feature);
