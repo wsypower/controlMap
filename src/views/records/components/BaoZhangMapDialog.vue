@@ -364,9 +364,13 @@
           });
           source.on('removefeature', function(e) {
             e.preventDefault();
-            console.log(_this.tempSource.getFeatures());
-            if(_this.tempSource.hasFeature(e.feature)){
-              const type=e.feature.getGeometry().getType();
+            // console.log(_this.tempSource.getFeatures());
+            // if(_this.tempSource.hasFeature(e.feature)){
+            //   const type=e.feature.getGeometry().getType();
+            //   _this.drawFeatures[type].delete.push(e.feature);
+            // }
+            const type=e.feature.getGeometry().getType();
+            if(!_this.drawFeatures[type].add.includes(e.feature)){
               _this.drawFeatures[type].delete.push(e.feature);
             }
           });
