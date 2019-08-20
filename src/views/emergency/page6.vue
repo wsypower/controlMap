@@ -40,6 +40,7 @@
         @change="changePagination"
       />
     </div>
+    <yu-an-list @operate="listOperate"></yu-an-list>
     <operation
       ref="Operate"
       :class="{ position: addPositionClass }"
@@ -83,6 +84,8 @@ import FarCall from './components/FarCall.vue'
 import YuAnItem from './components/YuAnItem.vue'
 import YuAnInfo from './components/YuAnInfo.vue'
 import UserInfo from './components/UserInfo.vue'
+import YuAnList from './components/YuAnList.vue'
+import YuAnFormNew from './components/YuAnFormNew.vue'
 import { getAllEmergencyArea, postEmergencyArea } from '@/api/map/service'
 import { emergencyAreaStyle, emergencyCenterStyle,emergencyPeopleStyle } from '@/utils/util.map.style'
 import { stampConvertToTime } from '@/utils/util.tool'
@@ -165,7 +168,9 @@ export default {
     FarCall,
     YuAnItem,
     YuAnInfo,
-    UserInfo
+    UserInfo,
+    YuAnList,
+      YuAnFormNew
   },
   computed: {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
@@ -407,7 +412,27 @@ export default {
       this.dialogTitle = '远程呼叫'
       this.bodyPadding = [0, 10, 10, 10]
       this.dialogVisible = true
-    }
+    },
+
+      //应急预案组件的各个对外操作
+      listOperate(data){
+        switch(data.type){
+            case 'add':
+                break;
+            case 'edit':
+                break;
+            case 'info':
+                break;
+            default:
+                console.log('no operate')
+        }
+          this.dialogComponentId = YuAnFormNew;
+          this.dWidth = 1200;
+          this.dHeight = 644;
+          this.dialogTitle = '应急预案';
+          this.bodyPadding = [0, 10, 10, 10];
+          this.dialogVisible = true;
+      }
   }
 }
 </script>
