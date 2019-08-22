@@ -5,7 +5,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">组长：</label>
-                    <a-select mode="multiple" v-model="innerPeople.leaderOne" style="width: 100%" @change="(val)=>{changeSelect(val,'leaderOne')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.leaderOne"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'leaderOne')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('leaderOne')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -13,7 +18,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副组长：</label>
-                    <a-select mode="multiple" v-model="innerPeople.leaderTwo" style="width: 100%"@change="(val)=>{changeSelect(val,'leaderTwo')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.leaderTwo"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'leaderTwo')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('leaderTwo')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -21,7 +31,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">组员：</label>
-                        <a-select mode="multiple" v-model="innerPeople.leaderThree"  style="width: 100%" @change="(val)=>{changeSelect(val,'leaderThree')}" placeholder="请选择">
+                        <a-select mode="multiple"
+                                  v-model="peopleData.leaderThree"
+                                  style="width: 100%"
+                                  @change="(val)=>{changeSelect(val,'leaderThree')}"
+                                  placeholder="请选择"
+                                  @dropdownVisibleChange="()=>{getSelectOptions('leaderThree')}">
                             <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -29,7 +44,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">主任：</label>
-                    <a-select mode="multiple" v-model="innerPeople.leaderFour" style="width: 100%" @change="(val)=>{changeSelect(val,'leaderFour')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.leaderFour"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'leaderFour')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('leaderFour')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -37,7 +57,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副主任：</label>
-                    <a-select mode="multiple" v-model="innerPeople.leaderFive" style="width: 100%" @change="(val)=>{changeSelect(val,'leaderFive')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.leaderFive"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'leaderFive')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('leaderFive')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -47,7 +72,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">队长：</label>
-                    <a-select mode="multiple" v-model="innerPeople.memberOne" style="width: 100%" @change="(val)=>{changeSelect(val,'memberOne')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.memberOne"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'memberOne')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('memberOne')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -55,7 +85,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副队长：</label>
-                    <a-select mode="multiple" v-model="innerPeople.memberTwo" style="width: 100%" @change="(val)=>{changeSelect(val,'memberTwo')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.memberTwo"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'memberTwo')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('memberTwo')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -66,7 +101,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">组长：</label>
-                    <a-select mode="multiple" v-model="innerPeople.groupOneForOne" style="width: 100%" @change="(val)=>{changeSelect(val,'groupOneForOne')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.groupOneForOne"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'groupOneForOne')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForOne')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -74,7 +114,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副组长：</label>
-                    <a-select mode="multiple" v-model="innerPeople.groupOneForTwo" style="width: 100%" @change="(val)=>{changeSelect(val,'groupOneForTwo')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.groupOneForTwo"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'groupOneForTwo')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForTwo')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -82,7 +127,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">队员：</label>
-                    <a-select mode="multiple" v-model="innerPeople.groupOneForThree" style="width: 100%" @change="(val)=>{changeSelect(val,'groupOneForThree')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.groupOneForThree"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'groupOneForThree')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForThree')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -93,7 +143,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">组长：</label>
-                    <a-select mode="multiple" v-model="innerPeople.groupTwoForOne" style="width: 100%" @change="(val)=>{changeSelect(val,'groupTwoForOne')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.groupTwoForOne"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'groupTwoForOne')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForOne')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -101,7 +156,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副组长：</label>
-                    <a-select mode="multiple" v-model="innerPeople.groupTwoForTwo" style="width: 100%" @change="(val)=>{changeSelect(val,'groupTwoForTwo')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.groupTwoForTwo"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'groupTwoForTwo')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForTwo')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -109,7 +169,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">队员：</label>
-                    <a-select mode="multiple" v-model="innerPeople.groupTwoForThree" style="width: 100%" @change="(val)=>{changeSelect(val,'groupTwoForThree')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.groupTwoForThree"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'groupTwoForThree')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForThree')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -120,7 +185,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">组长：</label>
-                    <a-select mode="multiple" v-model="innerPeople.groupThreeForOne" style="width: 100%" @change="(val)=>{changeSelect(val,'groupThreeForOne')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.groupThreeForOne"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'groupThreeForOne')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForOne')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -128,7 +198,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副组长：</label>
-                    <a-select mode="multiple" v-model="innerPeople.groupThreeForTwo" style="width: 100%" @change="(val)=>{changeSelect(val,'groupThreeForTwo')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.groupThreeForTwo"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'groupThreeForTwo')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForTwo')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -136,7 +211,12 @@
             <a-row>
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">队员：</label>
-                    <a-select mode="multiple" v-model="innerPeople.groupThreeForThree" style="width: 100%" @change="(val)=>{changeSelect(val,'groupThreeForThree')}" placeholder="请选择">
+                    <a-select mode="multiple"
+                              v-model="peopleData.groupThreeForThree"
+                              style="width: 100%"
+                              @change="(val)=>{changeSelect(val,'groupThreeForThree')}"
+                              placeholder="请选择"
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForThree')}">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="index" :value="item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -145,6 +225,7 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
+    import { mapActions } from 'vuex'
     export default {
         name: 'yuAnPeople',
         props:{
@@ -174,16 +255,16 @@
         },
         data(){
             return {
-                innerPeople: {},
                 totalPeople: [],
                 canSelectPeople: []
             }
         },
         computed:{
            allCheckedPeopleIdList:function(){
-               let arr = [];
-               Object.keys(this.innerPeople).forEach(function(key){
-                    this.innerPeople[key].reduce((res,id)=>{
+               console.log('allCheckedPeopleIdList change');
+               let _this = this, arr = [];
+               Object.keys(_this.peopleData).forEach(function(key){
+                    _this.peopleData[key].reduce((res,id)=>{
                         res.push(id);
                         return res
                     },arr);
@@ -191,12 +272,41 @@
                return arr
            }
         },
+        watch:{
+            // innerPeople:function(val){
+            //     this.$emit('update:peopleData', val);
+            // }
+        },
+        created(){
+            this.getAllPeopleDataList().then((res)=>{
+                this.totalPeople = res.data;
+            });
+        },
         mounted(){
-            this.innerPeople = JSON.parse(JSON.stringify(this.peopleData));
+
         },
         methods:{
+            ...mapActions('emergency/common', ['getAllPeopleDataList']),
             changeSelect(val,type){
                 console.log(val,type);
+                this.peopleData[type] = val;
+                console.log('allCheckedPeopleIdList',this.allCheckedPeopleIdList);
+            },
+            getSelectOptions(type){
+                console.log(type);
+                this.canSelectPeople = [];
+                let arr = [];
+                this.allCheckedPeopleIdList.forEach(id=>{
+                    if(!this.peopleData[type].includes(id)){
+                        arr.push(id);
+                    }
+                });
+                console.log('arr',arr);
+                this.totalPeople.forEach(item=>{
+                    if(!arr.includes(item.id)){
+                        this.canSelectPeople.push(item);
+                    }
+                });
             },
             handleChange(val){
                 console.log('people',val);

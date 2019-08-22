@@ -14,7 +14,11 @@
                     <span v-if="itemData.statusId == '3'" class="status-panel complete">已完成</span>
                 </div>
             </div>
-            <div class="description-panel">信息：{{ itemData.description }}</div>
+            <div class="item_body">
+                <div class="description-panel">信息：{{ itemData.description }}</div>
+                <div class="description-panel">位置：{{ itemData.position }}</div>
+                <div class="description-panel">时间：{{ new Date(parseInt(itemData.startDay))|date_format() }}~{{ new Date(parseInt(itemData.endDay))|date_format() }}</div>
+            </div>
             <div class="item-operate">
                 <span v-if="itemData.statusId == '1'" class="operate-btn" @click.stop="editYuan(itemData)">
                     <cg-icon-svg name="edit" class="svg_icon_edit"></cg-icon-svg>编辑
@@ -28,6 +32,7 @@
 </template>
 <script type="text/ecmascript-6">
     import Pin from './Position.vue';
+    import dayjs from 'dayjs'
     export default {
         name: 'yuAnItem',
         props:{
@@ -138,18 +143,21 @@
                     }
                 }
             }
-            .description-panel {
-                font-family: PingFang-SC-Medium;
-                font-size: 13px;
-                line-height: 18px;
-                color: #666666;
+            .item_body{
                 margin: 8px 0px;
-                max-height: 80px;
-                display: -webkit-box;
-                -webkit-box-orient: vertical;
-                -webkit-line-clamp: 3;
-                overflow: hidden;
+                max-height: 200px;
+                .description-panel {
+                    font-family: PingFang-SC-Medium;
+                    font-size: 13px;
+                    line-height: 18px;
+                    color: #666666;
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 3;
+                    overflow: hidden;
+                }
             }
+
             .item-operate {
                 .operate-btn {
                     display: inline-block;

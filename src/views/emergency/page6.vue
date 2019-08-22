@@ -1,7 +1,7 @@
 <template>
   <div class="left-message">
     <div class="left-message-title">
-      预案列表
+      事件列表
     </div>
     <div class="search-panel">
       <a-input-search placeholder="输入关键词搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
@@ -24,21 +24,20 @@
             @onClick="clickDataItem(index)"
           >
           </yu-an-item>
+          <div v-if="dataArr.length > 10" class="pagination-panel">
+            <a-pagination
+                    :total="totalSize"
+                    :showTotal="total => `共 ${total} 条`"
+                    :pageSize="10"
+                    :defaultCurrent="1"
+                    @change="changePagination"
+            />
+          </div>
         </cg-container>
         <div v-else class="none-panel" flex="main:center cross:center">
           <img src="~@img/zanwuyuan.png" />
         </div>
       </div>
-    </div>
-    <div v-if="dataArr.length > 0" class="pagination-panel">
-      <!--<div @click="clickTip">测试点击</div>-->
-      <a-pagination
-        :total="totalSize"
-        :showTotal="total => `共 ${total} 条`"
-        :pageSize="10"
-        :defaultCurrent="1"
-        @change="changePagination"
-      />
     </div>
     <yu-an-list @operate="listOperate"></yu-an-list>
     <operation
@@ -418,8 +417,12 @@ export default {
       listOperate(data){
         switch(data.type){
             case 'add':
+                this.dialogTitle = '新增预案';
+                this.sourceData = '';
                 break;
             case 'edit':
+                this.dialogTitle = '编辑预案';
+                this.sourceData = data.id;
                 break;
             case 'info':
                 break;
@@ -429,7 +432,6 @@ export default {
           this.dialogComponentId = YuAnFormNew;
           this.dWidth = 1200;
           this.dHeight = 644;
-          this.dialogTitle = '应急预案';
           this.bodyPadding = [0, 10, 10, 10];
           this.dialogVisible = true;
       }

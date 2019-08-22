@@ -10,13 +10,19 @@
            :destroyOnClose="true"
            :footer="null"
   >
-    <div class="yuan_dialog_body"></div>
+    <div class="yuan_dialog_body">
+      <!-- 地图控件注入地址 -->
+      <LayoutMap ref="olMap"></LayoutMap>
+    </div>
   </a-modal>
 </template>
 <script type="text/ecmascript-6">
+    import LayoutMap from '@/views/map/olMap.vue'
     export default{
       name: 'positionMapDialog',
-      components: {},
+      components: {
+          LayoutMap
+      },
       props:{
         visible: {
             type: Boolean,
