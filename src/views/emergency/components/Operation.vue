@@ -2,7 +2,7 @@
   <div class="top-operate-panel" :class="{ animation: isAnimationActive }" v-show="isActive">
     <a-dropdown>
       <a-menu slot="overlay" @click="handleOperateClick">
-        <a-menu-item key="add"> <a-icon type="plus-square" theme="filled" />新增预案</a-menu-item>
+        <a-menu-item key="add"> <a-icon type="plus-square" theme="filled" />新增事件</a-menu-item>
       </a-menu>
       <a-button class="op-btn yacz-btn">
         <i class="icon_yacz">

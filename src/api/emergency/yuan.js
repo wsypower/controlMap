@@ -19,7 +19,7 @@ import request from '@/plugins/axios/axios'
  */
 
 export function getYuAnDataList(data){
-    console.log('api：getYuAnList',data);
+    console.log('api：getYuAnDataList',data);
     return request({
         url: '@test/getYuAnDataList?_t='+ new Date().getTime(),
         method: 'get',
@@ -31,15 +31,11 @@ export function getYuAnDataList(data){
  * @description 增加新预案
  * @author moxuejuan
  * @date 2019-07-08 15:53:20
- * @param {Number} typeId 请求参数：类型Id
- * @param {Number} levelId 请求参数：等级Id
- * @param {Number} statusId 请求参数：状态Id
- * @param {String} dayTime 请求参数：时间
- * @param {String} position 请求参数：位置
- * @param {String} description 请求参数：信息
- * @param {Number} areaId 请求参数：区域
- * @param {Object} image 请求参数：照片
- * @param {Array} fileList 请求参数：附件
+ * @param {String} name 请求参数：预案名称
+ * @param {String} stageData 请求参数：预案阶段数据
+ * @param {String} peopleData 请求参数：预案成员数据
+ * @param {String} resourceData 请求参数：预案资源数据
+ * @param {String} placeData 请求参数：预案场地数据
  * @method：POST
  * @response：{
  *     msg:'操作成功;
