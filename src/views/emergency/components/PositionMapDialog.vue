@@ -11,15 +11,21 @@
            :footer="null"
   >
     <div class="yuan_dialog_body">
-
-
+      <!-- 地图控件注入地址 -->
+      <LayoutMap ref="olMap"></LayoutMap>
+      <div class="upload">
+        <a-button type="primary" @click="">确定</a-button>
+      </div>
     </div>
   </a-modal>
 </template>
 <script type="text/ecmascript-6">
+  import LayoutMap from '@/views/position/olMap.vue'
     export default{
       name: 'positionMapDialog',
-      components: {},
+      components: {
+        LayoutMap
+      },
       props:{
         visible: {
             type: Boolean,
@@ -58,7 +64,6 @@
       },
       methods:{
         init(){
-
         },
         //关闭保障视图弹窗
         handleCancel(){
@@ -72,6 +77,12 @@
   height: 400px;
   width: 100%;
   background-color: #fff;
+  position: relative;
+}
+.upload{
+  position: absolute;
+  top:20px;
+  right: 20px;
 }
 </style>
 <style lang='scss'>

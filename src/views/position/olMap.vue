@@ -1,5 +1,5 @@
 <template>
-  <div id="map">
+  <div id="position-map">
   </div>
 </template>
 <script>
@@ -37,7 +37,7 @@ export default {
       /* 添加影像地图 */
       this.map = new Map({
         loadTilesWhileAnimating: true,
-        target: 'map',
+        target: 'position-map',
         view: new View({
           projection: 'EPSG:4326',
           center: [122.22190299972,30.26656000004],
@@ -162,10 +162,9 @@ export default {
 }
 </script>
 <style scoped>
-#map {
+#position-map {
   width: 100%;
   height: 100%;
-  position: relative;
 }
 .draw {
   position: absolute;

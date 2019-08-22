@@ -135,7 +135,6 @@
                 }
             },
             openMapDialog(index){
-                debugger
                 let data = this.resultData[index];
                 this.positionData = {
                     address: data.address,

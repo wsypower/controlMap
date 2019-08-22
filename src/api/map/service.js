@@ -34,7 +34,6 @@ export async function getAllEmergencyArea() {
  * @createDate:2019/7/22 16:35
  */
 export async function postEmergencyArea(type, feature) {
-  debugger;
   const format = new WFS()
   let xml
   const obj = {
