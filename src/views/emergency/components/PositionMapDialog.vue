@@ -12,6 +12,7 @@
   >
     <div class="yuan_dialog_body">
 
+
     </div>
   </a-modal>
 </template>
