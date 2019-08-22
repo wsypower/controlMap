@@ -10,7 +10,9 @@
            :destroyOnClose="true"
            :footer="null"
   >
-    <div class="yuan_dialog_body"></div>
+    <div class="yuan_dialog_body">
+
+    </div>
   </a-modal>
 </template>
 <script type="text/ecmascript-6">
