@@ -50,7 +50,7 @@
                 </template>
             </a-table>
         </div>
-        <position-map-dialog :visible.sync="positionMapDialogVisible" :positionData="positionData"></position-map-dialog>
+        <position-map-dialog :visible.sync="positionMapDialogVisible" :positionData="positionData" @getAddress="getAddressData"></position-map-dialog>
     </div>
 </template>
 <script type="text/ecmascript-6">
@@ -165,7 +165,6 @@
                 };
                 this.resultData[index]=Object.assign(this.resultData[index],temp);
             },
-
             deleteRow(index){
                 this.positionData = {
                     address: '',
@@ -173,8 +172,11 @@
                     y: ''
                 }
                 this.resultData.splice(index,1);
+            },
+            //获取位置信息
+            getAddressData(address){
+                  console.log('地址数据',address);
             }
-
         }
     }
 </script>

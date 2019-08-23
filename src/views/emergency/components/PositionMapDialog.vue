@@ -104,7 +104,12 @@
           const xyData=feature.getGeometry().getCoordinates();
           let address;
           getAddress(xyData).then(res=>{
-            address=res;
+            address={
+              x:xyData[0],
+              y:xyData[1],
+              address:res
+            };
+            this.$emit('getAddress',address);
             this.mapDialogVisible=false;
           })
         },
