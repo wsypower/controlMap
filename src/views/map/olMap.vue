@@ -3,7 +3,7 @@
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations,mapState } from 'vuex'
 import 'ol/ol.css'
 import { Map, View } from 'ol'
 import { defaults as defaultControls } from 'ol/control'
@@ -20,6 +20,18 @@ export default {
   data() {
     return {
       mockPoints: []
+    }
+  },
+  watch:{
+    //监听从而实现动画效果
+    current: function(current){
+      if(current){
+        const layers = this.map.getLayers();
+        console.log(layers);
+        // layers.map(layer => {
+        //   layer.getSource().clear();
+        // });
+      }
     }
   },
   mounted() {
@@ -158,6 +170,9 @@ export default {
       })
       return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
     }
+  },
+  computed:{
+    ...mapState('cgadmin/page', ['current'])
   }
 }
 </script>
@@ -169,18 +184,18 @@ export default {
 }
 .draw {
   position: absolute;
-  top: 100px;
-  right: 100px;
-  width: 60px;
-  height: 40px;
+  top: 1.333rem  /* 100/75 */;
+  right: 1.333rem  /* 100/75 */;
+  width: 0.8rem  /* 60/75 */;
+  height: 0.533rem  /* 40/75 */;
   z-index: 999;
 }
 .draw1 {
   position: absolute;
-  top: 200px;
-  right: 100px;
-  width: 60px;
-  height: 40px;
+  top: 2.667rem  /* 200/75 */;
+  right: 1.333rem  /* 100/75 */;
+  width: 0.8rem  /* 60/75 */;
+  height: 0.533rem  /* 40/75 */;
   z-index: 999;
 }
 </style>
