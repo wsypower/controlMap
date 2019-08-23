@@ -27,7 +27,7 @@ export default {
     current: function(current){
       if(current){
         const layers = this.map.getLayers();
-        console.log(layers);
+        console.log(layers.array_);
         // layers.map(layer => {
         //   layer.getSource().clear();
         // });

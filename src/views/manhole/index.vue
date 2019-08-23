@@ -108,10 +108,7 @@ export default {
     ManholeInfo
   },
   computed:{
-    ...mapState('map', [
-      'mapManager',
-      'selectEmergencyFeature'
-    ]),
+    ...mapState('map', ['mapManager']),
   },
   mounted() {
     this.getDataList();
