@@ -7,7 +7,6 @@
     "build": "vue-cli-service build ",
     "build:nomock": "svgo -f src/assets/svg-icons/icons --config=src/assets/svg-icons/svgo.yml;vue-cli-service build --mode nomock",
     "lint": "vue-cli-service lint",
-    "createRouter": "vue-cli-service createRouter",
     "svgo": "svgo -f src/assets/svg-icons/icons --config=src/assets/svg-icons/svgo.yml",
     "docz:dev": "docz dev",
     "docz:build": "docz build"
@@ -43,7 +42,6 @@
     "@vue/cli-plugin-eslint": "^3.0.5",
     "@vue/cli-service": "^3.0.5",
     "@vue/eslint-config-prettier": "^4.0.1",
-    "@xohu/vue-cli-plugin-create-router": "^1.2.1",
     "axios": "^0.18.0",
     "babel-eslint": "^10.0.1",
     "docz": "^1.2.0",

@@ -108,3 +108,14 @@ export function getEquipListApi(type) {
     method: 'post'
   });
 }
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2019/8/23 10:14
+ */
+export function getAddressByXY(xy) {
+  return request({
+    url: `http://api.tianditu.gov.cn/geocoder?postStr={'lon':${xy[0]},'lat':${xy[1]},'ver':1}&type=geocode&tk=8f70b78b9e06a59ad7e97a162f54ac0c`,
+    method: 'post'
+  });
+}

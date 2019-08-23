@@ -329,7 +329,6 @@ export default {
           modify = this.mapManager.activeModifyFeature(modify,this.emergencyLayer.getSource());
           let _this=this;
           modify.on("modifyend",function (e) {
-            debugger;
             _this.mapManager.inactivateDraw(modify);
             var features =e.features.array_;
             _this.drawFeature=features[0];

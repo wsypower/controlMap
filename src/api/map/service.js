@@ -4,7 +4,7 @@
  * @createDate:2019/7/11 9:18
  **/
 import { getPoint, getEmergencyArea, postFeature, getVideoListApi,getResourceListApi,
-  getEquipListApi } from '@/api/map/map'
+  getEquipListApi, getAddressByXY } from '@/api/map/map'
 import GeoJSON from 'ol/format/GeoJSON'
 import WFS from 'ol/format/WFS'
 
@@ -34,7 +34,6 @@ export async function getAllEmergencyArea() {
  * @createDate:2019/7/22 16:35
  */
 export async function postEmergencyArea(type, feature) {
-  debugger;
   const format = new WFS()
   let xml
   const obj = {
@@ -113,4 +112,13 @@ export async function getTypeEquip(type) {
     }
   });
   return data.filter(Boolean);
+}
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2019/8/23 10:19
+ */
+export async function getAddress(xy) {
+  const { result } = await getAddressByXY(xy);
+  return result.formatted_address;
 }
