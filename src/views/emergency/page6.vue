@@ -40,7 +40,7 @@
       </div>
     </div>
     <div class="left-message-footer">启动预案</div>
-    <yu-an-list @operate="listOperate"></yu-an-list>
+    <yu-an-list ref='yuAnList' @operate="listOperate"></yu-an-list>
     <operation
       ref="Operate"
       :class="{ position: addPositionClass }"
@@ -57,7 +57,7 @@
       :bodyPadding="bodyPadding"
       :componentId="dialogComponentId"
       :sourceData="sourceData"
-      :closeCallBack="getDataList"
+      :closeCallBack="closeCallBack"
     >
     </custom-dialog>
     <div hidden>
@@ -85,7 +85,7 @@ import EventItem from './components/EventItem.vue'
 import YuAnInfo from './components/YuAnInfo.vue'
 import UserInfo from './components/UserInfo.vue'
 import YuAnList from './components/YuAnList.vue'
-import YuAnFormNew from './components/YuAnFormNew.vue'
+import YuAnForm from './components/YuAnForm.vue'
 import { getAllEmergencyArea, postEmergencyArea } from '@/api/map/service'
 import { emergencyAreaStyle, emergencyCenterStyle,emergencyPeopleStyle } from '@/utils/util.map.style'
 import { stampConvertToTime } from '@/utils/util.tool'
@@ -137,6 +137,8 @@ export default {
       dialogComponentId: {},
       //dialog弹窗body内组件需要使用的数据
       sourceData: {},
+      //回调函数名
+      closeCallBack: null,
       //tipModal弹窗是否渲染
       yuAnTipVisible: true,
       //tipModal弹窗宽
@@ -170,7 +172,7 @@ export default {
     YuAnInfo,
     UserInfo,
     YuAnList,
-      YuAnFormNew
+      YuAnForm
   },
   computed: {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
@@ -193,7 +195,7 @@ export default {
       //true:展开，false:关闭
       if (val) {
         setTimeout(() => {
-          this.addPositionClass = !val
+          this.addPositionClass = !val;
           this.isActiveOperation = true
         }, 300)
       } else {
@@ -206,7 +208,7 @@ export default {
   },
   methods: {
     ...mapMutations('map', ['setEmergencyAllArea', 'setSelectEmergencyFeature']),
-    ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn', 'getAllEmergencyPeople','getPersonInfo']),
+    ...mapActions('emergency/emergency', ['getEventDataList']),
     //地图点击事件处理器
     mapClickHandler({ pixel, coordinate }) {
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
@@ -244,12 +246,12 @@ export default {
     },
     //获取预案数据
     getDataList() {
-      this.showLoading = true
-      this.getEmergencyYuAnDataList(this.query).then(res => {
-        console.log(res)
-        this.dataArr = res.list
-        this.totalSize = res.total
-        this.showLoading = false
+      this.showLoading = true;
+      this.getEventDataList(this.query).then(res => {
+        console.log(res);
+        this.dataArr = res.data;
+        this.totalSize = this.dataArr.length;
+        this.showLoading = false;
       })
       //获取预案区域数据
       getAllEmergencyArea().then(points => {
@@ -419,6 +421,7 @@ export default {
         switch(data.type){
             case 'add':
                 this.dialogTitle = '新增预案';
+                this.closeCallBack = 'refreshYuAnList';
                 this.sourceData = '';
                 break;
             case 'edit':
@@ -430,11 +433,15 @@ export default {
             default:
                 console.log('no operate')
         }
-          this.dialogComponentId = YuAnFormNew;
+          this.dialogComponentId = YuAnForm;
           this.dWidth = 1200;
           this.dHeight = 644;
           this.bodyPadding = [0, 10, 10, 10];
           this.dialogVisible = true;
+      },
+      refreshYuAnList(){
+        console.log('go to refreshYuAnList');
+        this.$refs.yuAnList.getYuAnList();
       }
   }
 }

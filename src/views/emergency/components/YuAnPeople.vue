@@ -279,7 +279,7 @@
         },
         created(){
             this.getAllPeopleDataList().then((res)=>{
-                this.totalPeople = res.data;
+                this.totalPeople = res;
                 this.canSelectPeople = this.totalPeople;
             });
         },

@@ -8,68 +8,8 @@ import request from '@/plugins/axios/axios'
 =            request example             =
 =========================================*/
 
-
-/*=====  End of Section comment block  ======*/
 /**
- * @description 获取所有类型数据
- * @author moxuejuan
- * @date 2019-07-08 15:53:20
- * @method： GET
- * @response：{data:{
- *     {Number} id: 类型Id
- *     {String} name: 类型名称
- * }}
- */
-export function getAllTypeData(data){
-    console.log('api:getAllTypeData',data);
-    return request({
-        url: '@test/getAllTypeData?_t='+ new Date().getTime(),
-        method: 'get',
-        params: data
-    })
-}
-
-/**
- * @description 获取所有等级数据
- * @author moxuejuan
- * @date 2019-07-08 15:53:20
- * @method： GET
- * @response：{data:{
- *     {Number} id: 等级Id
- *     {String} name: 等级名称
- * }}
- */
-export function getAllLevelData(data){
-    console.log('api:getAllLevelData',data);
-    return request({
-        url: '@test/getAllLevelData?_t='+ new Date().getTime(),
-        method: 'get',
-        params: data
-    })
-}
-
-
-/**
- * @description 获取所有类型，等级数据
- * @author moxuejuan
- * @date 2019-07-18 15:53:20
- * @method： GET
- * @response：{data:{
- *     {Number} id: 等级Id
- *     {String} name: 等级名称
- * }}
- */
-export function getEmergencyYuAnInitData(data){
-    console.log('api:getEmergencyYuAnInitData',data);
-    return request({
-        url: 'emergencyplan/getEmergencyYuAnInitData?_t='+ new Date().getTime(),
-        method: 'get',
-        params: data
-    })
-}
-
-/**
- * @description 登录应急预案列表数据
+ * @description 获取事件列表数据
  * @author moxuejuan
  * @date 2019-07-08 15:53:20
  * @param {String} searchContent 请求参数 :搜索关键字（title或者description）
@@ -79,6 +19,7 @@ export function getEmergencyYuAnInitData(data){
  * @method： GET
  * @response：{data:{
  *     {Number} id
+ *     {String} name：事件名称
  *     {Number} typeId: 类型Id
  *     {String} typeName: 类型名称
  *     {Number} levelId: 等级Id
@@ -86,20 +27,24 @@ export function getEmergencyYuAnInitData(data){
  *     {Number} statusId：状态Id
  *     {String} statusName：状态名称
  *     {String} position：位置
- *     {String} dayTime：时间
+ *     {Number} startDay： 开始时间
+ *     {Number} endDay： 结束时间
  *     {String} description：信息
  *     {Number} areaId：区域Id
  *     {String} areaName：区域名称
+ *     {Number} mapId: 地图Id
+ *     {Number} positionX： 区域中心X
+ *     {Number} positionY： 区域中心Y
  *     {Object} image：上传的照片
  *     {Array} file：上传的附件
  *
  * }}
  */
 
-export function getEmergencyYuAnList(data){
-    console.log('api：getEmergencyYuAnList',data);
+export function getEventDataList(data){
+    console.log('api：getEventDataList',data);
     return request({
-        url: 'emergencyplan/getEmergencyYuAnList?_t='+ new Date().getTime(),
+        url: '@test/getEventDataList?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })

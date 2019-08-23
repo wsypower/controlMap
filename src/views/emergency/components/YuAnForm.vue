@@ -9,8 +9,8 @@
                     </div>
                     <yu-an-stage :stageData.sync="stageData"></yu-an-stage>
                     <yu-an-people :peopleData.sync="peopleData"></yu-an-people>
-                    <yu-an-resource :resourceData.sync="resourceData"></yu-an-resource>
-                    <yu-an-place :placeData.sync="placeData"></yu-an-place>
+                    <yu-an-resource :resourceData.sync="resourceData" @getResult="getResourceResult"></yu-an-resource>
+                    <yu-an-place :placeData.sync="placeData" @getResult="getPlaceResult"></yu-an-place>
                 </div>
             </cg-container>
         </div>
@@ -76,7 +76,9 @@
                     groupThreeForThree: []
                 },
                 resourceData: [],
-                placeData: []
+                resourceResultData: [],
+                placeData: [],
+                placeResultData: []
             }
         },
         mounted(){
@@ -85,7 +87,7 @@
 
         },
         methods:{
-            ...mapActions('emergency/yuan', ['getYuAnInfoById']),
+            ...mapActions('emergency/yuan', ['getYuAnInfoById','addNewYuAn']),
             init(){
                 if(this.operateType=='edit'){
                     this.getYuAnInfoById({id: this.sourceData}).then((res)=>{
@@ -113,8 +115,14 @@
                }
                return true
             },
+            getResourceResult(data){
+                this.resourceResultData = JSON.parse(JSON.stringify(data));
+            },
+            getPlaceResult(data){
+                this.placeResultData = JSON.parse(JSON.stringify(data));
+            },
             save(){
-                console.log('saveYuAn',this.stageData,this.peopleData,this.resourceData,this.placeData);
+                console.log('saveYuAn',this.stageData,this.peopleData,this.resourceResultData,this.placeResultData);
                 if(!this.checkParams()){
                     return
                 }
@@ -122,9 +130,13 @@
                     //掉保存接口
                     this.yuAnForm.stageData = JSON.stringify(this.stageData);
                     this.yuAnForm.peopleData = JSON.stringify(this.peopleData);
-                    this.yuAnForm.resourceData = JSON.stringify(this.resourceData);
-                    this.yuAnForm.placeData = JSON.stringify(this.placeData);
+                    this.yuAnForm.resourceData = JSON.stringify(this.resourceResultData);
+                    this.yuAnForm.placeData = JSON.stringify(this.placeResultData);
                     console.log('saveYuAn yuAnForm',this.yuAnForm);
+                    this.addNewYuAn(this.yuAnForm).then((res)=>{
+                        console.log('addNewYuAn',res);
+                        this.$emit('close')
+                    });
                 }
             }
         }

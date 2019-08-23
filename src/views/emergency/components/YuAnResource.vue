@@ -3,7 +3,7 @@
         <div class="title">应急物资管理</div>
         <div class="content resource_table">
             <a-table :columns="resourceColumns"
-                     :dataSource="resourceData"
+                     :dataSource="resultData"
                      :pagination="false"
                      bordered
                      :rowKey="record => record.id">
@@ -108,17 +108,18 @@
                 count: 0,
                 resourceColumns: resourceColumns,
                 resultData: [],
+                rowIndex: null,
                 positionMapDialogVisible: false,
                 positionData: {}
             }
         },
         mounted(){
-            // this.resultData = JSON.parse(JSON.stringify(this.resourceData));
+            this.resultData = JSON.parse(JSON.stringify(this.resourceData));
         },
         watch:{
-            // resultData:function(val){
-            //     this.$emit('update:resourceData', val);
-            // }
+            resultData:function(val){
+                this.$emit('getResult', val);
+            }
         },
         methods:{
             addRow(){
@@ -132,18 +133,19 @@
                     x: '',
                     y: ''
                 };
-                this.resourceData.push(temp);
+                this.resultData.push(temp);
             },
             changeVal(val,id,colName){
-                const newData = [...this.resourceData];
+                const newData = [...this.resultData];
                 const target = newData.filter(item => id === item.id)[0];
                 if (target) {
                     target[colName] = val;
-                    this.resourceData = newData;
+                    this.resultData = newData;
                 }
             },
             openMapDialog(index){
-                let data = this.resourceData[index];
+                let data = this.resultData[index];
+                this.rowIndex = index;
                 this.positionData = {
                     address: data.address,
                     x: data.x,
@@ -163,20 +165,18 @@
                     x: '',
                     y: ''
                 };
-                this.resourceData[index]=Object.assign(this.resourceData[index],temp);
+                this.resultData[index]=Object.assign(this.resultData[index],temp);
             },
             deleteRow(index){
-                this.positionData = {
-                    address: '',
-                    x: '',
-                    y: ''
-                }
-                this.resourceData.splice(index,1);
+                this.resultData.splice(index,1);
             },
 
             //获取位置信息
-            getAddressData(address){
-                  console.log('地址数据',address);
+            getAddressData(data){
+                  console.log('地址数据',data);
+                this.resultData[this.rowIndex].address = data.address;
+                this.resultData[this.rowIndex].x = data.x;
+                this.resultData[this.rowIndex].y = data.y;
             }
         }
     }

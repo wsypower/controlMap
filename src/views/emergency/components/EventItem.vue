@@ -5,7 +5,7 @@
         </div>
         <div class="item-right" flex="dir:top">
             <div class="top" flex="cross: center main:justify">
-                <div class="name-panel">{{ itemData.typeName }}</div>
+                <div class="name-panel">{{ itemData.name }}</div>
                 <div class="flag-panel">
                     <span class="level-panel "
                         :class="{yanzhong:itemData.levelId == '02',yiban:itemData.levelId == '01'}">等级：{{itemData.levelName}}</span>
@@ -15,9 +15,9 @@
                 </div>
             </div>
             <div class="item_body">
-                <div class="description-panel">信息：{{ itemData.description }}</div>
-                <div class="description-panel">位置：{{ itemData.position }}</div>
-                <div class="description-panel">时间：{{ new Date(parseInt(itemData.startDay))|date_format() }}~{{ new Date(parseInt(itemData.endDay))|date_format() }}</div>
+                <div class="description-panel" flex><span>信息：</span><span>{{ itemData.description }}</span></div>
+                <div class="description-panel" flex><span>位置：</span><span>{{ itemData.position }}</span></div>
+                <div class="description-panel" flex><span>时间：</span><span>{{ new Date(parseInt(itemData.startDay))|date_format() }}</span></div>
             </div>
             <div class="item-operate">
                 <span v-if="itemData.statusId == '1'" class="operate-btn" @click.stop="editYuan(itemData)">
@@ -151,10 +151,16 @@
                     font-size: 13px;
                     line-height: 18px;
                     color: #666666;
-                    display: -webkit-box;
-                    -webkit-box-orient: vertical;
-                    -webkit-line-clamp: 3;
                     overflow: hidden;
+                    span:first-child{
+                        width: 50px;
+                    }
+                    span:last-child{
+                        width: 100%;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 3;
+                    }
                 }
             }
 

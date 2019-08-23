@@ -1,17 +1,11 @@
 <template>
   <div class="top-operate-panel" :class="{ animation: isAnimationActive }" v-show="isActive">
-    <a-dropdown>
-      <a-menu slot="overlay" @click="handleOperateClick">
-        <a-menu-item key="add"> <a-icon type="plus-square" theme="filled" />新增事件</a-menu-item>
-      </a-menu>
-      <a-button class="op-btn yacz-btn">
+      <a-button class="op-btn yacz-btn" @click="addEvent">
         <i class="icon_yacz">
-          <cg-icon-svg name="anjianhuizong" class="svg_icon_anjianhuizong"></cg-icon-svg>
+            <cg-icon-svg name="anjianhuizong" class="svg_icon_anjianhuizong"></cg-icon-svg>
         </i>
-        <span class="memu-title-text">预案操作</span>
-        <a-icon type="down" />
+        <span class="memu-title-text">新增事件</span>
       </a-button>
-    </a-dropdown>
     <!--<a-button class="op-btn ychj-btn" @click="clickYCHJBtn">-->
       <!--<i class="icon_ychj">-->
         <!--<cg-icon-svg name="shipin" class="svg_icon_shipin"></cg-icon-svg>-->
@@ -24,18 +18,37 @@
             <i class="icon_yjzy">
                 <cg-icon-svg name="yinjiguanli" class="svg_icon_yinjiguanli"></cg-icon-svg>
             </i>
-            <span class="memu-title-text">应急资源</span>
+            <span class="memu-title-text">周边物资</span>
             <a-icon type="down" />
         </a-button>
         <a-menu slot="overlay" multiple :openKeys.sync="openKeys" @click="handleResourceClick">
             <template v-for="(item, index) in selectType">
-                <a-menu-item v-if="!item.children" :key="item.key" @click="clickShowPoints(item,index)"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>{{item.name}}</a-menu-item>
-                <a-sub-menu v-if="item.children" :key="item.key"><span slot="title"><cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg><span>{{item.name}}</span></span>
-                    <a-menu-item v-for="(bncs, index) in item.children" :key="bncs.key" @click="showTypePoints(bncs.type)"><a-checkbox :checked="bncs.checked" class="checkbox_d"></a-checkbox>{{ bncs.name }}</a-menu-item>
-                </a-sub-menu>
+                <a-menu-item :key="item.key" @click="clickShowPoints(item,index)">
+                    <a-checkbox :checked="item.checked" class="checkbox_d"></a-checkbox>
+                    <cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>
+                    {{item.name}}
+                </a-menu-item>
             </template>
       </a-menu>
     </a-dropdown>
+      <a-dropdown v-model="visible">
+          <a-button class="op-btn yjzy-btn">
+              <i class="icon_yjzy">
+                  <cg-icon-svg name="yinjiguanli" class="svg_icon_yinjiguanli"></cg-icon-svg>
+              </i>
+              <span class="memu-title-text">周边最优物资</span>
+              <a-icon type="down" />
+          </a-button>
+          <a-menu slot="overlay" multiple :openKeys.sync="openKeys" @click="handleResourceClick">
+              <template v-for="(item, index) in selectType">
+                  <a-menu-item :key="item.key" @click="clickShowPoints(item,index)">
+                      <a-checkbox :checked="item.checked" class="checkbox_d"></a-checkbox>
+                      <cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>
+                      {{item.name}}
+                  </a-menu-item>
+              </template>
+          </a-menu>
+      </a-dropdown>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -58,56 +71,47 @@ export default {
             isAnimationActive: false,
             //组件是否渲染
             isActive: false,
-            //应急资源选择类别
-          selectType:[
+            //周边物资选择类别
+            selectType:[
               {
-            key:'partVideo',
-            name:'区域视频',
-            icon:'video-two'
-          },
-            {
-            key:'manager',
-            name:'管理人员',
-            icon:'menu-section'
-          },
-            {
-            key:'equip',
-            name:'物联设备',
-            icon:'chuanganqi',
-            children: [{
-                'key':'all',
-                'name':'全部',
-                'checked': false,
-                'type':'0'
-                },{
-                'key':'jinggai',
-                'name':'井盖',
-                'checked': false,
-                'type':'3',
-                },{
-                'key':'lajitong',
-                'name':'智慧垃圾桶',
-                'checked': false,
-                'type':'7'
-                },{
-                'key':'shuiwei',
-                'name':'水位',
-                'checked': false,
-                'type':'8'
-                }]
-          },{
-            key:'terminal',
-            name:'执法终端',
-            icon:'zhifa'
-          },{
-            key:'gps',
-            name:'车载卡口gps',
-            icon:'gps'
-          },{
-            key:'car',
-            name:'市政环卫车辆',
-            icon:'huoche'
-          }],
+                key:'partVideo',
+                name:'救援绳',
+                icon:'video-two',
+                checked: false
+              },
+                {
+                key:'manager',
+                name:'皮划艇',
+                icon:'menu-section',
+                checked: false
+              },
+              {
+                  key:'jiushengyi',
+                  name:'救生衣',
+                  icon:'menu-section',
+                  checked: false
+
+              },
+              {
+                  key:'zhatuche',
+                  name:'渣土车',
+                  icon:'menu-section',
+                  checked: false
+              },
+              {
+                  key:'wajueji',
+                  name:'挖掘机',
+                  icon:'menu-section',
+                  checked: false
+              },
+              {
+                  key:'shuiche',
+                  name:'水车',
+                  icon:'menu-section',
+                  checked: false
+              }],
+            //周边最优资源选择类别
+            
             //已勾选的物联设备
           checkedWuLianList:[],
           emergencyResourceLayer:null,
@@ -158,16 +162,20 @@ export default {
     },
     methods:{
         //预案操作：目前只有新增预案
-        handleOperateClick(value){
-            console.log('handleMenuClick',value);
-            switch(value.key){
-                case 'add':
-                    console.log('add operation');
-                    this.$emit('addItem');
-                    break;
-                default:
-                    console.log('no operation');
-            }
+        // handleOperateClick(value){
+        //     console.log('handleMenuClick',value);
+        //     switch(value.key){
+        //         case 'add':
+        //             console.log('add operation');
+        //             this.$emit('addItem');
+        //             break;
+        //         default:
+        //             console.log('no operation');
+        //     }
+        // },
+        //新增事件
+        addEvent(){
+            this.$emit('addItem');
         },
         //远程呼叫
         clickYCHJBtn(){

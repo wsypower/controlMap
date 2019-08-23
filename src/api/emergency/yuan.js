@@ -21,7 +21,7 @@ import request from '@/plugins/axios/axios'
 export function getYuAnDataList(data){
     console.log('api：getYuAnDataList',data);
     return request({
-        url: '@test/getYuAnDataList?_t='+ new Date().getTime(),
+        url: 'emergencyplan/getYuAnDataList?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
@@ -45,7 +45,7 @@ export function getYuAnDataList(data){
 export function addNewYuAn(data){
     console.log('api:addNewYuAn',data);
     return request({
-        url: '@test/addNewYuAn',
+        url: 'emergencyplan/addNewYuAn',
         method: 'post',
         data
     })

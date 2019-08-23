@@ -3,7 +3,7 @@
         <div class="title">应急场地管理</div>
         <div class="content place_table">
             <a-table :columns="placeColumns"
-                     :dataSource="placeData"
+                     :dataSource="resultData"
                      :pagination="false"
                      bordered
                      :rowKey="record => record.id">
@@ -50,9 +50,11 @@
                 </template>
             </a-table>
         </div>
+        <position-map-dialog :visible.sync="positionMapDialogVisible" :positionData="positionData" @getAddress="getAddressData"></position-map-dialog>
     </div>
 </template>
 <script type="text/ecmascript-6">
+    import PositionMapDialog from './PositionMapDialog'
     const placeColumns = [{
         title: '序号',
         dataIndex: 'index',
@@ -98,19 +100,26 @@
                 }
             }
         },
+        components:{
+            PositionMapDialog
+        },
         data(){
             return {
+                count: 0,
                 placeColumns: placeColumns,
-                resultData: []
+                resultData: [],
+                rowIndex: null,
+                positionMapDialogVisible: false,
+                positionData: {}
             }
         },
         mounted(){
-            // this.resultData = JSON.parse(JSON.stringify(this.placeData));
+            this.resultData = JSON.parse(JSON.stringify(this.placeData));
         },
         watch:{
-            // resultData:function(val){
-            //     this.$emit('update:placeData', val);
-            // }
+            resultData:function(val){
+                this.$emit('getResult', val);
+            }
         },
         methods:{
             addRow(){
@@ -127,15 +136,16 @@
                 this.resultData.push(temp);
             },
             changeVal(val,id,colName){
-                const newData = [...this.placeData];
+                const newData = [...this.resultData];
                 const target = newData.filter(item => id === item.id)[0];
                 if (target) {
                     target[colName] = val;
-                    this.placeData = newData;
+                    this.resultData = newData;
                 }
             },
             openMapDialog(index){
-                let data = this.placeData[index];
+                let data = this.resultData[index];
+                this.rowIndex = index;
                 this.positionData = {
                     address: data.address,
                     x: data.x,
@@ -155,16 +165,19 @@
                     x: '',
                     y: ''
                 };
-                this.placeData[index]=Object.assign(this.placeData[index],temp);
+                this.resultData[index]=Object.assign(this.resultData[index],temp);
             },
 
             deleteRow(index){
-                this.positionData = {
-                    address: '',
-                    x: '',
-                    y: ''
-                }
-                this.placeData.splice(index,1);
+                this.resultData.splice(index,1);
+            },
+
+            //获取位置信息
+            getAddressData(data){
+                console.log('地址数据',data);
+                this.resultData[this.rowIndex].address = data.address;
+                this.resultData[this.rowIndex].x = data.x;
+                this.resultData[this.rowIndex].y = data.y;
             }
         }
     }
