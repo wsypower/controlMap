@@ -157,6 +157,9 @@ export default {
         maxResolution: 0.0000858306884765625
       })
       return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
+    },
+    getMap() {
+      return this.map;
     }
   }
 }

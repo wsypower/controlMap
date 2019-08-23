@@ -14,13 +14,22 @@
       <!-- 地图控件注入地址 -->
       <LayoutMap ref="olMap"></LayoutMap>
       <div class="upload">
-        <a-button type="primary" @click="">确定</a-button>
+        <a-button type="primary" icon="cloud-upload" @click="uploadPoint"></a-button>
       </div>
     </div>
   </a-modal>
 </template>
 <script type="text/ecmascript-6">
   import LayoutMap from '@/views/position/olMap.vue'
+  // import { MapManager,filterMapId } from '@/utils/util.map.manage'
+  import {Draw, Modify, Snap} from 'ol/interaction.js';
+  import {Vector as VectorLayer} from 'ol/layer.js';
+  import {Vector as VectorSource} from 'ol/source.js';
+  import { Style} from 'ol/style.js';
+  import Icon from 'ol/style/Icon';
+  import {getAddress} from '@/api/map/service'
+  let map;
+  let source;
     export default{
       name: 'positionMapDialog',
       components: {
@@ -60,10 +69,44 @@
             this.mapDialogVisible = true;
           }
         },
-
       },
       methods:{
         init(){
+          this.$nextTick().then(() => {
+            debugger;
+            map = this.$refs.olMap.getMap();
+            source = new VectorSource();
+            let vector = new VectorLayer({
+              source: source,
+              style: new Style({
+                image: new Icon({
+                  src: require('@/assets/mapImage/dingwei.png')
+                }),
+                anchor: [0.5, 1]
+              })
+            });
+            map.addLayer(vector);
+            let draw = new Draw({
+              source: source,
+              type: 'Point'
+            });
+            map.addInteraction(draw);
+            let modify = new Modify({source: source});
+            map.addInteraction(modify);
+            let snap = new Snap({source: source});
+            map.addInteraction(snap);
+            // mapManager = new MapManager(map);
+            // const drawResult=mapManager.activateDraw('Point',draw);
+          })
+        },
+        uploadPoint(){
+          const feature=source.getFeatures()[0];
+          const xyData=feature.getGeometry().getCoordinates();
+          let address;
+          getAddress(xyData).then(res=>{
+            address=res;
+            this.mapDialogVisible=false;
+          })
         },
         //关闭保障视图弹窗
         handleCancel(){
