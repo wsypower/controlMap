@@ -1,5 +1,5 @@
 <template>
-  <div class="tip-content">
+  <div class="tip-content" :style="{width: modalWidth+ 'px',height: modalHeight+ 'px' }">
     <div class="tip-header" flex="dir:left cross:center main:justify">
       <div class="tip-title" flex="cross:center">
         <cg-icon-svg v-if="iconShow" :name="iconName" class="svg_icon_name"></cg-icon-svg>

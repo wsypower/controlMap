@@ -3,7 +3,7 @@
         <div class="title">应急场地管理</div>
         <div class="content place_table">
             <a-table :columns="placeColumns"
-                     :dataSource="resultData"
+                     :dataSource="placeData"
                      :pagination="false"
                      bordered
                      :rowKey="record => record.id">
@@ -25,13 +25,13 @@
                 <template slot="address" slot-scope="text, record, index">
                     <div>
                         <div flex="cross:center main:justify">
-                            <span>位置：</span>
+                            <span>位置：{{record.address}}</span>
                             <span @click="openMapDialog(index)">
                                 <cg-icon-svg name="ditu" class="svg_icon"></cg-icon-svg>
                             </span>
                         </div>
-                        <div>X轴：</div>
-                        <div>Y轴：</div>
+                        <div>X轴：{{record.x}}</div>
+                        <div>Y轴：{{record.y}}</div>
                     </div>
                 </template>
                 <template slot="operate" slot-scope="text, record, index">
@@ -105,12 +105,12 @@
             }
         },
         mounted(){
-            this.resultData = JSON.parse(JSON.stringify(this.placeData));
+            // this.resultData = JSON.parse(JSON.stringify(this.placeData));
         },
         watch:{
-            resultData:function(val){
-                this.$emit('update:placeData', val);
-            }
+            // resultData:function(val){
+            //     this.$emit('update:placeData', val);
+            // }
         },
         methods:{
             addRow(){
@@ -127,15 +127,15 @@
                 this.resultData.push(temp);
             },
             changeVal(val,id,colName){
-                const newData = [...this.resultData];
+                const newData = [...this.placeData];
                 const target = newData.filter(item => id === item.id)[0];
                 if (target) {
                     target[colName] = val;
-                    this.resultData = newData;
+                    this.placeData = newData;
                 }
             },
             openMapDialog(index){
-                let data = this.resultData[index];
+                let data = this.placeData[index];
                 this.positionData = {
                     address: data.address,
                     x: data.x,
@@ -155,7 +155,7 @@
                     x: '',
                     y: ''
                 };
-                this.resultData[index]=Object.assign(this.resultData[index],temp);
+                this.placeData[index]=Object.assign(this.placeData[index],temp);
             },
 
             deleteRow(index){
@@ -164,7 +164,7 @@
                     x: '',
                     y: ''
                 }
-                this.resultData.splice(index,1);
+                this.placeData.splice(index,1);
             }
         }
     }

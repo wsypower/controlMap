@@ -1,7 +1,7 @@
 <template>
   <div class="left-message">
     <div class="left-message-title">
-      预案列表
+      事件列表
     </div>
     <div class="search-panel">
       <a-input-search placeholder="输入关键词搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
@@ -12,7 +12,7 @@
       </div>
       <div class="data-panel" v-else>
         <cg-container scroll v-if="dataArr.length > 0">
-          <yu-an-item
+          <event-item
             v-for="(item, index) in dataArr"
             :itemData="item"
             :index="index"
@@ -23,23 +23,23 @@
             @deleteYuAnItem="deleteYuAnItem"
             @onClick="clickDataItem(index)"
           >
-          </yu-an-item>
+          </event-item>
+          <div v-if="dataArr.length > 10" class="pagination-panel">
+            <a-pagination
+                    :total="totalSize"
+                    :showTotal="total => `共 ${total} 条`"
+                    :pageSize="10"
+                    :defaultCurrent="1"
+                    @change="changePagination"
+            />
+          </div>
         </cg-container>
         <div v-else class="none-panel" flex="main:center cross:center">
           <img src="~@img/zanwuyuan.png" />
         </div>
       </div>
     </div>
-    <div v-if="dataArr.length > 0" class="pagination-panel">
-      <!--<div @click="clickTip">测试点击</div>-->
-      <a-pagination
-        :total="totalSize"
-        :showTotal="total => `共 ${total} 条`"
-        :pageSize="10"
-        :defaultCurrent="1"
-        @change="changePagination"
-      />
-    </div>
+    <div class="left-message-footer">启动预案</div>
     <yu-an-list @operate="listOperate"></yu-an-list>
     <operation
       ref="Operate"
@@ -79,9 +79,9 @@
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
 import Operation from './components/Operation.vue'
-import YuAnForm from './components/YuAnForm.vue'
+import EventForm from './components/EventForm.vue'
 import FarCall from './components/FarCall.vue'
-import YuAnItem from './components/YuAnItem.vue'
+import EventItem from './components/EventItem.vue'
 import YuAnInfo from './components/YuAnInfo.vue'
 import UserInfo from './components/UserInfo.vue'
 import YuAnList from './components/YuAnList.vue'
@@ -164,9 +164,9 @@ export default {
   },
   components: {
     Operation,
-    YuAnForm,
+    EventForm,
     FarCall,
-    YuAnItem,
+    EventItem,
     YuAnInfo,
     UserInfo,
     YuAnList,
@@ -279,10 +279,10 @@ export default {
       if(this.peopleLayer){
         this.peopleLayer.getSource().clear();
       }
-      this.dialogComponentId = YuAnForm
+      this.dialogComponentId = EventForm
       this.dWidth = 810
-      this.dHeight = 450
-      this.dialogTitle = '新增预案'
+      this.dHeight = 470
+      this.dialogTitle = '新增事件'
       this.bodyPadding = [0, 10, 10, 10]
       this.sourceData = {}
       this.dialogVisible = true
@@ -299,9 +299,9 @@ export default {
         this.peopleLayer.getSource().clear();
       }
       console.log('editYuan item', item)
-      this.dialogComponentId = YuAnForm
+      this.dialogComponentId = EventForm
       this.dWidth = 810
-      this.dHeight = 450
+      this.dHeight = 470
       this.dialogTitle = '修改预案'
       this.bodyPadding = [0, 10, 10, 10]
       this.sourceData = item
@@ -418,8 +418,12 @@ export default {
       listOperate(data){
         switch(data.type){
             case 'add':
+                this.dialogTitle = '新增预案';
+                this.sourceData = '';
                 break;
             case 'edit':
+                this.dialogTitle = '编辑预案';
+                this.sourceData = data.id;
                 break;
             case 'info':
                 break;
@@ -429,7 +433,6 @@ export default {
           this.dialogComponentId = YuAnFormNew;
           this.dWidth = 1200;
           this.dHeight = 644;
-          this.dialogTitle = '应急预案';
           this.bodyPadding = [0, 10, 10, 10];
           this.dialogVisible = true;
       }
@@ -458,7 +461,7 @@ export default {
   }
   .search-result {
     width: 100%;
-    height: calc(100% - 200px);
+    height: calc(100% - 170px);
     position: relative;
     .spin-panel {
       width: 100%;
@@ -476,6 +479,17 @@ export default {
   .pagination-panel {
     text-align: right;
     padding: 20px 20px 0px 0px;
+  }
+  .left-message-footer{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    background-color: #2b8ff3;
+    font-family: PingFang-SC-Heavy;
+    font-size: 16px;
+    color: #ffffff;
+    cursor: pointer;
   }
   .position {
     left: 380px;

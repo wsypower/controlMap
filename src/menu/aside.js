@@ -42,6 +42,25 @@ export default [
   //   role: ['admin']
   // },
   {
+      path: '/manhole',
+      title: '智慧窨井盖',
+      icon: 'manhole',
+      active: false,
+      role: ['admin', 'super_editor']
+  },{
+      path: '/dustbin',
+      title: '智慧垃圾桶',
+      icon: 'dustbin',
+      active: false,
+      role: ['admin', 'super_editor']
+  },{
+      path: '/water',
+      title: '智慧水位',
+      icon: 'waterl',
+      active: false,
+      role: ['admin', 'super_editor']
+  },
+  {
     path: '/emergency',
     title: '应急指挥',
     icon: 'menu-emergency',

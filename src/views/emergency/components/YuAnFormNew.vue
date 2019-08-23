@@ -5,7 +5,7 @@
                 <div class="yuan-form">
                     <div class="part name">
                         <div class="title">预案名称</div>
-                        <a-input placeholder="请输入" style="width: 240px;"/>
+                        <a-input v-model="yuAnForm.name" placeholder="请输入" style="width: 240px;"/>
                     </div>
                     <yu-an-stage :stageData.sync="stageData"></yu-an-stage>
                     <yu-an-people :peopleData.sync="peopleData"></yu-an-people>
@@ -20,6 +20,7 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
+    import { mapActions } from 'vuex'
     import YuAnStage from './YuAnStage'
     import YuAnPeople from './YuAnPeople'
     import YuAnResource from './YuAnResource'
@@ -32,14 +33,22 @@
             YuAnResource,
             YuAnPlace
         },
+        props:{
+            //原始数据
+            sourceData:{
+                type: String,
+                default: ''
+            }
+        },
         data(){
             return {
+                operateType: 'add',
                 yuAnForm: {
                     name: '',
-                    stageData: [],
-                    peopleData:{},
-                    resourceData: [],
-                    placeData: []
+                    stageData: '',
+                    peopleData:'',
+                    resourceData: '',
+                    placeData: ''
                 },
                 stageData: [{
                     id: '',
@@ -71,11 +80,23 @@
             }
         },
         mounted(){
+            this.operateType = this.sourceData==''?'add':'edit';
             this.init();
+
         },
         methods:{
+            ...mapActions('emergency/yuan', ['getYuAnInfoById']),
             init(){
-
+                if(this.operateType=='edit'){
+                    this.getYuAnInfoById({id: this.sourceData}).then((res)=>{
+                        this.yuAnForm.id = res.data.id;
+                        this.yuAnForm.name = res.data.name;
+                        this.stageData = res.data.stageData;
+                        this.peopleData = res.data.peopleData;
+                        this.resourceData = res.data.resourceData;
+                        this.placeData = res.data.placeData;
+                    });
+                }
             },
             checkParams(){
                if(this.yuAnForm.name==''){
@@ -93,12 +114,17 @@
                return true
             },
             save(){
-                console.log('yuAnForm',this.yuAnForm);
+                console.log('saveYuAn',this.stageData,this.peopleData,this.resourceData,this.placeData);
                 if(!this.checkParams()){
                     return
                 }
                 else{
                     //掉保存接口
+                    this.yuAnForm.stageData = JSON.stringify(this.stageData);
+                    this.yuAnForm.peopleData = JSON.stringify(this.peopleData);
+                    this.yuAnForm.resourceData = JSON.stringify(this.resourceData);
+                    this.yuAnForm.placeData = JSON.stringify(this.placeData);
+                    console.log('saveYuAn yuAnForm',this.yuAnForm);
                 }
             }
         }

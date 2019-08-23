@@ -3,7 +3,7 @@
         <div class="title">应急物资管理</div>
         <div class="content resource_table">
             <a-table :columns="resourceColumns"
-                     :dataSource="resultData"
+                     :dataSource="resourceData"
                      :pagination="false"
                      bordered
                      :rowKey="record => record.id">
@@ -25,13 +25,13 @@
                 <template slot="address" slot-scope="text, record, index">
                     <div>
                         <div flex="cross:center main:justify">
-                            <span>位置：</span>
+                            <span>位置：{{record.address}}</span>
                             <span @click="openMapDialog(index)">
                                 <cg-icon-svg name="ditu" class="svg_icon"></cg-icon-svg>
                             </span>
                         </div>
-                        <div>X轴：</div>
-                        <div>Y轴：</div>
+                        <div>X轴：{{record.x}}</div>
+                        <div>Y轴：{{record.y}}</div>
                     </div>
                 </template>
                 <template slot="operate" slot-scope="text, record, index">
@@ -113,12 +113,12 @@
             }
         },
         mounted(){
-            this.resultData = JSON.parse(JSON.stringify(this.resourceData));
+            // this.resultData = JSON.parse(JSON.stringify(this.resourceData));
         },
         watch:{
-            resultData:function(val){
-                this.$emit('update:resourceData', val);
-            }
+            // resultData:function(val){
+            //     this.$emit('update:resourceData', val);
+            // }
         },
         methods:{
             addRow(){
@@ -132,18 +132,18 @@
                     x: '',
                     y: ''
                 };
-                this.resultData.push(temp);
+                this.resourceData.push(temp);
             },
             changeVal(val,id,colName){
-                const newData = [...this.resultData];
+                const newData = [...this.resourceData];
                 const target = newData.filter(item => id === item.id)[0];
                 if (target) {
                     target[colName] = val;
-                    this.resultData = newData;
+                    this.resourceData = newData;
                 }
             },
             openMapDialog(index){
-                let data = this.resultData[index];
+                let data = this.resourceData[index];
                 this.positionData = {
                     address: data.address,
                     x: data.x,
@@ -163,7 +163,7 @@
                     x: '',
                     y: ''
                 };
-                this.resultData[index]=Object.assign(this.resultData[index],temp);
+                this.resourceData[index]=Object.assign(this.resourceData[index],temp);
             },
             deleteRow(index){
                 this.positionData = {
@@ -171,8 +171,9 @@
                     x: '',
                     y: ''
                 }
-                this.resultData.splice(index,1);
+                this.resourceData.splice(index,1);
             },
+
             //获取位置信息
             getAddressData(address){
                   console.log('地址数据',address);

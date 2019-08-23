@@ -1,6 +1,6 @@
 <template>
   <div class="yuan-body" flex>
-    <a-form :form="form" hideRequiredMark @submit="handleSubmit" style="width: 100%">
+    <a-form :form="form" @submit="handleSubmit" style="width: 100%">
       <div class="yuan-form">
         <a-row style="height:100%">
           <a-col :span="12" style="height:100%">
@@ -8,6 +8,14 @@
             <!--<div style="height: 290px">-->
               <happy-scroll color="rgba(0,0,0,0.2)" size="5" resize smaller-move-v="end" bigger-move-v="end">
                 <div>
+                  <a-form-item
+                          label="名称"
+                          :label-col="{ span: 5 }"
+                          :wrapper-col="{ span: 12 }"
+                  >
+                    <a-input v-decorator="['name',configText]"
+                             placeholder="请输入" style="width: 277px" />
+                  </a-form-item>
                   <a-form-item
                     label="类型"
                     :label-col="{ span: 5 }"
@@ -69,7 +77,7 @@
                     :wrapper-col="{ span: 12 }"
                   >
                     <a-textarea v-decorator="['description',configText]"
-                            placeholder="请输入" :rows="2" :autosize="{minRows: 2, maxRows: 2}" style="width: 277px" />
+                            placeholder="请输入" :rows="2" :autosize="{minRows: 1, maxRows: 1}" style="width: 277px" />
                   </a-form-item>
                   <a-form-item
                     label="区域"
@@ -80,7 +88,7 @@
                       <span style="margin-right: 10px;">{{areaName}}</span>
                       <a-button type="primary" size="small" @click="editAreaPart">区域微调</a-button>
                     </div>
-                    <a-select v-else v-decorator="['areaId',config]"
+                    <a-select v-else v-model="sourceData.areaId"
                               placeholder="请选择" style="width: 277px" @select="selectPaintMethod">
                       <a-select-option
                               v-for="(item,index) in areaList"
@@ -536,7 +544,7 @@ export default {
 <style lang="scss" scoped>
 .yuan-body {
   width: 100%;
-  height: 390px;
+  height: 410px;
   background-color: #ffffff;
   .yuan-form {
     width: 100%;

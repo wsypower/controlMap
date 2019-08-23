@@ -3,7 +3,7 @@
         <div class="title">应急事项</div>
         <div class="add_btn" @click="addItem"><a-icon type="plus-circle" style="margin-right: 5px"/>新增应急阶段</div>
         <div class="content">
-            <a-row v-for="(item, index) in resultData" :key="index">
+            <a-row v-for="(item, index) in stageData" :key="index">
                 <a-col :span="5">
                     <div class="col-panel" flex="dir:left cross:center">
                         <label class="subtitle">阶段：</label>
@@ -35,7 +35,7 @@
                 </a-col>
                 <a-col :span="1">
                     <a-popconfirm
-                            v-if="resultData.length > 1"
+                            v-if="stageData.length > 1"
                             title="确定删除这个阶段吗？"
                             @confirm="() => deleteItem(index)"
                     >
@@ -64,18 +64,10 @@
             }
         },
         data(){
-            return {
-                resultData: []
-            }
+            return {}
         },
-        watch:{
-            resultData:function(val){
-                this.$emit('update:stageData', val);
-            }
-        },
-        mounted(){
-            this.resultData = JSON.parse(JSON.stringify(this.stageData));
-        },
+        watch:{},
+        mounted(){},
         methods:{
             addItem(){
                 console.log('add item');
@@ -86,10 +78,10 @@
                     person: '',
                     tel: ''
                 }
-                this.resultData.push(temp);
+                this.stageData.push(temp);
             },
             deleteItem(index){
-                this.resultData.slice(index,1);
+                this.stageData.slice(index,1);
             }
         }
     }

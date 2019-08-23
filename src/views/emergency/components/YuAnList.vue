@@ -12,13 +12,12 @@
                 <div v-for="(item,index) in yuAnList"
                      :key="index"
                      class="item"
-                     flex="dir:left cross:center main:justify"
-                     @click="openYuAnInfo(item.id)">
+                     flex="dir:left cross:center main:justify">
                     <span class="title">{{item.name}}</span>
                     <span class="operate">
                         <a-icon type="edit" style="color:#2b90f3" @click="editYuAn(item.id)"/>
                         <i class="sep"></i>
-                        <a-icon type="delete" style="color:#2b90f3" @click="deleteYuAn(item.id)"/>
+                        <a-icon type="delete" style="color:#2b90f3" @click="deleteYuAn(item.id,index)"/>
                     </span>
                 </div>
             </div>
@@ -26,6 +25,7 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
+    import { mapActions } from 'vuex'
     export default {
         name: 'yuAnList',
         data(){
@@ -38,17 +38,16 @@
             this.getYuAnList();
         },
         methods:{
+            ...mapActions('emergency/yuan', ['getYuAnDataList','deleteYuAn']),
             init(){},
             onSearch(val){
                this.searchContent = val;
                this.getYuAnList();
             },
             getYuAnList(){
-                this.yuAnList = [{'id':'aaa','name':'防台风预案'},
-                    {'id':'bbb','name':'防旱预案'},
-                    {'id':'ccc','name':'防汛预案'},
-                    {'id':'ddd','name':'领导视察'},
-                    {'id':'eee','name':'城管突发事件'}]
+                this.getYuAnDataList({'searchContent':this.searchContent}).then((res)=>{
+                    this.yuAnList = res.data;
+                });
             },
             addYuAn(){
                 let data = { type: 'add',id:''};
@@ -62,8 +61,10 @@
                 let data = { type: 'edit',id:id};
                 this.$emit('operate', data);
             },
-            deleteYuAn(id){
-
+            deleteYuAn(id,index){
+                this.deleteYuAn({id:id}).then((res)=>{
+                    this.yuAnList.splice(index,1);
+                });
             },
 
         }
