@@ -14,15 +14,15 @@
                 <cg-container scroll v-if="dataArr.length > 0">
                     <div v-for="(item, index) in dataArr"
                          :key="index" class="item"
-                         :class="{active: activeIndex===index,warning:item.statusId==='02'}"
+                         :class="{active: activeIndex===index,warning:item.alarmState==='2'}"
                          flex="cross:center main:justify"
                          @click="clickDataItem(index)">
                         <div class="item_left">
                             <cg-icon-svg name="manhole" class="svg_icon"></cg-icon-svg>
-                            <span>{{item.name}}</span>
+                            <span>{{item.imei}}</span>
                         </div>
                         <div class="item_right">
-                            <span>水位：{{item.statusName}}</span>
+                            <span>{{item.alarmReason}}</span>
                             <cg-icon-svg name="pin" class="svg_icon"></cg-icon-svg>
                         </div>
                     </div>
@@ -30,6 +30,15 @@
                 <div v-else class="none-panel" flex="main:center cross:center">
                     <img src="~@img/zanwuyuan.png" />
                 </div>
+            </div>
+            <div class="pagination-panel">
+                <a-pagination
+                        :total="totalSize"
+                        :showTotal="total => `共 ${total} 条`"
+                        :pageSize="50"
+                        :defaultCurrent="1"
+                        @change="changePagination"
+                />
             </div>
         </div>
         <div hidden>
@@ -50,24 +59,33 @@
 
 <script>
     import { mapState, mapActions, mapMutations } from 'vuex'
+    import  ManholeInfo from './components/ManholeInfo'
     export default {
         name: 'manhole',
         data() {
             return {
                 //查询条件
                 query: {
+                    deviceType: 3,
                     searchContent: '', //搜索关键字
                     status: '', //状态，‘’代表全部
+                    pageNo: 1,
+                    pageSize: 50
                 },
                 //数据查询中
                 showLoading: false,
                 //数据存放处
                 dataArr: [],
+                //总数
+                totalSize: 0,
                 //目前激活的窨井盖序号
                 activeIndex: null,
-
+                //信息窗的宽度
+                modalWidth: 300,
+                //信息窗的高度
+                modalHeight: 180,
                 //tipModal弹窗标题上的icon
-                iconName: '',
+                iconName: 'manhole',
                 //tipModal弹窗标题
                 modalTitle: '',
                 //tipModal弹窗副标题
@@ -79,13 +97,9 @@
             }
         },
         components: {
-
+            ManholeInfo
         },
-        computed: {
-            ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
-            ...mapState('cgadmin/page', ['current']),
-            ...mapState('map', ['mapManager'])
-        },
+        computed: {},
         mounted() {
             this.getDataList();
         },
@@ -93,103 +107,28 @@
 
         },
         methods: {
-            // ...mapMutations('map', ['setEmergencyAllArea', 'setSelectEmergencyFeature']),
-            // ...mapActions('emergency/emergency', ['getEmergencyYuAnDataList', 'deleteEmergencyYuAn', 'getAllEmergencyPeople','getPersonInfo']),
+            ...mapActions('intelligence/intelligence', ['getDeviceDataList']),
             //获取预案数据
             getDataList() {
-                //this.showLoading = true
-                this.dataArr = [{
-                    id: 'aaa',
-                    name: '窨井盖G100001',
-                    statusId: '01',
-                    statusName: '正常',
-                    updateTime: 1568278602377,
-                    wLevel: '1.0M',
-                    voltage: '23',
-                    signalStrength: '3.6V',
-                    temperature: '33℃'
-                }, {
-                    id: 'bbb',
-                    name: '窨井盖G100002',
-                    statusId: '02',
-                    statusName: '告警',
-                    updateTime: 1568278602377,
-                    wLevel: '1.0M',
-                    voltage: '23',
-                    signalStrength: '3.6V',
-                    temperature: '33℃'
-                },{
-                    id: 'ccc',
-                    name: '窨井盖G100003',
-                    statusId: '01',
-                    statusName: '正常',
-                    updateTime: 1568278602377,
-                    wLevel: '1.0M',
-                    voltage: '23',
-                    signalStrength: '3.6V',
-                    temperature: '33℃'
-                },{
-                    id: 'ddd',
-                    name: '窨井盖G100004',
-                    statusId: '02',
-                    statusName: '告警',
-                    updateTime: 1568278602377,
-                    wLevel: '1.0M',
-                    voltage: '23',
-                    signalStrength: '3.6V',
-                    temperature: '33℃'
-                },{
-                    id: 'eee',
-                    name: '窨井盖G100005',
-                    statusId: '01',
-                    statusName: '正常',
-                    updateTime: 1568278602377,
-                    wLevel: '1.0M',
-                    voltage: '23',
-                    signalStrength: '3.6V',
-                    temperature: '33℃'
-                },{
-                    id: 'fff',
-                    name: '窨井盖G100006',
-                    statusId: '01',
-                    statusName: '正常',
-                    updateTime: 1568278602377,
-                    wLevel: '1.0M',
-                    voltage: '23',
-                    signalStrength: '3.6V',
-                    temperature: '33℃'
-                },{
-                    id: 'ggg',
-                    name: '窨井盖G100007',
-                    statusId: '01',
-                    statusName: '正常',
-                    updateTime: 1568278602377,
-                    wLevel: '1.0M',
-                    voltage: '23',
-                    signalStrength: '3.6V',
-                    temperature: '33℃'
-                },{
-                    id: 'hhh',
-                    name: '窨井盖G100008',
-                    statusId: '01',
-                    statusName: '正常',
-                    updateTime: 1568278602377,
-                    wLevel: '1.0M',
-                    voltage: '23',
-                    signalStrength: '3.6V',
-                    temperature: '33℃'
-                }]
-                // this.getEmergencyYuAnDataList(this.query).then(res => {
-                //     console.log(res)
-                //     this.dataArr = res.list
-                //     this.totalSize = res.total
-                //     this.showLoading = false
-                // })
+                this.showLoading = true
+                this.getDeviceDataList(this.query).then(res => {
+                    console.log(res)
+                    this.dataArr = res.list;
+                    this.totalSize = res.total;
+                    this.showLoading = false;
+                })
             },
             //搜索关键字查询
             onSearch(val) {
-                this.query.searchContent = val
-                this.getDataList()
+                this.query.searchContent = val;
+                this.getDataList();
+            },
+
+            //翻页
+            changePagination(pageNo, pageSize) {
+                console.log('changePagination', pageNo, pageSize);
+                this.query.pageNo = pageNo;
+                this.getDataList();
             },
 
             //选择某个预案
@@ -197,8 +136,20 @@
                 console.log('clickDataItem', index);
                 this.activeIndex = index;
                 const data = this.dataArr[index];
+                if(data.alarmState==='2'){
+                    this.$refs.yuAnOverlay.$el.style.backgroundImage='linear-gradient(90deg, #f76a63 0%, #f77f6e 50%, #f79378 100%)';
+                }
+                else{
+                    this.$refs.yuAnOverlay.$el.style.backgroundImage='linear-gradient(90deg, #0065ea 0%, #00a5ff 100%)';
+                }
+                this.modalTitle = data.verifyCode;
+                this.tipComponentId = ManholeInfo;
+                this.infoData = data;
+                console.log('infoData', data);
+            },
+            closeOverlay(){
 
-            }
+            },
         }
     }
 </script>
@@ -224,11 +175,11 @@
         }
         .search-result {
             width: 100%;
-            height: calc(100% - 170px);
+            height: calc(100% - 180px);
             padding: 0px 20px;
             .spin-panel {
                 width: 100%;
-                height: 480px;
+                height: 100%;
             }
             .data-panel {
                 width: 100%;
@@ -268,7 +219,13 @@
                             color: #2b8ff3;
                         }
                         span{
+                            display: inline-block;
+                            max-width: 150px;
                             margin-left: 5px;
+                            overflow: hidden;
+                            text-overflow:ellipsis;
+                            white-space: nowrap;
+                            vertical-align: middle;
                         }
                     }
                     .item_right{
@@ -277,10 +234,20 @@
                             color: #2b8ff3;
                         }
                         span{
+                            display: inline-block;
+                            max-width: 100px;
                             margin-right: 5px;
+                            overflow: hidden;
+                            text-overflow:ellipsis;
+                            white-space: nowrap;
+                            vertical-align: middle;
                         }
                     }
                 }
+            }
+            .pagination-panel {
+                text-align: right;
+                padding: 20px 0px 10px 0px;
             }
         }
     }

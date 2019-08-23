@@ -280,6 +280,7 @@
         created(){
             this.getAllPeopleDataList().then((res)=>{
                 this.totalPeople = res.data;
+                this.canSelectPeople = this.totalPeople;
             });
         },
         mounted(){
