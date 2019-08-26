@@ -308,9 +308,6 @@
                         this.canSelectPeople.push(item);
                     }
                 });
-            },
-            handleChange(val){
-                console.log('people',val);
             }
         }
     }

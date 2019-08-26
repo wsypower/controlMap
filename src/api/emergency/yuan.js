@@ -65,7 +65,7 @@ export function addNewYuAn(data){
 export function deleteYuAn(data){
     console.log('api:deleteYuAn',data);
     return request({
-        url: '@test/deleteYuAn',
+        url: 'emergencyplan/deleteYuAn',
         method: 'post',
         data
     })
@@ -76,7 +76,7 @@ export function deleteYuAn(data){
  * @author moxuejuan
  * @date 2019-07-12 10:53:20
  * @param {Number} id 预案的唯一标识Id
- * @method：POST
+ * @method：GET
  * @response：{
  *
  * }
@@ -85,7 +85,27 @@ export function deleteYuAn(data){
 export function getYuAnInfoById(data){
     console.log('api:getYuAnInfoById',data);
     return request({
-        url: '@test/getYuAnInfoById?_t='+ new Date().getTime(),
+        url: 'emergencyplan/getYuAnInfoById?_t='+ new Date().getTime(),
+        method: 'get',
+        params: data
+    })
+}
+
+/**
+ * @description 获取全部归类物资列表信息
+ * @author moxuejuan
+ * @date 2019-07-12 10:53:20
+ * @param 无
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+
+export function getResourceDataList(data){
+    console.log('api:getResourceDataList',data);
+    return request({
+        url: 'emergencyplan/getResourceDataList?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })

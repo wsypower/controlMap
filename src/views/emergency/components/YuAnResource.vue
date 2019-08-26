@@ -113,13 +113,17 @@
                 positionData: {}
             }
         },
-        mounted(){
-            this.resultData = JSON.parse(JSON.stringify(this.resourceData));
-        },
         watch:{
-            resultData:function(val){
-                this.$emit('getResult', val);
-            }
+            resourceData:function(val){
+                this.resultData = JSON.parse(JSON.stringify(val));
+            },
+            resultData:{
+                handler(newValue,oldValue){
+                    console.log('watch resultData',newValue);
+                    this.$emit('getResult', newValue);
+                },
+                deep: true
+            },
         },
         methods:{
             addRow(){
@@ -151,7 +155,7 @@
                     x: data.x,
                     y: data.y
                 }
-                console.log('openMapDialog');
+                console.log('openMapDialog',this.positionData);
                 this.positionMapDialogVisible = true;
             },
             resetRow(index){
@@ -165,7 +169,7 @@
                     x: '',
                     y: ''
                 };
-                this.resultData[index]=Object.assign(this.resultData[index],temp);
+                this.resultData[index] = Object.assign(this.resultData[index],temp);
             },
             deleteRow(index){
                 this.resultData.splice(index,1);
@@ -173,7 +177,7 @@
 
             //获取位置信息
             getAddressData(data){
-                  console.log('地址数据',data);
+                console.log('地址数据',data);
                 this.resultData[this.rowIndex].address = data.address;
                 this.resultData[this.rowIndex].x = data.x;
                 this.resultData[this.rowIndex].y = data.y;

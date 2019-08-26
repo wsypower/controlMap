@@ -39,7 +39,7 @@
         </div>
       </div>
     </div>
-    <div class="left-message-footer">启动预案</div>
+    <div class="left-message-footer" @click="startYuAn">启动预案</div>
     <yu-an-list ref='yuAnList' @operate="listOperate"></yu-an-list>
     <operation
       ref="Operate"
@@ -84,7 +84,9 @@ import FarCall from './components/FarCall.vue'
 import EventItem from './components/EventItem.vue'
 import YuAnInfo from './components/YuAnInfo.vue'
 import UserInfo from './components/UserInfo.vue'
+import ResourceInfo from './components/ResourceInfo.vue'
 import YuAnList from './components/YuAnList.vue'
+import EventYuAnForm from './components/EventYuAnForm.vue'
 import YuAnForm from './components/YuAnForm.vue'
 import { getAllEmergencyArea, postEmergencyArea } from '@/api/map/service'
 import { emergencyAreaStyle, emergencyCenterStyle,emergencyPeopleStyle } from '@/utils/util.map.style'
@@ -169,10 +171,12 @@ export default {
     EventForm,
     FarCall,
     EventItem,
+    ResourceInfo,
     YuAnInfo,
     UserInfo,
     YuAnList,
-      YuAnForm
+    YuAnForm,
+    EventYuAnForm
   },
   computed: {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
@@ -208,7 +212,7 @@ export default {
   },
   methods: {
     ...mapMutations('map', ['setEmergencyAllArea', 'setSelectEmergencyFeature']),
-    ...mapActions('emergency/emergency', ['getEventDataList']),
+    ...mapActions('emergency/emergency', ['getEventDataList','deleteEvent']),
     //地图点击事件处理器
     mapClickHandler({ pixel, coordinate }) {
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
@@ -249,8 +253,8 @@ export default {
       this.showLoading = true;
       this.getEventDataList(this.query).then(res => {
         console.log(res);
-        this.dataArr = res.data;
-        this.totalSize = this.dataArr.length;
+        this.dataArr = res.list;
+        this.totalSize = res.total;
         this.showLoading = false;
       })
       //获取预案区域数据
@@ -286,7 +290,8 @@ export default {
       this.dHeight = 470
       this.dialogTitle = '新增事件'
       this.bodyPadding = [0, 10, 10, 10]
-      this.sourceData = {}
+      this.sourceData = {};
+      this.closeCallBack = this.getDataList;
       this.dialogVisible = true
     },
     //编辑预案
@@ -306,7 +311,8 @@ export default {
       this.dHeight = 470
       this.dialogTitle = '修改预案'
       this.bodyPadding = [0, 10, 10, 10]
-      this.sourceData = item
+      this.sourceData = item;
+        this.closeCallBack = this.getDataList;
       this.dialogVisible = true
     },
     //删除预案
@@ -333,7 +339,7 @@ export default {
               console.log(res)
             })
           }
-          _this.deleteEmergencyYuAn(data).then(res => {
+          _this.deleteEvent(data).then(res => {
             console.log(res)
             _this.getDataList()
           })
@@ -371,6 +377,30 @@ export default {
       this.emergencyCenterLayer = this.mapManager.addVectorLayerByFeatures([point], emergencyCenterStyle(), 3)
       this.mapManager.locateTo([parseFloat(data.positionX), parseFloat(data.positionY)])
     },
+      //启动预案
+      startYuAn(){
+          if(this.dataArr[this.activeIndex].statusId!=='1'){
+              this.$notification['warning']({
+                  message: '只能启动状态为未开始的预案',
+                  description: '请重新选择',
+                  style: {
+                      width: '350px',
+                      marginLeft: `50px`,
+                      fontSize: '14px'
+                  }
+              });
+          }
+          else{
+              this.dialogTitle = '启动预案';
+              this.closeCallBack = this.getDataList;
+              this.sourceData = this.dataArr[this.activeIndex].id;
+              this.dialogComponentId = EventYuAnForm;
+              this.dWidth = 1200;
+              this.dHeight = 644;
+              this.bodyPadding = [0, 10, 10, 10];
+              this.dialogVisible = true;
+          }
+      },
     //远程呼叫
     ychjOperation() {
       if (this.activeIndex === null) {
@@ -421,11 +451,12 @@ export default {
         switch(data.type){
             case 'add':
                 this.dialogTitle = '新增预案';
-                this.closeCallBack = 'refreshYuAnList';
+                this.closeCallBack = this.refreshYuAnList;
                 this.sourceData = '';
                 break;
             case 'edit':
                 this.dialogTitle = '编辑预案';
+                this.closeCallBack = this.refreshYuAnList;
                 this.sourceData = data.id;
                 break;
             case 'info':
@@ -439,6 +470,7 @@ export default {
           this.bodyPadding = [0, 10, 10, 10];
           this.dialogVisible = true;
       },
+
       refreshYuAnList(){
         console.log('go to refreshYuAnList');
         this.$refs.yuAnList.getYuAnList();

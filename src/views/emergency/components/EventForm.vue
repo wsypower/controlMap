@@ -59,7 +59,7 @@
                               v-decorator="['rangeDay', config]"
                               :placeholder="['开始日期', '结束日期']"
                               :disabledDate="disabledDate"
-                              format="YYYY-MM-DD"
+                              format="YYYY-MM-DD HH:mm"
                               style="width: 277px"
                       />
                   </a-form-item>
@@ -115,7 +115,7 @@
                 class="avatar-uploader"
                 accept=".jpg,.png"
                 :showUploadList="false"
-                action="http://61.153.37.213:8087/file/file/uploadFileWeb"
+                action="http://192.168.71.33:50000/file/file/uploadFileWeb"
                 :beforeUpload="beforeUpload"
                 @change="handleImgChange"
               >
@@ -221,73 +221,64 @@ export default {
     created(){},
     mounted(){
         let _this = this;
-        this.getEmergencyYuAnInitData().then((res) => {
-              _this.typeList = res.emergency_plan_type;
-              _this.levelList = res.emergency_plan_grade;
+        const p1 = this.getYuAnDataList().then((res) => {
+            console.log('getYuAnDataList',res);
+            this.typeList = res;
+        });
+        const p2 = this.getAllLevelData().then((res)=>{
+            console.log('getAllLevelData',res);
+            this.levelList = res;
 
-            //console.log('_this.sourceData',_this.sourceData,moment(_this.sourceData.startDay, 'YYYY-MM-DD'),moment(1567159292614).format());
+        });
+        Promise.all([p1,p2]).then(function (posts) {
             let startDay;
             let endDay;
             if(_this.sourceData.startDay){
-                startDay  = moment(parseInt(_this.sourceData.startDay)).format('YYYY-MM-DD');
-             }
+                startDay  = moment(parseInt(_this.sourceData.startDay)).format('YYYY-MM-DD HH:mm');
+            }
             if(_this.sourceData.endDay){
-                endDay = moment(parseInt(_this.sourceData.endDay)).format('YYYY-MM-DD');
+                endDay = moment(parseInt(_this.sourceData.endDay)).format('YYYY-MM-DD HH:mm');
             }
 
+            _this.form.setFieldsValue({
+                typeId: _this.sourceData.typeId,
+                levelId: _this.sourceData.levelId,
+                rangeDay: _this.sourceData.startDay?[moment(startDay, 'YYYY-MM-DD HH:mm'),moment(endDay, 'YYYY-MM-DD HH:mm')]:undefined,
+                position: _this.sourceData.position,
+                description: _this.sourceData.description
+            });
+
+            _this.image = _this.sourceData.imageStr?JSON.parse(_this.sourceData.imageStr):[];
+            _this.fileList = _this.sourceData.fileStr?JSON.parse(_this.sourceData.fileStr):[];
+            _this.imageUrl = _this.image[0]?_this.image[0].newPath:'';
+
+            _this.mapId = _this.sourceData.mapId;
+            _this.mapCenter = [_this.sourceData.positionX,_this.sourceData.positionY];
+            let index = parseInt(_this.sourceData.areaId)-2;
+            if(_this.sourceData.id||_this.sourceData.id===0){
+                _this.areaName =  _this.areaList[index].name;
+            }
+            else{
                 _this.form.setFieldsValue({
-                    typeId: _this.sourceData.typeId,
-                    levelId: _this.sourceData.levelId,
-                    rangeDay: _this.sourceData.startDay?[moment(startDay, 'YYYY-MM-DD'),moment(endDay, 'YYYY-MM-DD')]:undefined,
-                    position: _this.sourceData.position,
-                    description: _this.sourceData.description
-                });
-
-                _this.image = _this.sourceData.imageStr?JSON.parse(_this.sourceData.imageStr):[];
-                _this.fileList = _this.sourceData.fileStr?JSON.parse(_this.sourceData.fileStr):[];
-                _this.imageUrl = _this.image[0]?_this.image[0].newPath:'';
-
-                _this.mapId = _this.sourceData.mapId;
-                _this.mapCenter = [_this.sourceData.positionX,_this.sourceData.positionY];
-                let index = parseInt(_this.sourceData.areaId)-2;
-                if(_this.sourceData.id||_this.sourceData.id===0){
-                    _this.areaName =  _this.areaList[index].name;
-                }
-                else{
-                    _this.form.setFieldsValue({
-                        areaId: _this.sourceData.areaId
-                    })
-                }
-
-
+                    areaId: _this.sourceData.areaId
+                })
+            }
         }).catch((error) => {
             console.log(error)
-        })
-        console.log('=====预案区域=====');
+        });
+
     },
     methods:{
-        ...mapActions('emergency/emergency', ['getEmergencyYuAnInitData','addNewEmergencyYuAn']),
+        ...mapActions('emergency/common', ['getAllLevelData']),
+        ...mapActions('emergency/yuan', ['getYuAnDataList']),
+        ...mapActions('emergency/emergency', ['','addNewEvent']),
         init(){
         },
         //时间不可选设置
         disabledDate(current) {
             return current && current < moment().endOf('day');
         },
-        //选择区域
-        // changePaintMethod(val){
-          // const _this = this;
-          // draw = this.mapManager.activateDraw(val,draw);
-          // this.drawType = val;
-          // this.$emit('hide');
-          // draw.on('drawend', function(e) {
-          //   _this.mapManager.inactivateDraw(draw);
-          //   _this.$emit('show');
-          //   _this.drawFeature=e.feature;
-          //   const mapExtent = e.feature.getGeometry().getExtent();
-          //   _this.mapCenter= getCenter(mapExtent);
-          //   _this.addDraw();
-          // })
-        // },
+
         //选择区域
         selectPaintMethod(val,option){
           console.log('selectPaintMethod',val,option);
@@ -490,8 +481,8 @@ export default {
                               values.mapId = _this.mapId;
                               values.positionX = _this.mapCenter[0];
                               values.positionY = _this.mapCenter[1];
-                              _this.addNewEmergencyYuAn(values).then((res) => {
-                                  console.log('addNewEmergencyYuAn', res);
+                              _this.addNewEvent(values).then((res) => {
+                                  console.log('addNewEvent', res);
                                   _this.$emit('close');
                               })
                           });
@@ -500,23 +491,32 @@ export default {
                           values.mapId = this.sourceData.mapId;
                           values.positionX = this.sourceData.positionX;
                           values.positionY = this.sourceData.positionY;
-                          this.addNewEmergencyYuAn(values).then((res) => {
-                              console.log('addNewEmergencyYuAn', res);
+                          this.addNewEvent(values).then((res) => {
+                              console.log('addNewEvent', res);
                               _this.$emit('close');
                           })
                       }
 
                   }
                   else{
-                    this.addDraw(function () {
-                      values.mapId = _this.mapId;
-                      values.positionX = _this.mapCenter[0];
-                      values.positionY = _this.mapCenter[1];
-                      _this.addNewEmergencyYuAn(values).then((res) => {
-                        console.log('addNewEmergencyYuAn', res);
-                        _this.$emit('close');
-                      })
-                    });
+                      if(this.sourceData.areaId == ''){
+                          this.addNewEvent(values).then((res) => {
+                              console.log('addNewEvent', res);
+                              _this.$emit('close');
+                          })
+                      }
+                      else{
+                          this.addDraw(function () {
+                            values.mapId = _this.mapId;
+                            values.positionX = _this.mapCenter[0];
+                            values.positionY = _this.mapCenter[1];
+                            _this.addNewEmergencyYuAn(values).then((res) => {
+                              console.log('addNewEmergencyYuAn', res);
+                              _this.$emit('close');
+                            })
+                          });
+                      }
+
                   }
                 }
             });

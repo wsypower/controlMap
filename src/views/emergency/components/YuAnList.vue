@@ -18,9 +18,11 @@
                      flex="dir:left cross:center main:justify">
                     <span class="title">{{item.name}}</span>
                     <span class="operate">
-                        <a-icon type="edit" style="color:#2b90f3" @click="editYuAn(item.id)"/>
+                        <a-icon type="edit" style="color:#2b90f3" @click="editYuAnItem(item.id)"/>
                         <i class="sep"></i>
-                        <a-icon type="delete" style="color:#2b90f3" @click="deleteYuAn(item.id,index)"/>
+                        <a-popconfirm title="确定删除此预案吗？" @confirm="deleteYuAnItem(item.id,index)" @cancel="cancel" okText="确定" cancelText="取消">
+                            <a-icon type="delete" style="color:#2b90f3"/>
+                        </a-popconfirm>
                     </span>
                 </div>
             </div>
@@ -60,16 +62,18 @@
                 let data = { type: 'info',id:id};
                 this.$emit('operate', data);
             },
-            editYuAn(id){
+            editYuAnItem(id){
                 let data = { type: 'edit',id:id};
                 this.$emit('operate', data);
             },
-            deleteYuAn(id,index){
+            deleteYuAnItem(id,index){
                 this.deleteYuAn({id:id}).then((res)=>{
                     this.yuAnList.splice(index,1);
                 });
             },
-
+            cancel(){
+                console.log('no delete operation');
+            }
         }
 
     }

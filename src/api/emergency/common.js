@@ -20,7 +20,7 @@ import request from '@/plugins/axios/axios'
 export function getAllLevelData(data){
     console.log('api:getAllLevelData',data);
     return request({
-        url: '@test/getAllLevelData?_t='+ new Date().getTime(),
+        url: 'emergencyplan/getAllLevelData?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })

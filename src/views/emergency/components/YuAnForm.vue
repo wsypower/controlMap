@@ -91,13 +91,16 @@
             init(){
                 if(this.operateType=='edit'){
                     this.getYuAnInfoById({id: this.sourceData}).then((res)=>{
-                        this.yuAnForm.id = res.data.id;
-                        this.yuAnForm.name = res.data.name;
-                        this.stageData = res.data.stageData;
-                        this.peopleData = res.data.peopleData;
-                        this.resourceData = res.data.resourceData;
-                        this.placeData = res.data.placeData;
+                        this.yuAnForm.id = res.id;
+                        this.yuAnForm.name = res.name;
+                        this.stageData = res.stageData;
+                        this.peopleData = res.peopleData;
+                        this.resourceData = res.resourceData;
+                        this.placeData = res.placeData;
                     });
+                }
+                else{
+                    this.yuAnForm.id = ''
                 }
             },
             checkParams(){

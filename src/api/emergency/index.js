@@ -44,14 +44,14 @@ import request from '@/plugins/axios/axios'
 export function getEventDataList(data){
     console.log('api：getEventDataList',data);
     return request({
-        url: '@test/getEventDataList?_t='+ new Date().getTime(),
+        url: 'emergencyplan/getEventDataList?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
 }
 
 /**
- * @description 增加新预案
+ * @description 增加新事件
  * @author moxuejuan
  * @date 2019-07-08 15:53:20
  * @param {Number} typeId 请求参数：类型Id
@@ -69,10 +69,10 @@ export function getEventDataList(data){
  * }
  */
 
-export function addNewEmergencyYuAn(data){
-    console.log('api:addNewEmergencyYuAn',data);
+export function addNewEvent(data){
+    console.log('api:addNewEvent',data);
     return request({
-        url: 'emergencyplan/addNewEmergencyYuAn',
+        url: 'emergencyplan/addNewEvent',
         method: 'post',
         data
     })
@@ -89,10 +89,57 @@ export function addNewEmergencyYuAn(data){
  * }
  */
 
-export function deleteEmergencyYuAn(data){
-    console.log('api:deleteEmergencyYuAn',data);
+export function deleteEvent(data){
+    console.log('api:deleteEvent',data);
     return request({
-        url: 'emergencyplan/deleteEmergencyYuAn',
+        url: 'emergencyplan/deleteEvent',
+        method: 'post',
+        data
+    })
+}
+
+
+
+/**
+ * @description 启动预案获取的初始详细信息
+ * @author moxuejuan
+ * @date 2019-07-12 10:53:20
+ * @param {Number} id 事件的唯一标识Id
+ * @method：POST
+ * @response：{
+ *
+ * }
+ */
+
+export function getEventYuAnInfoById(data){
+    console.log('api:getEventYuAnInfoById',data);
+    return request({
+        url: 'emergencyplan/getEventYuAnInfoById?_t='+ new Date().getTime(),
+        method: 'get',
+        params: data
+    })
+}
+
+
+/**
+ * @description 启动预案
+ * @author moxuejuan
+ * @date 2019-07-12 10:53:20
+ * @param {Number} id 事件的唯一标识Id
+ * @param {String} stageData 请求参数：预案阶段数据
+ * @param {String} peopleData 请求参数：预案成员数据
+ * @param {String} resourceData 请求参数：预案资源数据
+ * @param {String} placeData 请求参数：预案场地数据
+ * @method：POST
+ * @response：{
+ *
+ * }
+ */
+
+export function startYuAn(data){
+    console.log('api:getEventYuAnInfoById',data);
+    return request({
+        url: 'emergencyplan/startYuAn',
         method: 'post',
         data
     })
@@ -155,3 +202,5 @@ export function getPersonInfo(data){
         params: data
     })
 }
+
+

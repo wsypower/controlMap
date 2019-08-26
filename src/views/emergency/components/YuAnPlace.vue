@@ -113,12 +113,16 @@
                 positionData: {}
             }
         },
-        mounted(){
-            this.resultData = JSON.parse(JSON.stringify(this.placeData));
-        },
         watch:{
-            resultData:function(val){
-                this.$emit('getResult', val);
+            placeData:function(val){
+                this.resultData = JSON.parse(JSON.stringify(val));
+            },
+            resultData:{
+                handler(newValue,oldValue){
+                    console.log('watch resultData',newValue);
+                    this.$emit('getResult', newValue);
+                },
+                deep: true
             }
         },
         methods:{

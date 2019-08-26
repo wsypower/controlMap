@@ -101,6 +101,7 @@
         },
         computed: {},
         mounted() {
+            console.log('dustbin mounted');
             this.getDataList();
         },
         watch: {

@@ -21,8 +21,8 @@
             <span class="memu-title-text">周边物资</span>
             <a-icon type="down" />
         </a-button>
-        <a-menu slot="overlay" multiple :openKeys.sync="openKeys" @click="handleResourceClick">
-            <template v-for="(item, index) in selectType">
+        <a-menu slot="overlay" multiple :openKeys.sync="openKeys">
+            <template v-for="(item, index) in sourceType">
                 <a-menu-item :key="item.key" @click="clickShowPoints(item,index)">
                     <a-checkbox :checked="item.checked" class="checkbox_d"></a-checkbox>
                     <cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>
@@ -31,17 +31,17 @@
             </template>
       </a-menu>
     </a-dropdown>
-      <a-dropdown v-model="visible">
+      <a-dropdown v-model="bestVisible">
           <a-button class="op-btn yjzy-btn">
               <i class="icon_yjzy">
                   <cg-icon-svg name="yinjiguanli" class="svg_icon_yinjiguanli"></cg-icon-svg>
               </i>
-              <span class="memu-title-text">周边最优物资</span>
+              <span class="memu-title-text">周边最优资源</span>
               <a-icon type="down" />
           </a-button>
-          <a-menu slot="overlay" multiple :openKeys.sync="openKeys" @click="handleResourceClick">
+          <a-menu slot="overlay" multiple >
               <template v-for="(item, index) in selectType">
-                  <a-menu-item :key="item.key" @click="clickShowPoints(item,index)">
+                  <a-menu-item :key="item.key" @click="clickShowBestPoints(item)">
                       <a-checkbox :checked="item.checked" class="checkbox_d"></a-checkbox>
                       <cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>
                       {{item.name}}
@@ -52,7 +52,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapState } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import { getAreaVideo,getTypeResources,getTypeEquip } from '@/api/map/service'
 import { videoStyle,emergencyResourceStyle,emergencyEquipStyle } from '@/utils/util.map.style'
 import { filterMeetingPeople } from '@/utils/util.map.manage'
@@ -63,7 +63,7 @@ export default {
     name: 'operation',
     data(){
         return {
-            //应急资源菜单显示
+            //周边物资菜单显示
             visible: false,
             //应急资源二级菜单显示
             openKeys:[],
@@ -71,49 +71,59 @@ export default {
             isAnimationActive: false,
             //组件是否渲染
             isActive: false,
+            iconType:[{
+                key: '救援绳',
+                icon: 'jiuyuanshen'
+            },{
+                key: '救生衣',
+                icon: 'jiushengyi'
+            },{
+                key: '渣土车',
+                icon: 'zhatuche'
+            },{
+                key: '水车',
+                icon: 'shashuiche'
+            },{
+                key: '挖掘机',
+                icon: 'wajueji'
+            },{
+                key: '皮划艇',
+                icon: 'pihuating'
+            }],
             //周边物资选择类别
-            selectType:[
-              {
-                key:'partVideo',
-                name:'救援绳',
-                icon:'video-two',
-                checked: false
-              },
-                {
-                key:'manager',
-                name:'皮划艇',
-                icon:'menu-section',
-                checked: false
-              },
-              {
-                  key:'jiushengyi',
-                  name:'救生衣',
-                  icon:'menu-section',
-                  checked: false
-
-              },
-              {
-                  key:'zhatuche',
-                  name:'渣土车',
-                  icon:'menu-section',
-                  checked: false
-              },
-              {
-                  key:'wajueji',
-                  name:'挖掘机',
-                  icon:'menu-section',
-                  checked: false
-              },
-              {
-                  key:'shuiche',
-                  name:'水车',
-                  icon:'menu-section',
-                  checked: false
-              }],
+            sourceType:[],
+            //周边最优资源菜单显示
+            bestVisible: false,
             //周边最优资源选择类别
-            
-            //已勾选的物联设备
-          checkedWuLianList:[],
+            selectType:[
+                {
+                    key:'partVideo',
+                    name:'摄像头',
+                    icon:'video-two',
+                    checked: false
+                },
+                {
+                    key:'manager',
+                    name:'管理人员',
+                    icon:'menu-section',
+                    checked: false
+                },{
+                    key:'terminal',
+                    name:'执法终端',
+                    icon:'zhifa',
+                    checked: false
+                },{
+                    key:'gps',
+                    name:'车载卡口gps',
+                    icon:'gps',
+                    checked: false
+                },{
+                    key:'car',
+                    name:'市政环卫车辆',
+                    icon:'huoche',
+                    checked: false
+                }],
+
           emergencyResourceLayer:null,
           equipLayer:[{
             type:'3',
@@ -139,6 +149,18 @@ export default {
             default: false
         }
     },
+    computed:{
+        ...mapState('map', [
+            'mapManager',
+            'selectEmergencyFeature'
+        ]),
+        //已选择的周边最优资源
+        checkedBestList:function(){
+            return this.selectType.filter(item=>{
+                item.checked===true
+            })
+        }
+    },
     watch:{
         //监听从而实现动画效果
         isActiveOperation: function(newValue,oldValue){
@@ -159,20 +181,32 @@ export default {
     },
     mounted(){
       this.getEquipPoints();
+      this.getResourceDataList().then((res)=>{
+          let arr = res.reduce((cal,item)=>{
+              let icon = '';
+              let hasIcon = this.iconType.some((ic)=>{
+                  if(item.name.indexOf(ic.key)>=0){
+                      icon = ic.icon;
+                  }
+                  return item.name.indexOf(ic.key)>=0
+              });
+              if(!hasIcon){
+                  icon = 'jiuyuan'
+              }
+              let temp = {
+                  key: item.id,
+                  name: item.name,
+                  icon: icon,
+                  checked: false
+              }
+              cal.push(temp);
+              return cal
+          },[]);
+          this.sourceType = arr;
+      });
     },
     methods:{
-        //预案操作：目前只有新增预案
-        // handleOperateClick(value){
-        //     console.log('handleMenuClick',value);
-        //     switch(value.key){
-        //         case 'add':
-        //             console.log('add operation');
-        //             this.$emit('addItem');
-        //             break;
-        //         default:
-        //             console.log('no operation');
-        //     }
-        // },
+        ...mapActions('emergency/yuan', ['getResourceDataList']),
         //新增事件
         addEvent(){
             this.$emit('addItem');
@@ -181,12 +215,17 @@ export default {
         clickYCHJBtn(){
             this.$emit('ychjOperate');
         },
-        handleResourceClick(e){
-            this.openKeys = [...e.keyPath];
-            console.log('handleResourceClick openKeys',e,this.openKeys);
+
+        clickShowBestPoints(item){
+            for(let i=0;i<this.selectType.length;i++){
+                if(this.selectType[i].key ===item.key){
+                    this.selectType[i].checked = !this.selectType[i].checked
+                }
+            }
+            console.log('周边最优资源已选择：', this.checkedBestList);
         },
         clickShowPoints(item,index){
-            if(item.name=='区域视频'){
+            if(item.name=='摄像头'){
                 if(this.isCheckedTuAn){
                     getAreaVideo().then(res=>{
                         console.log(this.selectEmergencyFeature[0]);
@@ -291,13 +330,7 @@ export default {
             })
           }
         }
-    },
-      computed:{
-        ...mapState('map', [
-          'mapManager',
-          'selectEmergencyFeature'
-        ]),
-      }
+    }
 }
 </script>
 <style lang="scss" scoped>
