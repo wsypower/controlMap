@@ -120,11 +120,12 @@ export default {
     this.manholeOverlay = this.mapManager.addOverlay({
       element: this.$refs.manholeOverlay.$el
     });
+    this.setOverlay(this.manholeOverlay);
   },
   watch: {},
   methods: {
     ...mapActions('intelligence/intelligence', ['getDeviceDataList']),
-    ...mapMutations('map', ['pushPageLayers','setClickHandler']),
+    ...mapMutations('map', ['pushPageLayers','setClickHandler','setOverlay']),
     manholeClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
       if(feature){
@@ -152,6 +153,7 @@ export default {
           });
           point.set('id', p.id);
           point.set('info',p.info);
+          point.set('state',p.info.alarmState);
           return point;
         });
         this.manholeLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
@@ -173,7 +175,7 @@ export default {
 
     //选择某个预案
     clickDataItem(item, index) {
-      console.log('clickDataItem', index)
+      console.log('clickDataItem', item)
       this.activeIndex = index
       const data = item;
       if (data.alarmState === '2') {
@@ -184,8 +186,11 @@ export default {
       }
       this.modalTitle = data.verifyCode
       this.tipComponentId = ManholeInfo
-      this.infoData = data
-      console.log('infoData', data)
+      this.infoData = data;
+      const xy=[parseFloat(data.longitudeGps84Y), parseFloat(data.latitudeGps84X)];
+      this.mapManager.locateTo(xy);
+      this.manholeOverlay.setPosition(xy);
+      console.log('infoData', data);
     },
     closeOverlay() {
       this.manholeOverlay.setPosition(undefined);

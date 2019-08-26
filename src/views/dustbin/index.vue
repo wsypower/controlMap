@@ -122,12 +122,13 @@ export default {
       this.dustbinOverlay = this.mapManager.addOverlay({
         element: this.$refs.dustbinOverlay.$el
       });
+      this.setOverlay(this.dustbinOverlay);
     })
   },
   watch: {},
   methods: {
     ...mapActions('intelligence/intelligence', ['getDeviceDataList']),
-    ...mapMutations('map', ['pushPageLayers','setClickHandler']),
+    ...mapMutations('map', ['pushPageLayers','setClickHandler','setOverlay']),
     dustbinClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
       if(feature){
@@ -155,6 +156,7 @@ export default {
           });
           point.set('id', p.id);
           point.set('info',p.info);
+          point.set('state',p.info.alarmState);
           return point;
         });
         this.dustbinLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('7'), 3);
@@ -187,8 +189,10 @@ export default {
       }
       this.modalTitle = data.verifyCode
       this.tipComponentId = DustbinInfo
-      this.infoData = data
-      // console.log('infoData', data);
+      this.infoData = data;
+      const xy=[parseFloat(data.longitudeGps84Y), parseFloat(data.latitudeGps84X)];
+      this.mapManager.locateTo(xy);
+      this.dustbinOverlay.setPosition(xy);
     },
     closeOverlay() {
       this.dustbinOverlay.setPosition(undefined);

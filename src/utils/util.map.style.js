@@ -98,10 +98,22 @@ export function emergencyResourceStyle(type) {
  * @createDate:2019/7/31 16:37
  */
 export function emergencyEquipStyle(type) {
-  return new Style({
-    image: new Icon({
-      src: require('@/assets/mapImage/物联设备-' + type + '.png')
-    }),
-    anchor: [0.5, 1]
-  })
+  return function(feature) {
+    let iconOptions = {}
+    const state = feature.get('state');
+    if (state=='1') {
+      iconOptions = {
+        src: require('@/assets/mapImage/物联设备-' + type + '-normal.png')
+      }
+    } else {
+      iconOptions = {
+        src: require('@/assets/mapImage/物联设备-' + type + '-alarm.png')
+      }
+    }
+    let style = new Style({
+      image: new Icon(iconOptions),
+      anchor: [0.5, 1],
+    })
+    return style
+  }
 }

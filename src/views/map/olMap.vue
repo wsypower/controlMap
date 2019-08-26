@@ -31,6 +31,7 @@ export default {
         });
         this.setPageLayers([]);
         this.map.un('click',this.clickHandler);
+        this.map.removeOverlay(this.overlay);
       }
     }
   },
@@ -173,7 +174,7 @@ export default {
   },
   computed:{
     ...mapState('cgadmin/page', ['current']),
-    ...mapState('map', ['pageLayers','clickHandler']),
+    ...mapState('map', ['pageLayers','clickHandler','overlay']),
   }
 }
 </script>

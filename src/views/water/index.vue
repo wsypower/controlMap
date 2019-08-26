@@ -120,11 +120,12 @@ export default {
     this.waterOverlay = this.mapManager.addOverlay({
       element: this.$refs.waterOverlay.$el
     });
+    this.setOverlay(this.waterOverlay);
   },
   watch: {},
   methods: {
     ...mapActions('intelligence/intelligence', ['getDeviceDataList']),
-    ...mapMutations('map', ['pushPageLayers','setClickHandler']),
+    ...mapMutations('map', ['pushPageLayers','setClickHandler','setOverlay']),
     waterClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
       if(feature){
@@ -156,6 +157,7 @@ export default {
           });
           point.set('id', p.id);
           point.set('info',p.info);
+          point.set('state',p.info.alarmState);
           return point;
         });
         this.waterLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('8'), 3);
@@ -182,8 +184,10 @@ export default {
       }
       this.modalTitle = data.verifyCode
       this.tipComponentId = WaterLevelInfo
-      this.infoData = data
-      console.log('infoData', data)
+      this.infoData = data;
+      const xy=[parseFloat(data.longitudeGps84Y), parseFloat(data.latitudeGps84X)];
+      this.mapManager.locateTo(xy);
+      this.waterOverlay.setPosition(xy);
     },
 
     closeOverlay() {
