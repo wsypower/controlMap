@@ -18,7 +18,7 @@
             class="item"
             :class="{ active: activeIndex === index, warning: item.alarmState === '2' }"
             flex="cross:center main:justify"
-            @click="clickDataItem(index)"
+            @click="clickDataItem(item, index)"
           >
             <div class="item_left">
               <cg-icon-svg name="dustbin" class="svg_icon"></cg-icon-svg>
@@ -46,7 +46,7 @@
     </div>
     <div hidden>
       <tip-modal
-        ref="yuAnOverlay"
+        ref="dustbinOverlay"
         :modalWidth="modalWidth"
         :modalHeight="modalHeight"
         :iconName="iconName"
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { mapActions,mapState } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 import DustbinInfo from './components/DustbinInfo'
 import { getTypeEquip } from '@/api/map/service'
 import { emergencyEquipStyle } from '@/utils/util.map.style'
@@ -101,7 +101,9 @@ export default {
       tipComponentId: {},
       //tipModal组件内组件的原始数据
       infoData: {},
-      dustbinLayer: null
+      dustbinLayer: null,
+      map:null,
+      dustbinOverlay:null
     }
   },
   components: {
@@ -111,12 +113,28 @@ export default {
     ...mapState('map', ['mapManager']),
   },
   mounted() {
-    this.getDataList();
-    this.getEquipPoints();
+    this.$nextTick().then(() => {
+      this.getDataList();
+      this.getEquipPoints();
+      this.map = this.mapManager.getMap()
+      this.map.on('click', this.dustbinClickHandler);
+      this.setClickHandler(this.dustbinClickHandler);
+      this.dustbinOverlay = this.mapManager.addOverlay({
+        element: this.$refs.dustbinOverlay.$el
+      });
+    })
   },
   watch: {},
   methods: {
     ...mapActions('intelligence/intelligence', ['getDeviceDataList']),
+    ...mapMutations('map', ['pushPageLayers','setClickHandler']),
+    dustbinClickHandler({ pixel, coordinate }) {
+      const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
+      if(feature){
+        this.clickDataItem(feature.get('info'),null)
+        this.dustbinOverlay.setPosition(coordinate);
+      }
+    },
     //获取垃圾桶数据
     getDataList() {
       this.showLoading = true
@@ -127,6 +145,7 @@ export default {
         this.showLoading = false
       })
     },
+    //获取垃圾桶设备点位
     getEquipPoints() {
       getTypeEquip('7').then(res => {
         console.log('===物联信息-7', res)
@@ -134,11 +153,12 @@ export default {
           const point = new Feature({
             geometry: new Point(p.position)
           });
-          point.set('id', p.id)
+          point.set('id', p.id);
+          point.set('info',p.info);
           return point;
         });
-        this.dustbinLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('7'), 3)
-        // this.equipLayer[i].layer.setVisible(false)
+        this.dustbinLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('7'), 3);
+        this.pushPageLayers(this.dustbinLayer);
       })
     },
     //搜索关键字查询
@@ -155,23 +175,24 @@ export default {
     },
 
     //选择某个垃圾桶
-    clickDataItem(index) {
+    clickDataItem(item, index) {
       console.log('clickDataItem', index)
       this.activeIndex = index
-      const data = this.dataArr[index]
+      const data = item;
       if (data.alarmState === '2') {
-        this.$refs.yuAnOverlay.$el.style.backgroundImage =
+        this.$refs.dustbinOverlay.$el.style.backgroundImage =
           'linear-gradient(90deg, #f76a63 0%, #f77f6e 50%, #f79378 100%)'
       } else {
-        this.$refs.yuAnOverlay.$el.style.backgroundImage = 'linear-gradient(90deg, #0065ea 0%, #00a5ff 100%)'
+        this.$refs.dustbinOverlay.$el.style.backgroundImage = 'linear-gradient(90deg, #0065ea 0%, #00a5ff 100%)'
       }
       this.modalTitle = data.verifyCode
       this.tipComponentId = DustbinInfo
       this.infoData = data
-      console.log('infoData', data)
+      // console.log('infoData', data);
     },
-
-    closeOverlay() {}
+    closeOverlay() {
+      this.dustbinOverlay.setPosition(undefined);
+    }
   }
 }
 </script>

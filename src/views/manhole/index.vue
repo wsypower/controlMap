@@ -18,7 +18,7 @@
             class="item"
             :class="{ active: activeIndex === index, warning: item.alarmState === '2' }"
             flex="cross:center main:justify"
-            @click="clickDataItem(index)"
+            @click="clickDataItem(item, index)"
           >
             <div class="item_left">
               <cg-icon-svg name="manhole" class="svg_icon"></cg-icon-svg>
@@ -46,7 +46,7 @@
     </div>
     <div hidden>
       <tip-modal
-        ref="yuAnOverlay"
+        ref="manholeOverlay"
         :modalWidth="modalWidth"
         :modalHeight="modalHeight"
         :iconName="iconName"
@@ -101,7 +101,8 @@ export default {
       tipComponentId: {},
       //tipModal组件内组件的原始数据
       infoData: {},
-      manholeLayer: null
+      manholeLayer: null,
+      manholeOverlay:null
     }
   },
   components: {
@@ -113,10 +114,24 @@ export default {
   mounted() {
     this.getDataList();
     this.getEquipPoints();
+    this.map = this.mapManager.getMap()
+    this.map.on('click', this.manholeClickHandler);
+    this.setClickHandler(this.manholeClickHandler);
+    this.manholeOverlay = this.mapManager.addOverlay({
+      element: this.$refs.manholeOverlay.$el
+    });
   },
   watch: {},
   methods: {
     ...mapActions('intelligence/intelligence', ['getDeviceDataList']),
+    ...mapMutations('map', ['pushPageLayers','setClickHandler']),
+    manholeClickHandler({ pixel, coordinate }) {
+      const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
+      if(feature){
+        this.clickDataItem(feature.get('info'),null)
+        this.manholeOverlay.setPosition(coordinate);
+      }
+    },
     //获取预案数据
     getDataList() {
       this.showLoading = true
@@ -127,6 +142,7 @@ export default {
         this.showLoading = false
       })
     },
+    //获取井盖设备点位
     getEquipPoints() {
       getTypeEquip('3').then(res => {
         console.log('===物联信息-3', res)
@@ -134,11 +150,12 @@ export default {
           const point = new Feature({
             geometry: new Point(p.position)
           });
-          point.set('id', p.id)
+          point.set('id', p.id);
+          point.set('info',p.info);
           return point;
         });
-        this.manholeLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3)
-        // this.equipLayer[i].layer.setVisible(false)
+        this.manholeLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
+        this.pushPageLayers(this.manholeLayer);
       })
     },
     //搜索关键字查询
@@ -155,22 +172,24 @@ export default {
     },
 
     //选择某个预案
-    clickDataItem(index) {
+    clickDataItem(item, index) {
       console.log('clickDataItem', index)
       this.activeIndex = index
-      const data = this.dataArr[index]
+      const data = item;
       if (data.alarmState === '2') {
-        this.$refs.yuAnOverlay.$el.style.backgroundImage =
+        this.$refs.manholeOverlay.$el.style.backgroundImage =
           'linear-gradient(90deg, #f76a63 0%, #f77f6e 50%, #f79378 100%)'
       } else {
-        this.$refs.yuAnOverlay.$el.style.backgroundImage = 'linear-gradient(90deg, #0065ea 0%, #00a5ff 100%)'
+        this.$refs.manholeOverlay.$el.style.backgroundImage = 'linear-gradient(90deg, #0065ea 0%, #00a5ff 100%)'
       }
       this.modalTitle = data.verifyCode
       this.tipComponentId = ManholeInfo
       this.infoData = data
       console.log('infoData', data)
     },
-    closeOverlay() {}
+    closeOverlay() {
+      this.manholeOverlay.setPosition(undefined);
+    }
   }
 }
 </script>

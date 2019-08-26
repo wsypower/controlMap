@@ -108,6 +108,7 @@ export async function getTypeEquip(type) {
       return {
         id: r.id,
         position: r.position,
+        info:r
       }
     }
   });

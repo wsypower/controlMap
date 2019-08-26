@@ -26,11 +26,11 @@ export default {
     //监听从而实现动画效果
     current: function(current){
       if(current){
-        const layers = this.map.getLayers();
-        console.log(layers.array_);
-        // layers.map(layer => {
-        //   layer.getSource().clear();
-        // });
+        this.pageLayers.map(layer=>{
+          this.map.removeLayer(layer)
+        });
+        this.setPageLayers([]);
+        this.map.un('click',this.clickHandler);
       }
     }
   },
@@ -43,6 +43,7 @@ export default {
   methods: {
     ...mapMutations(namespace, [
       'setMapManager',
+      'setPageLayers'
     ]),
     initMap() {
       /* 添加影像地图 */
@@ -171,7 +172,8 @@ export default {
     }
   },
   computed:{
-    ...mapState('cgadmin/page', ['current'])
+    ...mapState('cgadmin/page', ['current']),
+    ...mapState('map', ['pageLayers','clickHandler']),
   }
 }
 </script>
