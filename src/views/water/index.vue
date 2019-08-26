@@ -101,7 +101,6 @@
         },
         computed: {},
         mounted() {
-            console.log('water mounted');
             this.getDataList();
         },
         watch: {

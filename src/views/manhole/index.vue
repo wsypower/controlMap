@@ -101,7 +101,6 @@
         },
         computed: {},
         mounted() {
-            console.log('manhole mounted');
             this.getDataList();
         },
         watch: {
