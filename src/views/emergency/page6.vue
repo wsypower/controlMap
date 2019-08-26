@@ -211,7 +211,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('map', ['setEmergencyAllArea', 'setSelectEmergencyFeature']),
+    ...mapMutations('map', ['pushPageLayers','setEmergencyAllArea', 'setSelectEmergencyFeature']),
     ...mapActions('emergency/emergency', ['getEventDataList','deleteEvent']),
     //地图点击事件处理器
     mapClickHandler({ pixel, coordinate }) {
@@ -369,12 +369,14 @@ export default {
       this.setSelectEmergencyFeature(feature);
       //预案区域图层
       this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature, emergencyAreaStyle(), 2);
+      this.pushPageLayers(this.emergencyLayer);
       const point = new Feature({
         geometry: new Point([parseFloat(data.positionX), parseFloat(data.positionY)])
       });
       point.set('pointType', 'center');
       //预案中心点图标图层
-      this.emergencyCenterLayer = this.mapManager.addVectorLayerByFeatures([point], emergencyCenterStyle(), 3)
+      this.emergencyCenterLayer = this.mapManager.addVectorLayerByFeatures([point], emergencyCenterStyle(), 3);
+      this.pushPageLayers(this.emergencyCenterLayer);
       this.mapManager.locateTo([parseFloat(data.positionX), parseFloat(data.positionY)])
     },
       //启动预案

@@ -10,6 +10,9 @@ export default {
     mapManager: null,
     emergencyAllArea: null,
     selectEmergencyFeature: null, //当前选中应急预案的要素
+    pageLayers:[],
+    clickHandler:null,
+    overlay:null
   },
   mutations: {
     setMapManager(state, mapManager) {
@@ -20,7 +23,19 @@ export default {
     },
     setSelectEmergencyFeature(state, selectEmergencyFeature) {
       state.selectEmergencyFeature = selectEmergencyFeature;
-    }
+    },
+    pushPageLayers(state, pageLayer){
+      state.pageLayers.push(pageLayer);
+    },
+    setPageLayers(state, pageLayers){
+      state.pageLayers = pageLayers;
+    },
+    setClickHandler(state, clickHandler){
+      state.clickHandler = clickHandler;
+    },
+    setOverlay(state, overlay){
+      state.overlay = overlay;
+    },
   },
   actions: {
 

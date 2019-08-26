@@ -3,7 +3,7 @@
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations,mapState } from 'vuex'
 import 'ol/ol.css'
 import { Map, View } from 'ol'
 import { defaults as defaultControls } from 'ol/control'
@@ -22,6 +22,19 @@ export default {
       mockPoints: []
     }
   },
+  watch:{
+    //监听从而实现动画效果
+    current: function(current){
+      if(current){
+        this.pageLayers.map(layer=>{
+          this.map.removeLayer(layer)
+        });
+        this.setPageLayers([]);
+        this.map.un('click',this.clickHandler);
+        this.map.removeOverlay(this.overlay);
+      }
+    }
+  },
   mounted() {
     this.$nextTick(() => {
       // 初始化地图底图
@@ -31,9 +44,9 @@ export default {
   methods: {
     ...mapMutations(namespace, [
       'setMapManager',
+      'setPageLayers'
     ]),
     initMap() {
-      debugger;
       /* 添加影像地图 */
       this.map = new Map({
         loadTilesWhileAnimating: true,
@@ -158,6 +171,10 @@ export default {
       })
       return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
     }
+  },
+  computed:{
+    ...mapState('cgadmin/page', ['current']),
+    ...mapState('map', ['pageLayers','clickHandler','overlay']),
   }
 }
 </script>
@@ -169,18 +186,18 @@ export default {
 }
 .draw {
   position: absolute;
-  top: 100px;
-  right: 100px;
-  width: 60px;
-  height: 40px;
+  top: 1.333rem  /* 100/75 */;
+  right: 1.333rem  /* 100/75 */;
+  width: 0.8rem  /* 60/75 */;
+  height: 0.533rem  /* 40/75 */;
   z-index: 999;
 }
 .draw1 {
   position: absolute;
-  top: 200px;
-  right: 100px;
-  width: 60px;
-  height: 40px;
+  top: 2.667rem  /* 200/75 */;
+  right: 1.333rem  /* 100/75 */;
+  width: 0.8rem  /* 60/75 */;
+  height: 0.533rem  /* 40/75 */;
   z-index: 999;
 }
 </style>

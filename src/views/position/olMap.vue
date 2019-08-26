@@ -33,7 +33,6 @@ export default {
       'setMapManager',
     ]),
     initMap() {
-      debugger;
       /* 添加影像地图 */
       this.map = new Map({
         loadTilesWhileAnimating: true,

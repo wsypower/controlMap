@@ -103,11 +103,12 @@ export async function getTypeResources(type) {
 export async function getTypeEquip(type) {
   const result = await getEquipListApi(type);
   const data = result.map(r => {
-    if (r.longitudeY.length > 0 && r.latitudeX.length > 0){
-      r.position = [parseFloat(r.longitudeY), parseFloat(r.latitudeX)];
+    if (r.longitudeGps84Y.length > 0 && r.latitudeGps84X.length > 0){
+      r.position = [parseFloat(r.longitudeGps84Y), parseFloat(r.latitudeGps84X)];
       return {
         id: r.id,
         position: r.position,
+        info:r
       }
     }
   });

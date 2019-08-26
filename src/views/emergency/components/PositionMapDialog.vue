@@ -73,7 +73,6 @@
       methods:{
         init(){
           this.$nextTick().then(() => {
-            debugger;
             map = this.$refs.olMap.getMap();
             source = new VectorSource();
             let vector = new VectorLayer({
