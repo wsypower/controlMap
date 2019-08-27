@@ -77,7 +77,7 @@ export function videoStyle() {
     anchor: [0.5, 1]
   })
 }
-
+const allType=['挖掘机','救援绳','救生衣','水车','渣土车','皮划艇']
 /**
  * @description:应急资源图标
  * @author:sijianting

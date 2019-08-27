@@ -53,7 +53,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapState, mapActions, mapMutations } from 'vuex'
-import { getAreaVideo,getTypeResources,getTypeEquip } from '@/api/map/service'
+import { getAreaVideo,getTypeResources } from '@/api/map/service'
 import { videoStyle,emergencyResourceStyle,emergencyEquipStyle } from '@/utils/util.map.style'
 import { filterMeetingPeople } from '@/utils/util.map.manage'
 import Feature from 'ol/Feature'
@@ -201,10 +201,14 @@ export default {
                 'resource': this.checkedResourceList
             }
             this.$emit('getCheckedOption',data);
+        },
+        eventId:function(id) {
+           if(id){
+             console.log('已选物资',this.checkedResourceList);
+           }
         }
     },
     mounted(){
-      this.getEquipPoints();
     },
     methods:{
         ...mapActions('emergency/yuan', ['getResourceDataList','getMapInfoByEventIdAndRTypeId']),
@@ -268,13 +272,20 @@ export default {
                     });
                     point.set('id', p.id);
                     point.set('info',p);
-                    // point.set('state',p.info.alarmState);
                     return point;
                   });
-                  this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
+                  if(this.sourceType[index].layer){
+                    this.sourceType[index].layer.getSource().addFeatures(features);
+                  }
+                  else{
+                    this.sourceType[index].layer= this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
+                  }
                 });
             }
             else{
+              if(this.sourceType[index].layer){
+                this.sourceType[index].layer.getSource().clear();
+              }
                //清理此类物资在地图上的显示
             }
         },
@@ -321,71 +332,6 @@ export default {
               })
             }
         },
-        //在地图上显示不同类型物联网设备点位
-        showTypePoints(type){
-          console.log("===设备信息===",this.equipLayer);
-            this.checkedWuLianList = [];
-            let placeList = this.selectType[2].children;
-            if(type==='0'){
-                placeList[0].checked = !placeList[0].checked;
-                if(placeList[0].checked){
-                    for(let i=1;i<placeList.length;i++){
-                        placeList[i].checked = true;
-                        this.checkedWuLianList.push(placeList[i].type);
-                    }
-                }
-                else{
-                    for(let i=1;i<placeList.length;i++){
-                        placeList[i].checked = false;
-                    }
-                }
-            }
-            else{
-                for(let i=1;i<placeList.length;i++){
-                    if(placeList[i].type === type){
-                        placeList[i].checked = !placeList[i].checked;
-                        break;
-                    }
-                }
-                let num = 0;
-                for(let j=1;j<placeList.length;j++){
-                    if(placeList[j].checked){
-                        this.checkedWuLianList.push(placeList[j].type);
-                        num++;
-                    }
-                }
-                if(num === placeList.length-1){
-                    placeList[0].checked = true;
-                }
-                else{
-                    placeList[0].checked = false;
-                }
-            }
-            console.log('checkedWuLianList',this.checkedWuLianList);
-            for(let i=0;i<this.equipLayer.length;i++){
-              if(this.checkedWuLianList.includes(this.equipLayer[i].type)){
-                this.equipLayer[i].layer.setVisible(true);
-              } else{
-                this.equipLayer[i].layer.setVisible(false);
-              }
-            }
-        },
-        getEquipPoints(){
-          for(let i=0;i<this.equipLayer.length;i++){
-            getTypeEquip(this.equipLayer[i].type).then(res=>{
-              console.log('===物联信息-'+this.equipLayer[i].type,res);
-              const features =res.map(p =>{
-                const point = new Feature({
-                  geometry: new Point(p.position)
-                });
-                point.set('id',p.id);
-                return point;
-              });
-              this.equipLayer[i].layer=this.mapManager.addVectorLayerByFeatures(features,emergencyEquipStyle(this.equipLayer[i].type),3);
-              this.equipLayer[i].layer.setVisible(false);
-            })
-          }
-        }
     }
 }
 </script>
