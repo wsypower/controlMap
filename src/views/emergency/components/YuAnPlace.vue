@@ -25,7 +25,10 @@
                 <template slot="address" slot-scope="text, record, index">
                     <div>
                         <div flex="cross:center main:justify">
-                            <span>位置：{{record.address}}</span>
+                            <span>位置：
+                                <a-input :value="record.address" style="width:250px"
+                                         @change="e => changeVal(e.target.value, record.id, 'address')" />
+                            </span>
                             <span @click="openMapDialog(index)">
                                 <cg-icon-svg name="ditu" class="svg_icon"></cg-icon-svg>
                             </span>
@@ -74,7 +77,7 @@
         title: '场地责任人',
         dataIndex: 'person',
         scopedSlots: { customRender: 'person' },
-        width: '200px'
+        width: '120px'
     }, {
         title: '电话',
         dataIndex: 'tel',
