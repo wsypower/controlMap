@@ -16,7 +16,7 @@
     <a-dropdown v-model="visible" @visibleChange="visibleChange">
         <a-button class="op-btn yjzy-btn">
             <i class="icon_yjzy">
-                <cg-icon-svg name="yinjiguanli" class="svg_icon_yinjiguanli"></cg-icon-svg>
+                <cg-icon-svg name="dianchi" class="svg_icon_yinjiguanli"></cg-icon-svg>
             </i>
             <span class="memu-title-text">周边物资</span>
             <a-icon type="down" />
@@ -32,16 +32,16 @@
       </a-menu>
     </a-dropdown>
       <a-dropdown v-model="bestVisible">
-          <a-button class="op-btn yjzy-btn">
-              <i class="icon_yjzy">
-                  <cg-icon-svg name="yinjiguanli" class="svg_icon_yinjiguanli"></cg-icon-svg>
+          <a-button class="op-btn best-btn">
+              <i class="icon_best">
+                  <cg-icon-svg name="wulianwang" class="svg_icon_best"></cg-icon-svg>
               </i>
               <span class="memu-title-text">周边最优资源</span>
               <a-icon type="down" />
           </a-button>
           <a-menu slot="overlay" multiple >
               <template v-for="(item, index) in selectType">
-                  <a-menu-item :key="item.key" @click="clickShowBestPoints(item)">
+                  <a-menu-item :key="item.key" @click="clickShowBestPoints(item,index)">
                       <a-checkbox :checked="item.checked" class="checkbox_d"></a-checkbox>
                       <cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>
                       {{item.name}}
@@ -242,6 +242,7 @@ export default {
 
         },
         clickShowBestPoints(item,index){
+            this.selectType[index].checked = !this.selectType[index].checked;
             if(item.name=='摄像头'){
                 if(this.isCheckedTuAn){
                     getAreaVideo().then(res=>{
@@ -410,6 +411,20 @@ export default {
       }
     }
   }
+    .best-btn {
+        .icon_best {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #50cf3f;
+            border-radius: 12px;
+            vertical-align: middle;
+            .svg_icon_best {
+                color: #ffffff;
+                margin-top: 5px;
+            }
+        }
+    }
 }
 /deep/.svg_icon_common {
   color: #999999;
