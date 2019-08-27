@@ -1,4 +1,9 @@
-import {getYuAnDataList,getYuAnInfoById,addNewYuAn,deleteYuAn,getResourceDataList} from '@/api/emergency/yuan.js'
+import {getYuAnDataList,
+    getYuAnInfoById,
+    addNewYuAn,
+    deleteYuAn,
+    getResourceDataList,
+    getMapInfoByEventIdAndRTypeId} from '@/api/emergency/yuan.js'
 
 export default {
     namespaced: true,
@@ -56,6 +61,19 @@ export default {
         getResourceDataList(state,data){
             return new Promise((resolve, reject) =>{
                 getResourceDataList(data)
+                    .then(res => {
+                        resolve(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        reject(err)
+                    })
+            })
+        },
+
+        getMapInfoByEventIdAndRTypeId(state,data){
+            return new Promise((resolve, reject) =>{
+                getMapInfoByEventIdAndRTypeId(data)
                     .then(res => {
                         resolve(res)
                     })

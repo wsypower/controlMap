@@ -110,3 +110,26 @@ export function getResourceDataList(data){
         params: data
     })
 }
+
+
+
+/**
+ * @description 根据归类物资Id以及事件Id获取全部的物资地图信息
+ * @author moxuejuan
+ * @date 2019-08-27 10:53:20
+ * @param {Number} rTypeId 归类物资的唯一标识Id
+ * @param {Number} eventId 事件Id
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+
+export function getMapInfoByEventIdAndRTypeId(data){
+    console.log('api:getMapInfoByEventIdAndRTypeId',data);
+    return request({
+        url: 'emergencyplan/getMapInfoByEventIdAndRTypeId?_t='+ new Date().getTime(),
+        method: 'get',
+        params: data
+    })
+}

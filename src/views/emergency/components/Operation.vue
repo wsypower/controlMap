@@ -1,5 +1,5 @@
 <template>
-  <div class="top-operate-panel" :class="{ animation: isAnimationActive }" v-show="isActive">
+  <div class="top-operate-panel">
       <a-button class="op-btn yacz-btn" @click="addEvent">
         <i class="icon_yacz">
             <cg-icon-svg name="anjianhuizong" class="svg_icon_anjianhuizong"></cg-icon-svg>
@@ -13,7 +13,7 @@
       <!--<span class="memu-title-text">远程呼叫</span>-->
       <!--<a-icon type="right" style="font-size: 12px;" />-->
     <!--</a-button>-->
-    <a-dropdown v-model="visible">
+    <a-dropdown v-model="visible" @visibleChange="visibleChange">
         <a-button class="op-btn yjzy-btn">
             <i class="icon_yjzy">
                 <cg-icon-svg name="yinjiguanli" class="svg_icon_yinjiguanli"></cg-icon-svg>
@@ -144,6 +144,10 @@ export default {
             type: Boolean,
             default: false
         },
+        eventId:{
+            type: String,
+            default: ''
+        },
         isCheckedTuAn: {
             type: Boolean,
             default: false
@@ -181,32 +185,9 @@ export default {
     },
     mounted(){
       this.getEquipPoints();
-      this.getResourceDataList().then((res)=>{
-          let arr = res.reduce((cal,item)=>{
-              let icon = '';
-              let hasIcon = this.iconType.some((ic)=>{
-                  if(item.name.indexOf(ic.key)>=0){
-                      icon = ic.icon;
-                  }
-                  return item.name.indexOf(ic.key)>=0
-              });
-              if(!hasIcon){
-                  icon = 'jiuyuan'
-              }
-              let temp = {
-                  key: item.id,
-                  name: item.name,
-                  icon: icon,
-                  checked: false
-              }
-              cal.push(temp);
-              return cal
-          },[]);
-          this.sourceType = arr;
-      });
     },
     methods:{
-        ...mapActions('emergency/yuan', ['getResourceDataList']),
+        ...mapActions('emergency/yuan', ['getResourceDataList','getMapInfoByEventIdAndRTypeId']),
         //新增事件
         addEvent(){
             this.$emit('addItem');
@@ -215,16 +196,52 @@ export default {
         clickYCHJBtn(){
             this.$emit('ychjOperate');
         },
-
-        clickShowBestPoints(item){
-            for(let i=0;i<this.selectType.length;i++){
-                if(this.selectType[i].key ===item.key){
-                    this.selectType[i].checked = !this.selectType[i].checked
-                }
+        visibleChange(visible){
+            console.log('visibleChange',visible);
+            if(visible){
+                this.getResourceDataList().then((res)=>{
+                    let arr = res.reduce((cal,item)=>{
+                        let icon = '';
+                        let hasIcon = this.iconType.some((ic)=>{
+                            if(item.name.indexOf(ic.key)>=0){
+                                icon = ic.icon;
+                            }
+                            return item.name.indexOf(ic.key)>=0
+                        });
+                        if(!hasIcon){
+                            icon = 'jiuyuan'
+                        }
+                        let temp = {
+                            key: item.id,
+                            name: item.name,
+                            icon: icon,
+                            checked: false
+                        }
+                        cal.push(temp);
+                        return cal
+                    },[]);
+                    this.sourceType = arr;
+                });
             }
-            console.log('周边最优资源已选择：', this.checkedBestList);
         },
         clickShowPoints(item,index){
+            // for(let i=0;i<this.sourceType.length;i++){
+            //     if(this.selectType[i].key ===item.key){
+            //         this.selectType[i].checked = !this.selectType[i].checked
+            //     }
+            // }
+            this.sourceType[index].checked = !this.sourceType[index].checked;
+            if(this.sourceType[index].checked){
+                this.getMapInfoByEventIdAndRTypeId({rTypeId: this.sourceType[index].key, eventId: this.eventId}).then((res)=>{
+                    console.log('getMapInfoByEventIdAndRTypeId',res);
+                });
+            }
+            else{
+               //清理此类物资在地图上的显示
+            }
+
+        },
+        clickShowBestPoints(item,index){
             if(item.name=='摄像头'){
                 if(this.isCheckedTuAn){
                     getAreaVideo().then(res=>{
@@ -334,23 +351,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.animation {
-  opacity: 1 !important;
-  transition: opacity 1s;
-  -moz-transition: opacity 1s; /* Firefox 4 */
-  -webkit-transition: opacity 1s; /* Safari 和 Chrome */
-  -o-transition: opacity 1s; /* Opera */
-}
 .top-operate-panel {
   position: fixed;
   left: 437px;
   top: 70px;
-  width: 426px;
-  opacity: 0;
-  transition: opacity 1s;
-  -moz-transition: opacity 1s; /* Firefox 4 */
-  -webkit-transition: opacity 1s; /* Safari 和 Chrome */
-  -o-transition: opacity 1s; /* Opera */
+  width: 440px;
   .op-btn {
     height: 36px;
     border-radius: 0px;
