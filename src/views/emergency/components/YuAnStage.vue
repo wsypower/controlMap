@@ -18,7 +18,9 @@
                 <a-col :span="6">
                     <div class="col-panel" flex="dir:left cross:center">
                         <label class="subtitle">责任事项：</label>
-                        <a-input v-model="item.description" placeholder="请输入"/>
+                        <a-textarea v-model="item.description"
+                                    placeholder="请输入"
+                                    :autosize="{minRows: 1, maxRows: 1}"/>
                     </div>
                 </a-col>
                 <a-col :span="6">

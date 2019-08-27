@@ -84,7 +84,7 @@
             },
             exportYuAnExcel(id){
                 console.log('exportYuAnExcel',id);
-                window.open('http://192.168.71.238:8015/api/emergencyplan/exportResourceExcel?id=61acc800c86b11e945b1aa308d52a10d');
+                window.open('http://192.168.71.238:8015/api/emergencyplan/exportResourceExcel?id=' + id);
             }
         }
 
