@@ -40,12 +40,12 @@
       </div>
     </div>
     <div class="left-message-footer" @click="startYuAn">启动预案</div>
-    <yu-an-list ref='yuAnList' @operate="listOperate"></yu-an-list>
+    <yu-an-list v-show="showYuAnList" ref='yuAnList' @operate="listOperate"></yu-an-list>
     <operation
       ref="Operate"
-      :class="{ position: addPositionClass }"
-      :isActiveOperation="isActiveOperation"
+      v-show="showOperate"
       :isCheckedTuAn="activeIndex!==null"
+      :eventId='eventId'
       @addItem="addItemOperation"
       @ychjOperate="ychjOperation"
     ></operation>
@@ -106,6 +106,9 @@ export default {
       emergencyLayer: null,
       emergencyCenterLayer: null,
       addPositionClass: false,
+      showYuAnList: false,
+      showOperate: false,
+      eventId: '',
       //查询条件
       query: {
         searchContent: '', //搜索关键字
@@ -185,7 +188,10 @@ export default {
   },
   mounted() {
     this.getDataList()
-    this.isActiveOperation = true
+      setTimeout(() => {
+          this.showOperate = true;
+          this.showYuAnList = true;
+      }, 400);
     this.yuAnOverlay = this.mapManager.addOverlay({
       element: this.$refs.yuAnOverlay.$el
     })
@@ -195,18 +201,15 @@ export default {
   watch: {
     asideCollapse: function(val) {
       console.log('asideCollapse 777777', val)
-      this.isActiveOperation = false
       //true:展开，false:关闭
       if (val) {
         setTimeout(() => {
-          this.addPositionClass = !val;
-          this.isActiveOperation = true
-        }, 300)
+          this.showOperate = true;
+          this.showYuAnList = true;
+        }, 400)
       } else {
-        this.addPositionClass = !val
-        setTimeout(() => {
-          this.isActiveOperation = true
-        }, 300)
+          this.showOperate = false;
+          this.showYuAnList = false;
       }
     }
   },
@@ -360,7 +363,8 @@ export default {
       if(this.peopleLayer){
         this.peopleLayer.getSource().clear();
       }
-      this.activeIndex = index
+      this.activeIndex = index;
+      this.eventId = this.dataArr[index].id;
       const data = this.dataArr[index]
       this.infoData = data
       //过滤当前选择的预案区域
