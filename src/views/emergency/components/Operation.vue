@@ -262,12 +262,21 @@ export default {
             if(this.sourceType[index].checked){
                 this.getMapInfoByEventIdAndRTypeId({rTypeId: this.sourceType[index].key, eventId: this.eventId}).then((res)=>{
                     console.log('getMapInfoByEventIdAndRTypeId',res);
+                  const features = res.map(p => {
+                    const point = new Feature({
+                      geometry: new Point([parseFloat(p.x),parseFloat(p.y)])
+                    });
+                    point.set('id', p.id);
+                    point.set('info',p);
+                    // point.set('state',p.info.alarmState);
+                    return point;
+                  });
+                  this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
                 });
             }
             else{
                //清理此类物资在地图上的显示
             }
-
         },
         clickShowBestPoints(item,index){
             if(item.name=='摄像头'){

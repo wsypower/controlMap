@@ -28,6 +28,8 @@
   import { Style} from 'ol/style.js';
   import Icon from 'ol/style/Icon';
   import {getAddress} from '@/api/map/service'
+  import Feature from 'ol/Feature'
+  import Point from 'ol/geom/Point'
   let map;
   let source;
     export default{
@@ -73,6 +75,7 @@
       methods:{
         init(){
           this.$nextTick().then(() => {
+            console.log('位置信息',this.positionData)
             map = this.$refs.olMap.getMap();
             source = new VectorSource();
             let vector = new VectorLayer({
@@ -94,6 +97,19 @@
             map.addInteraction(modify);
             let snap = new Snap({source: source});
             map.addInteraction(snap);
+            if(this.positionData.x.length>0&&this.positionData.y.length>0){
+              map.removeInteraction(draw);
+              const xyArr=[parseFloat(this.positionData.x),parseFloat(this.positionData.y)];
+              const point = new Feature({
+                geometry: new Point(xyArr)
+              });
+              source.addFeature(point);
+              map.getView().animate({
+                center: xyArr,
+                zoom: 17,
+                duration: 500
+              })
+            }
             // mapManager = new MapManager(map);
             // const drawResult=mapManager.activateDraw('Point',draw);
           })
