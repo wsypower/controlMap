@@ -249,7 +249,6 @@ export default {
             else{
                //清理此类物资在地图上的显示
             }
-
         },
         clickShowBestPoints(item,index){
             this.selectType[index].checked = !this.selectType[index].checked;
