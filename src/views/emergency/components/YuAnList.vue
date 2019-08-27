@@ -20,9 +20,9 @@
                     <span class="operate">
                         <a-icon type="edit" style="color:#2b90f3" @click="editYuAnItem(item.id)"/>
                         <i class="sep"></i>
-                        <a-popconfirm title="确定删除此预案吗？" @confirm="deleteYuAnItem(item.id,index)" @cancel="cancel" okText="确定" cancelText="取消">
-                            <a-icon type="delete" style="color:#2b90f3"/>
-                        </a-popconfirm>
+                        <a-icon type="export" style="color:#2b90f3" title="导出" @click="exportYuAnExcel(item.id)"/>
+                        <i class="sep"></i>
+                        <a-icon type="delete" style="color:#2b90f3" @click="deleteYuAnItem(item.id,index)"/>
                     </span>
                 </div>
             </div>
@@ -67,12 +67,23 @@
                 this.$emit('operate', data);
             },
             deleteYuAnItem(id,index){
-                this.deleteYuAn({id:id}).then((res)=>{
-                    this.yuAnList.splice(index,1);
+                this.$confirm({
+                    title: '确定删除此应急预案吗？',
+                    content: '删除后不可恢复',
+                    okText: '确定',
+                    cancelText: '取消',
+                    onOk() {
+                        this.deleteYuAn({id:id}).then((res)=>{
+                            this.yuAnList.splice(index,1);
+                        });
+                    },
+                    onCancel() {
+                        console.log('no delete operation');
+                    },
                 });
             },
-            cancel(){
-                console.log('no delete operation');
+            exportYuAnExcel(id){
+                console.log('exportYuAnExcel',id);
             }
         }
 

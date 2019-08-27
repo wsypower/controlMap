@@ -161,7 +161,13 @@ export default {
         //已选择的周边最优资源
         checkedBestList:function(){
             return this.selectType.filter(item=>{
-                item.checked===true
+                return item.checked===true
+            })
+        },
+        //已选择的周边物资
+        checkedResourceList:function(){
+            return this.sourceType.filter(item=>{
+                return item.checked===true
             })
         }
     },
@@ -181,6 +187,20 @@ export default {
                     this.isActive = false;
                 },100);
             }
+        },
+        checkedResourceList:function(newVal){
+            let data = {
+                'best': this.checkedBestList,
+                'resource': newVal
+            }
+            this.$emit('getCheckedOption',data);
+        },
+        checkedBestList:function(newVal){
+            let data = {
+                'best': newVal,
+                'resource': this.checkedResourceList
+            }
+            this.$emit('getCheckedOption',data);
         }
     },
     mounted(){
@@ -198,6 +218,7 @@ export default {
         },
         visibleChange(visible){
             console.log('visibleChange',visible);
+            console.log('this.checkedResourceList',this.checkedResourceList);
             if(visible){
                 this.getResourceDataList().then((res)=>{
                     let arr = res.reduce((cal,item)=>{
@@ -217,6 +238,12 @@ export default {
                             icon: icon,
                             checked: false
                         }
+                        let ischecked = this.checkedResourceList.some((it)=>{
+                            return it.key===item.id
+                        })
+                        if(ischecked){
+                            temp.checked = true;
+                        }
                         cal.push(temp);
                         return cal
                     },[]);
@@ -231,6 +258,7 @@ export default {
             //     }
             // }
             this.sourceType[index].checked = !this.sourceType[index].checked;
+            console.log('clickShowPoints',this.checkedResourceList);
             if(this.sourceType[index].checked){
                 this.getMapInfoByEventIdAndRTypeId({rTypeId: this.sourceType[index].key, eventId: this.eventId}).then((res)=>{
                     console.log('getMapInfoByEventIdAndRTypeId',res);
@@ -242,9 +270,9 @@ export default {
 
         },
         clickShowBestPoints(item,index){
-            this.selectType[index].checked = !this.selectType[index].checked;
             if(item.name=='摄像头'){
                 if(this.isCheckedTuAn){
+                    this.selectType[index].checked = !this.selectType[index].checked;
                     getAreaVideo().then(res=>{
                         console.log(this.selectEmergencyFeature[0]);
                         const points = filterMeetingPeople(this.selectEmergencyFeature[0],res);
@@ -266,6 +294,7 @@ export default {
                 }
             }
             else{
+                this.selectType[index].checked = !this.selectType[index].checked;
               //获取其他类型的应急资源
               getTypeResources(item.key).then( points => {
                 const features =points.map(p =>{

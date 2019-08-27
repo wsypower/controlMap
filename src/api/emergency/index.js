@@ -139,7 +139,7 @@ export function getEventYuAnInfoById(data){
 export function startYuAn(data){
     console.log('api:getEventYuAnInfoById',data);
     return request({
-        url: 'emergencyplan/startYuAn',
+        url: 'emergencyplan/startNewYuAn',
         method: 'post',
         data
     })

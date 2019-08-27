@@ -58,6 +58,7 @@
                       <a-range-picker
                               v-decorator="['rangeDay', config]"
                               :placeholder="['开始日期', '结束日期']"
+                              showTime
                               :disabledDate="disabledDate"
                               format="YYYY-MM-DD HH:mm"
                               style="width: 277px"
@@ -157,8 +158,8 @@
 </template>
 <script type="text/ecmascript-6">
 import moment from 'moment';
-import 'moment/locale/zh-cn';
-moment.locale('zh-cn');
+// import 'moment/locale/zh-cn';
+// moment.locale('zh-cn');
 import { mapActions,mapState } from 'vuex';
 import Feature from 'ol/Feature';
 import { getCenter } from 'ol/extent'
@@ -241,6 +242,7 @@ export default {
             }
 
             _this.form.setFieldsValue({
+                name: _this.sourceData.name,
                 typeId: _this.sourceData.typeId,
                 levelId: _this.sourceData.levelId,
                 rangeDay: _this.sourceData.startDay?[moment(startDay, 'YYYY-MM-DD HH:mm'),moment(endDay, 'YYYY-MM-DD HH:mm')]:undefined,
@@ -451,12 +453,12 @@ export default {
                 console.log('Received values of form: ', values);
                 if(this.sourceData.id){
                     values.id = this.sourceData.id;
-                    values.areaId = this.sourceData.areaId;
                 }
                 if(values.rangeDay){
                     values.startDay = values.rangeDay[0]._d.getTime();
                     values.endDay = values.rangeDay[1]._d.getTime();
                 }
+                values.areaId = this.sourceData.areaId;
                 if(this.image.length>0){
                   values.imageStr = this.image[0].newPath + '|' + this.image[0].oldName;
                 }
@@ -474,7 +476,6 @@ export default {
                 }
                 delete values.rangeDay;
                 console.log('form value: ', values);
-                if(this.checkSubmitParams(values)) {
                   if(this.sourceData.id){
                       if(this.clickAreaEdit){
                           this.editDraw(function(){
@@ -500,6 +501,9 @@ export default {
                   }
                   else{
                       if(this.sourceData.areaId == ''){
+                          values.mapId = '';
+                          values.positionX = '';
+                          values.positionY = '';
                           this.addNewEvent(values).then((res) => {
                               console.log('addNewEvent', res);
                               _this.$emit('close');
@@ -510,15 +514,14 @@ export default {
                             values.mapId = _this.mapId;
                             values.positionX = _this.mapCenter[0];
                             values.positionY = _this.mapCenter[1];
-                            _this.addNewEmergencyYuAn(values).then((res) => {
-                              console.log('addNewEmergencyYuAn', res);
+                            _this.addNewEvent(values).then((res) => {
+                              console.log('addNewEvent', res);
                               _this.$emit('close');
                             })
                           });
                       }
 
                   }
-                }
             });
         },
         checkSubmitParams(params){

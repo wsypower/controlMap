@@ -1,15 +1,21 @@
 <template>
     <div class="info-body" flex="dir:left main:justify">
         <div class="info-body-left">
-            <img :src="JSON.parse(info.imageStr)[0].newPath" />
+            <img v-if="JSON.parse(info.imageStr)[0]" :src="JSON.parse(info.imageStr)[0].newPath" />
+            <img v-else src="~@img/zanwutupian.png"/>
         </div>
         <div class="info-body-right">
-            <div flex="dir:left"><span>位置：</span><span>{{info.position}}</span></div>
-            <div flex="dir:left"><span>等级：</span><span class="level" :class="{yiban: info.levelId==='01'}">{{info.levelName}}</span></div>
-            <div flex="dir:left"><span>详情：</span><span>{{info.description}}</span></div>
-            <p flex="dir:left"><span>附件：</span><span v-for="(file,index) in JSON.parse(info.fileStr)"
+            <div flex="dir:left" class="text-panel"><span>位置：</span><span>{{info.position}}</span></div>
+            <div flex="dir:left" class="text-panel"><span>等级：</span><span class="level" :class="{yiban: info.levelId==='01'}">{{info.levelName}}</span></div>
+            <div flex="dir:left" class="text-panel"><span>详情：</span><span>{{info.description}}</span></div>
+            <div flex="dir:left" class="file-panel">
+                <span>附件：</span>
+                <span v-for="(file,index) in JSON.parse(info.fileStr)"
                           :key="index"
-                          class="file" :title="file.oldName" @click="downloadFile(file.newPath)">{{file.oldName}}</span></p>
+                          class="file"
+                          :title="file.oldName"
+                          @click="downloadFile(file.newPath)">{{file.oldName}}</span>
+            </div>
         </div>
     </div>
 </template>
@@ -61,8 +67,9 @@
             }
         }
         .info-body-right{
-            width: 250px;
-            >div{
+            /*width: 250px;*/
+            padding-left: 10px;
+            div.text-panel{
                 font-family: PingFang-SC-Regular;
                 font-size: 13px;
                 color: #333333;
@@ -76,7 +83,7 @@
                     -webkit-box-orient: vertical;
                     -webkit-line-clamp: 3;
                     overflow: hidden;
-                    width: 205px;
+                    max-width: 205px;
                     &.level{
                         color: #f07171;
                         &.yiban{
@@ -85,7 +92,7 @@
                     }
                 }
             }
-            >p{
+            .file-panel{
                 font-family: PingFang-SC-Regular;
                 font-size: 13px;
                 color: #333333;

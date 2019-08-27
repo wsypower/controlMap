@@ -48,6 +48,7 @@
       :eventId='eventId'
       @addItem="addItemOperation"
       @ychjOperate="ychjOperation"
+      @getCheckedOption="getCheckedOption"
     ></operation>
     <custom-dialog
       :visible.sync="dialogVisible"
@@ -237,11 +238,11 @@ export default {
           })
         } else{
           //给弹框内容赋值
-          this.$refs.yuAnOverlay.$el.style.width='482px';
-          this.$refs.yuAnOverlay.$el.style.height='254px';
+          // this.$refs.yuAnOverlay.$el.style.width='482px';
+          // this.$refs.yuAnOverlay.$el.style.height='254px';
           this.tipComponentId = YuAnInfo
           this.iconName = 'menu-special'
-          this.modalTitle = this.infoData.typeName
+          this.modalTitle = this.infoData.name;
           this.subTitle = stampConvertToTime(this.infoData.startDay) + '-' + stampConvertToTime(this.infoData.endDay)
           this.yuAnOverlay.setPosition(coordinate)
         }
@@ -439,6 +440,10 @@ export default {
               })
           }
       }
+    },
+    //获取已选择的周边物资+周边最优资源
+    getCheckedOption(data){
+      console.log('getCheckedOption',data);
     },
     //人员区域选择后调用此接口
     openYchjDialog(persons) {

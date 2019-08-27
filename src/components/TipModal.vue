@@ -1,5 +1,5 @@
 <template>
-  <div class="tip-content" :style="{width: modalWidth+ 'px',height: modalHeight+ 'px' }">
+  <div class="tip-content" >
     <div class="tip-header" flex="dir:left cross:center main:justify">
       <div class="tip-title" flex="cross:center">
         <cg-icon-svg v-if="iconShow" :name="iconName" class="svg_icon_name"></cg-icon-svg>
@@ -25,14 +25,14 @@ export default{
       return {};
     },
     props:{
-        modalWidth: {
-            type: Number,
-            default: 482
-        },
-        modalHeight: {
-            type: Number,
-            default: 254
-        },
+        // modalWidth: {
+        //     type: Number,
+        //     default: 482
+        // },
+        // modalHeight: {
+        //     type: Number,
+        //     default: 254
+        // },
         bodyPadding:{
             type: Array,
             default: function(){
@@ -100,8 +100,6 @@ export default{
 }
 .tip-content {
   z-index: 10;
-  width: 482px;
-  height: 224px;
   background-image: linear-gradient(90deg, #0065ea 0%, #6f62ee 100%);
   border-radius: 6px;
   box-shadow: -1px 0px 4px 0px rgba(0, 0, 0, 0.12);

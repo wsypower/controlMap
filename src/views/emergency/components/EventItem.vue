@@ -17,7 +17,7 @@
             <div class="item_body">
                 <div class="description-panel" flex><span>信息：</span><span>{{ itemData.description }}</span></div>
                 <div class="description-panel" flex><span>位置：</span><span>{{ itemData.position }}</span></div>
-                <div class="description-panel" flex><span>时间：</span><span>{{ new Date(parseInt(itemData.startDay))|date_format() }}</span></div>
+                <div class="description-panel" flex><span>时间：</span><span>{{ new Date(parseInt(itemData.startDay))|date_format('YYYY-MM-DD HH:mm') }}</span></div>
             </div>
             <div class="item-operate">
                 <span v-if="itemData.statusId == '1'" class="operate-btn" @click.stop="editYuan(itemData)">

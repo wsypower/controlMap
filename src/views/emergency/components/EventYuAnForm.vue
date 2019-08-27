@@ -7,22 +7,22 @@
                         <div class="title">预案信息</div>
                         <div class="content base">
                             <a-row>
-                                <a-col :span="8">
-                                    <div flex="dir:left"><span>名称：</span>{{eventInfo.name}}</div>
-                                    <div flex="dir:left"><span>类型：</span>{{eventInfo.typeName}}</div>
-                                    <div flex="dir:left"><span>等级：</span>{{eventInfo.levelName}}</div>
-                                    <div flex="dir:left"><span>时间：</span>
-                                        {{new Date(parseInt(eventInfo.startDay))|date_format()}}~{{new Date(parseInt(eventInfo.endDay))|date_format()}}</div>
+                                <a-col :span="7">
+                                    <div flex="dir:left"><span class="sub-title">名称：</span><span class="sub-content">{{eventInfo.name}}</span></div>
+                                    <div flex="dir:left"><span class="sub-title">类型：</span><span class="sub-content">{{eventInfo.typeName}}</span></div>
+                                    <div flex="dir:left"><span class="sub-title">等级：</span><span class="sub-content">{{eventInfo.levelName}}</span></div>
+                                    <div flex="dir:left"><span class="sub-title">时间：</span>
+                                        <span class="sub-content">{{new Date(parseInt(eventInfo.startDay))|date_format('YYYY-MM-DD HH:mm')}}~{{new Date(parseInt(eventInfo.endDay))|date_format('YYYY-MM-DD HH:mm')}}</span></div>
                                 </a-col>
-                                <a-col :span="10">
-                                    <div flex="dir:left"><span>位置：</span>{{eventInfo.position}}</div>
-                                    <div flex="dir:left"><span>信息：</span>{{eventInfo.description}}</div>
+                                <a-col :span="11" style="padding-right:20px;">
+                                    <div flex="dir:left"><span class="sub-title">位置：</span><span class="sub-content">{{eventInfo.position}}</span></div>
+                                    <div flex="dir:left"><span class="sub-title">信息：</span><span class="sub-content">{{eventInfo.description}}</span></div>
                                     <div flex="dir:left">
-                                        <span>区域：</span>
-                                        {{eventInfo.areaName}}
-                                        <a-button v-if="eventInfo.areaId" type="primary" @click="lookAreaMap" size="small">查看区域范围</a-button>
+                                        <span class="sub-title">区域：</span>
+                                        <span class="sub-content">{{areaList[eventInfo.areaId]}}</span>
+                                        <a-button v-if="false" type="primary" @click="lookAreaMap" size="small">查看区域范围</a-button>
                                     </div>
-                                    <div flex="dir:left"><span>附件：</span>
+                                    <div flex="dir:left"><span class="sub-title">附件：</span>
                                         <span v-for="(file,index) in JSON.parse(eventInfo.fileStr)"
                                               :key="index"
                                               class="file"
@@ -30,9 +30,10 @@
                                     </div>
                                 </a-col>
                                 <a-col :span="6">
-                                    <div>
-                                        <span>照片：</span>
-                                        <img :src="JSON.parse(eventInfo.imageStr)[0].newPath" />
+                                    <div class="photo">
+                                        <span class="sub-title">照片：</span>
+                                        <img v-if="JSON.parse(eventInfo.imageStr)[0]" :src="JSON.parse(eventInfo.imageStr)[0].newPath" />
+                                        <img v-else src="~@img/zanwutupian_v1.png"/>
                                     </div>
                                 </a-col>
                             </a-row>
@@ -48,7 +49,7 @@
         <div class="operate-panel" flex="main:center cross:center">
             <a-button type="primary" @click="startYuAnEvent">启动预案</a-button>
         </div>
-        <position-map-dialog :visible.sync="areaMapDialogVisible" :mapId="mapId"></position-map-dialog>
+        <area-map-dialog :visible.sync="areaMapDialogVisible" :mapId="mapId"></area-map-dialog>
     </div>
 </template>
 <script type="text/ecmascript-6">
@@ -76,6 +77,11 @@
         },
         data(){
             return {
+                areaList:{
+                    '2':'圆形',
+                    '3':'多边形',
+                    '4':'任意面'
+                },
                 eventInfo:{
                     name: '',
                     typeName: '',
@@ -84,8 +90,9 @@
                     endDay: 0,
                     position: '',
                     description: '',
-                    areaName: '',
-                    fileStr: ''
+                    areaId: '',
+                    imageStr: '[]',
+                    fileStr: '[]'
                 },
                 areaMapDialogVisible: false,
                 mapId: null,
@@ -217,6 +224,23 @@
                             &:hover{
                                 background-color: rgba(43,144,243,.6);
                                 color: #ffffff;
+                            }
+                        }
+                    }
+                    .base{
+                        .sub-title{
+                            width: 50px;
+                        }
+                        .sub-content{
+                            width: 100%;
+                        }
+                        .photo{
+                            span{
+                                vertical-align: top;
+                            }
+                            img{
+                                width: 200px;
+                                height: 150px;
                             }
                         }
                     }
