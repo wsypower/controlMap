@@ -255,11 +255,14 @@
         },
         data(){
             return {
+                //所有人员
                 totalPeople: [],
+                //可被选择的人员
                 canSelectPeople: []
             }
         },
         computed:{
+            //已选的人员
            allCheckedPeopleIdList:function(){
                // console.log('allCheckedPeopleIdList change');
                let _this = this, arr = [];
@@ -272,11 +275,7 @@
                return arr
            }
         },
-        watch:{
-            // innerPeople:function(val){
-            //     this.$emit('update:peopleData', val);
-            // }
-        },
+        watch:{},
         created(){
             this.getAllPeopleDataList().then((res)=>{
                 this.totalPeople = res;
@@ -288,11 +287,13 @@
         },
         methods:{
             ...mapActions('emergency/common', ['getAllPeopleDataList']),
+            //下拉选择后触发
             changeSelect(val,type){
                 // console.log(val,type);
                 this.peopleData[type] = val;
                 // console.log('allCheckedPeopleIdList',this.allCheckedPeopleIdList);
             },
+            //出现下拉区域前触发，获取可以选择的人员名单，达到不可重复的目的
             getSelectOptions(type){
                 // console.log(type);
                 this.canSelectPeople = [];

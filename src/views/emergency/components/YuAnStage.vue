@@ -71,6 +71,7 @@
         watch:{},
         mounted(){},
         methods:{
+            //添加阶段
             addItem(){
                 // console.log('add item');
                 let temp = {
@@ -82,6 +83,7 @@
                 }
                 this.stageData.push(temp);
             },
+            //删除阶段
             deleteItem(index){
                 this.stageData.slice(index,1);
             }

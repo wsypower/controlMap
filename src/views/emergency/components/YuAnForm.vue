@@ -88,6 +88,7 @@
         },
         methods:{
             ...mapActions('emergency/yuan', ['getYuAnInfoById','addNewYuAn']),
+            //预案初始化
             init(){
                 if(this.operateType=='edit'){
                     this.getYuAnInfoById({id: this.sourceData}).then((res)=>{
@@ -103,6 +104,7 @@
                     this.yuAnForm.id = ''
                 }
             },
+            //预案提交校验
             checkParams(){
                if(this.yuAnForm.name==''){
                    this.$notification['error']({
@@ -118,12 +120,15 @@
                }
                return true
             },
+            //应急资源数据变更
             getResourceResult(data){
                 this.resourceResultData = JSON.parse(JSON.stringify(data));
             },
+            //应急场地数据变更
             getPlaceResult(data){
                 this.placeResultData = JSON.parse(JSON.stringify(data));
             },
+            //保存预案
             save(){
                 console.log('saveYuAn',this.stageData,this.peopleData,this.resourceResultData,this.placeResultData);
                 if(!this.checkParams()){

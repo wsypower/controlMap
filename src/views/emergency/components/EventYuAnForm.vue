@@ -153,13 +153,15 @@
                 this.areaMapDialogVisible = true;
                 this.mapId = this.eventInfo.mapId;
             },
-
+            //应急资源数据更新
             getResourceResult(data){
                 this.resourceResultData = JSON.parse(JSON.stringify(data));
             },
+            //应急场地数据更新
             getPlaceResult(data){
                 this.placeResultData = JSON.parse(JSON.stringify(data));
             },
+            //启动预案
             startYuAnEvent(){
                 console.log('startYuAnEvent',this.stageData,this.peopleData,this.resourceResultData,this.placeResultData);
 

@@ -45,27 +45,33 @@
         methods:{
             ...mapActions('emergency/yuan', ['getYuAnDataList','deleteYuAn']),
             init(){},
+            //查询预案
             onSearch(val){
                this.searchContent = val;
                this.getYuAnList();
             },
+            //获取所有预案数据
             getYuAnList(){
                 this.getYuAnDataList({'searchContent':this.searchContent}).then((res)=>{
                     this.yuAnList = res;
                 });
             },
+            //新增预案
             addYuAn(){
                 let data = { type: 'add',id:''};
                 this.$emit('operate', data);
             },
+            //展示预案信息
             openYuAnInfo(id){
                 let data = { type: 'info',id:id};
                 this.$emit('operate', data);
             },
+            //编辑预案
             editYuAnItem(id){
                 let data = { type: 'edit',id:id};
                 this.$emit('operate', data);
             },
+            //删除预案
             deleteYuAnItem(id,index){
                 this.$confirm({
                     title: '确定删除此应急预案吗？',
@@ -82,6 +88,7 @@
                     },
                 });
             },
+            //导出预案Excel，包括人员、资源、场地
             exportYuAnExcel(id){
                 console.log('exportYuAnExcel',id);
                 window.open('http://192.168.71.238:8015/api/emergencyplan/exportResourceExcel?id=' + id);

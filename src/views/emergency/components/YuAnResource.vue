@@ -41,7 +41,13 @@
                     <div class="operate-cell">
                         <span @click="resetRow(index)">重置</span>
                         <span>|</span>
-                        <span @click="deleteRow(index)">删除</span>
+                        <a-popconfirm title="确定删除吗?"
+                                      @confirm="deleteRow(index)"
+                                      @cancel="cancel"
+                                      okText="确定"
+                                      cancelText="取消">
+                            <span>删除</span>
+                        </a-popconfirm>
                     </div>
                 </template>
                 <template slot="footer">
@@ -129,6 +135,7 @@
             },
         },
         methods:{
+            //增加行
             addRow(){
                 let temp = {
                     id: 'jjdjd' + this.count++,
@@ -142,6 +149,7 @@
                 };
                 this.resultData.push(temp);
             },
+            //行内输入框数据改变时触发
             changeVal(val,id,colName){
                 const newData = [...this.resultData];
                 const target = newData.filter(item => id === item.id)[0];
@@ -150,6 +158,7 @@
                     this.resultData = newData;
                 }
             },
+            //打开地图，选择位置
             openMapDialog(index){
                 let data = this.resultData[index];
                 this.rowIndex = index;
@@ -161,6 +170,7 @@
                 // console.log('openMapDialog',this.positionData);
                 this.positionMapDialogVisible = true;
             },
+            //重置行
             resetRow(index){
                 let temp = {
                     id: 'jjdjd' + this.count++,
@@ -174,10 +184,14 @@
                 };
                 this.resultData[index] = Object.assign(this.resultData[index],temp);
             },
+            //删除行
             deleteRow(index){
                 this.resultData.splice(index,1);
             },
-
+            //取消删除
+            cancel(){
+              console.log('no delete operate');
+            },
             //获取位置信息
             getAddressData(data){
                 console.log('地址数据',data);
@@ -232,6 +246,7 @@
                 font-family: PingFang-SC-Medium;
                 font-size: 13px;
                 color: #2b8ff3;
+                cursor: pointer;
             }
             span:nth-child(2){
                 display:inline-block;
