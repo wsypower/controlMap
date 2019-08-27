@@ -122,7 +122,7 @@
             },
             resultData:{
                 handler(newValue,oldValue){
-                    console.log('watch resultData',newValue);
+                    // console.log('watch resultData',newValue);
                     this.$emit('getResult', newValue);
                 },
                 deep: true
@@ -158,7 +158,7 @@
                     x: data.x,
                     y: data.y
                 }
-                console.log('openMapDialog',this.positionData);
+                // console.log('openMapDialog',this.positionData);
                 this.positionMapDialogVisible = true;
             },
             resetRow(index){

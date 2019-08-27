@@ -261,7 +261,7 @@
         },
         computed:{
            allCheckedPeopleIdList:function(){
-               console.log('allCheckedPeopleIdList change');
+               // console.log('allCheckedPeopleIdList change');
                let _this = this, arr = [];
                Object.keys(_this.peopleData).forEach(function(key){
                     _this.peopleData[key].reduce((res,id)=>{
@@ -289,12 +289,12 @@
         methods:{
             ...mapActions('emergency/common', ['getAllPeopleDataList']),
             changeSelect(val,type){
-                console.log(val,type);
+                // console.log(val,type);
                 this.peopleData[type] = val;
-                console.log('allCheckedPeopleIdList',this.allCheckedPeopleIdList);
+                // console.log('allCheckedPeopleIdList',this.allCheckedPeopleIdList);
             },
             getSelectOptions(type){
-                console.log(type);
+                // console.log(type);
                 this.canSelectPeople = [];
                 let arr = [];
                 this.allCheckedPeopleIdList.forEach(id=>{
@@ -302,7 +302,7 @@
                         arr.push(id);
                     }
                 });
-                console.log('arr',arr);
+                // console.log('arr',arr);
                 this.totalPeople.forEach(item=>{
                     if(!arr.includes(item.id)){
                         this.canSelectPeople.push(item);

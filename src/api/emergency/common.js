@@ -18,7 +18,7 @@ import request from '@/plugins/axios/axios'
  * }}
  */
 export function getAllLevelData(data){
-    console.log('api:getAllLevelData',data);
+    // console.log('api:getAllLevelData',data);
     return request({
         url: 'emergencyplan/getAllLevelData?_t='+ new Date().getTime(),
         method: 'get',
@@ -38,7 +38,7 @@ export function getAllLevelData(data){
  * }}
  */
 export function getAllPeopleDataList(data){
-    console.log('api:getAllPeopleDataList',data);
+    // console.log('api:getAllPeopleDataList',data);
     return request({
         url: 'emergencyplan/getAllPeopleDataList?_t='+ new Date().getTime(),
         method: 'get',

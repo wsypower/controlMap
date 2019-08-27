@@ -72,7 +72,7 @@
         mounted(){},
         methods:{
             addItem(){
-                console.log('add item');
+                // console.log('add item');
                 let temp = {
                     id: '',
                     stageName: '',

@@ -158,8 +158,6 @@
 </template>
 <script type="text/ecmascript-6">
 import moment from 'moment';
-// import 'moment/locale/zh-cn';
-// moment.locale('zh-cn');
 import { mapActions,mapState } from 'vuex';
 import Feature from 'ol/Feature';
 import { getCenter } from 'ol/extent'
@@ -223,11 +221,11 @@ export default {
     mounted(){
         let _this = this;
         const p1 = this.getYuAnDataList().then((res) => {
-            console.log('getYuAnDataList',res);
+            // console.log('getYuAnDataList',res);
             this.typeList = res;
         });
         const p2 = this.getAllLevelData().then((res)=>{
-            console.log('getAllLevelData',res);
+            // console.log('getAllLevelData',res);
             this.levelList = res;
 
         });
@@ -338,12 +336,12 @@ export default {
             if (!isLt2M) {
                 this.$message.error('Image must smaller than 2MB!')
             }
-            console.log('isLt2M',isLt2M);
+            // console.log('isLt2M',isLt2M);
             return isLt2M
         },
         //照片上传状态改变
         handleImgChange (res) {
-            console.log('uploadImage handleChange',res);
+            // console.log('uploadImage handleChange',res);
             if (res.file.status === 'done') {
                 let data  = res.file.response.basefile;
                 this.imageUrl = data.newPath;
@@ -449,8 +447,8 @@ export default {
               this.drawLayer.getSource().clear();
             }
             this.form.validateFields((error, values) => {
-                console.log('error', error);
-                console.log('Received values of form: ', values);
+                // console.log('error', error);
+                // console.log('Received values of form: ', values);
                 if(this.sourceData.id){
                     values.id = this.sourceData.id;
                 }
@@ -483,7 +481,7 @@ export default {
                               values.positionX = _this.mapCenter[0];
                               values.positionY = _this.mapCenter[1];
                               _this.addNewEvent(values).then((res) => {
-                                  console.log('addNewEvent', res);
+                                  // console.log('addNewEvent', res);
                                   _this.$emit('close');
                               })
                           });
@@ -493,7 +491,7 @@ export default {
                           values.positionX = this.sourceData.positionX;
                           values.positionY = this.sourceData.positionY;
                           this.addNewEvent(values).then((res) => {
-                              console.log('addNewEvent', res);
+                              // console.log('addNewEvent', res);
                               _this.$emit('close');
                           })
                       }
@@ -505,7 +503,7 @@ export default {
                           values.positionX = '';
                           values.positionY = '';
                           this.addNewEvent(values).then((res) => {
-                              console.log('addNewEvent', res);
+                              // console.log('addNewEvent', res);
                               _this.$emit('close');
                           })
                       }
@@ -515,7 +513,7 @@ export default {
                             values.positionX = _this.mapCenter[0];
                             values.positionY = _this.mapCenter[1];
                             _this.addNewEvent(values).then((res) => {
-                              console.log('addNewEvent', res);
+                              // console.log('addNewEvent', res);
                               _this.$emit('close');
                             })
                           });

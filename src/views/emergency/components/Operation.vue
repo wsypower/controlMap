@@ -216,6 +216,7 @@ export default {
         clickYCHJBtn(){
             this.$emit('ychjOperate');
         },
+        //周边物资下拉时获取新数据
         visibleChange(visible){
             console.log('visibleChange',visible);
             console.log('this.checkedResourceList',this.checkedResourceList);
@@ -251,14 +252,10 @@ export default {
                 });
             }
         },
+        //展示周边物资
         clickShowPoints(item,index){
-            // for(let i=0;i<this.sourceType.length;i++){
-            //     if(this.selectType[i].key ===item.key){
-            //         this.selectType[i].checked = !this.selectType[i].checked
-            //     }
-            // }
             this.sourceType[index].checked = !this.sourceType[index].checked;
-            console.log('clickShowPoints',this.checkedResourceList);
+            // console.log('clickShowPoints',this.checkedResourceList);
             if(this.sourceType[index].checked){
                 this.getMapInfoByEventIdAndRTypeId({rTypeId: this.sourceType[index].key, eventId: this.eventId}).then((res)=>{
                     console.log('getMapInfoByEventIdAndRTypeId',res);
@@ -278,6 +275,7 @@ export default {
                //清理此类物资在地图上的显示
             }
         },
+        //展示周边最优资源
         clickShowBestPoints(item,index){
             if(item.name=='摄像头'){
                 if(this.isCheckedTuAn){
@@ -321,55 +319,7 @@ export default {
               })
             }
         },
-        //在地图上显示不同类型物联网设备点位
-        showTypePoints(type){
-          console.log("===设备信息===",this.equipLayer);
-            this.checkedWuLianList = [];
-            let placeList = this.selectType[2].children;
-            if(type==='0'){
-                placeList[0].checked = !placeList[0].checked;
-                if(placeList[0].checked){
-                    for(let i=1;i<placeList.length;i++){
-                        placeList[i].checked = true;
-                        this.checkedWuLianList.push(placeList[i].type);
-                    }
-                }
-                else{
-                    for(let i=1;i<placeList.length;i++){
-                        placeList[i].checked = false;
-                    }
-                }
-            }
-            else{
-                for(let i=1;i<placeList.length;i++){
-                    if(placeList[i].type === type){
-                        placeList[i].checked = !placeList[i].checked;
-                        break;
-                    }
-                }
-                let num = 0;
-                for(let j=1;j<placeList.length;j++){
-                    if(placeList[j].checked){
-                        this.checkedWuLianList.push(placeList[j].type);
-                        num++;
-                    }
-                }
-                if(num === placeList.length-1){
-                    placeList[0].checked = true;
-                }
-                else{
-                    placeList[0].checked = false;
-                }
-            }
-            console.log('checkedWuLianList',this.checkedWuLianList);
-            for(let i=0;i<this.equipLayer.length;i++){
-              if(this.checkedWuLianList.includes(this.equipLayer[i].type)){
-                this.equipLayer[i].layer.setVisible(true);
-              } else{
-                this.equipLayer[i].layer.setVisible(false);
-              }
-            }
-        },
+
         getEquipPoints(){
           for(let i=0;i<this.equipLayer.length;i++){
             getTypeEquip(this.equipLayer[i].type).then(res=>{

@@ -8,7 +8,7 @@ export default {
     namespaced: true,
     actions: {
         getEventDataList(state,data) {
-            console.log('store:getEventDataList',data);
+            // console.log('store:getEventDataList',data);
             return new Promise((resolve, reject) => {
                 getEventDataList(data)
                     .then(res => {
@@ -21,7 +21,7 @@ export default {
             })
         },
         addNewEvent(state,data){
-            console.log('store:addNewEvent',data);
+            // console.log('store:addNewEvent',data);
             return new Promise((resolve, reject) => {
                 addNewEvent(data)
                     .then(res => {
@@ -34,7 +34,7 @@ export default {
             })
         },
         deleteEvent(state,data){
-            console.log('store:deleteEvent',data);
+            // console.log('store:deleteEvent',data);
             return new Promise((resolve, reject) => {
                 deleteEvent(data)
                     .then(res => {
@@ -47,7 +47,7 @@ export default {
             })
         },
         getEventYuAnInfoById(state,data){
-            console.log('store:getEventYuAnInfoById',data);
+            // console.log('store:getEventYuAnInfoById',data);
             return new Promise((resolve, reject) => {
                 getEventYuAnInfoById(data)
                     .then(res => {
@@ -61,7 +61,7 @@ export default {
         },
 
         startYuAn(state,data){
-            console.log('store:startYuAn',data);
+            // console.log('store:startYuAn',data);
             return new Promise((resolve, reject) => {
                 startYuAn(data)
                     .then(res => {

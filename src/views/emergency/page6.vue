@@ -201,7 +201,7 @@ export default {
   },
   watch: {
     asideCollapse: function(val) {
-      console.log('asideCollapse 777777', val)
+      // console.log('asideCollapse 777777', val)
       //true:展开，false:关闭
       if (val) {
         setTimeout(() => {

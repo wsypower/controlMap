@@ -42,7 +42,7 @@ import request from '@/plugins/axios/axios'
  */
 
 export function getEventDataList(data){
-    console.log('api：getEventDataList',data);
+    // console.log('api：getEventDataList',data);
     return request({
         url: 'emergencyplan/getEventDataList?_t='+ new Date().getTime(),
         method: 'get',
@@ -70,7 +70,7 @@ export function getEventDataList(data){
  */
 
 export function addNewEvent(data){
-    console.log('api:addNewEvent',data);
+    // console.log('api:addNewEvent',data);
     return request({
         url: 'emergencyplan/addNewEvent',
         method: 'post',
@@ -90,7 +90,7 @@ export function addNewEvent(data){
  */
 
 export function deleteEvent(data){
-    console.log('api:deleteEvent',data);
+    // console.log('api:deleteEvent',data);
     return request({
         url: 'emergencyplan/deleteEvent',
         method: 'post',
@@ -112,7 +112,7 @@ export function deleteEvent(data){
  */
 
 export function getEventYuAnInfoById(data){
-    console.log('api:getEventYuAnInfoById',data);
+    // console.log('api:getEventYuAnInfoById',data);
     return request({
         url: 'emergencyplan/getEventYuAnInfoById?_t='+ new Date().getTime(),
         method: 'get',
@@ -137,7 +137,7 @@ export function getEventYuAnInfoById(data){
  */
 
 export function startYuAn(data){
-    console.log('api:getEventYuAnInfoById',data);
+    // console.log('api:getEventYuAnInfoById',data);
     return request({
         url: 'emergencyplan/startNewYuAn',
         method: 'post',
@@ -169,7 +169,7 @@ export function startYuAn(data){
  */
 
 export function getAllEmergencyPeople(data){
-    console.log('api:getAllEmergencyPeople',data);
+    // console.log('api:getAllEmergencyPeople',data);
     return request({
         url: 'emergencyplan/getUserList?_t='+ new Date().getTime(),
         method: 'get',
@@ -195,7 +195,7 @@ export function getAllEmergencyPeople(data){
  */
 
 export function getPersonInfo(data){
-    console.log('api:getPersonInfo',data);
+    // console.log('api:getPersonInfo',data);
     return request({
         url: 'emergencyplan/getUserById?_t='+ new Date().getTime(),
         method: 'get',

@@ -11,7 +11,7 @@ import request from '@/plugins/axios/axios'
  * @response：{}
  */
 export function getDeviceDataList(data){
-    console.log('api:getDeviceDataList',data);
+    // console.log('api:getDeviceDataList',data);
     return request({
         url: 'iot/device/pageList?_t='+ new Date().getTime(),
         method: 'get',

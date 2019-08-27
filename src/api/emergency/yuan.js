@@ -19,7 +19,7 @@ import request from '@/plugins/axios/axios'
  */
 
 export function getYuAnDataList(data){
-    console.log('api：getYuAnDataList',data);
+    // console.log('api：getYuAnDataList',data);
     return request({
         url: 'emergencyplan/getYuAnDataList?_t='+ new Date().getTime(),
         method: 'get',
@@ -43,7 +43,7 @@ export function getYuAnDataList(data){
  */
 
 export function addNewYuAn(data){
-    console.log('api:addNewYuAn',data);
+    // console.log('api:addNewYuAn',data);
     return request({
         url: 'emergencyplan/addNewYuAn',
         method: 'post',
@@ -63,7 +63,7 @@ export function addNewYuAn(data){
  */
 
 export function deleteYuAn(data){
-    console.log('api:deleteYuAn',data);
+    // console.log('api:deleteYuAn',data);
     return request({
         url: 'emergencyplan/deleteYuAn',
         method: 'post',
@@ -83,7 +83,7 @@ export function deleteYuAn(data){
  */
 
 export function getYuAnInfoById(data){
-    console.log('api:getYuAnInfoById',data);
+    // console.log('api:getYuAnInfoById',data);
     return request({
         url: 'emergencyplan/getYuAnInfoById?_t='+ new Date().getTime(),
         method: 'get',
@@ -103,7 +103,7 @@ export function getYuAnInfoById(data){
  */
 
 export function getResourceDataList(data){
-    console.log('api:getResourceDataList',data);
+    // console.log('api:getResourceDataList',data);
     return request({
         url: 'emergencyplan/getResourceDataList?_t='+ new Date().getTime(),
         method: 'get',
@@ -126,7 +126,7 @@ export function getResourceDataList(data){
  */
 
 export function getMapInfoByEventIdAndRTypeId(data){
-    console.log('api:getMapInfoByEventIdAndRTypeId',data);
+    // console.log('api:getMapInfoByEventIdAndRTypeId',data);
     return request({
         url: 'emergencyplan/getMapInfoByEventIdAndRTypeId?_t='+ new Date().getTime(),
         method: 'get',
