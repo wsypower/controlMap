@@ -266,15 +266,17 @@ export default {
                 this.getMapInfoByEventIdAndRTypeId({rTypeId: this.sourceType[index].key, eventId: this.eventId}).then((res)=>{
                     console.log('getMapInfoByEventIdAndRTypeId',res);
                   const features = res.map(p => {
-                    const point = new Feature({
-                      geometry: new Point([parseFloat(p.x),parseFloat(p.y)])
-                    });
-                    point.set('id', p.id);
-                    point.set('info',p);
-                    point.set('pointType','resource');
-                    return point;
+                    if(p.x.length>0 && p.y.length>0) {
+                      const point = new Feature({
+                        geometry: new Point([parseFloat(p.x), parseFloat(p.y)])
+                      });
+                      point.set('id', p.id);
+                      point.set('info', p);
+                      point.set('pointType', 'resource');
+                      return point;
+                    }
                   })
-                  const layer=this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
+                  const layer=this.mapManager.addVectorLayerByFeatures(features.filter(Boolean), emergencyResourceStyle(item.name), 3);
                   this.resourceLayer[index]={
                     key:item.key,
                     layer:layer
