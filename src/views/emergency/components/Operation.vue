@@ -207,6 +207,12 @@ export default {
         eventId:function(id) {
            if(id){
              console.log('已选物资',this.checkedResourceList);
+             for(let i=0;i<this.checkedResourceList.length;i++){
+               this.clickShowPoints(this.checkedBestList[i],'');
+             }
+             for(let i=0;i<this.checkedBestList.length;i++){
+               this.clickShowBestPoints(this.checkedBestList[i],'');
+             }
            }
         }
     },
@@ -293,50 +299,65 @@ export default {
         },
         //展示周边最优资源
         clickShowBestPoints(item,index){
-            if(item.name=='摄像头'){
-                // if(this.isCheckedTuAn){
-                this.selectType[index].checked = !this.selectType[index].checked;
-                getAreaVideo().then(res=>{
-                    console.log(this.selectEmergencyFeature[0]);
-                    let points;
-                    if(this.isCheckedTuAn) {
-                      points = filterMeetingPeople(this.selectEmergencyFeature[0], res);
-                    }
-                    const features =points.map(p =>{
-                        const point = new Feature({
-                            geometry: new Point(p.position)
-                        });
-                        point.set('id',p.id);
-                        return point;
+          this.selectType[index].checked = !this.selectType[index].checked;
+          if(this.selectType[index].name=='最优执法队员'||this.selectType[index].name=='最优执法车辆'){
+            return;
+          }
+          if(this.selectType[index].checked) {
+            if (item.name == '摄像头') {
+              if (this.isCheckedTuAn) {
+                getAreaVideo().then(res => {
+                  console.log(this.selectEmergencyFeature[0]);
+                  let points;
+                  if (this.selectEmergencyFeature) {
+                    points = filterMeetingPeople(this.selectEmergencyFeature[0], res);
+                  } else {
+                    points = res;
+                  }
+                  const features = points.map(p => {
+                    const point = new Feature({
+                      geometry: new Point(p.position)
                     });
-                      if(this.emergencyResourceLayer){
-                        this.emergencyResourceLayer.getSource().clear();
-                      }
-                    this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
+                    point.set('id', p.id);
+                    return point;
+                  });
+                  if (this.emergencyResourceLayer) {
+                    this.emergencyResourceLayer.getSource().clear();
+                  }
+                  this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
                 })
-                // }
-                // else{
-                //     this.$message.error('请先选择一个预案');
-                // }
+              }
+              else {
+                this.$message.error('请先选择一个预案');
+              }
             }
-            else{
-                this.selectType[index].checked = !this.selectType[index].checked;
+            else {
+              // this.selectType[index].checked = !this.selectType[index].checked;
               //获取其他类型的应急资源
-              getTypeResources(item.key).then( points => {
-                const features =points.map(p =>{
+              getTypeResources(item.key).then(points => {
+                const features = points.map(p => {
                   const point = new Feature({
                     geometry: new Point(p.position)
                   });
-                  point.set('id',p.id);
+                  point.set('id', p.id);
                   return point;
                 });
-                if(this.emergencyResourceLayer){
+                if (this.emergencyResourceLayer) {
                   this.emergencyResourceLayer.getSource().clear();
                 }
-                // this.selectType[index].layer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
-                this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
+                this.selectType[index].layer = this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
+                // this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
               })
             }
+          }
+          else{
+            if(this.selectType[index].name == '摄像头'){
+              this.emergencyResourceLayer.getSource().clear();
+            }
+            else{
+              this.selectType[index].layer.getSource().clear();
+            }
+          }
         },
     }
 }

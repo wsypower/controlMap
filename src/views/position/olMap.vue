@@ -3,7 +3,7 @@
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+// import { mapMutations } from 'vuex'
 import 'ol/ol.css'
 import { Map, View } from 'ol'
 import { defaults as defaultControls } from 'ol/control'
@@ -12,10 +12,10 @@ import { Tile as TileLayer } from 'ol/layer'
 import WMTS from 'ol/source/WMTS'
 import WMTSTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent'
-import { MapManager } from '@/utils/util.map.manage'
+// import { MapManager } from '@/utils/util.map.manage'
 
-const namespace = 'map'
-let mapManager
+// const namespace = 'map'
+// let mapManager
 export default {
   data() {
     return {
@@ -29,9 +29,9 @@ export default {
     })
   },
   methods: {
-    ...mapMutations(namespace, [
-      'setMapManager',
-    ]),
+    // ...mapMutations(namespace, [
+    //   'setMapManager',
+    // ]),
     initMap() {
       /* 添加影像地图 */
       this.map = new Map({
@@ -47,9 +47,9 @@ export default {
         layers: this.getBaseLayers(),
         controls: defaultControls({ attribution: false, rotate: false, zoom: false }) // 默认控件配置
       })
-      mapManager = new MapManager(this.map)
+      // mapManager = new MapManager(this.map)
       // 将mapManager状态存至vuex
-      this.setMapManager(mapManager)
+      // this.setMapManager(mapManager)
     },
     getBaseLayers() {
       /**
