@@ -333,7 +333,7 @@ export default {
         clickShowBestPoints(item,index){
           this.selectType[index].checked = !this.selectType[index].checked;
           if(this.selectType[index].name=='最优执法队员'||this.selectType[index].name=='最优执法车辆'){
-            return
+            return;
           }
           if(this.selectType[index].checked) {
             if (item.name == '摄像头') {
