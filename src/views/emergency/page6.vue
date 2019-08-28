@@ -238,7 +238,10 @@ export default {
           })
         }
         else if(feature.get('pointType')=='resource'){
-
+          const info=feature.get('info');
+          console.log('info',info);
+          this.tipComponentId = ResourceInfo;
+          this.yuAnOverlay.setPosition(coordinate);
         }
         else{
           //给弹框内容赋值
