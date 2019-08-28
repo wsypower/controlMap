@@ -63,7 +63,7 @@ export async function postEmergencyArea(type, feature) {
  * @createDate:2019/7/29 15:12
  */
 export async function getAreaVideo() {
-  const result = await getVideoListApi()
+  const result = await getVideoListApi();
   const data = result.map(r => {
     if (r.x84.length > 0 && r.y84.length > 0) {
       r.position = [parseFloat(r.x84), parseFloat(r.y84)]
@@ -72,8 +72,8 @@ export async function getAreaVideo() {
         position: r.position,
       }
     }
-  })
-  return data
+  });
+  return data.filter(Boolean);
 }
 
 /**

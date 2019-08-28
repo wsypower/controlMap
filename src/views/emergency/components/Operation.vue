@@ -125,17 +125,7 @@ export default {
                 }],
 
           emergencyResourceLayer:null,
-          equipLayer:[{
-            type:'3',
-            layer:null
-          },{
-            type:'7',
-            layer:null
-          },{
-            type:'8',
-            layer:null
-          },
-          ]
+          resourceLayer:[]
         }
     },
     props:{
@@ -273,20 +263,20 @@ export default {
                     point.set('id', p.id);
                     point.set('info',p);
                     return point;
-                  });
-                  if(this.sourceType[index].layer){
-                    this.sourceType[index].layer.getSource().addFeatures(features);
-                  }
-                  else{
-                    this.sourceType[index].layer= this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
-                  }
+                  })
+                  const layer=this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
+                  this.resourceLayer[index]={
+                    key:item.key,
+                    layer:layer
+                  };
                 });
-            }
-            else{
-              if(this.sourceType[index].layer){
-                this.sourceType[index].layer.getSource().clear();
+            } else{
+              //清理此类物资在地图上的显示
+              for(let i=0;i<this.resourceLayer.length;i++){
+                if(this.resourceLayer[index].key==this.sourceType[index].key){
+                  this.resourceLayer[index].layer.getSource().clear();
+                }
               }
-               //清理此类物资在地图上的显示
             }
         },
         clickShowBestPoints(item,index){
@@ -294,6 +284,7 @@ export default {
                 if(this.isCheckedTuAn){
                     this.selectType[index].checked = !this.selectType[index].checked;
                     getAreaVideo().then(res=>{
+                      debugger;
                         console.log(this.selectEmergencyFeature[0]);
                         const points = filterMeetingPeople(this.selectEmergencyFeature[0],res);
                         const features =points.map(p =>{
