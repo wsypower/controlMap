@@ -18,9 +18,9 @@ import request from '@/plugins/axios/axios'
  */
 export const AccountLogin = data => {
   return request({
-    url: `unauthorized/gkpt/login`,
-    method: 'post',
-    data
+    url: 'emergencyplan/getUserInfo?_t='+ new Date().getTime(),
+    method: 'get',
+    params: data
   })
 }
 

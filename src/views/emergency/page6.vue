@@ -252,7 +252,7 @@ export default {
     closeOverlay() {
       this.yuAnOverlay.setPosition(undefined);
     },
-    //获取预案数据
+    //获取事件预案数据
     getDataList() {
       this.showLoading = true;
       this.getEventDataList(this.query).then(res => {
@@ -267,7 +267,7 @@ export default {
         this.setEmergencyAllArea(points)
       })
     },
-    //搜索关键字查询
+    //搜索关键字查询事件预案
     onSearch(val) {
       this.query.searchContent = val
       this.getDataList()
@@ -278,7 +278,7 @@ export default {
       this.query.pageNo = pageNo
       this.getDataList()
     },
-    //增加预案
+    //增加事件预案
     addItemOperation() {
       if(this.emergencyLayer){
         this.emergencyLayer.getSource().clear();
@@ -298,7 +298,7 @@ export default {
       this.closeCallBack = this.getDataList;
       this.dialogVisible = true
     },
-    //编辑预案
+    //编辑事件预案
     editYuAnItem(item) {
       if (this.emergencyLayer) {
         this.emergencyLayer.getSource().clear()
@@ -319,7 +319,7 @@ export default {
         this.closeCallBack = this.getDataList;
       this.dialogVisible = true
     },
-    //删除预案
+    //删除事件预案
     deleteYuAnItem(item) {
       console.log('deleteYuan', item)
       let data = { id: item.id }
@@ -351,7 +351,7 @@ export default {
         onCancel() {}
       })
     },
-    //选择某个预案
+    //选择某个事件预案
     clickDataItem(index) {
       console.log('clickDataItem', index);
       this.ychjPeopleList = [];
@@ -386,7 +386,7 @@ export default {
         this.mapManager.locateTo([parseFloat(data.positionX), parseFloat(data.positionY)])
       }
     },
-      //启动预案
+      //启动事件预案
       startYuAn(){
           if(this.dataArr[this.activeIndex].statusId!=='1'){
               this.$notification['warning']({

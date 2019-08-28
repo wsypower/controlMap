@@ -85,7 +85,7 @@
                     :label-col="{ span: 5 }"
                     :wrapper-col="{ span: 12 }"
                   >
-                    <div v-if="sourceData.id">
+                    <div v-if="areaName">
                       <span style="margin-right: 10px;">{{areaName}}</span>
                       <a-button type="primary" size="small" @click="editAreaPart">区域微调</a-button>
                     </div>
@@ -204,7 +204,9 @@ export default {
             //附件上传后得到的附件对象数组
             fileList:[],
             //编辑时是否点击区域微调
-            clickAreaEdit: false
+            clickAreaEdit: false,
+            //是否点击区域下拉框选择了
+            selectAreaType: false
         }
     },
     props:{
@@ -282,6 +284,7 @@ export default {
         //选择区域
         selectPaintMethod(val,option){
           console.log('selectPaintMethod',val,option);
+          this.selectAreaType = true;
           const _this = this;
           const drawResult=this.mapManager.activateDraw(val,draw);
           draw = drawResult[0];
@@ -485,8 +488,17 @@ export default {
                                   _this.$emit('close');
                               })
                           });
-                      }
-                      else{
+                      }else if(this.selectAreaType) {
+                          this.addDraw(function () {
+                              values.mapId = _this.mapId;
+                              values.positionX = _this.mapCenter[0];
+                              values.positionY = _this.mapCenter[1];
+                              _this.addNewEvent(values).then((res) => {
+                                  // console.log('addNewEvent', res);
+                                  _this.$emit('close');
+                              })
+                          });
+                      }else{
                           values.mapId = this.sourceData.mapId;
                           values.positionX = this.sourceData.positionX;
                           values.positionY = this.sourceData.positionY;
@@ -495,7 +507,6 @@ export default {
                               _this.$emit('close');
                           })
                       }
-
                   }
                   else{
                       if(this.sourceData.areaId == ''){
