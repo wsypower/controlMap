@@ -231,9 +231,11 @@
                     }
                     .base{
                         .sub-title{
+                            margin: 5px 0px 5px 5px;
                             width: 50px;
                         }
                         .sub-content{
+                            margin: 5px 0px;
                             width: 100%;
                         }
                         .photo{

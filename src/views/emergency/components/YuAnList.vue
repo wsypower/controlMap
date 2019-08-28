@@ -18,11 +18,11 @@
                      flex="dir:left cross:center main:justify">
                     <span class="title">{{item.name}}</span>
                     <span class="operate">
-                        <a-icon type="edit" style="color:#2b90f3" @click="editYuAnItem(item.id)"/>
+                        <a-icon type="edit" style="color:#2b90f3;cursor: pointer;" @click="editYuAnItem(item.id)"/>
                         <i class="sep"></i>
-                        <a-icon type="export" style="color:#2b90f3" title="导出" @click="exportYuAnExcel(item.id)"/>
+                        <a-icon type="export" style="color:#2b90f3;cursor: pointer;" title="导出" @click="exportYuAnExcel(item.id)"/>
                         <i class="sep"></i>
-                        <a-icon type="delete" style="color:#2b90f3" @click="deleteYuAnItem(item.id,index)"/>
+                        <a-icon type="delete" style="color:#2b90f3;cursor: pointer;" @click="deleteYuAnItem(item.id,index)"/>
                     </span>
                 </div>
             </div>
@@ -133,7 +133,7 @@
                     background-color: #f5f7f8;
                     margin-bottom: 4px;
                     padding: 0px 12px;
-                    cursor: pointer;
+                    /*cursor: pointer;*/
                     &:last-child{
                         margin-bottom: 0px;
                     }

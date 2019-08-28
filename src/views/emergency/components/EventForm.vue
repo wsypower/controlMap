@@ -509,7 +509,7 @@ export default {
                       }
                   }
                   else{
-                      if(this.sourceData.areaId == ''){
+                      if(this.sourceData.areaId == undefined){
                           values.mapId = '';
                           values.positionX = '';
                           values.positionY = '';

@@ -5,7 +5,7 @@
         </div>
         <div class="item-right" flex="dir:top">
             <div class="top" flex="cross: center main:justify">
-                <div class="name-panel">{{ itemData.name }}</div>
+                <div class="name-panel" :title="itemData.name">{{ itemData.name }}</div>
                 <div class="flag-panel">
                     <span class="level-panel "
                         :class="{yanzhong:itemData.levelId == '02',yiban:itemData.levelId == '01'}">等级：{{itemData.levelName}}</span>
@@ -109,6 +109,10 @@
                     font-family: PingFang-SC-Heavy;
                     font-size: 14px;
                     color: #333333;
+                    max-width: 155px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
                 .flag-panel {
                     .level-panel {
