@@ -168,6 +168,26 @@ export default {
       emergencyAreas: null,
       //远程呼叫所有人员
       ychjPeopleList:[],
+      //资源图标
+      iconType:[{
+          key: '救援绳',
+          icon: 'jiuyuanshen'
+      },{
+          key: '救生衣',
+          icon: 'jiushengyi'
+      },{
+          key: '渣土车',
+          icon: 'zhatuche'
+      },{
+          key: '水车',
+          icon: 'shashuiche'
+      },{
+          key: '挖掘机',
+          icon: 'wajueji'
+      },{
+          key: '皮划艇',
+          icon: 'pihuating'
+      }],
     }
   },
   components: {
@@ -240,6 +260,19 @@ export default {
         else if(feature.get('pointType')=='resource'){
           const info=feature.get('info');
           console.log('info',info);
+          let icon = '';
+          let hasIcon = this.iconType.some((ic)=>{
+              if(info.name.indexOf(ic.key)>=0){
+                  icon = ic.icon;
+              }
+              return info.name.indexOf(ic.key)>=0
+          });
+          if(!hasIcon){
+              icon = 'jiuyuan'
+          }
+          this.iconName = icon;
+          this.modalTitle = info.name;
+          this.infoData = info;
           this.tipComponentId = ResourceInfo;
           this.yuAnOverlay.setPosition(coordinate);
         }
@@ -247,8 +280,8 @@ export default {
           //给弹框内容赋值
           // this.$refs.yuAnOverlay.$el.style.width='482px';
           // this.$refs.yuAnOverlay.$el.style.height='254px';
-          this.tipComponentId = YuAnInfo
-          this.iconName = 'menu-special'
+          this.tipComponentId = YuAnInfo;
+          this.iconName = 'menu-special';
           this.modalTitle = this.infoData.name;
           this.subTitle = stampConvertToTime(this.infoData.startDay) + '-' + stampConvertToTime(this.infoData.endDay)
           this.yuAnOverlay.setPosition(coordinate)

@@ -1,10 +1,10 @@
 <template>
     <div class="info">
-        <div><span>物资名称：</span>{{info.name}}</div>
-        <div><span>物资数量：</span>{{info.num}}</div>
-        <div><span>负责人：</span>{{info.person}}</div>
-        <div><span>联系方式：</span>{{info.tel}}</div>
-        <div><span>存储位置：</span>{{info.address}}</div>
+        <div><span>物资名称：</span><span>{{info.name}}</span></div>
+        <div><span>物资数量：</span><span>{{info.num}}</span></div>
+        <div><span>负责人：</span><span>{{info.person}}</span></div>
+        <div><span>联系方式：</span><span>{{info.tel}}</span></div>
+        <div flex="dir:left"><span>存储位置：</span><span>{{info.address}}</span></div>
     </div>
 </template>
 <script type="text/ecmascript-6">
@@ -27,5 +27,15 @@
         height:100%;
         padding: 17px;
         background-color: #ffffff;
+        div{
+            span:first-child{
+                display:inline-block;
+                width: 70px;
+            }
+            span:last-child{
+                display:inline-block;
+                max-width: 200px;
+            }
+        }
     }
 </style>
