@@ -262,6 +262,7 @@ export default {
                     });
                     point.set('id', p.id);
                     point.set('info',p);
+                    point.set('pointType','resource');
                     return point;
                   })
                   const layer=this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
