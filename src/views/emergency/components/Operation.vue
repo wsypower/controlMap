@@ -206,13 +206,7 @@ export default {
         },
         eventId:function(id) {
            if(id){
-             console.log('已选物资',this.checkedResourceList);
-             for(let i=0;i<this.checkedResourceList.length;i++){
-               this.clickShowPoints(this.checkedBestList[i],'');
-             }
-             for(let i=0;i<this.checkedBestList.length;i++){
-               this.clickShowBestPoints(this.checkedBestList[i],'');
-             }
+             this.setPointForBestAndResource();
            }
         }
     },
@@ -297,11 +291,49 @@ export default {
               }
             }
         },
+
+        //事件改变时，设置地图点位
+        setPointForBestAndResource(){
+            console.log('已选物资',this.checkedResourceList);
+            for(let j=0;j<this.resourceLayer.length;j++){
+                this.resourceLayer[j].layer.getSource().clear();
+            }
+            for(let i=0;i<this.checkedResourceList.length;i++){
+                this.getMapInfoByEventIdAndRTypeId({rTypeId: this.checkedResourceList[i].key, eventId: this.eventId}).then((res)=>{
+                    console.log('getMapInfoByEventIdAndRTypeId',res);
+                    const features = res.map(p => {
+                        if(p.x.length>0 && p.y.length>0) {
+                            const point = new Feature({
+                                geometry: new Point([parseFloat(p.x), parseFloat(p.y)])
+                            });
+                            point.set('id', p.id);
+                            point.set('info', p);
+                            point.set('pointType', 'resource');
+                            return point;
+                        }
+                    })
+                    const layer=this.mapManager.addVectorLayerByFeatures(features.filter(Boolean), emergencyResourceStyle(item.name), 3);
+                    for(let k=0;i<this.resourceLayer.length;k++){
+                        if(this.resourceLayer[k].key==this.checkedResourceList[i].key){
+                            this.resourceLayer[k].layer = layer;
+                        }
+                    }
+                    // this.resourceLayer[index]={
+                    //     key:item.key,
+                    //     layer:layer
+                    // };
+                });
+            }
+            //
+            // for(let i=0;i<this.checkedBestList.length;i++){
+            //     this.clickShowBestPoints(this.checkedBestList[i],'');
+            // }
+        },
         //展示周边最优资源
         clickShowBestPoints(item,index){
           this.selectType[index].checked = !this.selectType[index].checked;
           if(this.selectType[index].name=='最优执法队员'||this.selectType[index].name=='最优执法车辆'){
-            return;
+            return
           }
           if(this.selectType[index].checked) {
             if (item.name == '摄像头') {
