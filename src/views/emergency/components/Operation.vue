@@ -329,6 +329,7 @@ export default {
               }
               else {
                 this.$message.error('请先选择一个预案');
+                this.selectType[index].checked = !this.selectType[index].checked;
               }
             }
             else {

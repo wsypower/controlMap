@@ -26,7 +26,8 @@
                                         <span v-for="(file,index) in JSON.parse(eventInfo.fileStr)"
                                               :key="index"
                                               class="file"
-                                              :title="file.oldName">{{file.oldName}}</span>
+                                              :title="file.oldName"
+                                              @click="downloadFile(file.newPath)">{{file.oldName}}</span>
                                     </div>
                                 </a-col>
                                 <a-col :span="6">
@@ -160,6 +161,10 @@
             //应急场地数据更新
             getPlaceResult(data){
                 this.placeResultData = JSON.parse(JSON.stringify(data));
+            },
+            //下载附件
+            downloadFile(fileUrl){
+                window.open(fileUrl);
             },
             //启动预案
             startYuAnEvent(){
