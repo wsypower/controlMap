@@ -54,7 +54,7 @@
 <script type="text/ecmascript-6">
 import { mapState, mapActions, mapMutations } from 'vuex'
 import { getAreaVideo,getTypeResources } from '@/api/map/service'
-import { videoStyle,emergencyResourceStyle,emergencyEquipStyle } from '@/utils/util.map.style'
+import { videoStyle,emergencyResourceStyle } from '@/utils/util.map.style'
 import { filterMeetingPeople } from '@/utils/util.map.manage'
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
@@ -292,27 +292,30 @@ export default {
         //展示周边最优资源
         clickShowBestPoints(item,index){
             if(item.name=='摄像头'){
-                if(this.isCheckedTuAn){
-                    this.selectType[index].checked = !this.selectType[index].checked;
-                    getAreaVideo().then(res=>{
-                        console.log(this.selectEmergencyFeature[0]);
-                        const points = filterMeetingPeople(this.selectEmergencyFeature[0],res);
-                        const features =points.map(p =>{
-                            const point = new Feature({
-                                geometry: new Point(p.position)
-                            });
-                            point.set('id',p.id);
-                            return point;
+                // if(this.isCheckedTuAn){
+                this.selectType[index].checked = !this.selectType[index].checked;
+                getAreaVideo().then(res=>{
+                    console.log(this.selectEmergencyFeature[0]);
+                    let points;
+                    if(this.isCheckedTuAn) {
+                      points = filterMeetingPeople(this.selectEmergencyFeature[0], res);
+                    }
+                    const features =points.map(p =>{
+                        const point = new Feature({
+                            geometry: new Point(p.position)
                         });
-                          if(this.emergencyResourceLayer){
-                            this.emergencyResourceLayer.getSource().clear();
-                          }
-                        this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
-                    })
-                }
-                else{
-                    this.$message.error('请先选择一个预案');
-                }
+                        point.set('id',p.id);
+                        return point;
+                    });
+                      if(this.emergencyResourceLayer){
+                        this.emergencyResourceLayer.getSource().clear();
+                      }
+                    this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,videoStyle(),3);
+                })
+                // }
+                // else{
+                //     this.$message.error('请先选择一个预案');
+                // }
             }
             else{
                 this.selectType[index].checked = !this.selectType[index].checked;
