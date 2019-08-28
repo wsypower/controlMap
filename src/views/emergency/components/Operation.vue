@@ -277,16 +277,16 @@ export default {
                     }
                   })
                   const layer=this.mapManager.addVectorLayerByFeatures(features.filter(Boolean), emergencyResourceStyle(item.name), 3);
-                  this.resourceLayer[index]={
+                  this.resourceLayer.push({
                     key:item.key,
                     layer:layer
-                  };
+                  });
                 });
             } else{
               //清理此类物资在地图上的显示
               for(let i=0;i<this.resourceLayer.length;i++){
-                if(this.resourceLayer[index].key==this.sourceType[index].key){
-                  this.resourceLayer[index].layer.getSource().clear();
+                if(this.resourceLayer[i].key==this.sourceType[index].key){
+                  this.resourceLayer[i].layer.getSource().clear();
                 }
               }
             }
@@ -312,8 +312,8 @@ export default {
                             return point;
                         }
                     })
-                    const layer=this.mapManager.addVectorLayerByFeatures(features.filter(Boolean), emergencyResourceStyle(item.name), 3);
-                    for(let k=0;i<this.resourceLayer.length;k++){
+                    const layer=this.mapManager.addVectorLayerByFeatures(features.filter(Boolean), emergencyResourceStyle(this.checkedResourceList[i].name), 3);
+                    for(let k=0;k<this.resourceLayer.length;k++){
                         if(this.resourceLayer[k].key==this.checkedResourceList[i].key){
                             this.resourceLayer[k].layer = layer;
                         }
@@ -324,10 +324,27 @@ export default {
                     // };
                 });
             }
-            //
-            // for(let i=0;i<this.checkedBestList.length;i++){
-            //     this.clickShowBestPoints(this.checkedBestList[i],'');
-            // }
+            this.emergencyResourceLayer.getSource().clear();
+            getAreaVideo().then(res => {
+                console.log(this.selectEmergencyFeature[0]);
+                let points;
+                if (this.selectEmergencyFeature) {
+                  points = filterMeetingPeople(this.selectEmergencyFeature[0], res);
+                } else {
+                  points = res;
+                }
+                const features = points.map(p => {
+                  const point = new Feature({
+                    geometry: new Point(p.position)
+                  });
+                  point.set('id', p.id);
+                  return point;
+                });
+                if (this.emergencyResourceLayer) {
+                  this.emergencyResourceLayer.getSource().clear();
+                }
+                this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
+          })
         },
         //展示周边最优资源
         clickShowBestPoints(item,index){
