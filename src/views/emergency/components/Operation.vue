@@ -53,7 +53,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapState, mapActions, mapMutations } from 'vuex'
-import { getAreaVideo,getTypeResources,getTypeEquip } from '@/api/map/service'
+import { getAreaVideo,getTypeResources } from '@/api/map/service'
 import { videoStyle,emergencyResourceStyle,emergencyEquipStyle } from '@/utils/util.map.style'
 import { filterMeetingPeople } from '@/utils/util.map.manage'
 import Feature from 'ol/Feature'
@@ -137,17 +137,7 @@ export default {
                 }],
 
           emergencyResourceLayer:null,
-          equipLayer:[{
-            type:'3',
-            layer:null
-          },{
-            type:'7',
-            layer:null
-          },{
-            type:'8',
-            layer:null
-          },
-          ]
+          resourceLayer:[]
         }
     },
     props:{
@@ -213,10 +203,14 @@ export default {
                 'resource': this.checkedResourceList
             }
             this.$emit('getCheckedOption',data);
+        },
+        eventId:function(id) {
+           if(id){
+             console.log('已选物资',this.checkedResourceList);
+           }
         }
     },
     mounted(){
-      this.getEquipPoints();
     },
     methods:{
         ...mapActions('emergency/yuan', ['getResourceDataList','getMapInfoByEventIdAndRTypeId']),
@@ -277,14 +271,22 @@ export default {
                     });
                     point.set('id', p.id);
                     point.set('info',p);
-                    // point.set('state',p.info.alarmState);
+                    point.set('pointType','resource');
                     return point;
-                  });
-                  this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
+                  })
+                  const layer=this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
+                  this.resourceLayer[index]={
+                    key:item.key,
+                    layer:layer
+                  };
                 });
-            }
-            else{
-               //清理此类物资在地图上的显示
+            } else{
+              //清理此类物资在地图上的显示
+              for(let i=0;i<this.resourceLayer.length;i++){
+                if(this.resourceLayer[index].key==this.sourceType[index].key){
+                  this.resourceLayer[index].layer.getSource().clear();
+                }
+              }
             }
         },
         //展示周边最优资源
@@ -331,23 +333,6 @@ export default {
               })
             }
         },
-
-        getEquipPoints(){
-          for(let i=0;i<this.equipLayer.length;i++){
-            getTypeEquip(this.equipLayer[i].type).then(res=>{
-              console.log('===物联信息-'+this.equipLayer[i].type,res);
-              const features =res.map(p =>{
-                const point = new Feature({
-                  geometry: new Point(p.position)
-                });
-                point.set('id',p.id);
-                return point;
-              });
-              this.equipLayer[i].layer=this.mapManager.addVectorLayerByFeatures(features,emergencyEquipStyle(this.equipLayer[i].type),3);
-              this.equipLayer[i].layer.setVisible(false);
-            })
-          }
-        }
     }
 }
 </script>
