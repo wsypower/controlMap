@@ -207,6 +207,12 @@ export default {
         eventId:function(id) {
            if(id){
              console.log('已选物资',this.checkedResourceList);
+             for(let i=0;i<this.checkedResourceList.length;i++){
+               this.clickShowPoints(this.checkedBestList[i],'');
+             }
+             for(let i=0;i<this.checkedBestList.length;i++){
+               this.clickShowBestPoints(this.checkedBestList[i],'');
+             }
            }
         }
     },
@@ -345,7 +351,12 @@ export default {
             }
           }
           else{
-            this.selectType[index].layer.getSource().clear();
+            if(this.selectType[index].name == '摄像头'){
+              this.emergencyResourceLayer.getSource().clear();
+            }
+            else{
+              this.selectType[index].layer.getSource().clear();
+            }
           }
         },
     }
