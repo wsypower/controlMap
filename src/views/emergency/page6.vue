@@ -74,10 +74,12 @@
         @closeDialog="closeOverlay()"
       ></tip-modal>
     </div>
+    <iframe width=0 height=0 id="camera"></iframe>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import { mapState, mapActions, mapMutations } from 'vuex'
 import Operation from './components/Operation.vue'
 import EventForm from './components/EventForm.vue'
@@ -278,6 +280,7 @@ export default {
         }
         else if(feature.get('pointType')=='video'){
           console.log('video code',feature.get('id'));
+          this.openCameraDevice(feature.get('id'));
         }
         else{
           //给弹框内容赋值
@@ -290,6 +293,40 @@ export default {
           this.yuAnOverlay.setPosition(coordinate)
         }
       }
+    },
+
+    //打开摄像头第三方插件
+    openCameraDevice(code){
+        axios.get('http://192.168.71.33:8015/api/sp/getSecretApi')
+            .then(function (response) {
+                if(response){
+                    let PalyType = "PlayReal";
+                    let SvrPort = "443";
+                    let httpsflag = "1";
+                    let data = response.data;
+                    let SvrIp = data.SvrIp;
+                    let appkey = data.appkey;
+                    let appSecret = data.appSecret;
+                    let time = data.time;
+                    let timeSecret = data.timeSecret;
+                    let CamList = code;
+                    //主要是添加了'hikvideoclient://' 和 'VersionTag:artemis'2段字符串
+                    let param = 'hikvideoclient://ReqType:' + PalyType + ';'
+                        + 'VersionTag:artemis' + ';'
+                        + 'SvrIp:' + SvrIp + ';'
+                        + 'SvrPort:' + SvrPort + ';'
+                        + 'Appkey:' + appkey + ';'
+                        + 'AppSecret:' + appSecret + ';'
+                        + 'time:' + time + ';'
+                        + 'timesecret:' + timeSecret + ';'
+                        + 'httpsflag:' + httpsflag + ';'
+                        + 'CamList:' + CamList + ';';
+                    document.getElementById("camera").src = param;
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     },
     //关闭地图弹框
     closeOverlay() {

@@ -45,3 +45,20 @@ export function getAllPeopleDataList(data){
         params: data
     })
 }
+//
+// /**
+//  * @description 打开摄像头
+//  * @author moxuejuan
+//  * @date 2019-08-29 10:53:20
+//  * @param 无
+//  *  @method：GET
+//  * @response：{}
+//  */
+//
+// export function openCamera(data={}){
+//     return request({
+//         url: 'sp/getSecretApi?_t='+ new Date().getTime(),
+//         method: 'get',
+//         params: data
+//     })
+// }
