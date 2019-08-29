@@ -240,7 +240,7 @@ export default {
     //地图点击事件处理器
     mapClickHandler({ pixel, coordinate }) {
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
-        console.log(feature);
+        console.log('videofeature',feature);
       if (feature && feature.get('pointType')) {
         if(feature.get('pointType')=='people'){
           //给弹框内容赋值
@@ -275,6 +275,9 @@ export default {
           this.infoData = info;
           this.tipComponentId = ResourceInfo;
           this.yuAnOverlay.setPosition(coordinate);
+        }
+        else if(feature.get('pointType')=='video'){
+          console.log('video code',feature.get('id'));
         }
         else{
           //给弹框内容赋值

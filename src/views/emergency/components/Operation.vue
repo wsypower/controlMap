@@ -324,7 +324,7 @@ export default {
                     // };
                 });
             }
-            this.emergencyResourceLayer.getSource().clear();
+            this.emergencyResourceLayer && this.emergencyResourceLayer.getSource().clear();
             getAreaVideo().then(res => {
                 console.log(this.selectEmergencyFeature[0]);
                 let points;
@@ -338,11 +338,9 @@ export default {
                     geometry: new Point(p.position)
                   });
                   point.set('id', p.id);
+                  point.set('pointType','video');
                   return point;
                 });
-                if (this.emergencyResourceLayer) {
-                  this.emergencyResourceLayer.getSource().clear();
-                }
                 this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
           })
         },
@@ -356,7 +354,7 @@ export default {
             if (item.name == '摄像头') {
               if (this.isCheckedTuAn) {
                 getAreaVideo().then(res => {
-                  console.log(this.selectEmergencyFeature[0]);
+                  // console.log(this.selectEmergencyFeature[0]);
                   let points;
                   if (this.selectEmergencyFeature) {
                     points = filterMeetingPeople(this.selectEmergencyFeature[0], res);
@@ -368,6 +366,7 @@ export default {
                       geometry: new Point(p.position)
                     });
                     point.set('id', p.id);
+                    point.set('pointType','video');
                     return point;
                   });
                   if (this.emergencyResourceLayer) {
