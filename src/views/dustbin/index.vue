@@ -187,8 +187,8 @@ export default {
       } else {
         this.$refs.dustbinOverlay.$el.style.backgroundImage = 'linear-gradient(90deg, #0065ea 0%, #00a5ff 100%)'
       }
-      this.modalTitle = data.verifyCode
-      this.tipComponentId = DustbinInfo
+      this.modalTitle = data.imei;
+      this.tipComponentId = DustbinInfo;
       this.infoData = data;
       const xy=[parseFloat(data.longitudeGps84Y), parseFloat(data.latitudeGps84X)];
       this.mapManager.locateTo(xy);

@@ -39,7 +39,7 @@
         </div>
       </div>
     </div>
-    <div class="left-message-footer" @click="startYuAn">启动预案</div>
+    <div class="left-message-footer" :class="{disable: activeIndex===null||dataArr[activeIndex].statusId!=='1'}" @click="startYuAn">启动预案</div>
     <yu-an-list v-show="showYuAnList" ref='yuAnList' @operate="listOperate"></yu-an-list>
     <operation
       ref="Operate"
@@ -393,7 +393,7 @@ export default {
       this.dialogComponentId = EventForm
       this.dWidth = 810
       this.dHeight = 470
-      this.dialogTitle = '修改预案'
+      this.dialogTitle = '修改事件'
       this.bodyPadding = [0, 10, 10, 10]
       this.sourceData = item;
         this.closeCallBack = this.getDataList;
@@ -405,7 +405,7 @@ export default {
       let data = { id: item.id }
       let _this = this
       this.$confirm({
-        title: '确定删除这个预案吗？',
+        title: '确定删除这个事件吗？',
         content: '',
         okText: '确定',
         okType: 'danger',
@@ -470,17 +470,18 @@ export default {
       }
     },
       //启动事件预案
-      startYuAn(){
-          if(this.dataArr[this.activeIndex].statusId!=='1'){
-              this.$notification['warning']({
-                  message: '只能启动状态为未开始的预案',
-                  description: '请重新选择',
-                  style: {
-                      width: '350px',
-                      marginLeft: `50px`,
-                      fontSize: '14px'
-                  }
-              });
+      startYuAn(e){
+          if(this.activeIndex===null||this.dataArr[this.activeIndex].statusId!=='1'){
+              e.preventDefault();
+              // this.$notification['warning']({
+              //     message: '只能启动状态为未开始的预案',
+              //     description: '请重新选择',
+              //     style: {
+              //         width: '350px',
+              //         marginLeft: `50px`,
+              //         fontSize: '14px'
+              //     }
+              // });
           }
           else{
               this.dialogTitle = '启动预案';
@@ -625,6 +626,9 @@ export default {
     font-size: 16px;
     color: #ffffff;
     cursor: pointer;
+    &.disable{
+      cursor: not-allowed;
+    }
   }
   .position {
     left: 380px;

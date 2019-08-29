@@ -5,11 +5,11 @@
             <a-button type="primary" icon="plus" @click="addYuAn">新建预案</a-button>
         </div>
         <div class="content">
+            <div class="search-panel">
+                <a-input-search placeholder="输入应急预案名称搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
+            </div>
             <div v-if="yuAnList.length===0" style="padding:10px;" flex="main:center cross:center">
                 <img src="~@img/zanwumuban.png" />
-            </div>
-            <div v-if="yuAnList.length!==0" class="search-panel">
-                <a-input-search placeholder="输入应急预案名称搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
             </div>
             <div v-if="yuAnList.length!==0" class="content_body">
                 <div v-for="(item,index) in yuAnList"

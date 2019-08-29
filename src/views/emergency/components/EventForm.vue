@@ -59,7 +59,6 @@
                               v-decorator="['rangeDay', config]"
                               :placeholder="['开始日期', '结束日期']"
                               showTime
-                              :disabledDate="disabledDate"
                               format="YYYY-MM-DD HH:mm"
                               style="width: 277px"
                       />

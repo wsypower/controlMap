@@ -182,7 +182,7 @@ export default {
       } else {
         this.$refs.waterOverlay.$el.style.backgroundImage = 'linear-gradient(90deg, #0065ea 0%, #00a5ff 100%)'
       }
-      this.modalTitle = data.verifyCode
+      this.modalTitle = data.imei
       this.tipComponentId = WaterLevelInfo
       this.infoData = data;
       const xy=[parseFloat(data.longitudeGps84Y), parseFloat(data.latitudeGps84X)];
