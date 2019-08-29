@@ -66,15 +66,16 @@ const success = success => {
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 let base_url= '';
 //http://192.168.71.238:8015/api/
-if (process.env.NODE_ENV === 'development') {
-    base_url = 'http://192.168.71.33:8015/api/'
-}
-else{
-    base_url = 'http://61.153.37.214:81/api/'
-}
+//http://61.153.37.214:81/api/
+// if (process.env.NODE_ENV === 'development') {
+//     base_url = 'http://192.168.71.33:8015/api/'
+// }
+// else{
+//     base_url = 'http://192.168.71.33:8015/api/'
+// }
 //axios config配置
 let config = {
-  baseURL: base_url,
+  baseURL: URL_CONFIG.baseURL,
   timeout: 60 * 100, // 请求超时时间
   //TODO:只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法
   //修改请求数据添加必填项 userId

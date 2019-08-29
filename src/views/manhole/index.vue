@@ -31,7 +31,7 @@
           </div>
         </cg-container>
         <div v-else class="none-panel" flex="main:center cross:center">
-          <img src="~@img/zanwuyuan.png" />
+          <img src="~@img/zanwudata.png" />
         </div>
       </div>
       <div class="pagination-panel">

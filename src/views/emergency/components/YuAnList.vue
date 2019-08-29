@@ -9,7 +9,7 @@
                 <img src="~@img/zanwumuban.png" />
             </div>
             <div v-if="yuAnList.length!==0" class="search-panel">
-                <a-input-search placeholder="输入关键词搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
+                <a-input-search placeholder="输入应急预案名称搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
             </div>
             <div v-if="yuAnList.length!==0" class="content_body">
                 <div v-for="(item,index) in yuAnList"
@@ -73,14 +73,15 @@
             },
             //删除预案
             deleteYuAnItem(id,index){
+                let _this = this;
                 this.$confirm({
                     title: '确定删除此应急预案吗？',
                     content: '删除后不可恢复',
                     okText: '确定',
                     cancelText: '取消',
                     onOk() {
-                        this.deleteYuAn({id:id}).then((res)=>{
-                            this.yuAnList.splice(index,1);
+                        _this.deleteYuAn({id:id}).then((res)=>{
+                            _this.yuAnList.splice(index,1);
                         });
                     },
                     onCancel() {

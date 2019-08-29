@@ -4,7 +4,7 @@
       事件列表
     </div>
     <div class="search-panel">
-      <a-input-search placeholder="输入关键词搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
+      <a-input-search placeholder="输入事件（预案）名称搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
     </div>
     <div class="search-result">
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
