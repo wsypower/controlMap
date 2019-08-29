@@ -3,7 +3,7 @@
     <a-form :form="form" @submit="handleSubmit" style="width: 100%">
       <div class="yuan-form">
         <a-row style="height:100%">
-          <a-col :span="12" style="height:100%">
+          <a-col :span="12" style="height:100%" class="scroll-height">
             <!--<cg-container scroll>-->
             <!--<div style="height: 290px">-->
               <happy-scroll color="rgba(0,0,0,0.2)" size="5" resize smaller-move-v="end" bigger-move-v="end">
@@ -450,87 +450,89 @@ export default {
               this.drawLayer.getSource().clear();
             }
             this.form.validateFields((error, values) => {
-                // console.log('error', error);
+                console.log('error', error);
                 // console.log('Received values of form: ', values);
-                if(this.sourceData.id){
-                    values.id = this.sourceData.id;
-                }
-                if(values.rangeDay){
-                    values.startDay = values.rangeDay[0]._d.getTime();
-                    values.endDay = values.rangeDay[1]._d.getTime();
-                }
-                values.areaId = this.sourceData.areaId;
-                if(this.image.length>0){
-                  values.imageStr = this.image[0].newPath + '|' + this.image[0].oldName;
-                }
-                if(this.fileList.length>0) {
-                    let fileStr = '';
-                    for (let i = 0; i < this.fileList.length; i++) {
-                        if (i < this.fileList.length - 1) {
-                            fileStr += this.fileList[i].newPath + '|' + this.fileList[i].oldName + ',';
+                if (!error) {
+                    if (this.sourceData.id) {
+                        values.id = this.sourceData.id;
+                    }
+                    if (values.rangeDay) {
+                        values.startDay = values.rangeDay[0]._d.getTime();
+                        values.endDay = values.rangeDay[1]._d.getTime();
+                    }
+                    values.areaId = this.sourceData.areaId;
+                    if (this.image.length > 0) {
+                        values.imageStr = this.image[0].newPath + '|' + this.image[0].oldName;
+                    }
+                    if (this.fileList.length > 0) {
+                        let fileStr = '';
+                        for (let i = 0; i < this.fileList.length; i++) {
+                            if (i < this.fileList.length - 1) {
+                                fileStr += this.fileList[i].newPath + '|' + this.fileList[i].oldName + ',';
+                            }
+                            else {
+                                fileStr += this.fileList[i].newPath + '|' + this.fileList[i].oldName;
+                            }
                         }
-                        else {
-                            fileStr += this.fileList[i].newPath + '|' + this.fileList[i].oldName;
+                        values.fileStr = fileStr;
+                    }
+                    delete values.rangeDay;
+                    console.log('form value: ', values);
+                    if (this.sourceData.id) {
+                        if (this.clickAreaEdit) {
+                            this.editDraw(function () {
+                                values.mapId = _this.mapId;
+                                values.positionX = _this.mapCenter[0];
+                                values.positionY = _this.mapCenter[1];
+                                _this.addNewEvent(values).then((res) => {
+                                    // console.log('addNewEvent', res);
+                                    _this.$emit('close');
+                                })
+                            });
+                        } else if (this.selectAreaType) {
+                            this.addDraw(function () {
+                                values.mapId = _this.mapId;
+                                values.positionX = _this.mapCenter[0];
+                                values.positionY = _this.mapCenter[1];
+                                _this.addNewEvent(values).then((res) => {
+                                    // console.log('addNewEvent', res);
+                                    _this.$emit('close');
+                                })
+                            });
+                        } else {
+                            values.mapId = this.sourceData.mapId;
+                            values.positionX = this.sourceData.positionX;
+                            values.positionY = this.sourceData.positionY;
+                            this.addNewEvent(values).then((res) => {
+                                // console.log('addNewEvent', res);
+                                _this.$emit('close');
+                            })
                         }
                     }
-                    values.fileStr = fileStr;
-                }
-                delete values.rangeDay;
-                console.log('form value: ', values);
-                  if(this.sourceData.id){
-                      if(this.clickAreaEdit){
-                          this.editDraw(function(){
-                              values.mapId = _this.mapId;
-                              values.positionX = _this.mapCenter[0];
-                              values.positionY = _this.mapCenter[1];
-                              _this.addNewEvent(values).then((res) => {
-                                  // console.log('addNewEvent', res);
-                                  _this.$emit('close');
-                              })
-                          });
-                      }else if(this.selectAreaType) {
-                          this.addDraw(function () {
-                              values.mapId = _this.mapId;
-                              values.positionX = _this.mapCenter[0];
-                              values.positionY = _this.mapCenter[1];
-                              _this.addNewEvent(values).then((res) => {
-                                  // console.log('addNewEvent', res);
-                                  _this.$emit('close');
-                              })
-                          });
-                      }else{
-                          values.mapId = this.sourceData.mapId;
-                          values.positionX = this.sourceData.positionX;
-                          values.positionY = this.sourceData.positionY;
-                          this.addNewEvent(values).then((res) => {
-                              // console.log('addNewEvent', res);
-                              _this.$emit('close');
-                          })
-                      }
-                  }
-                  else{
-                      if(this.sourceData.areaId == undefined){
-                          values.mapId = '';
-                          values.positionX = '';
-                          values.positionY = '';
-                          this.addNewEvent(values).then((res) => {
-                              // console.log('addNewEvent', res);
-                              _this.$emit('close');
-                          })
-                      }
-                      else{
-                          this.addDraw(function () {
-                            values.mapId = _this.mapId;
-                            values.positionX = _this.mapCenter[0];
-                            values.positionY = _this.mapCenter[1];
-                            _this.addNewEvent(values).then((res) => {
-                              // console.log('addNewEvent', res);
-                              _this.$emit('close');
+                    else {
+                        if (this.sourceData.areaId == undefined) {
+                            values.mapId = '';
+                            values.positionX = '';
+                            values.positionY = '';
+                            this.addNewEvent(values).then((res) => {
+                                // console.log('addNewEvent', res);
+                                _this.$emit('close');
                             })
-                          });
-                      }
+                        }
+                        else {
+                            this.addDraw(function () {
+                                values.mapId = _this.mapId;
+                                values.positionX = _this.mapCenter[0];
+                                values.positionY = _this.mapCenter[1];
+                                _this.addNewEvent(values).then((res) => {
+                                    // console.log('addNewEvent', res);
+                                    _this.$emit('close');
+                                })
+                            });
+                        }
 
-                  }
+                    }
+                }
             });
         },
         checkSubmitParams(params){
@@ -626,4 +628,11 @@ export default {
     height: 60px;
   }
 }
+</style>
+<style lang="scss">
+  .scroll-height {
+    .happy-scroll-container {
+      height: 320px !important;
+    }
+  }
 </style>
