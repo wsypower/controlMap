@@ -85,7 +85,7 @@ const allType=['挖掘机','救援绳','救生衣','水车','渣土车','皮划�
  */
 export function emergencyResourceStyle(type) {
   if(!allType.includes(type)){
-    type = '救援绳';
+    type = '默认图标';
   }
   return new Style({
     image: new Icon({
