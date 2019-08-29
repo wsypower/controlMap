@@ -110,6 +110,11 @@
                 duration: 500
               })
             }
+            draw.on('drawend', function (evt) {
+              source.clear();
+              const feature=evt.feature.clone();
+              source.addFeature(feature);
+            },this)
             // mapManager = new MapManager(map);
             // const drawResult=mapManager.activateDraw('Point',draw);
           })

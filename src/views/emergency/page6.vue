@@ -428,6 +428,9 @@ export default {
         this.pushPageLayers(this.emergencyCenterLayer);
         this.mapManager.locateTo([parseFloat(data.positionX), parseFloat(data.positionY)])
       }
+      else{
+        this.setSelectEmergencyFeature(null);
+      }
     },
       //启动事件预案
       startYuAn(){

@@ -324,25 +324,26 @@ export default {
                     // };
                 });
             }
-            this.emergencyResourceLayer && this.emergencyResourceLayer.getSource().clear();
+          if(this.selectType[0].checked){
+            this.emergencyResourceLayer.getSource().clear();
             getAreaVideo().then(res => {
-                console.log(this.selectEmergencyFeature[0]);
-                let points;
-                if (this.selectEmergencyFeature) {
-                  points = filterMeetingPeople(this.selectEmergencyFeature[0], res);
-                } else {
-                  points = res;
-                }
-                const features = points.map(p => {
-                  const point = new Feature({
-                    geometry: new Point(p.position)
-                  });
-                  point.set('id', p.id);
-                  point.set('pointType','video');
-                  return point;
+              let points;
+              if (this.selectEmergencyFeature) {
+                points = filterMeetingPeople(this.selectEmergencyFeature[0], res);
+              } else {
+                points = res;
+              }
+              const features = points.map(p => {
+                const point = new Feature({
+                  geometry: new Point(p.position)
                 });
-                this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
-          })
+                point.set('id', p.id);
+                point.set('pointType','video');
+                return point;
+              });
+              this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
+            })
+          }
         },
         //展示周边最优资源
         clickShowBestPoints(item,index){
