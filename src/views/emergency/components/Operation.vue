@@ -277,6 +277,7 @@ export default {
                     }
                   })
                   const layer=this.mapManager.addVectorLayerByFeatures(features.filter(Boolean), emergencyResourceStyle(item.name), 3);
+                  this.mapManager.getMap().getView().fit(layer.getSource().getExtent());
                   this.resourceLayer.push({
                     key:item.key,
                     layer:layer
@@ -342,6 +343,7 @@ export default {
                 return point;
               });
               this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
+              this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getExtent());
             })
           }
         },
@@ -374,7 +376,6 @@ export default {
                     this.emergencyResourceLayer.getSource().clear();
                   }
                   this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
-                  debugger;
                   this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getExtent());
                 })
               }
@@ -395,7 +396,6 @@ export default {
                   return point;
                 });
                 this.selectType[index].layer = this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
-                debugger;
                 this.mapManager.getMap().getView().fit(this.selectType[index].layer.getSource().getExtent());
                 // this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
               })
