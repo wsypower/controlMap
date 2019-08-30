@@ -221,9 +221,9 @@ export default {
     created(){},
     mounted(){
         let _this = this;
-        const p1 = this.getYuAnDataList().then((res) => {
+        const p1 = this.getYuAnDataList({pageSize: 100}).then((res) => {
             // console.log('getYuAnDataList',res);
-            this.typeList = res;
+            this.typeList = res.list;
         });
         const p2 = this.getAllLevelData().then((res)=>{
             // console.log('getAllLevelData',res);

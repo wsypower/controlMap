@@ -85,7 +85,7 @@
             },
             //删除阶段
             deleteItem(index){
-                this.stageData.slice(index,1);
+                this.stageData.splice(index,1);
             }
         }
     }
