@@ -16,7 +16,7 @@
                      :key="index"
                      class="item"
                      flex="dir:left cross:center main:justify">
-                    <span class="title">{{item.name}}</span>
+                    <span class="title" :title="item.name">{{item.name}}</span>
                     <span class="operate">
                         <a-icon type="edit" style="color:#2b90f3;cursor: pointer;" @click="editYuAnItem(item.id)"/>
                         <i class="sep"></i>
@@ -177,6 +177,10 @@
                         font-family: PingFang-SC-Medium;
                         font-size: 14px;
                         color: #333333;
+                        max-width: 200px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
                     }
                     .operate{
                         .sep{
