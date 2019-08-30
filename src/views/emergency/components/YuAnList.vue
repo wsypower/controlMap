@@ -108,7 +108,7 @@
                                 _this.getYuAnList();
                             }
                             else{
-                                this.$warning({
+                                _this.$warning({
                                     title: '提醒',
                                     content: res,
                                 });
