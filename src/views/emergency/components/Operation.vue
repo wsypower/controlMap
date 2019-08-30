@@ -374,6 +374,8 @@ export default {
                     this.emergencyResourceLayer.getSource().clear();
                   }
                   this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
+                  debugger;
+                  this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getExtent());
                 })
               }
               else {
@@ -392,10 +394,9 @@ export default {
                   point.set('id', p.id);
                   return point;
                 });
-                if (this.emergencyResourceLayer) {
-                  this.emergencyResourceLayer.getSource().clear();
-                }
                 this.selectType[index].layer = this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
+                debugger;
+                this.mapManager.getMap().getView().fit(this.selectType[index].layer.getSource().getExtent());
                 // this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
               })
             }
