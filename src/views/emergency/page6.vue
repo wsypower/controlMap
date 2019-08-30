@@ -463,7 +463,8 @@ export default {
         //预案中心点图标图层
         this.emergencyCenterLayer = this.mapManager.addVectorLayerByFeatures([point], emergencyCenterStyle(), 3);
         this.pushPageLayers(this.emergencyCenterLayer);
-        this.mapManager.locateTo([parseFloat(data.positionX), parseFloat(data.positionY)])
+        this.mapManager.getMap().getView().fit(this.emergencyLayer.getSource().getExtent());
+        // this.mapManager.locateTo([parseFloat(data.positionX), parseFloat(data.positionY)])
       }
       else{
         this.setSelectEmergencyFeature(null);

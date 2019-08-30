@@ -73,7 +73,7 @@ export function postFeature(data) {
  */
 export function getVideoListApi() {
   return request({
-    url: baseApi+'point/getCamList',
+    url: baseApi + 'point/getCamList',
     method: 'post'
   });
 }
