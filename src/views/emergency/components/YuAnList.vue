@@ -124,7 +124,7 @@
             //导出预案Excel，包括人员、资源、场地
             exportYuAnExcel(id){
                 console.log('exportYuAnExcel',id);
-                window.open('http://192.168.71.238:8015/api/emergencyplan/exportResourceExcel?id=' + id);
+                window.open(URL_CONFIG.baseURL + '/emergencyplan/exportResourceExcel?id=' + id);
             }
         }
 
