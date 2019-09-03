@@ -291,6 +291,30 @@ export default {
           const type=feature.get('key');
           console.log(info);
           console.log(type);
+          if(type==='car'){
+              this.tipComponentId = CarInfo;
+              this.infoData = info;
+              this.iconName = '';
+              this.modalTitle = '市政环卫车辆';
+              this.subTitle = '';
+              this.yuAnOverlay.setPosition(coordinate)
+          }
+          if(type==='terminal'){
+              this.tipComponentId = PeopleInfo;
+              this.infoData = info;
+              this.iconName = '';
+              this.modalTitle = '执法终端';
+              this.subTitle = '';
+              this.yuAnOverlay.setPosition(coordinate)
+          }
+          if(type==='manager'){
+              this.tipComponentId = PeopleInfo;
+              this.infoData = info;
+              this.iconName = '';
+              this.modalTitle = '管理人员';
+              this.subTitle = '';
+              this.yuAnOverlay.setPosition(coordinate)
+          }
         }
         else if(feature.get('pointType')=='video'){
           //视频弹框

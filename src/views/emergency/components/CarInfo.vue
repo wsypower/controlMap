@@ -30,7 +30,7 @@
         div{
             span:first-child{
                 display:inline-block;
-                width: 70px;
+                width: 60px;
             }
             span:last-child{
                 display:inline-block;
