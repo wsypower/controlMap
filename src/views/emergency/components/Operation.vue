@@ -393,6 +393,8 @@ export default {
                     geometry: new Point(p.position)
                   });
                   point.set('id', p.id);
+                  point.set('info',p.info);
+                  point.set('pointType','bestResource')
                   return point;
                 });
                 this.selectType[index].layer = this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
@@ -410,7 +412,16 @@ export default {
             }
           }
         },
-    }
+    },
+      beforeDestroy(){
+        this.mapManager.removeLayer(this.emergencyResourceLayer);
+        this.selectType.map(item =>{
+          item.layer && this.mapManager.removeLayer(item.layer);
+        });
+        this.resourceLayer.map(item=>{
+          item.layer && this.mapManager.removeLayer(item.layer);
+        })
+      }
 }
 </script>
 <style lang="scss" scoped>

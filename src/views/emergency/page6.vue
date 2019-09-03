@@ -245,7 +245,7 @@ export default {
         console.log('videofeature',feature);
       if (feature && feature.get('pointType')) {
         if(feature.get('pointType')=='people'){
-          //给弹框内容赋值
+          //人员弹框
           console.log(feature.get('userid'));
           this.getPersonInfo({Id:feature.get('userid')}).then(res => {
               console.log('getPersonInfo',res)
@@ -260,6 +260,7 @@ export default {
           })
         }
         else if(feature.get('pointType')=='resource'){
+          //物资弹框
           const info=feature.get('info');
           console.log('info',info);
           let icon = '';
@@ -278,12 +279,18 @@ export default {
           this.tipComponentId = ResourceInfo;
           this.yuAnOverlay.setPosition(coordinate);
         }
+        else if(feature.get('pointType')=='bestResource'){
+          //最优资源弹框
+          const info=feature.get('info');
+          console.log(info);
+        }
         else if(feature.get('pointType')=='video'){
+          //视频弹框
           console.log('video code',feature.get('id'));
           this.openCameraDevice(feature.get('id'));
         }
         else{
-          //给弹框内容赋值
+          //预案点击弹框
           // this.$refs.yuAnOverlay.$el.style.width='482px';
           // this.$refs.yuAnOverlay.$el.style.height='254px';
           this.tipComponentId = YuAnInfo;
