@@ -24,7 +24,7 @@
             @onClick="clickDataItem(index)"
           >
           </event-item>
-          <div v-if="dataArr.length > 10" class="pagination-panel">
+          <div v-if="totalSize > 10" class="pagination-panel">
             <a-pagination
                     :total="totalSize"
                     :showTotal="total => `共 ${total} 条`"
@@ -635,6 +635,7 @@ export default {
     color: #ffffff;
     cursor: pointer;
     &.disable{
+      background-color: #b0b0ad;
       cursor: not-allowed;
     }
   }

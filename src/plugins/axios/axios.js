@@ -139,6 +139,10 @@ service.interceptors.response.use(
         // [ 示例 ] code === 0 代表成功
         success(response.config.url)
         return dataAxios.result
+      case 2:
+        // [ 示例 ] code === 2 特例，删除时因为被使用而不能删除
+        success(response.config.url)
+        return dataAxios.result
       case 401:
         // [ 示例 ] code === 401 代表没有权限
         errorCreate(`${dataAxios.msg}`)

@@ -16,7 +16,7 @@
                      :key="index"
                      class="item"
                      flex="dir:left cross:center main:justify">
-                    <span class="title">{{item.name}}</span>
+                    <span class="title" :title="item.name">{{item.name}}</span>
                     <span class="operate">
                         <a-icon type="edit" style="color:#2b90f3;cursor: pointer;" @click="editYuAnItem(item.id)"/>
                         <i class="sep"></i>
@@ -24,6 +24,15 @@
                         <i class="sep"></i>
                         <a-icon type="delete" style="color:#2b90f3;cursor: pointer;" @click="deleteYuAnItem(item.id,index)"/>
                     </span>
+                </div>
+                <div v-if="totalSize > 10" class="pagination-panel">
+                    <a-pagination
+                            :total="totalSize"
+                            :showTotal="total => `共 ${total} 条`"
+                            :pageSize="10"
+                            :defaultCurrent="query.pageNo"
+                            @change="changePagination"
+                    />
                 </div>
             </div>
         </div>
@@ -35,8 +44,13 @@
         name: 'yuAnList',
         data(){
             return {
-                searchContent: '',
-                yuAnList: []
+                query:{
+                    searchContent: '',
+                    pageNo: 1,
+                    pageSize: 10
+                },
+                yuAnList: [],
+                totalSize: 0,
             }
         },
         mounted(){
@@ -47,14 +61,21 @@
             init(){},
             //查询预案
             onSearch(val){
-               this.searchContent = val;
+               this.query.searchContent = val;
+               this.query.pageNo = 1;
                this.getYuAnList();
             },
             //获取所有预案数据
             getYuAnList(){
-                this.getYuAnDataList({'searchContent':this.searchContent}).then((res)=>{
-                    this.yuAnList = res;
+                this.getYuAnDataList(this.query).then((res)=>{
+                    this.yuAnList = res.list;
+                    this.totalSize = res.total;
                 });
+            },
+            //翻页
+            changePagination(pageNo, pageSize) {
+                this.query.pageNo = pageNo;
+                this.getYuAnList()
             },
             //新增预案
             addYuAn(){
@@ -81,7 +102,18 @@
                     cancelText: '取消',
                     onOk() {
                         _this.deleteYuAn({id:id}).then((res)=>{
-                            _this.yuAnList.splice(index,1);
+                            console.log('deleteYuAnItem',res);
+                            if(res===undefined){
+                                // _this.yuAnList.splice(index,1);
+                                _this.getYuAnList();
+                            }
+                            else{
+                                _this.$warning({
+                                    title: '提醒',
+                                    content: res,
+                                });
+                            }
+
                         });
                     },
                     onCancel() {
@@ -92,7 +124,7 @@
             //导出预案Excel，包括人员、资源、场地
             exportYuAnExcel(id){
                 console.log('exportYuAnExcel',id);
-                window.open('http://192.168.71.238:8015/api/emergencyplan/exportResourceExcel?id=' + id);
+                window.open(URL_CONFIG.baseURL + '/emergencyplan/exportResourceExcel?id=' + id);
             }
         }
 
@@ -145,6 +177,10 @@
                         font-family: PingFang-SC-Medium;
                         font-size: 14px;
                         color: #333333;
+                        max-width: 200px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
                     }
                     .operate{
                         .sep{
@@ -156,6 +192,10 @@
                         }
                     }
                 }
+            }
+            .pagination-panel {
+                text-align: right;
+                padding-top: 10px;
             }
         }
     }
