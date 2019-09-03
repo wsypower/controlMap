@@ -282,7 +282,9 @@ export default {
         else if(feature.get('pointType')=='bestResource'){
           //最优资源弹框
           const info=feature.get('info');
+          const type=feature.get('key');
           console.log(info);
+          console.log(type);
         }
         else if(feature.get('pointType')=='video'){
           //视频弹框

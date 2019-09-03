@@ -394,7 +394,8 @@ export default {
                   });
                   point.set('id', p.id);
                   point.set('info',p.info);
-                  point.set('pointType','bestResource')
+                  point.set('pointType','bestResource');
+                  point.set('key',item.key);
                   return point;
                 });
                 this.selectType[index].layer = this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
