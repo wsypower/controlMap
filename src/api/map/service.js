@@ -89,6 +89,7 @@ export async function getTypeResources(type) {
       return {
         id: r.id,
         position: r.position,
+        info:r.info
       }
     }
   });
