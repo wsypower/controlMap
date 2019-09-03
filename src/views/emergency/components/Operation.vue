@@ -412,7 +412,16 @@ export default {
             }
           }
         },
-    }
+    },
+      beforeDestroy(){
+        this.mapManager.removeLayer(this.emergencyResourceLayer);
+        this.selectType.map(item =>{
+          item.layer && this.mapManager.removeLayer(item.layer);
+        });
+        this.resourceLayer.map(item=>{
+          item.layer && this.mapManager.removeLayer(item.layer);
+        })
+      }
 }
 </script>
 <style lang="scss" scoped>
