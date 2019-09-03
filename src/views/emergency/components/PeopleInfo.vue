@@ -1,9 +1,6 @@
 <template>
     <div class="info">
-        <div><span>车牌：</span><span>{{info.carNumber}}</span></div>
-        <div><span>类型：</span><span>{{info.unit}}</span></div>
-        <div><span>GPS：</span><span>{{info.GPS}}</span></div>
-        <div><span>驾驶员：</span><span>{{info.driver}}</span></div>
+        <div><span>姓名：</span><span>{{info.name}}</span></div>
         <div><span>电话：</span><span>{{info.phone}}</span></div>
     </div>
 </template>

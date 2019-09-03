@@ -1,9 +1,9 @@
 <template>
     <div class="info">
         <div><span>设备名称：</span><span>{{info.name}}</span></div>
-        <div><span>驾驶员：</span><span>{{info.type}}</span></div>
-        <div><span>电话：</span><span>{{info.person}}</span></div>
-        <div><span>编号：</span><span>{{info.tel}}</span></div>
+        <div><span>驾驶员：</span><span>{{info.driver}}</span></div>
+        <div><span>电话：</span><span>{{info.phone}}</span></div>
+        <div><span>编号：</span><span>{{info.number}}</span></div>
     </div>
 </template>
 <script type="text/ecmascript-6">

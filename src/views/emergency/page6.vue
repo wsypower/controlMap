@@ -91,6 +91,9 @@ import ResourceInfo from './components/ResourceInfo.vue'
 import YuAnList from './components/YuAnList.vue'
 import EventYuAnForm from './components/EventYuAnForm.vue'
 import YuAnForm from './components/YuAnForm.vue'
+import CarInfo from './components/CarInfo.vue'
+import GPSInfo from './components/GPSInfo.vue'
+import PeopleInfo from './components/PeopleInfo.vue'
 import { getAllEmergencyArea, postEmergencyArea } from '@/api/map/service'
 import { emergencyAreaStyle, emergencyCenterStyle,emergencyPeopleStyle } from '@/utils/util.map.style'
 import { stampConvertToTime } from '@/utils/util.tool'
@@ -202,7 +205,10 @@ export default {
     UserInfo,
     YuAnList,
     YuAnForm,
-    EventYuAnForm
+    EventYuAnForm,
+    CarInfo,
+    GPSInfo,
+    PeopleInfo
   },
   computed: {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
