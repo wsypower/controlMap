@@ -388,7 +388,6 @@ export default {
               // this.selectType[index].checked = !this.selectType[index].checked;
               //获取其他类型的应急资源
               getTypeResources(item.key).then(points => {
-                console.log('周边最优资源==',points)
                 const features = points.map(p => {
                   const point = new Feature({
                     geometry: new Point(p.position)
