@@ -8,7 +8,7 @@
                         <a-input v-model="yuAnForm.name" placeholder="请输入" style="width: 240px;"/>
                     </div>
                     <yu-an-stage :stageData.sync="stageData"></yu-an-stage>
-                    <yu-an-people :peopleData.sync="peopleData"></yu-an-people>
+                    <yu-an-people :peopleData.sync="peopleData" @getResult="getPeopleResult"></yu-an-people>
                     <yu-an-resource :resourceData.sync="resourceData" @getResult="getResourceResult"></yu-an-resource>
                     <yu-an-place :placeData.sync="placeData" @getResult="getPlaceResult"></yu-an-place>
                 </div>
@@ -75,6 +75,7 @@
                     groupThreeForTwo: [],
                     groupThreeForThree: []
                 },
+                peopleResultData:{},
                 resourceData: [],
                 resourceResultData: [],
                 placeData: [],
@@ -120,6 +121,11 @@
                }
                return true
             },
+            //应急人员数据更新
+            getPeopleResult(data){
+                this.peopleResultData = JSON.parse(JSON.stringify(data));
+                // console.log('peopleResultData',this.peopleResultData);
+            },
             //应急资源数据变更
             getResourceResult(data){
                 this.resourceResultData = JSON.parse(JSON.stringify(data));
@@ -130,14 +136,14 @@
             },
             //保存预案
             save(){
-                console.log('saveYuAn',this.stageData,this.peopleData,this.resourceResultData,this.placeResultData);
+                console.log('saveYuAn',this.stageData,this.peopleResultData,this.resourceResultData,this.placeResultData);
                 if(!this.checkParams()){
                     return
                 }
                 else{
                     //掉保存接口
                     this.yuAnForm.stageData = JSON.stringify(this.stageData);
-                    this.yuAnForm.peopleData = JSON.stringify(this.peopleData);
+                    this.yuAnForm.peopleData = JSON.stringify(this.peopleResultData);
                     this.yuAnForm.resourceData = JSON.stringify(this.resourceResultData);
                     this.yuAnForm.placeData = JSON.stringify(this.placeResultData);
                     console.log('saveYuAn yuAnForm',this.yuAnForm);

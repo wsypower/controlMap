@@ -6,7 +6,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">组长：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.leaderOne"
+                              v-model="peopleDisplayData.leaderOne"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderOne')}"
                               placeholder="请选择"
@@ -19,7 +19,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副组长：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.leaderTwo"
+                              v-model="peopleDisplayData.leaderTwo"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderTwo')}"
                               placeholder="请选择"
@@ -32,7 +32,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">组员：</label>
                         <a-select mode="multiple"
-                                  v-model="peopleData.leaderThree"
+                                  v-model="peopleDisplayData.leaderThree"
                                   style="width: 100%"
                                   @change="(val)=>{changeSelect(val,'leaderThree')}"
                                   placeholder="请选择"
@@ -45,7 +45,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">主任：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.leaderFour"
+                              v-model="peopleDisplayData.leaderFour"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderFour')}"
                               placeholder="请选择"
@@ -58,7 +58,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副主任：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.leaderFive"
+                              v-model="peopleDisplayData.leaderFive"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderFive')}"
                               placeholder="请选择"
@@ -73,7 +73,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">队长：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.memberOne"
+                              v-model="peopleDisplayData.memberOne"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'memberOne')}"
                               placeholder="请选择"
@@ -86,7 +86,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副队长：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.memberTwo"
+                              v-model="peopleDisplayData.memberTwo"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'memberTwo')}"
                               placeholder="请选择"
@@ -102,7 +102,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">组长：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.groupOneForOne"
+                              v-model="peopleDisplayData.groupOneForOne"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupOneForOne')}"
                               placeholder="请选择"
@@ -115,7 +115,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副组长：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.groupOneForTwo"
+                              v-model="peopleDisplayData.groupOneForTwo"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupOneForTwo')}"
                               placeholder="请选择"
@@ -128,7 +128,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">队员：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.groupOneForThree"
+                              v-model="peopleDisplayData.groupOneForThree"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupOneForThree')}"
                               placeholder="请选择"
@@ -144,7 +144,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">组长：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.groupTwoForOne"
+                              v-model="peopleDisplayData.groupTwoForOne"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupTwoForOne')}"
                               placeholder="请选择"
@@ -157,7 +157,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副组长：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.groupTwoForTwo"
+                              v-model="peopleDisplayData.groupTwoForTwo"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupTwoForTwo')}"
                               placeholder="请选择"
@@ -170,7 +170,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">队员：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.groupTwoForThree"
+                              v-model="peopleDisplayData.groupTwoForThree"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupTwoForThree')}"
                               placeholder="请选择"
@@ -186,7 +186,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">组长：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.groupThreeForOne"
+                              v-model="peopleDisplayData.groupThreeForOne"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupThreeForOne')}"
                               placeholder="请选择"
@@ -199,7 +199,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">副组长：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.groupThreeForTwo"
+                              v-model="peopleDisplayData.groupThreeForTwo"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupThreeForTwo')}"
                               placeholder="请选择"
@@ -212,7 +212,7 @@
                 <div class="col-panel" flex="dir:left">
                     <label class="subtitle">队员：</label>
                     <a-select mode="multiple"
-                              v-model="peopleData.groupThreeForThree"
+                              v-model="peopleDisplayData.groupThreeForThree"
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupThreeForThree')}"
                               placeholder="请选择"
@@ -295,6 +295,18 @@
            }
         },
         watch:{
+            peopleData:{
+                handler(newValue){
+                    Object.keys(newValue).forEach(key=>{
+                        newValue[key].forEach(id=>{
+                            let data = this.totalPeople.filter(item => item.id===id)
+                            console.log('data',data);
+                            this.peopleDisplayData[key].push(data[0].name + '_' + data[0].id);
+                        })
+                    });
+                },
+                deep: true
+            },
             peopleDisplayData:{
                 handler(newValue,oldValue){
                     // console.log('watch peopleDisplayData',newValue);
@@ -322,7 +334,6 @@
                         })
 
                     });
-                    console.log('resultData',resultData);
                     this.$emit('getResult', resultData);
                 },
                 deep: true
@@ -332,14 +343,6 @@
             this.getAllPeopleDataList().then((res)=>{
                 this.totalPeople = res;
                 this.canSelectPeople = this.totalPeople;
-                Object.keys(this.peopleData).forEach(key=>{
-                    this.peopleData[key].forEach(id=>{
-                        let data = this.totalPeople.filter(item => item.id===id)
-                        this.peopleDisplayData[key].push(data.name + '_' + data.id);
-                    })
-
-                });
-
             });
         },
         mounted(){

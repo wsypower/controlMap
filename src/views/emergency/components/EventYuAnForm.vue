@@ -155,11 +155,10 @@
                 this.areaMapDialogVisible = true;
                 this.mapId = this.eventInfo.mapId;
             },
-            //应急人员
+            //应急人员数据更新
             getPeopleResult(data){
-                console.log(1111111);
                 this.peopleResultData = JSON.parse(JSON.stringify(data));
-                console.log('peopleResultData',this.peopleResultData);
+                // console.log('peopleResultData',this.peopleResultData);
             },
             //应急资源数据更新
             getResourceResult(data){
@@ -175,7 +174,7 @@
             },
             //启动预案
             startYuAnEvent(){
-                console.log('startYuAnEvent',this.stageData,this.peopleData,this.resourceResultData,this.placeResultData);
+                console.log('startYuAnEvent',this.stageData,this.peopleResultData,this.resourceResultData,this.placeResultData);
 
                 //调启动接口
                 this.eventYuAnForm.id = this.eventInfo.id;
