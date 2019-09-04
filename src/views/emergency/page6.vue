@@ -336,7 +336,7 @@ export default {
 
     //打开摄像头第三方插件
     openCameraDevice(code){
-        axios.get('http://192.168.71.33:8015/api/sp/getSecretApi')
+        axios.get('http://61.153.37.214:81/api/sp/getSecretApi')
             .then(function (response) {
                 if(response){
                     let PalyType = "PlayReal";
