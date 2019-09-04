@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <yu-an-stage :stageData.sync="stageData"></yu-an-stage>
-                    <yu-an-people :peopleData.sync="peopleData"></yu-an-people>
+                    <yu-an-people :peopleData.sync="peopleData" @getResult="getPeopleResult"></yu-an-people>
                     <yu-an-resource :resourceData.sync="resourceData" @getResult="getResourceResult"></yu-an-resource>
                     <yu-an-place :placeData.sync="placeData" @getResult="getPlaceResult"></yu-an-place>
                 </div>
@@ -129,6 +129,7 @@
                     groupThreeForTwo: [],
                     groupThreeForThree: []
                 },
+                peopleResultData:{},
                 resourceData: [],
                 resourceResultData: [],
                 placeData: [],
@@ -154,6 +155,12 @@
                 this.areaMapDialogVisible = true;
                 this.mapId = this.eventInfo.mapId;
             },
+            //应急人员
+            getPeopleResult(data){
+                console.log(1111111);
+                this.peopleResultData = JSON.parse(JSON.stringify(data));
+                console.log('peopleResultData',this.peopleResultData);
+            },
             //应急资源数据更新
             getResourceResult(data){
                 this.resourceResultData = JSON.parse(JSON.stringify(data));
@@ -173,7 +180,7 @@
                 //调启动接口
                 this.eventYuAnForm.id = this.eventInfo.id;
                 this.eventYuAnForm.stageData = JSON.stringify(this.stageData);
-                this.eventYuAnForm.peopleData = JSON.stringify(this.peopleData);
+                this.eventYuAnForm.peopleData = JSON.stringify(this.peopleResultData);
                 this.eventYuAnForm.resourceData = JSON.stringify(this.resourceResultData);
                 this.eventYuAnForm.placeData = JSON.stringify(this.placeResultData);
                 console.log('startYuAn eventYuAnForm',this.eventYuAnForm);

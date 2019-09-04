@@ -56,7 +56,7 @@
                     :wrapper-col="{ span: 12 }"
                   >
                       <a-range-picker
-                              v-decorator="['rangeDay', config]"
+                              v-model="rangeDay"
                               :placeholder="['开始日期', '结束日期']"
                               showTime
                               format="YYYY-MM-DD HH:mm"
@@ -70,14 +70,6 @@
                   >
                     <a-input v-decorator="['position',configText]"
                              placeholder="请输入" style="width: 277px" />
-                  </a-form-item>
-                  <a-form-item
-                    label="信息"
-                    :label-col="{ span: 5 }"
-                    :wrapper-col="{ span: 12 }"
-                  >
-                    <a-textarea v-decorator="['description',configText]"
-                            placeholder="请输入" :rows="2" :autosize="{minRows: 1, maxRows: 1}" style="width: 277px" />
                   </a-form-item>
                   <a-form-item
                     label="区域"
@@ -97,6 +89,14 @@
                           {{item.name}}
                       </a-select-option>
                     </a-select>
+                  </a-form-item>
+                  <a-form-item
+                          label="信息"
+                          :label-col="{ span: 5 }"
+                          :wrapper-col="{ span: 12 }"
+                  >
+                    <a-textarea v-decorator="['description',configText]"
+                                placeholder="请输入" :rows="2" :autosize="{minRows: 2, maxRows: 2}" style="width: 277px" />
                   </a-form-item>
                 </div>
             <!--</cg-container>-->
@@ -178,6 +178,7 @@ export default {
            mapCenter:null,//绘制区域中心点位坐标
            mapId:null,
            form: this.$form.createForm(this),
+            rangeDay: null,
             //校验配置
             config: {rules: [{ required: true, message: '请选择' }]},
             configText: {rules: [{ required: true, message: '请输入' }]},
@@ -244,11 +245,10 @@ export default {
                 name: _this.sourceData.name,
                 typeId: _this.sourceData.typeId,
                 levelId: _this.sourceData.levelId,
-                rangeDay: _this.sourceData.startDay?[moment(startDay, 'YYYY-MM-DD HH:mm'),moment(endDay, 'YYYY-MM-DD HH:mm')]:undefined,
                 position: _this.sourceData.position,
                 description: _this.sourceData.description
             });
-
+            _this.rangeDay = _this.sourceData.startDay?[moment(startDay, 'YYYY-MM-DD HH:mm'),moment(endDay, 'YYYY-MM-DD HH:mm')]:undefined,
             _this.image = _this.sourceData.imageStr?JSON.parse(_this.sourceData.imageStr):[];
             _this.fileList = _this.sourceData.fileStr?JSON.parse(_this.sourceData.fileStr):[];
             _this.imageUrl = _this.image[0]?_this.image[0].newPath:'';
@@ -455,9 +455,9 @@ export default {
                     if (this.sourceData.id) {
                         values.id = this.sourceData.id;
                     }
-                    if (values.rangeDay) {
-                        values.startDay = values.rangeDay[0]._d.getTime();
-                        values.endDay = values.rangeDay[1]._d.getTime();
+                    if (this.rangeDay) {
+                        values.startDay = this.rangeDay[0]._d.getTime();
+                        values.endDay = this.rangeDay[1]._d.getTime();
                     }
                     values.areaId = this.sourceData.areaId;
                     if (this.image.length > 0) {
@@ -475,7 +475,7 @@ export default {
                         }
                         values.fileStr = fileStr;
                     }
-                    delete values.rangeDay;
+                    // delete values.rangeDay;
                     console.log('form value: ', values);
                     if (this.sourceData.id) {
                         if (this.clickAreaEdit) {
@@ -557,7 +557,7 @@ export default {
 <style lang="scss" scoped>
 .yuan-body {
   width: 100%;
-  height: 410px;
+  height: 430px;
   background-color: #ffffff;
   .yuan-form {
     width: 100%;
@@ -631,7 +631,7 @@ export default {
 <style lang="scss">
   .scroll-height {
     .happy-scroll-container {
-      height: 320px !important;
+      height: 340px !important;
     }
   }
 </style>

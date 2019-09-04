@@ -409,8 +409,8 @@ export default {
         this.peopleLayer.getSource().clear();
       }
       this.dialogComponentId = EventForm
-      this.dWidth = 810
-      this.dHeight = 470
+      this.dWidth = 810;
+      this.dHeight = 490;
       this.dialogTitle = '新增事件'
       this.bodyPadding = [0, 10, 10, 10]
       this.sourceData = {};
