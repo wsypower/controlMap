@@ -157,6 +157,7 @@ export default {
           return point;
         });
         this.manholeLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
+        this.map.getView().fit(this.manholeLayer.getSource().getExtent());
         this.pushPageLayers(this.manholeLayer);
       })
     },

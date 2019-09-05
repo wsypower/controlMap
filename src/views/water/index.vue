@@ -161,6 +161,7 @@ export default {
           return point;
         });
         this.waterLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('8'), 3);
+        this.map.getView().fit(this.waterLayer.getSource().getExtent());
         this.pushPageLayers(this.waterLayer);
       })
     },
