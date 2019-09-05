@@ -223,7 +223,8 @@ export default {
       }, 400);
     this.yuAnOverlay = this.mapManager.addOverlay({
       element: this.$refs.yuAnOverlay.$el
-    })
+    });
+    this.setOverlay(this.yuAnOverlay);
     map = this.mapManager.getMap()
     map.on('click', this.mapClickHandler)
   },
@@ -243,7 +244,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('map', ['pushPageLayers','setEmergencyAllArea', 'setSelectEmergencyFeature']),
+    ...mapMutations('map', ['pushPageLayers','setEmergencyAllArea', 'setSelectEmergencyFeature','setOverlay']),
     ...mapActions('emergency/emergency', ['getEventDataList','deleteEvent']),
     //地图点击事件处理器
     mapClickHandler({ pixel, coordinate }) {
