@@ -1,7 +1,7 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 17:03:40
- * @Last Modified by: wei.yafei 
+ * @Last Modified by: wei.yafei
  * @Last Modified time: 2019-08-02 15:14:50
  */
 // Vue
@@ -23,6 +23,12 @@ import setting from '@/setting.js'
 //加载时间过滤器(依赖于dayjs)
 import vueFiltersDate from '@/filters/moment/main'
 Vue.use(vueFiltersDate)
+
+
+// 引入echarts
+import echarts from "echarts";
+Vue.prototype.$echarts = echarts;
+
 
 //mock => 生产环境(上线前请注释！！！)
 import '@/mock'

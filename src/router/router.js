@@ -1,7 +1,7 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
- * @Last Modified by: wei.yafei 
+ * @Last Modified by: wei.yafei
  * @Last Modified time: 2019-07-19 19:04:34
  */
 
@@ -26,7 +26,7 @@ const frameIn = [
   {
     path: '/',
     name: 'layoutHeaderAside',
-    // redirect: { path: '/section' },
+    redirect: { path: '/section' },
     component: layoutHeaderAside,
     meta: {
       title: '管控平台'
@@ -35,34 +35,12 @@ const frameIn = [
       //测试 => page1
       {
         path: '/section',
-        name: 'section',
+        name: 'people',
         meta: {
           title: '人员管控',
           role: ['admin', 'super_editor']
         },
-        component: _import('section/page1.vue'),
-        redirect: { path: '/section/warnList' },
-        children: [
-          {
-            name: 'warnList',
-            path: '/section/warnList',
-            meta: {
-              title: '人员管控列表',
-              role: ['admin', 'super_editor'],
-              cache: true
-            },
-            component: _import('section/list.vue')
-          },
-          //列表详情
-          {
-            path: '/section/warnDetails',
-            meta: {
-              title: '人员管控详情',
-              role: ['admin', 'super_editor']
-            },
-            component: _import('section/details.vue')
-          }
-        ]
+        component: _import('section/index.vue')
       },
       //测试 => page2
       {
