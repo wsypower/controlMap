@@ -9,6 +9,8 @@ if (process.env.NODE_ENV !== 'production') {
   // 防止 vuex 中的 GetInfo 早于 mock 运行，导致无法 mock 请求返回结果
   require('./services/user')
   require('./services/add')
+  require('./services/common')
+  require('./section/statistical')
   Mock.setup({
     timeout: 800 // setter delay time
   })

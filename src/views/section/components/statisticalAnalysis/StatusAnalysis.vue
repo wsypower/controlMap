@@ -6,9 +6,9 @@
         <div class="panel-content">
             <div class="status-choose-panel">
                 <a-radio-group @change="onChange" v-model="status">
-                    <a-radio value="all">全部(630)</a-radio>
-                    <a-radio value="online">在线(100)</a-radio>
-                    <a-radio value="outline">离线(530)</a-radio>
+                    <a-radio value="all">全部({{totalNum}})</a-radio>
+                    <a-radio value="online">在线({{onlineNum}})</a-radio>
+                    <a-radio value="outline">离线({{outlineNum}})</a-radio>
                 </a-radio-group>
             </div>
             <div id="status"></div>
@@ -17,36 +17,68 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
+    import { mapActions } from 'vuex'
     export default {
         name: 'StatusAnalysis',
         data(){
             return {
-                status: 'all'
+                status: 'all',
+                totalNum: 0,
+                onlineNum: 0,
+                outlineNum: 0,
+                totalArr: [],
+                onlineArr: [],
+                outlineArr: []
             }
         },
         mounted(){
             this.getChartData();
         },
         methods:{
+            ...mapActions('section/statistical', ['getStatusAnalysisData']),
             onChange(val){
-                console.log('status:change',val);
+                console.log('status:change',val,this.status);
+                if(this.status==='all'){
+                    this.chartInit(this.totalArr,this.totalNum);
+                }
+                else if(this.status==='online'){
+                    this.chartInit(this.onlineArr,this.onlineNum);
+                }
+                else{
+                    this.chartInit(this.outlineArr,this.outlineNum);
+                }
             },
             getChartData(){
-                this.chartInit();
-            },
-            chartInit(){
-                let data = [{'name':'市本级指挥中心1','value': 24},
-                    {'name':'市本级指挥中心2','value': 24},
-                    {'name':'信息采集中心1','value': 34},
-                    {'name':'信息采集中心2','value': 17},
-                    {'name':'信息采集中心3','value': 78},
-                    {'name':'信息采集中心4','value': 31},
-                    {'name':'信息采集中心5','value': 8},
-                    {'name':'信息采集中心6','value': 1},
-                    {'name':'信息采集中心7','value': 45},
-                    {'name':'信息采集中心8','value': 77},
-                    {'name':'信息采集中心9','value': 51}]
+                this.getStatusAnalysisData().then(res=>{
+                    console.log('getStatusAnalysisData',res);
+                    res.data.forEach(item=>{
+                        let allTemp = {
+                            name: item.name,
+                            value: item.totalNum
+                        }
+                        this.totalNum += item.totalNum;
+                        this.totalArr.push(allTemp);
 
+                        let onlineTemp = {
+                            name: item.name,
+                            value: item.onlineNum
+                        }
+                        this.onlineNum += item.onlineNum;
+                        this.onlineArr.push(onlineTemp);
+
+                        let outlineTemp = {
+                            name: item.name,
+                            value: item.outlineNum
+                        }
+                        this.outlineNum += item.outlineNum;
+                        this.outlineArr.push(outlineTemp);
+                    })
+                    console.log('dataHandle',this.totalArr,this.onlineArr,this.outlineArr);
+                    this.chartInit(this.totalArr,this.totalNum);
+                })
+
+            },
+            chartInit(data,total){
                 const ChartColumnar = this.$echarts.init(document.getElementById('status'));
                 ChartColumnar.setOption({
                     grid: {
@@ -57,21 +89,21 @@
                         containLabel: true
                     },
                     title: {
-                        text: 630,
+                        text: total,
                         subtext: "人员总数",
                         itemGap: 5,
                         top: 75,
-                        left: 73,
-                        //textAlign:"center",
+                        left: 95,
+                        textAlign:"center",
                         textStyle: {
                             color: "#333333",
                             fontSize: 23,
                             width: 200,
-                            align: 'center',
+                            align: 'right',
                             rich:{
                                 a:{
-                                    width:100,
-                                    align: 'center'
+                                    width:80,
+                                    align: 'right'
                                 }
                             }
                         },
@@ -81,7 +113,7 @@
                         }
                     },
                     tooltip: {
-                        show: false
+                        show: true
                     },
                     legend: {
                         type: 'scroll',
@@ -105,33 +137,8 @@
                         radius: ["40%", "50%"],
                         color: ["#febb08", "#f07171", "#50cf3f", "#2c90f3", "#3fcfc0", "#7c2cf3", "#ba6112", "#FE2C8A"],
                         startAngle: 135,
-                        // labelLine: {
-                        //     "normal": {
-                        //         "length": 25
-                        //     }
-                        // },
                         label: {
-                            normal: {
-                                formatter: "{c|{c}}",
-                                rich: {
-                                    "c": {
-                                        "color": "#333333",
-                                        "fontSize": 12
-                                    }
-                                }
-                            }
-                        },
-                        emphasis: {
-                            label: {
-                                show: true,
-                                formatter: "{c|{c}}",
-                                rich: {
-                                    "c": {
-                                        "fontSize": 16,
-                                        "color": "#222222"
-                                    }
-                                }
-                            }
+                            show: false
                         },
                         data: data
                     }]

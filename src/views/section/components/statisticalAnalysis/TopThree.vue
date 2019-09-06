@@ -20,6 +20,7 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
+    import { mapActions } from 'vuex'
     export default {
         name: 'TopThree',
         data(){
@@ -31,10 +32,13 @@
             this.getChartData();
         },
         methods:{
+            ...mapActions('section/statistical', ['getPeopleTopThreeData']),
             getChartData(){
-                this.topData = [{'photoUrl':'','name':'许三多','dept':'新昌县指挥平台','sbajs': 56,'hsajs':48,'hcajs':36},
-                    {'photoUrl':'','name':'许三多','dept':'新昌县指挥平台','sbajs': 50,'hsajs':31,'hcajs':30},
-                    {'photoUrl':'','name':'许三多','dept':'新昌县指挥平台','sbajs': 41,'hsajs':29,'hcajs':36}]
+                this.getPeopleTopThreeData().then(res=>{
+                    console.log('getPeopleTopThreeData',res);
+                    this.topData = res.data;
+                });
+
             }
 
         }

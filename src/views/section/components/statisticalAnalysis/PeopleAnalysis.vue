@@ -12,26 +12,40 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
+    import { mapActions } from 'vuex'
     export default {
         name: 'PeopleAnalysis',
         data(){
             return {
-
+                chartData: []
             }
         },
         mounted(){
             this.getChartData();
         },
         methods:{
+            ...mapActions('section/statistical', ['getPeopleAnalysisData']),
             getChartData(){
-                this.chartInit();
+                this.getPeopleAnalysisData().then(res=>{
+                    console.log('getPeopleAnalysisData', res);
+                    let gArr = [], allArr = [], onWorkArr = [], onLineArr = [];
+                    res.data.forEach(item=>{
+                        gArr.push(item.groupName);
+                        allArr.push(item.allNum);
+                        onWorkArr.push(item.onWorkNum);
+                        onLineArr.push(item.onlineNum);
+                    })
+                    this.chartData.push(gArr);
+                    this.chartData.push(onWorkArr);
+                    this.chartData.push(onLineArr);
+                    this.chartData.push(allArr);
+                    console.log('this.chartData',this.chartData);
+                    this.chartInit();
+                });
+
             },
             chartInit(){
-                let data =[['中队名称','中队名称','中队名称','中队名称','中队名称','中队名称','中队名称'],
-                    ['90','130','70','180','150','130','115'],
-                    ['220','195','160','230','180','230','180'],
-                    ['310','275','260','290','240','290','240']];
-
+                let _this = this;
                 const ChartColumnar = this.$echarts.init(document.getElementById('analysis'));
                 ChartColumnar.setOption({
                     grid: {
@@ -67,10 +81,36 @@
 
                     },
                     yAxis: {
-                        data: data[0],
+                        data: _this.chartData[0],
                         axisLabel: {
                             fontSize: 12,
-                            color: '#333333'
+                            color: '#333333',
+                            align: 'right',
+                            width: 80,
+                            interval: 0,
+                            formatter:function(value){
+                                var result = "";//拼接加\n返回的类目项
+                                var maxLength = 4;//每项显示文字个数
+                                var valLength = value.length;//X轴类目项的文字个数
+                                var rowNumber = Math.ceil(valLength / maxLength); //类目项需要换行的行数
+                                if (rowNumber > 1)//如果文字大于3,
+                                {
+                                    for (var i = 0; i < rowNumber ; i++) {
+                                        var temp = "";//每次截取的字符串
+                                        var start = i * maxLength;//开始截取的位置
+                                        var end = start + maxLength;//结束截取的位置
+                                        temp = value.substring(start, end) + "\n";
+                                        result += temp; //拼接生成最终的字符串
+                                    }
+                                    return result ;
+                                }
+                                else {
+                                    return value;
+                                }
+                            },
+                            rich:{
+                                a:{}
+                            }
                         },
                         axisLine: {
                             show: true,
@@ -93,11 +133,11 @@
                             show: true,
                             position: 'right',
                             fontSize: 12,
-                            color: '#dddddd',
+                            color: '#ccc',
                             formatter: function(params){
-                                return data[1][params.dataIndex]
-                                    + '/' + data[2][params.dataIndex]
-                                    +'/'+ data[3][params.dataIndex]
+                                return _this.chartData[1][params.dataIndex]
+                                    + '/' + _this.chartData[2][params.dataIndex]
+                                    +'/'+ _this.chartData[3][params.dataIndex]
                             }
                         },
                         barWidth: 8,
@@ -109,7 +149,7 @@
                                 color: '#a0a0a0'
                             }
                         },
-                        data: data[3]
+                        data: _this.chartData[3]
                     }, {
                         type: 'bar',
                         name: '在线',
@@ -124,7 +164,7 @@
                                 color: '#3296fa'
                             }
                         },
-                        data: data[2]
+                        data: _this.chartData[2]
                     },{
                         type: 'bar',
                         name: '在岗',
@@ -139,7 +179,7 @@
                                 color: '#50cf3f'
                             }
                         },
-                        data: data[1]
+                        data: _this.chartData[1]
                     }]
                 });
             }

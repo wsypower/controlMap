@@ -7,6 +7,7 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
+    import { mapActions } from 'vuex'
     export default {
         name: 'OverstepAnalysis',
         data(){
@@ -18,13 +19,24 @@
             this.getChartData();
         },
         methods:{
+            ...mapActions('section/statistical', ['getOverstepAnalysisData']),
             getChartData(){
-                this.chartInit();
-            },
-            chartInit(){
-                let data =[['01-23', '01-24', '01-25', '01-26', '01-27', '01-28', '01-29'],
-                    [80, 32, 91, 10, 56, 12, 50]];
+                this.getOverstepAnalysisData().then(res=>{
+                    console.log('getOverstepAnalysisData',res);
+                    let data = [],
+                        dayArr = [],
+                        numArr = [];
+                    res.data.forEach(item=>{
+                        dayArr.push(item.day);
+                        numArr.push(item.num);
+                    })
+                    data.push(dayArr);
+                    data.push(numArr);
+                    this.chartInit(data);
+                })
 
+            },
+            chartInit(data){
                 const ChartColumnar = this.$echarts.init(document.getElementById('overstep'));
                 ChartColumnar.setOption({
                     grid: {
@@ -41,7 +53,7 @@
                         textStyle:{
                             color: '#000000'
                         },
-                        formatter: '{c}'
+                        formatter: '人数：{c}'
                     },
                     legend:{
                         show: true,

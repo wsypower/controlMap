@@ -35,9 +35,6 @@
 <style lang="scss" scoped>
 .tab-layer{
     height: 100%;
-    /*/deep/.cg-container-full-bs__body-wrapper-inner{*/
-        /*height:100%;*/
-    /*}*/
     /deep/.ant-tabs-bar{
         background-color: #f5f5f5;
         margin-bottom: 3px;
