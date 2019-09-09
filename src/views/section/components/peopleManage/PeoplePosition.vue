@@ -5,117 +5,108 @@
         </div>
         <div class="yuan_dialog_body">
             <cg-container scroll>
-                <a-tree showIcon :treeData="treeData">
+                <a-tree showIcon showLine :treeData="treeData" @select="onSelect">
                     <img slot="dept" src="~@img/avatar_dept.png"/>
-                    <img slot="male" src="~@img/avatar_boy.png"/>
-                    <img slot="female" src="~@img/avatar_girl.png"/>
+                    <img slot="male" src="~@img/avatar-male.png"/>
+                    <img slot="male-outline" src="~@img/avatar-male-outline.png"/>
+                    <img slot="female" src="~@img/avatar-female.png"/>
+                    <img slot="female-outline" src="~@img/avatar-female-outline.png"/>
                 </a-tree>
             </cg-container>
         </div>
-
+        <people-info ref="peopleInfo" style="position:fixed; top: 100px;right:100px;display:none" :info="peopleInfoData" @closeTip="closeTip"></people-info>
     </div>
 </template>
 <script type="text/ecmascript-6">
+    import { mapActions } from 'vuex'
+    import PeopleInfo from './PeopleInfo.vue';
     export default {
         name: '',
+        components:{
+            PeopleInfo
+        },
         data(){
             return {
-                checkedKeys: [],
-                treeData: [{
-                    title: '智慧城管',
-                    key: 'chengguan',
-                    slots: {
-                        icon: 'dept'
+                sourceData: [],
+                peopleInfoData:{
+                    id: 'sdjfjdgfjsdgfjsd',
+                    sex: 'female',
+                    name: '沈芳',
+                    tel: '13525165428',
+                    dept: '信息采集中心',
+                    online: true,
+                    todayData: {
+                        num1: 14,
+                        num2: 10,
+                        num3: 9,
+                        num4: 0
                     },
-                    children:[{
-                        title: '信息采集中心',
-                        key: 'xinxi',
-                        slots: {
-                            icon: 'dept'
-                        },
-                        children: [{
-                            title: '傅建民',
-                            key: '0-0-0',
-                            slots: {
-                                icon: 'male'
-                            }
-                        }, {
-                            title: '董亨芳',
-                            key: '0-0-1',
-                            slots: {
-                                icon: 'female'
-                            }
-                        }, {
-                            title: '顾 祎',
-                            key: '0-0-2',
-                            slots: {
-                                icon: 'male'
-                            }
-                        }]
-                    },{
-                        title: '第一中队',
-                        key: 'yizhongdui',
-                        slots: {
-                            icon: 'dept',
-                        },
-                        children: [{
-                            title: '郑波立',
-                            key: '0-1-0',
-                            slots: {
-                                icon: 'male'
-                            }
-                        }, {
-                            title: '金 涛',
-                            key: '0-1-1',
-                            slots: {
-                                icon: 'male'
-                            }
-                        }, {
-                            title: '周 军',
-                            key: '0-1-2',
-                            slots: {
-                                icon: 'male'
-                            }
-                        }]
-                    }]
-                }, {
-                    title: '智慧教育',
-                    key: 'jiaoyu',
-                    slots: {
-                        icon: 'dept',
-                    },
-                    children:[{
-                        title: '信息采集中心',
-                        key: 'caiji',
-                        slots: {
-                            icon: 'dept',
-                        },
-                        children: [{
-                            title: '郑 明',
-                            key: '1-0-0',
-                            slots: {
-                                icon: 'male'
-                            }
-                        }, {
-                            title: '俞 君',
-                            key: '1-0-1',
-                            slots: {
-                                icon: 'male'
-                            }
-                        }, {
-                            title: '邵群艳',
-                            key: '1-0-2',
-                            slots: {
-                                icon: 'female'
-                            }
-                        }]
-                    }]
-                }]
+                    historyData: {
+                        num1: 159,
+                        num2: 137,
+                        num3: 162,
+                        num4: 24
+                    }
+                }
             }
         },
+        computed:{
+           treeData:function(){
+               let data = JSON.parse(JSON.stringify(this.sourceData));
+               this.changeTreeData(data);
+               return data
+           }
+        },
+        mounted(){
+            this.getAllPeopleTreeData().then(res=>{
+                this.sourceData = res.data;
+            });
+            // console.log('this.sourceData',JSON.stringify(this.sourceData));
+        },
         methods:{
+            ...mapActions('section/common', ['getAllPeopleTreeData']),
             onSearch(val){
 
+            },
+            changeTreeData(arr){
+                arr.forEach(item=>{
+                    item.title = item.name;
+                    if(item.isLeaf){
+                        item.key = item.id;
+                        if(item.sex=='female'){
+                            if(item.online){
+                                item.slots = {icon: 'female'}
+                            }
+                            else{
+                                item.slots = {icon: 'female-outline'}
+                            }
+                        }
+                        else{
+                            if(item.online){
+                                item.slots = {icon: 'male'}
+                            }
+                            else{
+                                item.slots = {icon: 'male-outline'}
+                            }
+                        }
+                        item.class = 'itemClass';
+                    }
+                    else{
+                        item.key = 'dept_' + item.id;
+                        item.slots = {icon: 'dept'}
+                        this.changeTreeData(item.children)
+                    }
+
+                })
+            },
+            onSelect(selectedKeys, e){
+                console.log(selectedKeys, e);
+                if(selectedKeys[0].indexOf('dept_')<0){
+                    this.$refs.peopleInfo.$el.style.display = 'block';
+                }
+            },
+            closeTip(){
+                console.log('closeTip');
             }
         }
     }
@@ -137,6 +128,21 @@
                 display: inline-block;
                 border-radius: 12px;
                 margin-right: 8px;
+            }
+            /deep/.ant-tree.ant-tree-show-line li:not(:last-child):before{
+                border-left: 1px dashed rgba(0,164,254,0.8);
+            }
+            /deep/.ant-tree.ant-tree-show-line li span.ant-tree-switcher{
+                background-color: #f5f5f5;
+                color: rgba(43,144,243,0.8);
+            }
+            /deep/.itemClass{
+                &::before{
+                    opacity: 0;
+                }
+                span.ant-tree-switcher{
+                    opacity: 0;
+                }
             }
         }
     }

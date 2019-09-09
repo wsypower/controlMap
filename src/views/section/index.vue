@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <content-tabs :tabData="tabData"></content-tabs>
-    <people-info style="position:fixed; top: 100px;right:100px;display:none" :info="peopleInfoData" @closeTip="closeTip"></people-info>
+    <!--<people-info ref="peopleInfo" style="position:fixed; top: 100px;right:100px;display:none" :info="peopleInfoData" @closeTip="closeTip"></people-info>-->
   </div>
 </template>
 <script>
@@ -42,6 +42,12 @@ export default {
       }
     }
   },
+    mounted(){
+      // setTimeout(()=>{
+      //     this.$refs.peopleInfo.$el.style.display = 'block';
+      // },2000)
+
+    },
     methods:{
         closeTip(){
             console.log('closeTip');

@@ -6,92 +6,119 @@ const getAllPeopleTreeData = (options) => {
     const queryParameters = getQueryParameters(options);
     console.log('getAllPeopleTreeData query',queryParameters);
     let data = [{
-        title: '智慧城管',
-        key: 'chengguan',
-        slots: {
-            icon: 'dept'
-        },
+        name: '智慧城管',
+        id: 'chengguan',
+        allNum: 6,
+        onlineNum: 5,
+        isLeaf: false,
         children:[{
-            title: '信息采集中心',
-            key: 'xinxi',
-            slots: {
-                icon: 'dept'
-            },
+            name: '信息采集中心',
+            id: 'xinxi',
+            allNum: 3,
+            onlineNum: 2,
+            isLeaf: false,
             children: [{
-                title: '傅建民',
-                key: '0-0-0',
-                slots: {
-                    icon: 'male'
-                }
+                name: '傅建民',
+                id: '0-0-0',
+                online: true,
+                phone: "13967215943",
+                sex: "male",
+                x: "122.206714",
+                y: "30.245535",
+                isLeaf: true
             }, {
-                title: '董亨芳',
-                key: '0-0-1',
-                slots: {
-                    icon: 'female'
-                }
+                name: '董亨芳',
+                id: '0-0-1',
+                online: true,
+                phone: "13967215943",
+                sex: "female",
+                x: "122.206714",
+                y: "30.245535",
+                isLeaf: true
             }, {
-                title: '顾 祎',
-                key: '0-0-2',
-                slots: {
-                    icon: 'male'
-                }
+                name: '顾 祎',
+                id: '0-0-2',
+                online: false,
+                phone: "13967215943",
+                sex: "male",
+                x: "122.206714",
+                y: "30.245535",
+                isLeaf: true
             }]
         },{
-            title: '第一中队',
-            key: 'yizhongdui',
-            slots: {
-                icon: 'dept',
-            },
+            name: '第一中队',
+            id: 'yizhongdui',
+            allNum: 3,
+            onlineNum: 3,
+            isLeaf: false,
             children: [{
-                title: '郑波立',
-                key: '0-1-0',
-                slots: {
-                    icon: 'male'
-                }
+                name: '郑波立',
+                id: '0-1-0',
+                online: true,
+                phone: "13967215943",
+                sex: "male",
+                x: "122.206714",
+                y: "30.245535",
+                isLeaf: true
             }, {
-                title: '金 涛',
-                key: '0-1-1',
-                slots: {
-                    icon: 'male'
-                }
+                name: '金 涛',
+                id: '0-1-1',
+                online: true,
+                phone: "13967215943",
+                sex: "male",
+                x: "122.206714",
+                y: "30.245535",
+                isLeaf: true
             }, {
-                title: '周 军',
-                key: '0-1-2',
-                slots: {
-                    icon: 'male'
-                }
+                name: '周 军',
+                id: '0-1-2',
+                online: true,
+                phone: "13967215943",
+                sex: "male",
+                x: "122.206714",
+                y: "30.245535",
+                isLeaf: true
             }]
         }]
     }, {
-        title: '智慧教育',
-        key: 'jiaoyu',
-        slots: {
-            icon: 'dept',
-        },
+        name: '智慧教育',
+        id: 'jiaoyu',
+        allNum: 10,
+        onlineNum: 4,
+        isLeaf: false,
         children:[{
-            title: '信息采集中心',
-            key: 'caiji',
-            slots: {
-                icon: 'dept',
-            },
+            name: '信息采集中心',
+            id: 'caiji',
+            allNum: 3,
+            onlineNum: 2,
+            isLeaf: false,
             children: [{
-                title: '郑 明',
-                key: '1-0-0',
-                slots: {
-                    icon: 'male'
-                }
+                name: '郑 明',
+                id: '1-0-0',
+                online: true,
+                phone: "13967215943",
+                sex: "male",
+                x: "122.206714",
+                y: "30.245535",
+                isLeaf: true
             }, {
-                title: '俞 君',
-                key: '1-0-1',
-                slots: {
-                    icon: 'male'
-                }
+                name: '俞 君',
+                id: '1-0-1',
+                online: false,
+                phone: "13967215943",
+                sex: "female",
+                x: "122.206714",
+                y: "30.245535",
+                isLeaf: true
             }, {
-                title: '邵群艳',
-                key: '1-0-2',
-                slots: {
-                    icon: 'female'
-                }
+                name: '邵群艳',
+                id: '1-0-2',
+                online: true,
+                phone: "13967215943",
+                sex: "female",
+                x: "122.206714",
+                y: "30.245535",
+                isLeaf: true
             }]
         }]
     }];
