@@ -1,0 +1,130 @@
+import {builder, getBody, getQueryParameters} from '../util'
+import Mock from 'mockjs'
+
+const getUserWorkInfoData = (options) => {
+    console.log('getUserWorkInfoData options',options);
+    const queryParameters = getQueryParameters(options);
+    console.log('getUserWorkInfoData query',queryParameters);
+    let data = {
+        br_sbs: 2,
+        br_hss: 10,
+        br_hcs: 20,
+        br_fqs: 0,
+
+        bh_sbs: 214,
+        bh_hss: 320,
+        bh_hcs: 136,
+        bh_fqs: 17
+    };
+    return builder(
+        {
+            code: 0,
+            data:data,
+            msg: '操作成功'
+        },
+        '请求成功',
+        0,
+        { 'Custom-Header': Mock.mock('@id') }
+    )
+}
+Mock.mock(/\/@test\/getUserWorkInfoData/, 'get', getUserWorkInfoData);
+
+const getUserTrailDataList = (options) => {
+    console.log('getUserTrailDataList options',options);
+    const queryParameters = getQueryParameters(options);
+    console.log('getUserTrailDataList query',queryParameters);
+    let data = {
+        list:[{
+                index: '01',
+                startTime: 1564961494783,
+                endTime: 1564961880960
+            },
+            {
+                index: '02',
+                startTime: 1564962352718,
+                endTime: 1564963660184
+            },{
+                index: '03',
+                startTime: 1564964046637,
+                endTime: 1564964340783
+            },{
+                index: '04',
+                startTime: 1565163204326,
+                endTime: 1565164464569
+            },{
+                index: '05',
+                startTime: 1565164703221,
+                endTime: 1565165818051
+            },{
+                index: '06',
+                startTime: 1565752350553,
+                endTime: 1565755772150
+            }
+        ],
+        total: 6};
+    return builder(
+        {
+            code: 0,
+            data:data,
+            msg: '操作成功'
+        },
+        '请求成功',
+        0,
+        { 'Custom-Header': Mock.mock('@id') }
+    )
+}
+Mock.mock(/\/@test\/getUserTrailDataList/, 'post', getUserTrailDataList);
+
+const getTrailDetailData = (options) => {
+    console.log('getTrailDetailData options',options);
+    const queryParameters = getQueryParameters(options);
+    console.log('getTrailDetailData query',queryParameters);
+    let data = [{
+        coordinatex: "122.22062999999999",
+        coordinatey: "30.262163",
+        createtime: 1564961494783,
+        geom: "geom",
+        gpstime: 1564961494783,
+        gpsx: "122.22062999999999",
+        gpsy: "30.262163",
+        id: "ff65e0d0b70f11e94084da2335b942ab",
+        operate: "99",
+        remark: "true",
+        userId: "557c6850a4e611e856f64dd5bc2aa7bb"
+    },{
+        coordinatex: "122.20669448375702",
+        coordinatey: "30.24557590484619",
+        createtime: 1564961509683,
+        geom: "geom",
+        gpstime: 1564961509683,
+        gpsx: "122.20669448375702",
+        gpsy: "30.24557590484619",
+        id: "083dac10b71011e94084da2335b942ab",
+        operate: "99",
+        remark: "true",
+        userId: "557c6850a4e611e856f64dd5bc2aa7bb"
+    },{
+        coordinatex: "122.20669448375702",
+        coordinatey: "30.24557590484619",
+        createtime: 1564961524708,
+        geom: "geom",
+        gpstime: 1564961524708,
+        gpsx: "122.20669448375702",
+        gpsy: "30.24557590484619",
+        id: "113115a0b71011e94084da2335b942ab",
+        operate: "99",
+        remark: "true",
+        userId: "557c6850a4e611e856f64dd5bc2aa7bb"
+    }];
+    return builder(
+        {
+            code: 0,
+            data:data,
+            msg: '操作成功'
+        },
+        '请求成功',
+        0,
+        { 'Custom-Header': Mock.mock('@id') }
+    )
+}
+Mock.mock(/\/@test\/getTrailDetailData/, 'get', getTrailDetailData);

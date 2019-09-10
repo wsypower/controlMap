@@ -142,31 +142,40 @@ const getAllPeopleDataList = (options) => {
     console.log('getAllPeopleDataList query',queryParameters);
     let data = [{
         id: '0-0-0',
-        name: '傅建民'
+        name: '傅建民',
+        dept: '信息采集中心1'
     },{
         id: '0-0-1',
-        name: '董亨芳'
+        name: '董亨芳',
+        dept: '信息采集中心1'
     },{
         id: '0-0-2',
-        name: '顾 祎'
+        name: '顾 祎',
+        dept: '信息采集中心1'
     },{
         id: '0-1-0',
-        name: '郑波立'
+        name: '郑波立',
+        dept: '第一中队'
     },{
         id: '0-1-1',
-        name: '金 涛'
+        name: '金 涛',
+        dept: '第一中队'
     },{
         id: '0-1-2',
-        name: '周 军'
+        name: '周 军',
+        dept: '第一中队'
     },{
         id: '1-0-0',
-        name: '郑 明'
+        name: '郑 明',
+        dept: '信息采集中心2'
     },{
         id: '1-0-1',
-        name: '俞 君'
+        name: '俞 君',
+        dept: '信息采集中心2'
     },{
         id: '1-0-2',
-        name: '邵群艳'
+        name: '邵群艳',
+        dept: '信息采集中心2'
     }];
     return builder(
         {

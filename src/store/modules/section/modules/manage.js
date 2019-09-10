@@ -1,12 +1,12 @@
-import { getAllPeopleTreeData, getAllPeopleDataList } from '@/api/section/common.js'
+import { getUserWorkInfoData, getUserTrailDataList, getTrailDetailData } from '@/api/section/manage.js'
 
 export default {
     namespaced: true,
     actions: {
-        getAllPeopleTreeData(state,data){
+        getUserWorkInfoData(state,data){
             console.log('store',data);
             return new Promise((resolve, reject) => {
-                getAllPeopleTreeData(data)
+                getUserWorkInfoData(data)
                     .then(res => {
                         resolve(res)
                     })
@@ -16,10 +16,10 @@ export default {
                     })
             })
         },
-        getAllPeopleDataList(state,data){
+        getUserTrailDataList(state,data){
             console.log('store',data);
             return new Promise((resolve, reject) => {
-                getAllPeopleDataList(data)
+                getUserTrailDataList(data)
                     .then(res => {
                         resolve(res)
                     })
@@ -29,5 +29,18 @@ export default {
                     })
             })
         },
+        getTrailDetailData(state,data){
+            console.log('store',data);
+            return new Promise((resolve, reject) => {
+                getTrailDetailData(data)
+                    .then(res => {
+                        resolve(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        reject(err)
+                    })
+            })
+        }
     }
 }

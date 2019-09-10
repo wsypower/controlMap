@@ -13,7 +13,7 @@
                 </div>
                 <div flex="dir:left cross:center">
                     <cg-icon-svg name="telephone" class="svg_icon_telephone"></cg-icon-svg>
-                    <span>{{info.tel}}</span>
+                    <span>{{info.phone}}</span>
                 </div>
                 <div flex="dir:left cross:center">
                     <cg-icon-svg name="menu-section" class="svg_icon_section"></cg-icon-svg>
@@ -30,30 +30,43 @@
                 </div>
             </div>
             <div class="data_panel" v-show="activeIndex===0" flex="dir:left cross:center main:center">
-                <div><span>{{info.todayData.num1}}</span><span>上报数</span></div>
-                <div><span>{{info.todayData.num2}}</span><span>核实数</span></div>
-                <div><span>{{info.todayData.num3}}</span><span>核查数</span></div>
-                <div><span>{{info.todayData.num4}}</span><span>废弃数</span></div>
+                <div><span>{{todayData.num1}}</span><span>上报数</span></div>
+                <div><span>{{todayData.num2}}</span><span>核实数</span></div>
+                <div><span>{{todayData.num3}}</span><span>核查数</span></div>
+                <div><span>{{todayData.num4}}</span><span>废弃数</span></div>
             </div>
             <div class="data_panel" v-show="activeIndex===1" flex="dir:left cross:center main:center">
-                <div><span>{{info.historyData.num1}}</span><span>上报数</span></div>
-                <div><span>{{info.historyData.num2}}</span><span>核实数</span></div>
-                <div><span>{{info.historyData.num3}}</span><span>核查数</span></div>
-                <div><span>{{info.historyData.num4}}</span><span>废弃数</span></div>
+                <div><span>{{historyData.num1}}</span><span>上报数</span></div>
+                <div><span>{{historyData.num2}}</span><span>核实数</span></div>
+                <div><span>{{historyData.num3}}</span><span>核查数</span></div>
+                <div><span>{{historyData.num4}}</span><span>废弃数</span></div>
             </div>
         </div>
-        <div class="info-body-operation">
+        <div class="info-body-operation" @click="lookPeopleTrail">
             查看轨迹
         </div>
         <div class="tooltip__arrow"></div>
     </div>
 </template>
 <script type="text/ecmascript-6">
+    import { mapActions } from 'vuex'
     export default{
         name: 'peopleInfo',
         data(){
             return {
-                activeIndex: 0
+                activeIndex: 0,
+                todayData: {
+                    num1: 0,
+                    num2: 0,
+                    num3: 0,
+                    num4: 0
+                },
+                historyData: {
+                    num1: 0,
+                    num2: 0,
+                    num3: 0,
+                    num4: 0
+                }
             };
         },
         props:{
@@ -63,21 +76,9 @@
                         id: '',
                         sex: '',
                         name: '',
-                        tel: '',
+                        phone: '',
                         dept: '',
                         online: true,
-                        todayData: {
-                            num1: 0,
-                            num2: 0,
-                            num3: 0,
-                            num4: 0
-                        },
-                        historyData: {
-                            num1: 0,
-                            num2: 0,
-                            num3: 0,
-                            num4: 0
-                        }
                     }
                 }
             },
@@ -88,10 +89,33 @@
                 }
             }
         },
+        watch: {
+            'info.id':function(val){
+                this.getUserWorkInfoData({userId:this.info.id}).then(res=>{
+                    console.log('',res.data);
+                    this.todayData = {
+                        num1: res.data.br_sbs,
+                        num2: res.data.br_hss,
+                        num3: res.data.br_hcs,
+                        num4: res.data.br_fqs,
+                    }
+                    this.historyData = {
+                        num1: res.data.bh_sbs,
+                        num2: res.data.bh_hss,
+                        num3: res.data.bh_hcs,
+                        num4: res.data.bh_fqs,
+                    }
+                })
+            }
+        },
         mounted(){},
         methods:{
+            ...mapActions('section/manage', ['getUserWorkInfoData']),
             clickTab(tab){
                 this.activeIndex = tab;
+            },
+            lookPeopleTrail(){
+                this.$emit('getUserId',this.info.id);
             },
             closeDialog(){
                 this.$emit('closeTip')
