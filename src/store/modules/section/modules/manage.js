@@ -1,4 +1,8 @@
-import { getUserWorkInfoData, getUserTrailDataList, getTrailDetailData } from '@/api/section/manage.js'
+import { getUserWorkInfoData,
+    getUserTrailDataList,
+    getTrailDetailData,
+    getUserWorkTimeDataList,
+    getUserSignDetailData} from '@/api/section/manage.js'
 
 export default {
     namespaced: true,
@@ -33,6 +37,32 @@ export default {
             console.log('store',data);
             return new Promise((resolve, reject) => {
                 getTrailDetailData(data)
+                    .then(res => {
+                        resolve(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        reject(err)
+                    })
+            })
+        },
+        getUserWorkTimeDataList(state,data){
+            console.log('store',data);
+            return new Promise((resolve, reject) => {
+                getUserWorkTimeDataList(data)
+                    .then(res => {
+                        resolve(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        reject(err)
+                    })
+            })
+        },
+        getUserSignDetailData(state,data){
+            console.log('store',data);
+            return new Promise((resolve, reject) => {
+                getUserSignDetailData(data)
                     .then(res => {
                         resolve(res)
                     })

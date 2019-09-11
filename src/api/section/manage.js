@@ -53,3 +53,37 @@ export const getTrailDetailData = data => {
         params: data
     })
 }
+
+
+/**
+ * @description 获取用户签到签退数据(point/signRecords)
+ * @author moxuejuan
+ * @date 2019-09-10 14:53:20
+ * @param {String} userId 请求参数 :用户唯一标识符默认参数）
+ * @param {String} startDay 请求参数 :开始日期
+ * @param {String} endDay 请求参数 :结束日期
+ */
+export const getUserWorkTimeDataList = data => {
+    console.log('api:getUserWorkTimeDataList',data);
+    return request({
+        url: `@test/getUserWorkTimeDataList`,
+        method: 'post',
+        data
+    })
+}
+
+/**
+ * @description 获取某次用户签到签退详细数据(point/signRecord)
+ * @author moxuejuan
+ * @date 2019-09-11 14:53:20
+ * @param {String} userId 请求参数 :用户唯一标识符默认参数）
+ * @param {String} id 请求参数 :签到签退数据Id
+ */
+export const getUserSignDetailData = data => {
+    console.log('api:getUserSignDetailData',data);
+    return request({
+        url: `@test/getUserSignDetailData`,
+        method: 'post',
+        data
+    })
+}

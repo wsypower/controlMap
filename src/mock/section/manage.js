@@ -128,3 +128,90 @@ const getTrailDetailData = (options) => {
     )
 }
 Mock.mock(/\/@test\/getTrailDetailData/, 'get', getTrailDetailData);
+
+const getUserWorkTimeDataList = (options) => {
+    console.log('getUserWorkTimeDataList options',options);
+    const queryParameters = getQueryParameters(options);
+    console.log('getUserWorkTimeDataList query',queryParameters);
+    let data = {
+        list:[{
+            id: 'jasgdhsadhfsadhsad0',
+            day: '2019-09-02',
+            signInTime: 1564961494783,
+            signOutTime: 1564961880960
+        },{
+            id: 'jasgdhsadhfsadhsad1',
+            day: '2019-08-31',
+            signInTime: 1564962352718,
+            signOutTime: 1564963660184
+        },{
+            id: 'jasgdhsadhfsadhsad2',
+            day: '2019-08-30',
+            signInTime: 1564964046637,
+            signOutTime: null
+        },{
+            id: 'jasgdhsadhfsadhsad3',
+            day: '2019-08-29',
+            signInTime: 1565163204326,
+            signOutTime: 1565164464569
+        },{
+            id: 'jasgdhsadhfsadhsad4',
+            day: '2019-08-28',
+            signInTime: 1565164703221,
+            signOutTime: 1565165818051
+        },{
+            id: 'jasgdhsadhfsadhsad5',
+            day: '2019-08-27',
+            signInTime: 1565752350553,
+            signOutTime: 1565755772150
+        }],
+        total: 6};
+    return builder(
+        {
+            code: 0,
+            data:data,
+            msg: '操作成功'
+        },
+        '请求成功',
+        0,
+        { 'Custom-Header': Mock.mock('@id') }
+    )
+}
+Mock.mock(/\/@test\/getUserWorkTimeDataList/, 'post', getUserWorkTimeDataList);
+
+const getUserSignDetailData = (options) => {
+    console.log('getUserSignDetailData options',options);
+    const queryParameters = getQueryParameters(options);
+    console.log('getUserSignDetailData query',queryParameters);
+    let data = {
+        signIn: {
+            time: 1564961494783,
+            positionX: '120',
+            positionY: '33',
+            fileList: [{
+                name: 'xxxx.jpg',
+                url: 'xxxxxxx'
+            }]
+        },
+        signOut: {
+            time: 1564961880960,
+            positionX: '120',
+            positionY: '33',
+            fileList: [{
+                name: 'xxxx.jpg',
+                url: 'xxxxxxx'
+            }]
+        }
+    };
+    return builder(
+        {
+            code: 0,
+            data:data,
+            msg: '操作成功'
+        },
+        '请求成功',
+        0,
+        { 'Custom-Header': Mock.mock('@id') }
+    )
+}
+Mock.mock(/\/@test\/getUserSignDetailData/, 'post', getUserSignDetailData);
