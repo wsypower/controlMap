@@ -58,7 +58,7 @@ export const getTrailDetailData = data => {
 /**
  * @description 获取用户签到签退数据(point/signRecords)
  * @author moxuejuan
- * @date 2019-09-10 14:53:20
+ * @date 2019-09-11 14:53:20
  * @param {String} userId 请求参数 :用户唯一标识符默认参数）
  * @param {String} startDay 请求参数 :开始日期
  * @param {String} endDay 请求参数 :结束日期
@@ -83,6 +83,38 @@ export const getUserSignDetailData = data => {
     console.log('api:getUserSignDetailData',data);
     return request({
         url: `@test/getUserSignDetailData`,
+        method: 'post',
+        data
+    })
+}
+
+/**
+ * @description 获取用户违规数据()
+ * @author moxuejuan
+ * @date 2019-09-11 14:53:20
+ * @param {String} userId 请求参数 :用户唯一标识符默认参数）
+ * @param {String} startDay 请求参数 :开始日期
+ * @param {String} endDay 请求参数 :结束日期
+ */
+export const getUserViolateRulesDataList = data => {
+    console.log('api:getUserViolateRulesDataList',data);
+    return request({
+        url: `@test/getUserViolateRulesDataList`,
+        method: 'post',
+        data
+    })
+}
+
+/**
+ * @description 删除某条用户非违规数据
+ * @author moxuejuan
+ * @date 2019-09-11 14:53:20
+ * @param {String} id 请求参数 :违规数据唯一Id
+ */
+export const deleteUserViolateRules = data => {
+    console.log('api:deleteUserViolateRules',data);
+    return request({
+        url: `@test/deleteUserViolateRules`,
         method: 'post',
         data
     })

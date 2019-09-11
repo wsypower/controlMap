@@ -219,3 +219,77 @@ const getUserSignDetailData = (options) => {
     )
 }
 Mock.mock(/\/@test\/getUserSignDetailData/, 'post', getUserSignDetailData);
+
+const getUserViolateRulesDataList = (options) => {
+    console.log('getUserViolateRulesDataList options',options);
+    const queryParameters = getQueryParameters(options);
+    console.log('getUserViolateRulesDataList query',queryParameters);
+    let data = [{
+            userId: 'jhsjhdhdj',
+            name: '甄某某',
+            dept: '信息采集中心',
+            vLog:[{
+                id: 'sjgjgjgjhgjdsa0',
+                startTime: 1564961494783,
+                endTime: 1564961880960,
+                vType: '越界'
+            },{
+                id: 'sjgjgjgjhgjdsa1',
+                signInTime: 1564962352718,
+                signOutTime: 1564963660184,
+                vType: '越界'
+            },{
+                id: 'sjgjgjgjhgjdsa2',
+                startTime: 1564964046637,
+                endTime: 1564964340783,
+                vType: '越界'
+            }],
+        }, {
+            userId: 'erghjhdhdjfdgfhfghg',
+            name: '何某',
+            dept: '信息采集中心',
+            vLog:[{
+                id: 'sjgjgjgjhgjdsa3',
+                startTime: 1565164703221,
+                endTime: 1565165818051,
+                vType: '越界'
+            },{
+                id: 'sjgjgjgjhgjdsa4',
+                startTime: 1565752350553,
+                endTime: 1565755772150,
+                vType: '不在岗'
+            }]
+        },
+    ];
+    return builder(
+        {
+            code: 0,
+            data:data,
+            msg: '操作成功'
+        },
+        '请求成功',
+        0,
+        { 'Custom-Header': Mock.mock('@id') }
+    )
+}
+Mock.mock(/\/@test\/getUserViolateRulesDataList/, 'post', getUserViolateRulesDataList);
+
+const deleteUserViolateRules = (options) => {
+    console.log('deleteUserViolateRules options',options);
+    const queryParameters = getQueryParameters(options);
+    console.log('deleteUserViolateRules query',queryParameters);
+    let data = {
+        msg: '操作成功'
+    };
+    return builder(
+        {
+            code: 0,
+            data:data,
+            msg: '操作成功'
+        },
+        '请求成功',
+        0,
+        { 'Custom-Header': Mock.mock('@id') }
+    )
+}
+Mock.mock(/\/@test\/deleteUserViolateRules/, 'post', deleteUserViolateRules);

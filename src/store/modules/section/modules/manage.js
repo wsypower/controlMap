@@ -2,7 +2,9 @@ import { getUserWorkInfoData,
     getUserTrailDataList,
     getTrailDetailData,
     getUserWorkTimeDataList,
-    getUserSignDetailData} from '@/api/section/manage.js'
+    getUserSignDetailData,
+    getUserViolateRulesDataList,
+    deleteUserViolateRules} from '@/api/section/manage.js'
 
 export default {
     namespaced: true,
@@ -71,6 +73,32 @@ export default {
                         reject(err)
                     })
             })
-        }
+        },
+        getUserViolateRulesDataList(state,data){
+            console.log('store',data);
+            return new Promise((resolve, reject) => {
+                getUserViolateRulesDataList(data)
+                    .then(res => {
+                        resolve(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        reject(err)
+                    })
+            })
+        },
+        deleteUserViolateRules(state,data){
+            console.log('store',data);
+            return new Promise((resolve, reject) => {
+                deleteUserViolateRules(data)
+                    .then(res => {
+                        resolve(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        reject(err)
+                    })
+            })
+        },
     }
 }
