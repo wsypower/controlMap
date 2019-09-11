@@ -189,8 +189,12 @@ const getUserSignDetailData = (options) => {
             positionX: '120',
             positionY: '33',
             fileList: [{
-                name: 'xxxx.jpg',
-                url: 'xxxxxxx'
+                name: '1567387712203.jpg',
+                url: 'http://61.153.37.213:8087/upload/file/2019/09/02/2019090209285388169.jpg'
+            },
+            {
+                name: '1567647711557.jpg',
+                url: 'http://61.153.37.213:8087/upload/file/2019/09/05/20190905094208620997.jpg'
             }]
         },
         signOut: {

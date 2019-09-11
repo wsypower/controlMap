@@ -5,7 +5,7 @@
             <div class="close" flex="main:center cross:center" @click="closeDialog"></div>
         </div>
         <div class="tip-body">
-            <img :src="info.photoUrl" />
+            <img :src="info.photoUrl" @click="showPhoto"/>
         </div>
         <div class="tooltip__arrow"></div>
     </div>
@@ -38,7 +38,9 @@
         },
         mounted(){},
         methods:{
-
+            showPhoto(){
+                this.$emit('showPhoto',0)
+            },
             closeDialog(){
                 this.$emit('closeTip')
             }
@@ -91,6 +93,7 @@
             img{
                 width: 100%;
                 height: 100%;
+                cursor: zoom-in;
             }
         }
 

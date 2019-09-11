@@ -62,7 +62,12 @@
         <people-sign-info ref="peopleSignInfo"
                      style="position:fixed; top: 100px;right:100px;display:none"
                      :info="signInfoData"
+                          @showPhoto="showPhoto"
                      @closeTip="closeTip"></people-sign-info>
+        <photo-show ref="photoShow"
+                    :photoList = "photoList"
+                    :toIndex = "toIndex"
+                    @closePhotoShow="closePhotoShow"></photo-show>
     </div>
 </template>
 <script type="text/ecmascript-6">
@@ -98,7 +103,9 @@
                 activeIndex: null,
                 dataList:[],
                 totalSize: 0,
-                signInfoData: {}
+                signInfoData: {},
+                photoList: [],
+                toIndex: 0
             }
         },
         components:{
@@ -166,6 +173,7 @@
                     this.signInfoData = {
                         photoUrl: res.data.signIn.fileList[0].url,
                         photoName: res.data.signIn.fileList[0].name,
+                        photoList: res.data.signIn.fileList,
                         signTime: res.data.signIn.time,
                         isSignIn: true
                     }
@@ -177,6 +185,14 @@
             },
             closeTip(){
                 console.log('close the info');
+            },
+            showPhoto(index){
+                this.photoList = this.signInfoData.photoList;
+                this.toIndex = index;
+                this.$refs.photoShow.$el.style.display = 'block';
+            },
+            closePhotoShow(){
+                this.$refs.photoShow.$el.style.display = 'none';
             }
         }
     }
