@@ -17,7 +17,7 @@
             <div class="item_body">
                 <div class="description-panel" flex><span>信息：</span><span>{{ itemData.description }}</span></div>
                 <div class="description-panel" flex><span>位置：</span><span>{{ itemData.position }}</span></div>
-                <div class="description-panel" flex><span>时间：</span><span>{{ new Date(parseInt(itemData.startDay))|date_format('YYYY-MM-DD HH:mm') }}</span></div>
+                <div class="description-panel" flex><span>时间：</span><span v-if="itemData.startDay">{{ new Date(parseInt(itemData.startDay))|date_format('YYYY-MM-DD HH:mm') }}</span></div>
             </div>
             <div class="item-operate">
                 <span v-if="itemData.statusId == '1'" class="operate-btn" @click.stop="editYuan(itemData)">
@@ -26,6 +26,17 @@
                 <span v-if="itemData.statusId != '2'" class="operate-btn" @click.stop="deleteYuan(itemData)">
                     <cg-icon-svg name="delete" class="svg_icon_delete"></cg-icon-svg>删除
                 </span>
+            </div>
+            <div class="to-next" v-if="itemData.stageName">
+                <a-tooltip placement="top" >
+                    <template slot="title">
+                        <span>{{textShow[itemData.stageName]}}</span>
+                    </template>
+                    <span class="stage_btn"
+                          :class="{blue:itemData.stageName=='消息阶段',orange:itemData.stageName=='警报阶段',red:itemData.stageName=='紧急警报阶段',green:itemData.stageName=='警报解除阶段'}"
+                          @click="goToNextStage(itemData)"
+                    >{{itemData.stageName}}<a-icon type="caret-right" /></span>
+                </a-tooltip>
             </div>
         </div>
     </div>
@@ -58,7 +69,12 @@
         },
         data(){
             return{
-
+                textShow:{
+                  '消息阶段':'现阶段为消息阶段，请点击进入预案触发下一个阶段',
+                  '警报阶段':'现阶段为警报阶段，请点击进入预案触发下一个阶段',
+                  '紧急警报阶段':'现阶段为紧急警报阶段，请点击进入预案触发下一个阶段',
+                  '警报解除阶段':'现阶段为警报解除阶段，该预案已结束'
+                }
             }
         },
         components:{
@@ -73,6 +89,9 @@
             },
             clickDataItem(){
                 this.$emit('onClick');
+            },
+            goToNextStage(item){
+              this.$emit('goToNextStage',item);
             }
         }
     }
@@ -102,6 +121,7 @@
             padding-left: 5px;
             padding-bottom: 10px;
             border-bottom: solid 1px #dddddd;
+            position: relative;
             .top {
                 height: 18px;
                 width: 100%;
@@ -183,6 +203,34 @@
                         height: 14px;
                         color: #2c90f3;
                         margin-right: 5px;
+                    }
+                }
+            }
+            .to-next{
+                position:absolute;
+                right:0px;
+                bottom:20px;
+                .stage_btn{
+                    display:inline-block;
+                    height: 28px;
+                    line-height: 28px;
+                    border-radius: 4px;
+                    padding: 0px 8px 0px 12px;
+                    font-family: PingFang-SC-Medium;
+                    font-size: 13px;
+                    color: #ffffff;
+                    cursor: pointer;
+                    &.blue{
+                        background-color: #2b90f3;
+                    }
+                    &.orange{
+                        background-color: #f99927;
+                    }
+                    &.red{
+                        background-color: #f96363;
+                    }
+                    &.green{
+                        background-color: #49c61a;
                     }
                 }
             }

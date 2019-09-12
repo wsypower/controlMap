@@ -21,6 +21,7 @@
             :isActive="activeIndex == index"
             @editYuAnItem="editYuAnItem"
             @deleteYuAnItem="deleteYuAnItem"
+            @goToNextStage="goToNextStage"
             @onClick="clickDataItem(index)"
           >
           </event-item>
@@ -72,7 +73,14 @@
         :componentId="tipComponentId"
         :info="infoData"
         @closeDialog="closeOverlay()"
-      ></tip-modal>
+      >
+        <template v-if="showOperatePanel" slot="operate-panel">
+          <span class="operate_stage_btn"
+                :class="{blue:infoData.stageName=='消息阶段',orange:infoData.stageName=='警报阶段',red:infoData.stageName=='紧急警报阶段',green:infoData.stageName=='警报解除阶段'}"
+                @click="goToNextStage(infoData)"
+          >{{infoData.stageName}}</span>
+        </template>
+      </tip-modal>
     </div>
     <iframe width=0 height=0 id="camera"></iframe>
   </div>
@@ -160,6 +168,8 @@ export default {
       positionX: 0,
       //tipModal弹窗显示位置Y
       positionY: 0,
+      //是否有操作按钮
+      showOperatePanel: false,
       //tipModal弹窗标题上的icon
       iconName: '',
       //tipModal弹窗标题
@@ -262,6 +272,7 @@ export default {
               this.iconName = '';
               this.infoData = res;
               this.tipComponentId = UserInfo;
+              this.showOperatePanel = false;
               this.yuAnOverlay.setPosition(coordinate)
           })
         }
@@ -283,6 +294,7 @@ export default {
           this.modalTitle = info.name;
           this.infoData = info;
           this.tipComponentId = ResourceInfo;
+          this.showOperatePanel = false;
           this.yuAnOverlay.setPosition(coordinate);
         }
         else if(feature.get('pointType')=='bestResource'){
@@ -297,6 +309,7 @@ export default {
               this.iconName = '';
               this.modalTitle = '市政环卫车辆';
               this.subTitle = '';
+              this.showOperatePanel = false;
               this.yuAnOverlay.setPosition(coordinate)
           }
           if(type==='terminal'){
@@ -305,6 +318,7 @@ export default {
               this.iconName = '';
               this.modalTitle = '执法终端';
               this.subTitle = '';
+            this.showOperatePanel = false;
               this.yuAnOverlay.setPosition(coordinate)
           }
           if(type==='manager'){
@@ -313,6 +327,7 @@ export default {
               this.iconName = '';
               this.modalTitle = '管理人员';
               this.subTitle = '';
+            this.showOperatePanel = false;
               this.yuAnOverlay.setPosition(coordinate)
           }
         }
@@ -328,7 +343,23 @@ export default {
           this.tipComponentId = YuAnInfo;
           this.iconName = 'menu-special';
           this.modalTitle = this.infoData.name;
-          this.subTitle = stampConvertToTime(this.infoData.startDay) + '-' + stampConvertToTime(this.infoData.endDay)
+          let startTime = ''
+          if(this.infoData.startDay){
+            startTime = stampConvertToTime(this.infoData.startDay) + '-';
+          }
+          let endTime = '';
+          if(this.infoData.endDay){
+            endTime = stampConvertToTime(this.infoData.endDay);
+          }
+
+          this.subTitle = startTime + endTime;
+          if(this.infoData.stageName){
+            this.showOperatePanel = true;
+          }
+          else{
+            this.showOperatePanel = false;
+          }
+
           this.yuAnOverlay.setPosition(coordinate)
         }
       }
@@ -373,6 +404,10 @@ export default {
     },
     //获取事件预案数据
     getDataList() {
+      if(this.yuAnOverlay){
+        this.closeOverlay();
+      }
+
       this.showLoading = true;
       this.getEventDataList(this.query).then(res => {
         console.log(res);
@@ -473,6 +508,7 @@ export default {
     //选择某个事件预案
     clickDataItem(index) {
       console.log('clickDataItem', index);
+      this.closeOverlay();
       this.ychjPeopleList = [];
       if (this.emergencyLayer) {
         this.emergencyLayer.getSource().clear()
@@ -509,6 +545,20 @@ export default {
         this.setSelectEmergencyFeature(null);
       }
     },
+    goToNextStage(item){
+      this.dialogTitle = '预案进行中';
+      this.closeCallBack = this.getDataList;
+      this.sourceData = {
+        id: item.id,
+        activeStage: item.stageName,
+        sourceType: 1
+      };
+      this.dialogComponentId = EventYuAnForm;
+      this.dWidth = 1200;
+      this.dHeight = 644;
+      this.bodyPadding = [0, 10, 10, 10];
+      this.dialogVisible = true;
+    },
       //启动事件预案
       startYuAn(e){
           if(this.activeIndex===null||this.dataArr[this.activeIndex].statusId!=='1'){
@@ -526,7 +576,11 @@ export default {
           else{
               this.dialogTitle = '启动预案';
               this.closeCallBack = this.getDataList;
-              this.sourceData = this.dataArr[this.activeIndex].id;
+              this.sourceData = {
+                id: this.dataArr[this.activeIndex].id,
+                activeStage: '消息阶段',
+                sourceType: 0
+              };
               this.dialogComponentId = EventYuAnForm;
               this.dWidth = 1200;
               this.dHeight = 644;

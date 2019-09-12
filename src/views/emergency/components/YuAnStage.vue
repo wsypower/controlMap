@@ -6,8 +6,12 @@
             <a-row v-for="(item, index) in stageData" :key="index">
                 <a-col :span="5">
                     <div class="col-panel" flex="dir:left cross:center">
-                        <label class="subtitle">阶段：</label>
-                        <a-select v-model="item.stageName" @change="" style="width: 100%">
+                        <i class="dot"
+                           :class="{blue:item.stageName=='消息阶段',orange:item.stageName=='警报阶段',red:item.stageName=='紧急警报阶段',green:item.stageName=='警报解除阶段',active: activeStage==item.stageName}"
+                        ></i>
+
+                        <label class="subtitle" style="width:80px;">阶段：</label>
+                        <a-select v-model="item.stageName" style="width: 100%">
                             <a-select-option value="消息阶段">消息阶段</a-select-option>
                             <a-select-option value="警报阶段">警报阶段</a-select-option>
                             <a-select-option value="紧急警报阶段">紧急警报阶段</a-select-option>
@@ -63,7 +67,11 @@
                         tel: ''
                     }]
                 }
-            }
+            },
+          activeStage:{
+            type: String,
+            default: '消息阶段'
+          }
         },
         data(){
             return {}
@@ -104,6 +112,29 @@
             padding: 5px;
             .col-panel {
                 padding: 0px 10px 0px 0px;
+                .dot{
+                    display:inline-block;
+                    width: 11px;
+                    height: 8px;
+                    border-radius: 10px;
+                    border: 1px solid #2b90f3;
+                    &.blue.active{
+                        border: 1px solid #2b90f3;
+                        background-color: #2b90f3;
+                    }
+                    &.orange.active{
+                        border: 1px solid #f99927;
+                        background-color: #f99927;
+                    }
+                    &.red.active{
+                        border: 1px solid #f96363;
+                        background-color: #f96363;
+                    }
+                    &.green.active{
+                        border: 1px solid #49c61a;
+                        background-color: #49c61a;
+                    }
+                }
                 .subtitle {
                     text-align: right;
                     width: 100px;

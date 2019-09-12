@@ -5,6 +5,7 @@
         <cg-icon-svg v-if="iconShow" :name="iconName" class="svg_icon_name"></cg-icon-svg>
         <span>{{ title }}</span>
         <span>{{ subTitle }}</span>
+        <slot name="operate-panel"></slot>
       </div>
       <div
         class="close"
@@ -117,8 +118,31 @@ export default{
         width: 16px;
         margin-right: 10px;
       }
-      span:last-child {
-        margin-left: 10px;
+      span:nth-child(3) {
+        margin: 0px 10px;
+      }
+      .operate_stage_btn{
+        display:inline-block;
+        height: 28px;
+        line-height: 28px;
+        border-radius: 4px;
+        padding: 0px 8px 0px 12px;
+        font-family: PingFang-SC-Medium;
+        font-size: 13px;
+        color: #ffffff;
+        cursor: pointer;
+        &.blue{
+          background-color: #2b90f3;
+        }
+        &.orange{
+          background-color: #f99927;
+        }
+        &.red{
+          background-color: #f96363;
+        }
+        &.green{
+          background-color: #49c61a;
+        }
       }
     }
     .close {
