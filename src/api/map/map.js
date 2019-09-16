@@ -6,10 +6,8 @@
 
 import request from '@/plugins/axios/axios'
 
-// let gisApi = 'http://61.153.37.212:6350/geoserver/';  //正式环境gis服务
-let gisApi = 'http://192.168.1.10.8080/geoserver/'; //测试环境gis服务
-// let baseApi = 'http://61.153.37.214:81/api/';  //正式环境的后端API
-let baseApi = 'http://192.168.71.33:8015/api/';  //测试环境的后端API
+// let gisApi = 'http://61.153.37.212:6350/geoserver/';
+// let baseApi = 'http://61.153.37.214:81/api/';
 /**
  * @description: 获取基础点位调用的接口
  * @author:sijianting
@@ -18,13 +16,13 @@ let baseApi = 'http://192.168.71.33:8015/api/';  //测试环境的后端API
 export function getPoint(type = '全部视频') {
   type = type == '全部视频' ? '视频' : type
   return request({
-    url: gisApi + 'hescgis/ows',
+    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix+'/ows',
     method: 'get',
     params: {
       service: 'WFS',
       version: '1.0.0',
       request: 'GetFeature',
-      typeName: `hescgis:${type}`,
+      typeName: `${GIS_CONFIG.featurePrefix}:${type}`,
       outputFormat: 'application/json'
     }
   })
@@ -36,13 +34,13 @@ export function getPoint(type = '全部视频') {
  */
 export function getEmergencyArea(type = '预案区域') {
   return request({
-    url: gisApi + 'hescgis/ows',
+    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix+'/ows',
     method: 'get',
     params: {
       service: 'WFS',
       version: '1.0.0',
       request: 'GetFeature',
-      typeName: `hescgis:${type}`,
+      typeName: `${GIS_CONFIG.featurePrefix}:${type}`,
       outputFormat: 'application/json'
     }
   })
@@ -55,7 +53,7 @@ export function getEmergencyArea(type = '预案区域') {
  * */
 export function postFeature(data) {
   return request({
-    url: gisApi+'hescgis/wfs',
+    url: GIS_CONFIG.baseURL +GIS_CONFIG.featurePrefix +'/wfs',
     method: 'post',
     headers: { 'Content-Type': 'text/xml ' },
     transformRequest: [
@@ -75,7 +73,7 @@ export function postFeature(data) {
  */
 export function getVideoListApi() {
   return request({
-    url: baseApi + 'point/getCamList',
+    url: URL_CONFIG.baseURL + 'point/getCamList',
     method: 'post'
   });
 }
@@ -94,7 +92,7 @@ const apiMapping = {
  */
 export function getResourceListApi(type) {
   return request({
-    url: baseApi + 'point/' + apiMapping[type],
+    url: URL_CONFIG.baseURL + 'point/' + apiMapping[type],
     method: 'post'
   });
 }
@@ -106,7 +104,7 @@ export function getResourceListApi(type) {
  */
 export function getEquipListApi(type) {
   return request({
-    url: baseApi + 'iot/device/list?deviceType=' + type,
+    url: URL_CONFIG.baseURL + 'iot/device/list?deviceType=' + type,
     method: 'post'
   });
 }

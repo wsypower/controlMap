@@ -37,8 +37,8 @@ export async function postEmergencyArea(type, feature) {
   const format = new WFS()
   let xml
   const obj = {
-    featureNS: 'http://hescgis', //该图层所在工作空间的uri
-    featurePrefix: 'hescgis', //工作空间名称0
+    featureNS: GIS_CONFIG.featureNS, //该图层所在工作空间的uri
+    featurePrefix: GIS_CONFIG.featurePrefix, //工作空间名称0
     featureType: '预案区域',//图层名称
   }
   if (type == 'add') {
