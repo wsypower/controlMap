@@ -6,8 +6,10 @@
 
 import request from '@/plugins/axios/axios'
 
-let gisApi = 'http://61.153.37.212:6350/geoserver/';
-let baseApi = 'http://61.153.37.214:81/api/';
+// let gisApi = 'http://61.153.37.212:6350/geoserver/';  //正式环境gis服务
+let gisApi = 'http://192.168.1.10.8080/geoserver/'; //测试环境gis服务
+// let baseApi = 'http://61.153.37.214:81/api/';  //正式环境的后端API
+let baseApi = 'http://192.168.71.33:8015/api/';  //测试环境的后端API
 /**
  * @description: 获取基础点位调用的接口
  * @author:sijianting
