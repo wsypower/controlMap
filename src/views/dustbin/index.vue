@@ -160,6 +160,7 @@ export default {
           return point;
         });
         this.dustbinLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('7'), 3);
+        this.map.getView().fit(this.dustbinLayer.getSource().getExtent());
         this.pushPageLayers(this.dustbinLayer);
       })
     },

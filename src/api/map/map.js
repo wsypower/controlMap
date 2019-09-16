@@ -6,8 +6,8 @@
 
 import request from '@/plugins/axios/axios'
 
-let gisApi = 'http://192.168.1.10:8080/geoserver/';
-let baseApi = 'http://192.168.71.33:8015/api/';
+let gisApi = 'http://61.153.37.212:6350/geoserver/';
+let baseApi = 'http://61.153.37.214:81/api/';
 /**
  * @description: 获取基础点位调用的接口
  * @author:sijianting
@@ -16,13 +16,13 @@ let baseApi = 'http://192.168.71.33:8015/api/';
 export function getPoint(type = '全部视频') {
   type = type == '全部视频' ? '视频' : type
   return request({
-    url: gisApi + 'guankongceshi/ows',
+    url: gisApi + 'hescgis/ows',
     method: 'get',
     params: {
       service: 'WFS',
       version: '1.0.0',
       request: 'GetFeature',
-      typeName: `guankongceshi:${type}`,
+      typeName: `hescgis:${type}`,
       outputFormat: 'application/json'
     }
   })
@@ -34,13 +34,13 @@ export function getPoint(type = '全部视频') {
  */
 export function getEmergencyArea(type = '预案区域') {
   return request({
-    url: gisApi + 'haining/ows',
+    url: gisApi + 'hescgis/ows',
     method: 'get',
     params: {
       service: 'WFS',
       version: '1.0.0',
       request: 'GetFeature',
-      typeName: `haining:${type}`,
+      typeName: `hescgis:${type}`,
       outputFormat: 'application/json'
     }
   })
@@ -53,7 +53,7 @@ export function getEmergencyArea(type = '预案区域') {
  * */
 export function postFeature(data) {
   return request({
-    url: gisApi+'haining/wfs',
+    url: gisApi+'hescgis/wfs',
     method: 'post',
     headers: { 'Content-Type': 'text/xml ' },
     transformRequest: [

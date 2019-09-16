@@ -233,7 +233,8 @@ export default {
       }, 400);
     this.yuAnOverlay = this.mapManager.addOverlay({
       element: this.$refs.yuAnOverlay.$el
-    })
+    });
+    this.setOverlay(this.yuAnOverlay);
     map = this.mapManager.getMap()
     map.on('click', this.mapClickHandler)
   },
@@ -253,7 +254,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('map', ['pushPageLayers','setEmergencyAllArea', 'setSelectEmergencyFeature']),
+    ...mapMutations('map', ['pushPageLayers','setEmergencyAllArea', 'setSelectEmergencyFeature','setOverlay']),
     ...mapActions('emergency/emergency', ['getEventDataList','deleteEvent']),
     //地图点击事件处理器
     mapClickHandler({ pixel, coordinate }) {
@@ -367,7 +368,7 @@ export default {
 
     //打开摄像头第三方插件
     openCameraDevice(code){
-        axios.get('http://192.168.71.33:8015/api/sp/getSecretApi')
+        axios.get('http://61.153.37.214:81/api/sp/getSecretApi')
             .then(function (response) {
                 if(response){
                     let PalyType = "PlayReal";

@@ -31,7 +31,9 @@ export default {
         });
         this.setPageLayers([]);
         this.map.un('click',this.clickHandler);
-        this.map.removeOverlay(this.overlay);
+        debugger;
+        console.log(this.yuanOverlay);
+        this.map.removeOverlay(this.yuanOverlay);
       }
     }
   },
@@ -174,7 +176,7 @@ export default {
   },
   computed:{
     ...mapState('cgadmin/page', ['current']),
-    ...mapState('map', ['pageLayers','clickHandler','overlay']),
+    ...mapState('map', ['pageLayers','clickHandler','yuanOverlay']),
   }
 }
 </script>
