@@ -206,6 +206,7 @@
                 //调启动接口
                 this.eventYuAnForm.stageName = this.showStage;
                 this.eventYuAnForm.id = this.eventInfo.id;
+                this.eventYuAnForm.sourceType = this.sourceData.sourceType;
                 this.eventYuAnForm.stageData = JSON.stringify(this.stageData);
                 this.eventYuAnForm.peopleData = JSON.stringify(this.peopleResultData);
                 this.eventYuAnForm.resourceData = JSON.stringify(this.resourceResultData);

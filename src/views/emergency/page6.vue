@@ -547,7 +547,12 @@ export default {
     },
     goToNextStage(item){
       this.dialogTitle = '预案进行中';
-      this.closeCallBack = this.getDataList;
+      this.closeCallBack = ()=>{
+        this.getDataList();
+        setTimeout(()=>{
+          this.clickDataItem(this.activeIndex);
+        },1000)
+      };
       this.sourceData = {
         id: item.id,
         activeStage: item.stageName,
@@ -575,7 +580,12 @@ export default {
           }
           else{
               this.dialogTitle = '启动预案';
-              this.closeCallBack = this.getDataList;
+              this.closeCallBack = ()=>{
+                this.getDataList();
+                setTimeout(()=>{
+                  this.clickDataItem(this.activeIndex);
+                },1000)
+              };
               this.sourceData = {
                 id: this.dataArr[this.activeIndex].id,
                 activeStage: '消息阶段',
