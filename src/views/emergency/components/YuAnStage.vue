@@ -1,7 +1,7 @@
 <template>
     <div class="part things">
         <div class="title">应急事项</div>
-        <div class="add_btn" @click="addItem"><a-icon type="plus-circle" style="margin-right: 5px"/>新增应急阶段</div>
+        <div v-if="operateType!=='look'" class="add_btn" @click="addItem"><a-icon type="plus-circle" style="margin-right: 5px"/>新增应急阶段</div>
         <div class="content">
             <a-row v-for="(item, index) in stageData" :key="index">
                 <a-col :span="5">
@@ -11,7 +11,7 @@
                         ></i>
 
                         <label class="subtitle" style="width:80px;">阶段：</label>
-                        <a-select v-model="item.stageName" style="width: 100%">
+                        <a-select v-model="item.stageName" style="width: 100%" :disabled="operateType==='look'">
                             <a-select-option value="消息阶段">消息阶段</a-select-option>
                             <a-select-option value="警报阶段">警报阶段</a-select-option>
                             <a-select-option value="紧急警报阶段">紧急警报阶段</a-select-option>
@@ -39,7 +39,7 @@
                         <a-input v-model="item.tel" placeholder="请输入"/>
                     </div>
                 </a-col>
-                <a-col :span="1">
+                <a-col :span="1" v-if="operateType!=='look'">
                     <a-popconfirm
                             v-if="stageData.length > 1"
                             title="确定删除这个阶段吗？"
@@ -71,6 +71,11 @@
           activeStage:{
             type: String,
             default: '消息阶段'
+          },
+          //是否可编辑，look表示不可编辑
+          operateType:{
+            type: String,
+            default: 'set'
           }
         },
         data(){

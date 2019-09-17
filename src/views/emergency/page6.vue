@@ -547,7 +547,12 @@ export default {
       }
     },
     goToNextStage(item){
-      this.dialogTitle = '预案进行中';
+      if(item.stageName==='警报解除阶段'){
+        this.dialogTitle = '预案已完成';
+      }else{
+        this.dialogTitle = '预案进行中';
+      }
+
       this.closeCallBack = ()=>{
         this.getDataList();
         setTimeout(()=>{

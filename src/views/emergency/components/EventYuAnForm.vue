@@ -53,10 +53,10 @@
                             </a-row>
                         </div>
                     </div>
-                    <yu-an-stage :stageData.sync="stageData" :activeStage="showStage"></yu-an-stage>
-                    <yu-an-people :peopleData.sync="peopleData" @getResult="getPeopleResult"></yu-an-people>
-                    <yu-an-resource :resourceData.sync="resourceData" @getResult="getResourceResult"></yu-an-resource>
-                    <yu-an-place :placeData.sync="placeData" @getResult="getPlaceResult"></yu-an-place>
+                    <yu-an-stage :stageData.sync="stageData" :activeStage="showStage" :operateType="operateType"></yu-an-stage>
+                    <yu-an-people :peopleData.sync="peopleData" :operateType="operateType" @getResult="getPeopleResult"></yu-an-people>
+                    <yu-an-resource :resourceData.sync="resourceData" :operateType="operateType" @getResult="getResourceResult"></yu-an-resource>
+                    <yu-an-place :placeData.sync="placeData" :operateType="operateType" @getResult="getPlaceResult"></yu-an-place>
                 </div>
             </cg-container>
         </div>
@@ -100,6 +100,7 @@
         data(){
             return {
                 showStage: '',
+                operateType: 'set',
                 areaList:{
                     '2':'圆形',
                     '3':'多边形',
@@ -167,6 +168,11 @@
             ...mapActions('emergency/emergency', ['getEventYuAnInfoById','startYuAn']),
             init(){
               this.showStage = this.sourceData.activeStage;
+              if(this.sourceData.activeStage==='警报解除阶段'){
+                //所有都只有查看的动作
+                this.operateType = 'look';
+              }
+
                 this.getEventYuAnInfoById({id: this.sourceData.id}).then((res)=>{
                     this.eventInfo = res.eventData;
                     this.stageData = res.emPlanData.stageData;

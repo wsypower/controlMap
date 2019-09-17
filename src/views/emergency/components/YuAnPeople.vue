@@ -10,7 +10,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderOne')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('leaderOne')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('leaderOne')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -23,7 +24,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderTwo')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('leaderTwo')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('leaderTwo')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -36,7 +38,8 @@
                                   style="width: 100%"
                                   @change="(val)=>{changeSelect(val,'leaderThree')}"
                                   placeholder="请选择"
-                                  @dropdownVisibleChange="()=>{getSelectOptions('leaderThree')}">
+                                  @dropdownVisibleChange="()=>{getSelectOptions('leaderThree')}"
+                                  :disabled="operateType==='look'">
                             <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -49,7 +52,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderFour')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('leaderFour')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('leaderFour')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -62,7 +66,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderFive')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('leaderFive')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('leaderFive')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -77,7 +82,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'memberOne')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('memberOne')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('memberOne')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -90,7 +96,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'memberTwo')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('memberTwo')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('memberTwo')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -106,7 +113,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupOneForOne')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForOne')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForOne')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -119,7 +127,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupOneForTwo')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForTwo')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForTwo')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -132,7 +141,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupOneForThree')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForThree')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForThree')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -148,7 +158,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupTwoForOne')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForOne')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForOne')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -161,7 +172,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupTwoForTwo')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForTwo')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForTwo')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -174,7 +186,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupTwoForThree')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForThree')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForThree')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -190,7 +203,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupThreeForOne')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForOne')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForOne')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -203,7 +217,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupThreeForTwo')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForTwo')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForTwo')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -216,7 +231,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'groupThreeForThree')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForThree')}">
+                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForThree')}"
+                              :disabled="operateType==='look'">
                         <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
@@ -251,7 +267,12 @@
                         groupThreeForThree: []
                     }
                 }
-            }
+            },
+          //是否可编辑，look表示不可编辑
+          operateType:{
+            type: String,
+            default: 'set'
+          }
         },
         data(){
             return {

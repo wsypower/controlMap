@@ -38,7 +38,7 @@
                     </div>
                 </template>
                 <template slot="operate" slot-scope="text, record, index">
-                    <div class="operate-cell">
+                    <div class="operate-cell" v-if="operateType!=='look'">
                         <span @click="resetRow(index)">重置</span>
                         <span>|</span>
                         <a-popconfirm title="确定删除吗?"
@@ -52,7 +52,7 @@
                     </div>
                 </template>
                 <template slot="footer">
-                    <div class="table_footer">
+                    <div class="table_footer" v-if="operateType!=='look'">
                         <span @click="addRow">
                             <a-icon type="plus-circle" style="margin-right: 5px"/>新增场地
                         </span>
@@ -108,7 +108,12 @@
                 default(){
                     return []
                 }
-            }
+            },
+          //是否可编辑，look表示不可编辑
+          operateType:{
+            type: String,
+            default: 'set'
+          }
         },
         components:{
             PositionMapDialog
@@ -229,6 +234,9 @@
                 }
             }
         }
+    }
+    .place{
+        padding-bottom: 10px;
     }
     .place_table{
         padding: 0px !important;
