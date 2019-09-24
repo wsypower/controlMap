@@ -1,7 +1,7 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-21 15:35:05
- * @Last Modified by: wei.yafei 
+ * @Last Modified by: wei.yafei
  * @Last Modified time: 2019-06-22 19:55:52
  */
 import BScroll from 'better-scroll'
@@ -35,6 +35,7 @@ export default {
             mouseWheel: true,
             click: true,
             bounce: true,
+            preventDefault: false,
             scrollbar: {
               fade: true,
               interactive: false

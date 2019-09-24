@@ -24,11 +24,15 @@ import setting from '@/setting.js'
 import vueFiltersDate from '@/filters/moment/main'
 Vue.use(vueFiltersDate)
 
-
 // 引入echarts
 import echarts from "echarts";
 Vue.prototype.$echarts = echarts;
 
+import { HappyScroll } from 'vue-happy-scroll'
+//自定义组件名
+Vue.component('happy-scroll', HappyScroll)
+// 引入css
+import 'vue-happy-scroll/docs/happy-scroll.css'
 
 //mock => 生产环境(上线前请注释！！！)
 import '@/mock'
@@ -44,12 +48,13 @@ new Vue({
     // 获取userId并登陆
     this.$store
       .dispatch('cgadmin/account/login')
-      .then(() => {
-        console.log(111)
+      .then((res) => {
+        console.log(111,res);
         //登录后获取用户权限
-        const role = this.$store.getters['cgadmin/user/role']
-        console.log(role)
+        // const role = this.$store.getters['cgadmin/user/role']
+        // console.log(role)
         //设置侧边栏菜单
+          const role = 'admin';
         const menu = menuAside.filter(v => v.role.includes(role))
         this.$store.commit('cgadmin/menu/asideSet', menu)
       })

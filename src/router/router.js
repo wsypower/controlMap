@@ -32,7 +32,6 @@ const frameIn = [
       title: '管控平台'
     },
     children: [
-      //测试 => page1
       {
         path: '/section',
         name: 'people',
@@ -57,40 +56,46 @@ const frameIn = [
         path: '/records',
         name: 'records',
         meta: {
-          title: '案卷',
+          title: '案卷管控',
           role: ['admin', 'super_editor']
         },
         component: _import('records/page3.vue')
       },
-      //测试 => page4
-      {
-        path: '/special',
-        name: 'special',
-        meta: {
-          title: '视频',
-          role: ['admin', 'super_editor']
-        },
-        component: _import('special/page4.vue')
-      },
-      //测试 => page5
-      {
-        path: '/video',
-        name: 'video',
-        meta: {
-          title: '专题服务',
-          role: ['admin', 'super_editor']
-        },
-        component: _import('video/page5.vue')
-      },
-      //测试 => page6
       {
         path: '/emergency',
         name: 'emergency',
         meta: {
-          title: '应急指挥',
-          role: ['admin', 'super_editor']
+            title: '应急指挥',
+            role: ['admin', 'super_editor']
         },
         component: _import('emergency/page6.vue')
+      },
+      {
+          path: '/manhole',
+          name: 'manhole',
+          meta: {
+              title: '智能井盖',
+              role: ['admin', 'super_editor']
+          },
+          component: _import('manhole/index.vue')
+      },
+      {
+          path: '/dustbin',
+          name: 'dustbin',
+          meta: {
+              title: '智能垃圾桶',
+              role: ['admin', 'super_editor']
+          },
+          component: _import('dustbin/index.vue')
+      },
+      {
+          path: '/water',
+          name: 'water',
+          meta: {
+              title: '智能水位计',
+              role: ['admin', 'super_editor']
+          },
+          component: _import('water/index.vue')
       },
       // 刷新页面 必须保留
       {

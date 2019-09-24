@@ -34,7 +34,7 @@
               </keep-alive>
             </layout-drawer>
             <!-- 地图控件注入地址 -->
-            <LayoutMap />
+            <LayoutMap ref="olMap"></LayoutMap>
           </div>
         </div>
       </loading>
@@ -43,8 +43,9 @@
 </template>
 
 <script>
+
 import { LayoutMenu, LayoutDrawer, LayoutHeader, Loading } from './components/index'
-import LayoutMap from '@/views/map/index.vue'
+import LayoutMap from '@/views/map/olMap.vue'
 import { mapState } from 'vuex'
 export default {
   name: 'layoutHeaderAside',
