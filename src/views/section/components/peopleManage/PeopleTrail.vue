@@ -3,7 +3,7 @@
         <div class="search-panel">
             <div flex="fir:left cross:center">
                 <label style="width: 90px;">选择人员：</label>
-                <a-select v-model="query.userId" showSearch placeholder="请选择" style="width: 100%;">
+                <a-select v-model="query.userId" showSearch placeholder="请选择" style="width: 246px;">
                     <a-select-option v-for="(people,index) in peopleDataList" :value="people.id" :key="index">{{people.name}}（{{people.dept}}）</a-select-option>
                 </a-select>
             </div>
@@ -81,6 +81,7 @@
         },
         data(){
             return {
+                //各项查询条件
                 query: {
                    userId: '',
                    startDay: '',
@@ -89,13 +90,15 @@
                    pageNo: 1,
                    pageSize: 20
                 },
+                //查询的时间范围
                 dayRange: [],
-
+                //查询时的过渡效果
                 showLoading: false,
-                start: false,
+                //正序asc、倒序desc
                 activeName: 'asc',
-                activeIndex: null,
+                //单页数据
                 dataList:[],
+                //总数
                 totalSize: 0
             }
         },

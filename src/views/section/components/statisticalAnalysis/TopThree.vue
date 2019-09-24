@@ -33,6 +33,7 @@
         },
         methods:{
             ...mapActions('section/statistical', ['getPeopleTopThreeData']),
+            //获取前三的人员数据
             getChartData(){
                 this.getPeopleTopThreeData().then(res=>{
                     console.log('getPeopleTopThreeData',res);

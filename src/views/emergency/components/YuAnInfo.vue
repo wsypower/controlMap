@@ -1,5 +1,5 @@
 <template>
-    <div class="info-body" flex="dir:left main:justify">
+    <div class="info-body" flex="dir:left">
         <div class="info-body-left">
             <img v-if="JSON.parse(info.imageStr)[0]" :src="JSON.parse(info.imageStr)[0].newPath" />
             <img v-else src="~@img/zanwutupian.png"/>

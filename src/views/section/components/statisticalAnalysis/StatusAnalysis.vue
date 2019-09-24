@@ -48,9 +48,11 @@
                     this.chartInit(this.outlineArr,this.outlineNum);
                 }
             },
+            //获取全部数据
             getChartData(){
                 this.getStatusAnalysisData().then(res=>{
                     console.log('getStatusAnalysisData',res);
+                    //一次性获取全部数据，从而把数据进行归类显示
                     res.data.forEach(item=>{
                         let allTemp = {
                             name: item.name,
@@ -78,6 +80,7 @@
                 })
 
             },
+            //初始化图表
             chartInit(data,total){
                 const ChartColumnar = this.$echarts.init(document.getElementById('status'));
                 ChartColumnar.setOption({

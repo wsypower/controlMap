@@ -25,6 +25,7 @@
         },
         methods:{
             ...mapActions('section/statistical', ['getPeopleAnalysisData']),
+            //获取人员状态数据
             getChartData(){
                 this.getPeopleAnalysisData().then(res=>{
                     console.log('getPeopleAnalysisData', res);
@@ -44,6 +45,7 @@
                 });
 
             },
+            //初始化图表
             chartInit(){
                 let _this = this;
                 const ChartColumnar = this.$echarts.init(document.getElementById('analysis'));

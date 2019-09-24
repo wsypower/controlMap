@@ -49,6 +49,7 @@
             changeTab(){
 
             },
+            //人员查看轨迹触发，使页面显示人员轨迹的tab以及地图显示轨迹
             getUserId(data){
                 console.log('peopleManage-userId:' + data);
                 this.activeTab = '2';

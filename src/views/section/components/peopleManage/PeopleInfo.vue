@@ -111,9 +111,11 @@
         mounted(){},
         methods:{
             ...mapActions('section/manage', ['getUserWorkInfoData']),
+            //今日工作与历史工作的切换
             clickTab(tab){
                 this.activeIndex = tab;
             },
+            //查看轨迹，触发父组件的方法
             lookPeopleTrail(){
                 this.$emit('getUserId',this.info.id);
             },

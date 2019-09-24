@@ -3,7 +3,7 @@
         <div class="search-panel">
             <div flex="fir:left cross:center">
                 <label style="width: 90px;">选择人员：</label>
-                <a-select v-model="query.userId" showSearch placeholder="请选择" style="width: 100%;">
+                <a-select v-model="query.userId" showSearch placeholder="请选择" style="width: 246px;">
                     <a-select-option v-for="(people,index) in peopleDataList" :value="people.id" :key="index">{{people.name}}（{{people.dept}}）</a-select-option>
                 </a-select>
             </div>

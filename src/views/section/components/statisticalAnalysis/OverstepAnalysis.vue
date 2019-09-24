@@ -20,6 +20,7 @@
         },
         methods:{
             ...mapActions('section/statistical', ['getOverstepAnalysisData']),
+            //获取越界数据
             getChartData(){
                 this.getOverstepAnalysisData().then(res=>{
                     console.log('getOverstepAnalysisData',res);
@@ -36,6 +37,7 @@
                 })
 
             },
+            //初始化图表
             chartInit(data){
                 const ChartColumnar = this.$echarts.init(document.getElementById('overstep'));
                 ChartColumnar.setOption({

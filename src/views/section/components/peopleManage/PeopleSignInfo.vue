@@ -1,3 +1,4 @@
+<!--签到签退弹窗详情-->
 <template>
     <div class="tip-content">
         <div class="tip-header" flex="dir:left cross:center">

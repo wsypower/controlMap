@@ -1,12 +1,12 @@
 <template>
     <a-tabs :defaultActiveKey="defaultActiveKey" @change="changeTab" style="height: 100%" class="tab-layer">
         <a-tab-pane v-for="(item, index) in tabData" :tab="item.name" :key="index">
+            <!--统计分析页面需要全局滚动条，其余页面只是页面中的一部分可能需要滚动显示，故只给统计页面增加全局滚动-->
             <cg-container scroll v-if="item.name==='统计分析'">
                 <component :is="item.component"></component>
             </cg-container>
             <component v-else :is="item.component"></component>
         </a-tab-pane>
-        <!--<div style="position:absolute;left:50%;top:10px;height: 15px;border-right: 1px solid #dddddd"></div>-->
     </a-tabs>
 </template>
 <script type="text/ecmascript-6">

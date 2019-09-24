@@ -43,6 +43,7 @@
             }
         },
         computed:{
+            //获得展示的数据与属性
            treeData:function(){
                let data = JSON.parse(JSON.stringify(this.sourceData));
                this.changeTreeData(data);
@@ -66,6 +67,7 @@
                     this.showLoading = false;
                 });
             },
+            //给后端的数据增加一些前端展示与判断需要的属性
             changeTreeData(arr){
                 arr.forEach(item=>{
                     item.title = item.name;
@@ -97,6 +99,7 @@
 
                 })
             },
+            //点击树中某个节点（某个人员）时触发
             onSelect(selectedKeys, e){
                 console.log(selectedKeys, e);
                 if(selectedKeys.length===0){
@@ -109,6 +112,7 @@
                 }
 
             },
+            //获取父节点的一些关键信息存放入peopleInfoData，给peopleInfo使用
             getUserInfoById(arr,id,dept){
                 for(let i=0;i<arr.length;i++){
                     if(arr[i].isLeaf){
@@ -122,6 +126,7 @@
                     }
                 }
             },
+            //人员轨迹触发
             getUserId(data){
                 this.$emit('getUserId',data);
             },

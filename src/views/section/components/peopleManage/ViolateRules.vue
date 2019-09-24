@@ -75,13 +75,17 @@
         },
         data(){
             return {
+                //查询条件--不分页
                 query: {
                     userId: '',
                     startDay: '',
                     endDay: '',
+                    //违规类型
                     vType: '',
                 },
+                //时间范围
                 dayRange: [],
+                //查询数据的过渡效果
                 showLoading: false,
                 dataList:[]
             }
