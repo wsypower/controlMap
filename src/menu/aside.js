@@ -6,13 +6,13 @@
  */
 // 菜单 侧边栏
 export default [
-  // {
-  //   path: '/section',
-  //   title: '人员管控',
-  //   icon: 'menu-section',
-  //   active: false,
-  //   role: ['admin']
-  // },
+  {
+    path: '/section',
+    title: '人员管控',
+    icon: 'menu-section',
+    active: false,
+    role: ['admin']
+  },
   // {
   //   path: '/car',
   //   title: '车辆管控',
@@ -41,25 +41,25 @@ export default [
   //   active: false,
   //   role: ['admin']
   // },
-  {
-      path: '/manhole',
-      title: '智慧窨井盖',
-      icon: 'manhole',
-      active: false,
-      role: ['admin', 'super_editor']
-  },{
-      path: '/dustbin',
-      title: '智慧垃圾桶',
-      icon: 'dustbin',
-      active: false,
-      role: ['admin', 'super_editor']
-  },{
-      path: '/water',
-      title: '智慧水位',
-      icon: 'waterl',
-      active: false,
-      role: ['admin', 'super_editor']
-  },
+  // {
+  //     path: '/manhole',
+  //     title: '智慧窨井盖',
+  //     icon: 'manhole',
+  //     active: false,
+  //     role: ['admin', 'super_editor']
+  // },{
+  //     path: '/dustbin',
+  //     title: '智慧垃圾桶',
+  //     icon: 'dustbin',
+  //     active: false,
+  //     role: ['admin', 'super_editor']
+  // },{
+  //     path: '/water',
+  //     title: '智慧水位',
+  //     icon: 'waterl',
+  //     active: false,
+  //     role: ['admin', 'super_editor']
+  // },
   {
     path: '/emergency',
     title: '应急指挥',
