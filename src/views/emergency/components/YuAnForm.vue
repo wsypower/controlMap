@@ -124,7 +124,7 @@
             //应急人员数据更新
             getPeopleResult(data){
                 this.peopleResultData = JSON.parse(JSON.stringify(data));
-                // console.log('peopleResultData',this.peopleResultData);
+                console.log('peopleResultData',this.peopleResultData);
             },
             //应急资源数据变更
             getResourceResult(data){
