@@ -25,6 +25,7 @@
     import YuAnPeople from './YuAnPeople'
     import YuAnResource from './YuAnResource'
     import YuAnPlace from './YuAnPlace'
+    const _ = require('lodash')
     export default {
         name: 'yuAnFormNew',
         components:{
@@ -65,15 +66,7 @@
                     leaderFive: [],
                     memberOne: [],
                     memberTwo: [],
-                    groupOneForOne: [],
-                    groupOneForTwo: [],
-                    groupOneForThree: [],
-                    groupTwoForOne: [],
-                    groupTwoForTwo: [],
-                    groupTwoForThree: [],
-                    groupThreeForOne: [],
-                    groupThreeForTwo: [],
-                    groupThreeForThree: []
+                    groupMember: []
                 },
                 peopleResultData:{},
                 resourceData: [],
@@ -123,7 +116,7 @@
             },
             //应急人员数据更新
             getPeopleResult(data){
-                this.peopleResultData = JSON.parse(JSON.stringify(data));
+                this.peopleResultData = _.cloneDeep(data);
                 console.log('peopleResultData',this.peopleResultData);
             },
             //应急资源数据变更
@@ -141,7 +134,7 @@
                     return
                 }
                 else{
-                    //掉保存接口
+                    //调保存接口
                     this.yuAnForm.stageData = JSON.stringify(this.stageData);
                     this.yuAnForm.peopleData = JSON.stringify(this.peopleResultData);
                     this.yuAnForm.resourceData = JSON.stringify(this.resourceResultData);

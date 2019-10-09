@@ -209,7 +209,7 @@
             .to-next{
                 position:absolute;
                 right:0px;
-                bottom:20px;
+                bottom:5px;
                 .stage_btn{
                     display:inline-block;
                     height: 28px;

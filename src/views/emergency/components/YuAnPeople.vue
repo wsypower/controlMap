@@ -99,7 +99,7 @@
                 <div class="member-top" flex="dir:left cross:center main:justify">
                     <span class="member-top-group">第{{numArr[index]}}组</span>
                     <div>
-                        <a-icon type="plus-circle" style="margin-right: 10px;" @click="addGroupItem"/>
+                        <a-icon v-if="index===groupMember.length-1" type="plus-circle" style="margin-right: 10px;" @click="addGroupItem"/>
                         <a-popconfirm
                                 title="确定删除这个组吗？"
                                 @confirm="() => deleteGroupItem(index)"
@@ -153,6 +153,7 @@
 </template>
 <script type="text/ecmascript-6">
     import { mapActions } from 'vuex'
+    const _ = require('lodash')
     const numArr= ['一','二','三','四','五','六','七','八','九','十',
       '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十'];
     export default {
@@ -225,18 +226,47 @@
             peopleData:{
                 handler(newValue){
                     Object.keys(newValue).forEach(key=>{
+                      if(key!=='groupMember'){
                         newValue[key].forEach(id=>{
-                            let data = this.totalPeople.filter(item => item.id===id)
-                            console.log('data',data);
-                            this.peopleDisplayData[key].push(data[0].name + '_' + data[0].id);
+                          let data = this.totalPeople.filter(item => item.id===id)
+                          console.log('data',data);
+                          this.peopleDisplayData[key].push(data[0].name + '_' + data[0].id);
                         })
+                      }
+                      else{
+                        this.groupMember = [];
+                        newValue[key].forEach(item=>{
+                          let temp = {
+                            groupForOne: [],
+                            groupForTwo: [],
+                            groupForThree: []
+                          }
+                          item.groupForOne.map(id=>{
+                            let data = this.totalPeople.filter(item => item.id===id)
+                            temp.groupForOne.push(data[0].name + '_' + data[0].id);
+                          })
+                          item.groupForTwo.map(id=>{
+                            let data = this.totalPeople.filter(item => item.id===id)
+                            temp.groupForTwo.push(data[0].name + '_' + data[0].id);
+                          })
+                          item.groupForThree.map(id=>{
+                            let data = this.totalPeople.filter(item => item.id===id)
+                            temp.groupForThree.push(data[0].name + '_' + data[0].id);
+                          })
+
+                          // console.log('data',data);
+                          //
+                          this.groupMember.push(temp);
+                        })
+                      }
+
                     });
                 },
                 deep: true
             },
           groupMember:{
             handler(newValue){
-              this.peopleDisplayData.groupMember = JSON.parse(JSON.stringify(newValue));
+              this.peopleDisplayData.groupMember = _.cloneDeep(newValue);//JSON.parse(JSON.stringify(newValue));
             },
             deep: true
           },
@@ -304,7 +334,7 @@
 
                 // console.log('allCheckedPeopleIdList',this.allCheckedPeopleIdList);
             },
-            
+
           addGroupItem(){
               let temp = {
                 groupForOne: [],
