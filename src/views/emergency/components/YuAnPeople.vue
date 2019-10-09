@@ -225,6 +225,7 @@
         watch:{
             peopleData:{
                 handler(newValue){
+                  console.log('peopleData newValue', newValue);
                     Object.keys(newValue).forEach(key=>{
                       if(key!=='groupMember'){
                         newValue[key].forEach(id=>{
