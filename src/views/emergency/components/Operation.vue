@@ -102,18 +102,18 @@ export default {
                     icon:'camera',
                     checked: false
                 },
-                {
-                    key:'zfPeople',
-                    name:'最优执法队员',
-                    icon:'zf-people',
-                    checked: false
-                },
-                {
-                    key:'zfCar',
-                    name:'最优执法车辆',
-                    icon:'zf-car',
-                    checked: false
-                },
+                // {
+                //     key:'zfPeople',
+                //     name:'最优执法队员',
+                //     icon:'zf-people',
+                //     checked: false
+                // },
+                // {
+                //     key:'zfCar',
+                //     name:'最优执法车辆',
+                //     icon:'zf-car',
+                //     checked: false
+                // },
                 {
                     key:'manager',
                     name:'管理人员',
