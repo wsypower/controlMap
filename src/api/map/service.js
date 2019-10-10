@@ -84,7 +84,7 @@ export async function getAreaVideo() {
 export async function getTypeResources(type) {
   const result=await getResourceListApi(type);
   const data = result.map(r => {
-    if (r.x.length > 0 && r.y.length > 0){
+    if (r.x.length > 0 && r.y.length > 0 && r.x.indexOf('.') > 1 && r.y.indexOf('.') > 1){
       r.position = [parseFloat(r.x), parseFloat(r.y)];
       return {
         id: r.id,

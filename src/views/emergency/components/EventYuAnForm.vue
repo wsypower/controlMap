@@ -18,7 +18,7 @@
                             <a-row>
                                 <a-col :span="7">
                                     <div flex="dir:left"><span class="sub-title">名称：</span><span class="sub-content">{{eventInfo.name}}</span></div>
-                                    <div flex="dir:left"><span class="sub-title">类型：</span><span class="sub-content">{{eventInfo.typeName}}</span></div>
+                                    <div flex="dir:left"><span class="sub-title">预案：</span><span class="sub-content">{{eventInfo.typeName}}</span></div>
                                     <div flex="dir:left"><span class="sub-title">等级：</span><span class="sub-content">{{eventInfo.levelName}}</span></div>
                                     <div flex="dir:left"><span class="sub-title">时间：</span>
                                         <span class="sub-content">

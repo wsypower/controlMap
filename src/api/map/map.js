@@ -73,7 +73,7 @@ export function postFeature(data) {
  */
 export function getVideoListApi() {
   return request({
-    url: URL_CONFIG.baseURL + 'point/getCamList',
+    url: URL_CONFIG.baseURL + '/point/getCamList',
     method: 'post'
   });
 }
@@ -92,7 +92,7 @@ const apiMapping = {
  */
 export function getResourceListApi(type) {
   return request({
-    url: URL_CONFIG.baseURL + 'point/' + apiMapping[type],
+    url: URL_CONFIG.baseURL + '/point/' + apiMapping[type],
     method: 'post'
   });
 }
@@ -104,7 +104,7 @@ export function getResourceListApi(type) {
  */
 export function getEquipListApi(type) {
   return request({
-    url: URL_CONFIG.baseURL + 'iot/device/list?deviceType=' + type,
+    url: URL_CONFIG.baseURL + '/iot/device/list?deviceType=' + type,
     method: 'post'
   });
 }

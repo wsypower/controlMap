@@ -375,8 +375,10 @@ export default {
                   if (this.emergencyResourceLayer) {
                     this.emergencyResourceLayer.getSource().clear();
                   }
-                  this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
-                  this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getExtent());
+                  if(features.length>0) {
+                    this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
+                    this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getExtent());
+                  }
                 })
               }
               else {
