@@ -235,32 +235,31 @@
                         })
                       }
                       else{
-                        this.groupMember = [];
-                        newValue[key].forEach(item=>{
-                          let temp = {
-                            groupForOne: [],
-                            groupForTwo: [],
-                            groupForThree: []
-                          }
-                          item.groupForOne.map(id=>{
-                            let data = this.totalPeople.filter(item => item.id===id)
-                            temp.groupForOne.push(data[0].name + '_' + data[0].id);
-                          })
-                          item.groupForTwo.map(id=>{
-                            let data = this.totalPeople.filter(item => item.id===id)
-                            temp.groupForTwo.push(data[0].name + '_' + data[0].id);
-                          })
-                          item.groupForThree.map(id=>{
-                            let data = this.totalPeople.filter(item => item.id===id)
-                            temp.groupForThree.push(data[0].name + '_' + data[0].id);
-                          })
 
-                          // console.log('data',data);
-                          //
-                          this.groupMember.push(temp);
-                        })
+                        if(newValue[key]&&newValue[key].length>0){
+                          this.groupMember = [];
+                          newValue[key].forEach(item=>{
+                            let temp = {
+                              groupForOne: [],
+                              groupForTwo: [],
+                              groupForThree: []
+                            }
+                            item.groupForOne.map(id=>{
+                              let data = this.totalPeople.filter(item => item.id===id)
+                              temp.groupForOne.push(data[0].name + '_' + data[0].id);
+                            })
+                            item.groupForTwo.map(id=>{
+                              let data = this.totalPeople.filter(item => item.id===id)
+                              temp.groupForTwo.push(data[0].name + '_' + data[0].id);
+                            })
+                            item.groupForThree.map(id=>{
+                              let data = this.totalPeople.filter(item => item.id===id)
+                              temp.groupForThree.push(data[0].name + '_' + data[0].id);
+                            })
+                            this.groupMember.push(temp);
+                          })
+                        }
                       }
-
                     });
                 },
                 deep: true
