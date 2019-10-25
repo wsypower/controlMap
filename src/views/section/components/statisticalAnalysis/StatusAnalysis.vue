@@ -78,7 +78,6 @@
                     console.log('dataHandle',this.totalArr,this.onlineArr,this.outlineArr);
                     this.chartInit(this.totalArr,this.totalNum);
                 })
-
             },
             //初始化图表
             chartInit(data,total){

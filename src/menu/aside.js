@@ -27,15 +27,15 @@ export default [
   //   active: false,
   //   role: ['admin']
   // },
+  {
+    path: '/video',
+    title: '视频',
+    icon: 'menu-video',
+    active: false,
+    role: ['admin']
+  },
   // {
   //   path: '/special',
-  //   title: '视频',
-  //   icon: 'menu-video',
-  //   active: false,
-  //   role: ['admin']
-  // },
-  // {
-  //   path: '/video',
   //   title: '专题服务',
   //   icon: 'menu-special',
   //   active: false,

@@ -19,7 +19,7 @@ export async function getTypePoint(type) {
 }
 
 /**
- * @description:
+ * @description:获取所有应急区域
  * @author:sijianting
  * @createDate:2019/7/22 15:26
  */
@@ -116,7 +116,7 @@ export async function getTypeEquip(type) {
   return data.filter(Boolean);
 }
 /**
- * @description:
+ * @description:通过经纬度获取地址
  * @author:sijianting
  * @createDate:2019/8/23 10:19
  */

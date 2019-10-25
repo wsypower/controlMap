@@ -36,11 +36,12 @@
 .tab-layer{
     height: 100%;
     /deep/.ant-tabs-bar{
-        background-color: #f5f5f5;
+        /*background-color: #f5f5f5;*/
         margin-bottom: 3px;
         padding: 0px 20px;
         .ant-tabs-nav{
             width: 100%;
+            /*text-align: center;*/
             .ant-tabs-tab{
                 width: 50%;
                 text-align: center;
