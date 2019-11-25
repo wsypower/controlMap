@@ -1,12 +1,30 @@
 <template>
   <div class="page">
-      page3
+      <swiper :options="swiperOption" style="width:100%;height:30px">
+          　　<swiper-slide>slide1</swiper-slide>
+          　　<swiper-slide>slide2</swiper-slide>
+          <swiper-slide>slid3</swiper-slide>
+          <swiper-slide>slide4</swiper-slide>
+          　　<div class="swiper-button-prev" slot="button-prev"></div>
+          　　<div class="swiper-button-next" slot="button-next"></div>
+      </swiper>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'page3'
+  name: 'page3',
+  data(){
+    return {
+      swiperOption: {
+        loop: false,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
+        }
+      }
+    }
+  }
 }
 </script>
 

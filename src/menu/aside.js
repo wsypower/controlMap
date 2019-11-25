@@ -13,20 +13,20 @@ export default [
     active: false,
     role: ['admin']
   },
-  // {
-  //   path: '/car',
-  //   title: '车辆管控',
-  //   icon: 'menu-car',
-  //   active: false,
-  //   role: ['admin']
-  // },
-  // {
-  //   path: '/records',
-  //   title: '案卷',
-  //   icon: 'menu-records',
-  //   active: false,
-  //   role: ['admin']
-  // },
+  {
+    path: '/car',
+    title: '车辆管控',
+    icon: 'menu-car',
+    active: false,
+    role: ['admin']
+  },
+  {
+    path: '/records',
+    title: '案卷',
+    icon: 'menu-records',
+    active: false,
+    role: ['admin']
+  },
   // {
   //   path: '/special',
   //   title: '视频',

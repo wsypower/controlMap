@@ -49,7 +49,7 @@ const frameIn = [
           title: '车辆管控',
           role: ['admin', 'super_editor']
         },
-        component: _import('car/page2.vue')
+        component: _import('car/index.vue')
       },
       //测试 => page3
       {
