@@ -13,12 +13,23 @@ import { Modify } from 'ol/interaction.js';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';
 import Feature from 'ol/Feature';
 import MultiPolygon from 'ol/geom/MultiPolygon';
-import { fromCircle } from 'ol/geom/Polygon'
+import { fromCircle } from 'ol/geom/Polygon';
+import Point from 'ol/geom/Point';
 
 export class MapManager {
   constructor(map) {
     this.map = map
     this.drawLayer=null;
+  }
+  /**
+   * @description: xy生成要素
+   * @param {number} x
+   * @param {number} y
+   */
+  xyToFeature(x, y) {
+    return new Feature({
+      geometry: new Point([parseFloat(x), parseFloat(y)])
+    })
   }
   /**
    * @description: 通过url添加矢量图层
@@ -65,11 +76,12 @@ export class MapManager {
       style,
       zIndex
     })
-    source.addFeatures(features)
+    source.addFeatures(features);
+    console.log('source',source.getFeatures());
+    console.log('加载要素',features);
     this.map.addLayer(vectorLayer)
     return vectorLayer
   }
-
   /**
    * @description: 通过features数组添加热力图图层
    * @param {Array} features
@@ -226,4 +238,3 @@ export function circleToPloygon(feature) {
   })
   return feature;
 }
-
