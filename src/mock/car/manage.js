@@ -1,6 +1,147 @@
 import {builder, getBody, getQueryParameters} from '../util'
 import Mock from 'mockjs'
 
+const getAllCarTreeData = options => {
+    console.log('getAllCarTreeData options',options);
+    const body = getBody(options);
+    console.log('getAllCarTreeData body',body);
+    let data = [{
+        name: '智慧城管',
+        id: 'chengguan',
+        isLeaf: false,
+        children:[{
+            name: '信息采集中心',
+            id: 'xinxi',
+            isLeaf: false,
+            children: [{
+                name: "浙GN8P80",
+                id: "861996030365941",
+                carNumber: "浙GN8P80",
+                code: '浙GN8P80',
+                flag: '浙GN8P80',
+                phone: '14212412512',
+                gpsTime: 1574730352000,
+                online: false,
+                x: "122.206714",
+                y: "30.245535",
+                isLeaf: true
+            },{
+                name: "浙GB3F66",
+                id: "861996030369604",
+                carNumber: "浙GB3F66",
+                code: '浙GB3F66',
+                flag: '浙GB3F66',
+                phone: '14212412512',
+                gpsTime: 1574695055000,
+                online: true,
+                x: "122.206714",
+                y: "30.245535",
+                isLeaf: true
+            }, {
+                name: "浙GD01039",
+                id: "861996030370263",
+                carNumber: "浙GD01039",
+                code: '浙GD01039',
+                flag: '浙GD01039',
+                phone: '14212412512',
+                gpsTime: 1574730528000,
+                online: true,
+                x: "119.62399883414247",
+                y: "29.07119100775157",
+                isLeaf: true
+            }]
+        },{
+            name: '第一中队',
+            id: 'yizhongdui',
+            isLeaf: false,
+            children: [{
+                name: "浙GC8B01",
+                id: "861996030376930",
+                carNumber: "浙GC8B01",
+                code: '浙GC8B01',
+                flag: '浙GC8B01',
+                phone: '14212412512',
+                gpsTime: 1574730537000,
+                online: true,
+                x: "119.64706984131524",
+                y: "29.09840347291763",
+                isLeaf: true
+            }, {
+                name: "浙GZ0G66",
+                id: "861996030365958",
+                carNumber: "浙GZ0G66",
+                code: '浙GZ0G66',
+                flag: '浙GZ0G66',
+                phone: '14212412512',
+                gpsTime: 1574653032000,
+                online: false,
+                x: "119.6612536774609",
+                y: "29.09780620397094",
+                isLeaf: true
+            }]
+        }]
+    }, {
+        name: '智慧教育',
+        id: 'jiaoyu',
+        allNum: 10,
+        onlineNum: 4,
+        isLeaf: false,
+        children:[{
+            name: '信息采集中心',
+            id: 'caiji',
+            isLeaf: false,
+            children: [{
+                name: "浙G1923M",
+                id: "861996030369620",
+                carNumber: "浙G1923M",
+                code: '浙G1923M',
+                flag: '浙G1923M',
+                phone: '14212412512',
+                gpsTime: 1574729844000,
+                online: true,
+                x: "119.64009925849292",
+                y: "29.084221957704376",
+                isLeaf: true
+            }, {
+                name: "浙GD02667",
+                id: "861996030370297",
+                carNumber: "浙GD02667",
+                code: '浙GD02667',
+                flag: '浙GD02667',
+                phone: '14212412512',
+                gpsTime: 1574584935000,
+                online: true,
+                x: "119.65797838272466",
+                y: "29.07670247599889",
+                isLeaf: true
+            }, {
+                name: "浙GD06752",
+                id: "861996030376641",
+                carNumber: "浙GD06752",
+                code: '浙GD06752',
+                flag: '浙GD06752',
+                phone: '14212412512',
+                gpsTime: 1574672080000,
+                online: true,
+                x: "119.64020518008596",
+                y: "29.084231736936314",
+                isLeaf: true
+            }]
+        }]
+    }];
+    return builder(
+      {
+          code: 0,
+          data:data,
+          msg: '操作成功'
+      },
+      '请求成功',
+      0,
+      { 'Custom-Header': Mock.mock('@id') }
+    )
+}
+Mock.mock(/\/@test\/getAllCarTreeData/, 'post', getAllCarTreeData);
+
 const getUserWorkInfoData = (options) => {
     console.log('getUserWorkInfoData options',options);
     const queryParameters = getQueryParameters(options);

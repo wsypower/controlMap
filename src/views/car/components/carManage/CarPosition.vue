@@ -1,5 +1,5 @@
 <template>
-  <div class="people-manage" flex="dir:top">
+  <div class="car-manage" flex="dir:top">
     <div class="search-panel">
       <a-input-search placeholder="输入关键词搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
     </div>
@@ -19,10 +19,8 @@
           @expand="onExpand"
         >
           <img slot="dept" src="~@img/avatar_dept.png" />
-          <img slot="male" src="~@img/avatar-male.png" />
-          <img slot="male-outline" src="~@img/avatar-male-outline.png" />
-          <img slot="female" src="~@img/avatar-female.png" />
-          <img slot="female-outline" src="~@img/avatar-female-outline.png" />
+          <img slot="car" src="~@img/avatar-car.png" />
+          <img slot="car-outline" src="~@img/avatar-car-outline.png" />
           <template slot="title" slot-scope="{ title }">
             <span v-if="title.indexOf(searchValue) > -1">
               {{ title.substr(0, title.indexOf(searchValue)) }}
@@ -41,32 +39,32 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
-    <people-info
-      ref="peopleInfo"
+    <car-info
+      ref="carInfo"
       style="position:fixed; top: 100px;right:100px;display:none"
-      :info="peopleInfoData"
+      :info="carInfoData"
       @closeTip="closeTip"
-      @getUserId="getUserId"
-    ></people-info>
+      @getCarId="getCarId"
+    ></car-info>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
-import PeopleInfo from './PeopleInfo.vue';
+import CarInfo from './CarInfo.vue';
 export default {
     name: '',
     components:{
-        PeopleInfo
+      CarInfo
     },
     data(){
         return {
           expandedKeys: [],
           autoExpandParent: true,
           searchValue: '',
-            showLoading: false,
-            sourceData: [],
-          allPeopleData: [],
-            peopleInfoData: {},
+          showLoading: false,
+          sourceData: [],
+          allCarData: [],
+          carInfoData: {},
           showTree: true,
           timer: null
         }
@@ -75,77 +73,62 @@ export default {
         //获得展示的数据与属性
        treeData:function(){
            let data = JSON.parse(JSON.stringify(this.sourceData));
-         this.allPeopleData = [];
-           this.changeTreeData(data, '');
+           this.allCarData = [];
+           this.changeTreeData(data,'');
            return data
        }
     },
     mounted(){
         this.showLoading = true;
-        this.getAllPeopleTreeData().then(res=>{
+        this.getAllCarTreeData().then(res=>{
             this.sourceData = res.data;
             this.showLoading = false;
         });
-      let _this = this;
+        let _this = this;
       this.timer = setInterval(function() {
         _this.getAllCarTreeData().then(res=>{
           _this.sourceData = res.data;
         });
       },600000)
     },
-  beforeDestroy(){
-    clearInterval(this.timer)
-  },
+   beforeDestroy(){
+     clearInterval(this.timer)
+   },
     methods:{
-        ...mapActions('section/common', ['getAllPeopleTreeData']),
+        ...mapActions('car/manage', ['getAllCarTreeData']),
         //给后端的数据增加一些前端展示与判断需要的属性
         changeTreeData(arr,deptName){
             arr.forEach(item=>{
                 item.title = item.name;
-              item.scopedSlots = { title: 'title' };
+                item.scopedSlots = { title: 'title' };
                 if(item.isLeaf){
                     item.key = item.id;
-                  item.dept = deptName;
-                    if(item.sex=='female'){
-                        if(item.online){
-                            item.slots = {icon: 'female'}
-                        }
-                        else{
-                            item.slots = {icon: 'female-outline'}
-                        }
+                    item.dept = deptName;
+                    if(item.online){
+                        item.slots = {icon: 'car'}
                     }
                     else{
-                        if(item.online){
-                            item.slots = {icon: 'male'}
-                        }
-                        else{
-                            item.slots = {icon: 'male-outline'}
-                        }
+                        item.slots = {icon: 'car-outline'}
                     }
                     item.class = 'itemClass';
-                  let temp = {
-                    title: item.name,
-                    key: item.id
-                  }
-                  this.allPeopleData.push(temp);
+
+                    let temp = {
+                      title: item.name,
+                      key: item.id
+                    }
+                    this.allCarData.push(temp);
                 }
                 else{
                     item.key = 'dept_' + item.id;
-                    item.slots = {icon: 'dept'};
-                    this.changeTreeData(item.children, item.name);
+                    item.slots = {icon: 'dept'}
+                    this.changeTreeData(item.children, item.name)
                 }
-
             })
         },
       onSearch(val){
-        // this.showLoading = true;
-        // this.getAllPeopleTreeData({searchContent: val}).then(res=>{
-        //   this.sourceData = res.data;
-        //   this.showLoading = false;
-        // });
         this.expandedKeys = [];
         this.searchValue = val;
-        this.allPeopleData.forEach(item => {
+        this.allCarData.forEach(item => {
           if(item.title.indexOf(val)>=0){
             this.expandedKeys.push(item.key);
           }
@@ -162,38 +145,39 @@ export default {
         this.expandedKeys = expandedKeys;
         this.autoExpandParent = false;
       },
-        //点击树中某个节点（某个人员）时触发
-        onSelect(selectedKeys, e){
-            console.log(selectedKeys, e);
-          if(selectedKeys[0].indexOf('dept_')<0){
-            let needData = e.selectedNodes[0].data.props;
-            let temp = {};
-            temp.id = needData.id;
-            temp.name = needData.name;
-            temp.sex = needData.sex;
-            temp.online = needData.online;
-            temp.phone = needData.phone;
-            temp.dept = needData.dept;
-            temp.x = needData.x;
-            temp.y = needData.y;
-            this.peopleInfoData = temp;
-            this.$refs.peopleInfo.$el.style.display = 'block';
-          } else{
-            this.$refs.peopleInfo.$el.style.display = 'none';
-          }
-        },
-        //人员轨迹触发
-        getUserId(data){
-            this.$emit('getUserId',data);
-        },
-        closeTip(){
-            console.log('closeTip');
+      //点击树中某个节点（某个人员）时触发
+      onSelect(selectedKeys, e){
+        console.log(selectedKeys, e);
+        if(selectedKeys[0].indexOf('dept_')<0){
+          let needData = e.selectedNodes[0].data.props;
+          let temp = {};
+          temp.id = needData.id;
+          temp.name = needData.carNumber;
+          temp.code = needData.carNumber;
+          temp.flag = needData.carNumber;
+          temp.phone = needData.phone;
+          temp.dept = needData.dept;
+          temp.gpsTime = needData.gpsTime;
+          temp.x = needData.x;
+          temp.y = needData.y;
+          this.carInfoData = temp;
+          this.$refs.carInfo.$el.style.display = 'block';
+        } else{
+          this.$refs.carInfo.$el.style.display = 'none';
         }
+      },
+        //人员轨迹触发
+      getCarId(data){
+        this.$emit('getCarId',data);
+      },
+      closeTip(){
+        console.log('closeTip');
+      }
     }
 }
 </script>
 <style lang="scss" scoped>
-.people-manage {
+.car-manage {
   height: 100%;
   width: 100%;
   .search-panel {
@@ -209,10 +193,11 @@ export default {
       padding: 10px;
       img {
         width: 20px;
-        height: 20px;
+        /*height: 14px;*/
         display: inline-block;
         border-radius: 12px;
         margin-right: 8px;
+        margin-bottom: 5px;
       }
     }
     .nodata-panel,

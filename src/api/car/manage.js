@@ -1,24 +1,43 @@
 /*
  * @Author: Mo.xuejuan
- * @Date: 2019-09-06 14:53:20
+ * @Date: 2019-11-26 09:12:20
  */
 
 import request from '@/plugins/axios/axios'
 
 /**
- * @description 获取用户工作数据信息
+ * @description 获取所有车辆(树形结构)
  * @author moxuejuan
- * @date 2019-09-10 14:53:20
- * @param {String} userId 请求参数 :用户唯一标识符默认参数）
+ * @date 2019-11-26 09:26
+ * @method：POST
+ * @response：{
+ *     树形结构数据
+ * }
  */
-export const getUserWorkInfoData = data => {
-    console.log('api:getUserWorkInfoData',data);
+
+export function getAllCarTreeData(data) {
+    console.log('api:getAllCarTreeData',data);
     return request({
-        url: `@test/getUserWorkInfoData?_t=` + new Date().getTime(),
-        method: 'get',
-        params: data
+        url: '@test/getAllCarTreeData',
+        method: 'post',
+        data
     })
 }
+
+// /**
+//  * @description 获取用户工作数据信息
+//  * @author moxuejuan
+//  * @date 2019-09-10 14:53:20
+//  * @param {String} userId 请求参数 :用户唯一标识符默认参数）
+//  */
+// export const getAllCarTreeData = data => {
+//     console.log('api:getUserWorkInfoData',data);
+//     return request({
+//         url: `@test/getUserWorkInfoData?_t=` + new Date().getTime(),
+//         method: 'get',
+//         params: data
+//     })
+// }
 
 /**
  * @description 获取用户轨迹分段数据

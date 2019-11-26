@@ -16,6 +16,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('./section/statistical')
   require('./section/manage')
   require('./car/statistical')
+  require('./car/manage')
   Mock.setup({
     timeout: 800 // setter delay time
   })
