@@ -2,9 +2,9 @@ import { builder, getBody, getQueryParameters } from '../util'
 import Mock from 'mockjs'
 
 const getAllCarTreeData = options => {
-  console.log('getAllCarTreeData options', options)
-  const body = getBody(options)
-  console.log('getAllCarTreeData body', body)
+  console.log('getAllCarTreeData options',options);
+  const queryParameters = getQueryParameters(options);
+  console.log('getAllCarTreeData query',queryParameters);
   let data = [
     {
       name: '智慧城管',
@@ -159,12 +159,12 @@ const getAllCarTreeData = options => {
     { 'Custom-Header': Mock.mock('@id') }
   )
 }
-Mock.mock(/\/@test\/getAllCarTreeData/, 'post', getAllCarTreeData)
+Mock.mock(/\/@test\/getAllCarTreeData/, 'get', getAllCarTreeData)
 
 const getAllCarDataList = options => {
-  console.log('getAllCarDataList options', options)
-  const body = getBody(options)
-  console.log('getAllCarDataList body', body)
+  console.log('getAllCarDataList options',options);
+  const queryParameters = getQueryParameters(options);
+  console.log('getAllCarDataList query',queryParameters);
   let data = [
     {
       id: '861996030365941',
@@ -220,7 +220,7 @@ const getAllCarDataList = options => {
     { 'Custom-Header': Mock.mock('@id') }
   )
 }
-Mock.mock(/\/@test\/getAllCarDataList/, 'post', getAllCarDataList)
+Mock.mock(/\/@test\/getAllCarDataList/, 'get', getAllCarDataList)
 
 const getCarTrailDataList = options => {
   console.log('getCarTrailDataList options', options)
@@ -275,9 +275,9 @@ const getCarTrailDataList = options => {
 Mock.mock(/\/@test\/getCarTrailDataList/, 'post', getCarTrailDataList)
 
 const getTrailDetailData = options => {
-  console.log('getTrailDetailData options', options)
-  const body = getBody(options)
-  console.log('getTrailDetailData body', body)
+  console.log('getTrailDetailData options',options);
+  const queryParameters = getQueryParameters(options);
+  console.log('getTrailDetailData query',queryParameters);
   let data = [
     {
       coordinatex: '122.22062999999999',
@@ -330,12 +330,12 @@ const getTrailDetailData = options => {
     { 'Custom-Header': Mock.mock('@id') }
   )
 }
-Mock.mock(/\/@test\/getTrailDetailData/, 'post', getTrailDetailData)
+Mock.mock(/\/@test\/getTrailDetailData/, 'get', getTrailDetailData)
 
 const getAllCarCompanyDataList = options => {
-  console.log('getAllCarCompanyDataList options', options)
-  const body = getBody(options)
-  console.log('getAllCarCompanyDataList body', body)
+  console.log('getAllCarCompanyDataList options',options);
+  const queryParameters = getQueryParameters(options);
+  console.log('getAllCarCompanyDataList query',queryParameters);
   let data = [
     {
       id: 'company1',
@@ -377,7 +377,7 @@ const getAllCarCompanyDataList = options => {
     { 'Custom-Header': Mock.mock('@id') }
   )
 }
-Mock.mock(/\/@test\/getAllCarCompanyDataList/, 'post', getAllCarCompanyDataList)
+Mock.mock(/\/@test\/getAllCarCompanyDataList/, 'get', getAllCarCompanyDataList)
 
 const getCarViolateRulesDataList = options => {
   console.log('getCarViolateRulesDataList options', options)

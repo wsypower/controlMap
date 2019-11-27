@@ -33,7 +33,7 @@ export const getUserTrailDataList = data => {
   return request({
     url: `@test/getUserTrailDataList?_t=` + new Date().getTime(),
     method: 'get',
-    data
+    params: data
   })
 }
 
@@ -67,7 +67,7 @@ export const getUserWorkTimeDataList = data => {
   return request({
     url: `@test/getUserWorkTimeDataList_t=` + new Date().getTime(),
     method: 'get',
-    data
+    params: data
   })
 }
 
@@ -83,7 +83,7 @@ export const getUserSignDetailData = data => {
   return request({
     url: `@test/getUserSignDetailData_t=` + new Date().getTime(),
     method: 'get',
-    data
+    params: data
   })
 }
 
@@ -100,7 +100,7 @@ export const getUserViolateRulesDataList = data => {
   return request({
     url: `@test/getUserViolateRulesDataList_t=` + new Date().getTime(),
     method: 'get',
-    data
+    params: data
   })
 }
 
@@ -115,6 +115,6 @@ export const deleteUserViolateRules = data => {
   return request({
     url: `@test/deleteUserViolateRules`,
     method: 'post',
-    data
+    params: data
   })
 }

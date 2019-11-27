@@ -39,7 +39,6 @@ const getCarTypeAnalysisData = (options) => {
 }
 Mock.mock(/\/@test\/getCarTypeAnalysisData/, 'get', getCarTypeAnalysisData);
 
-
 const getCarGroupAnalysisData = (options) => {
     console.log('getCarGroupAnalysisData options',options);
     const queryParameters = getQueryParameters(options);
@@ -79,7 +78,6 @@ const getCarGroupAnalysisData = (options) => {
 }
 Mock.mock(/\/@test\/getCarGroupAnalysisData/, 'get', getCarGroupAnalysisData);
 
-
 const getBreakTypeAnalysisData = (options) => {
     console.log('getBreakTypeAnalysisData options',options);
     const queryParameters = getQueryParameters(options);
@@ -112,7 +110,6 @@ const getBreakTypeAnalysisData = (options) => {
     )
 }
 Mock.mock(/\/@test\/getBreakTypeAnalysisData/, 'get', getBreakTypeAnalysisData);
-
 
 const getCarWorkInfoData = (options) => {
     console.log('getCarWorkInfoData options',options);
