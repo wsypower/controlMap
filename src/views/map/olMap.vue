@@ -31,7 +31,6 @@ export default {
         });
         this.setPageLayers([]);
         this.map.un('click',this.clickHandler);
-        debugger;
         console.log(this.yuanOverlay);
         this.map.removeOverlay(this.yuanOverlay);
       }

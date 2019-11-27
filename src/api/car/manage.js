@@ -6,6 +6,27 @@
 import request from '@/plugins/axios/axios'
 
 /**
+ * @description 获取所有车辆(列表结构)
+ * @author moxuejuan
+ * @date 2019-11-26 14:53:20
+ * @method：POST
+ * @response：{
+ *     {Number} id: 车辆Id
+ *     {String} name: 车辆名称
+ *     {String} dept: 所属部门
+ * }
+ */
+
+export function getAllCarDataList(data) {
+  console.log('api:getAllCarDataList', data)
+  return request({
+    url: '@test/getAllCarDataList',
+    method: 'post',
+    data
+  })
+}
+
+/**
  * @description 获取所有车辆(树形结构)
  * @author moxuejuan
  * @date 2019-11-26 09:26
@@ -16,125 +37,94 @@ import request from '@/plugins/axios/axios'
  */
 
 export function getAllCarTreeData(data) {
-    console.log('api:getAllCarTreeData',data);
-    return request({
-        url: '@test/getAllCarTreeData',
-        method: 'post',
-        data
-    })
+  console.log('api:getAllCarTreeData', data)
+  return request({
+    url: '@test/getAllCarTreeData',
+    method: 'post',
+    data
+  })
 }
 
-// /**
-//  * @description 获取用户工作数据信息
-//  * @author moxuejuan
-//  * @date 2019-09-10 14:53:20
-//  * @param {String} userId 请求参数 :用户唯一标识符默认参数）
-//  */
-// export const getAllCarTreeData = data => {
-//     console.log('api:getUserWorkInfoData',data);
-//     return request({
-//         url: `@test/getUserWorkInfoData?_t=` + new Date().getTime(),
-//         method: 'get',
-//         params: data
-//     })
-// }
-
 /**
- * @description 获取用户轨迹分段数据
+ * @description 获取车辆轨迹分段数据
  * @author moxuejuan
- * @date 2019-09-10 14:53:20
- * @param {String} userId 请求参数 :用户唯一标识符默认参数）
+ * @date 2019-11-26 14:53:20
+ * @param {String} carId 请求参数 :用户唯一标识符默认参数）
  * @param {String} startDay 请求参数 :开始日期
  * @param {String} endDay 请求参数 :结束日期
  */
-export const getUserTrailDataList = data => {
-    console.log('api:getUserTrailDataList',data);
-    return request({
-        url: `@test/getUserTrailDataList`,
-        method: 'post',
-        data
-    })
+export const getCarTrailDataList = data => {
+  console.log('api:getCarTrailDataList', data)
+  return request({
+    url: `@test/getCarTrailDataList`,
+    method: 'post',
+    data
+  })
 }
 
 /**
- * @description 获取用户某段轨迹的详细数据
+ * @description 获取车辆某段轨迹的详细数据
  * @author moxuejuan
- * @date 2019-09-10 14:53:20
- * @param {String} userId 请求参数 :用户唯一标识符默认参数）
+ * @date 2019-11-27 09:13:26
+ * @param {String} carId 请求参数 :车辆唯一标识符默认参数）
  * @param {Number} startTime 请求参数 :开始时间
  * @param {Number} endTime 请求参数 :结束时间
  */
 export const getTrailDetailData = data => {
-    console.log('api:getTrailDetailData',data);
-    return request({
-        url: `@test/getTrailDetailData_t=` + new Date().getTime(),
-        method: 'get',
-        params: data
-    })
+  console.log('api:getTrailDetailData', data)
+  return request({
+    url: `@test/getTrailDetailData`,
+    method: 'post',
+    data
+  })
 }
 
-
 /**
- * @description 获取用户签到签退数据(point/signRecords)
+ * @description 获取车辆所属公司的数据
  * @author moxuejuan
- * @date 2019-09-11 14:53:20
- * @param {String} userId 请求参数 :用户唯一标识符默认参数）
+ * @date 2019-11-27 14:13:26
+ * @param 无
+ */
+export const getAllCarCompanyDataList = data => {
+  console.log('api:getAllCarCompanyDataList', data)
+  return request({
+    url: `@test/getAllCarCompanyDataList`,
+    method: 'post',
+    data
+  })
+}
+/**
+ * @description 获取车辆违规数据()
+ * @author moxuejuan
+ * @date 2019-11-27 09:14:14
+ * @param {String} carId 请求参数 :用户唯一标识符默认参数）
+ * @param {String} companyId 请求参数：所属公司ID
+ * @param {String} vType 请求参数：违规类型Id
+ * @param {String} carType 请求参数：车型Id
  * @param {String} startDay 请求参数 :开始日期
  * @param {String} endDay 请求参数 :结束日期
+ * @param {String} searchContent 请求参数 : 车牌号/驾驶员/手机号
  */
-export const getUserWorkTimeDataList = data => {
-    console.log('api:getUserWorkTimeDataList',data);
-    return request({
-        url: `@test/getUserWorkTimeDataList`,
-        method: 'post',
-        data
-    })
+export const getCarViolateRulesDataList = data => {
+  console.log('api:getCarViolateRulesDataList', data)
+  return request({
+    url: `@test/getCarViolateRulesDataList`,
+    method: 'post',
+    data
+  })
 }
 
 /**
- * @description 获取某次用户签到签退详细数据(point/signRecord)
+ * @description 删除某条车辆非违规数据
  * @author moxuejuan
- * @date 2019-09-11 14:53:20
- * @param {String} userId 请求参数 :用户唯一标识符默认参数）
- * @param {String} id 请求参数 :签到签退数据Id
- */
-export const getUserSignDetailData = data => {
-    console.log('api:getUserSignDetailData',data);
-    return request({
-        url: `@test/getUserSignDetailData`,
-        method: 'post',
-        data
-    })
-}
-
-/**
- * @description 获取用户违规数据()
- * @author moxuejuan
- * @date 2019-09-11 14:53:20
- * @param {String} userId 请求参数 :用户唯一标识符默认参数）
- * @param {String} startDay 请求参数 :开始日期
- * @param {String} endDay 请求参数 :结束日期
- */
-export const getUserViolateRulesDataList = data => {
-    console.log('api:getUserViolateRulesDataList',data);
-    return request({
-        url: `@test/getUserViolateRulesDataList`,
-        method: 'post',
-        data
-    })
-}
-
-/**
- * @description 删除某条用户非违规数据
- * @author moxuejuan
- * @date 2019-09-11 14:53:20
+ * @date 2019-11-27 09:14:50
  * @param {String} id 请求参数 :违规数据唯一Id
  */
-export const deleteUserViolateRules = data => {
-    console.log('api:deleteUserViolateRules',data);
-    return request({
-        url: `@test/deleteUserViolateRules`,
-        method: 'post',
-        data
-    })
+export const deleteCarViolateRules = data => {
+  console.log('api:deleteCarViolateRules', data)
+  return request({
+    url: `@test/deleteCarViolateRules`,
+    method: 'post',
+    data
+  })
 }

@@ -2,13 +2,13 @@
   <div class="manage">
     <a-tabs v-model="activeTab" @change="changeTab" class="content_tab">
       <a-tab-pane tab="车辆定位" key="1">
-        <car-position></car-position>
+        <car-position @getCarId="getCarId"></car-position>
       </a-tab-pane>
       <a-tab-pane tab="轨迹查询" key="2">
-        <!--                <people-trail :peopleDataList="peopleDataList" :infoId="infoId"></people-trail>-->
+        <car-trail :carDataList="carDataList" :infoId="infoId"></car-trail>
       </a-tab-pane>
       <a-tab-pane tab="违规查询" key="3">
-        <!--                <violate-rules :peopleDataList="peopleDataList"></violate-rules>-->
+        <violate-rules></violate-rules>
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -16,7 +16,7 @@
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
 import CarPosition from './carManage/CarPosition'
-import PeopleTrail from './carManage/PeopleTrail'
+import CarTrail from './carManage/CarTrail'
 import ViolateRules from './carManage/ViolateRules'
 export default {
     name: 'carManage',
@@ -24,27 +24,28 @@ export default {
         return {
             activeTab: '1',
             infoId: '',
-            peopleDataList: []
+            carDataList: []
         }
     },
     components:{
-      CarPosition
+      CarPosition,
+      CarTrail,
+      ViolateRules
     },
     mounted(){
-        //getAllPeopleDataList
-        // this.getAllPeopleDataList().then(res=>{
-        //     this.peopleDataList = res.data;
-        // });
+        this.getAllCarDataList().then(res=>{
+            this.carDataList = res.data;
+        });
     },
     methods:{
-        ...mapActions('section/common', ['getAllPeopleDataList']),
+        ...mapActions('car/manage', ['getAllCarDataList']),
         init(){},
         changeTab(){
 
         },
-        //人员查看轨迹触发，使页面显示人员轨迹的tab以及地图显示轨迹
-        getUserId(data){
-            console.log('peopleManage-userId:' + data);
+        //车辆查看轨迹触发，使页面显示人员轨迹的tab以及地图显示轨迹
+      getCarId(data){
+            console.log('carManage-carId:' + data);
             this.activeTab = '2';
             this.infoId = data;
         }
