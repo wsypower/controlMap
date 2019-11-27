@@ -20,15 +20,13 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
-    <!--<div hidden>-->
+    <div hidden>
       <people-info
         ref="peopleInfo"
-        style="position:fixed; top: 100px;right:100px;display:none"
         :info="peopleInfoData"
         @closeTip="closeTip"
-        @getUserId="getUserId"
-      ></people-info>
-    <!--</div>-->
+        @getUserId="getUserId"></people-info>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -75,9 +73,13 @@ export default {
             this.sourceData = res.data;
             this.showLoading = false;
         });
-          this.peopleOverlay = this.mapManager.addOverlay({
-            element: this.$refs.peopleInfo.$el
-          });
+        this.map = this.mapManager.getMap()
+        this.map.on('click', this.peopleMapClickHandler);
+        this.peopleOverlay = this.mapManager.addOverlay({
+          offset:[0,-20],
+          positioning: 'bottom-center',
+          element: this.$refs.peopleInfo.$el
+        });
     },
     methods:{
         ...mapActions('section/common', ['getAllPeopleTreeData']),
@@ -121,6 +123,7 @@ export default {
                     if(item.x && item.x.length>0 && item.y && item.y.length>0){
                       const feature=_this.mapManager.xyToFeature(item.x,item.y);
                       feature.set('icon',pointImg);
+                      feature.set('props',item);
                       _this.peopleFeatures.push(feature);
                     }
                 }
@@ -133,15 +136,8 @@ export default {
         },
         //点击树中某个节点（某个人员）时触发
         onSelect(selectedKeys, e){
-            // console.log(selectedKeys, e);
-            if(selectedKeys.length===0){
-                this.$refs.peopleInfo.$el.style.display = 'none';
-            }
-            else if(selectedKeys[0].indexOf('dept_')<0){
-                this.getUserInfoById(this.sourceData,selectedKeys[0],'')
-                this.$refs.peopleInfo.$el.style.display = 'block';
-            }
-
+          this.getUserInfoById(this.sourceData,selectedKeys[0],'');
+          this.peopleOverlay.setPosition([parseFloat(this.peopleInfoData.x),parseFloat(this.peopleInfoData.y)])
         },
         //获取父节点的一些关键信息存放入peopleInfoData，给peopleInfo使用
         getUserInfoById(arr,id,dept){
@@ -157,12 +153,20 @@ export default {
                 }
             }
         },
+        //地图上人员点击事件处理器
+        peopleMapClickHandler({ pixel, coordinate }){
+          const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
+          if(feature){
+            this.peopleInfoData=feature.get('props');
+            this.peopleOverlay.setPosition(coordinate);
+          }
+        },
         //人员轨迹触发
         getUserId(data){
             this.$emit('getUserId',data);
         },
         closeTip(){
-            console.log('closeTip');
+          this.peopleOverlay.setPosition(undefined);
         }
     }
 }
