@@ -4,25 +4,33 @@
   </div>
 </template>
 <script>
-  import StatisticalAnalysis from './components/StatisticalAnalysis.vue';
-  import PeopleManage from './components/PeopleManage.vue';
+import StatisticalAnalysis from './components/StatisticalAnalysis.vue'
+import PeopleManage from './components/PeopleManage.vue'
 export default {
   name: 'people',
-  components:{PeopleManage, StatisticalAnalysis},
-  data(){
+  components: {
+    PeopleManage,
+    StatisticalAnalysis
+  },
+  data() {
     return {
       //tab标签
-      tabData:[{
-        name:'统计分析',
-        component:StatisticalAnalysis
-      }, {
-        name:'人员管控',
-        component:PeopleManage
-      }]
+      tabData: [
+        {
+          name: '统计分析',
+          component: StatisticalAnalysis,
+          hasScroll: true
+        },
+        {
+          name: '人员管控',
+          component: PeopleManage,
+          hasScroll: false
+        }
+      ]
     }
   },
-    mounted(){},
-    methods:{}
+  mounted() {},
+  methods: {}
 }
 </script>
 
