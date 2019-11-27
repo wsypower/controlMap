@@ -7,6 +7,21 @@ import Icon from 'ol/style/Icon'
 import Style from 'ol/style/Style'
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
+/**
+ * @description:应急预案应急资源点位样式
+ * @author:sijianting
+ * @createDate:2019/7/22 14:47
+ */
+export function PeoplePointStyle() {
+  return function(feature) {
+    return new Style({
+      image: new Icon({
+        src: require('@/assets/mapImage/' + feature.get('icon') + '.png')
+      }),
+      anchor: [0.5, 1],
+    })
+  }
+}
 
 /**
  * @description:应急预案应急资源点位样式

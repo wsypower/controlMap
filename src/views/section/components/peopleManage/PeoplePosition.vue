@@ -41,18 +41,21 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
-    <people-info
-      ref="peopleInfo"
-      style="position:fixed; top: 100px;right:100px;display:none"
-      :info="peopleInfoData"
-      @closeTip="closeTip"
-      @getUserId="getUserId"
-    ></people-info>
+    <div hidden>
+      <people-info
+        ref="peopleInfo"
+        style="position:fixed; top: 100px;right:100px;display:none"
+        :info="peopleInfoData"
+        @closeTip="closeTip"
+        @getUserId="getUserId"
+      ></people-info>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
+import { mapActions,mapState } from 'vuex'
 import PeopleInfo from './PeopleInfo.vue';
+import {PeoplePointStyle} from '@/utils/util.map.style'
 export default {
     name: '',
     components:{
@@ -63,35 +66,57 @@ export default {
           expandedKeys: [],
           autoExpandParent: true,
           searchValue: '',
-            showLoading: false,
-            sourceData: [],
+          showLoading: false,
+          sourceData: [],
           allPeopleData: [],
-            peopleInfoData: {},
+          peopleInfoData: {},
           showTree: true,
-          timer: null
+          timer: null,
+          peopleFeatures: [],
+          peopleLayer: null,
+          isLoadData: false
         }
     },
     computed:{
+        ...mapState('map', ['mapManager']),
         //获得展示的数据与属性
-       treeData:function(){
-           let data = JSON.parse(JSON.stringify(this.sourceData));
-         this.allPeopleData = [];
-           this.changeTreeData(data, '');
-           return data
-       }
+        treeData:function(){
+            let data = JSON.parse(JSON.stringify(this.sourceData));
+            this.peopleFeatures=[];
+            this.changeTreeData(data);
+            this.isLoadData=!this.isLoadData;
+            return data;
+        }
     },
+    watch:{
+      isLoadData:function() {
+        if(this.peopleFeatures.length>0){
+          const peopleLayer = this.mapManager.addVectorLayerByFeatures(this.peopleFeatures,PeoplePointStyle(),3);
+          this.mapManager.getMap().getView().fit(peopleLayer.getSource().getExtent());
+        }
+      }
+    },
+
     mounted(){
         this.showLoading = true;
         this.getAllPeopleTreeData().then(res=>{
             this.sourceData = res.data;
             this.showLoading = false;
         });
+      this.map = this.mapManager.getMap()
+      this.map.on('click', this.peopleMapClickHandler);
+      this.peopleOverlay = this.mapManager.addOverlay({
+        offset:[0,-20],
+        positioning: 'bottom-center',
+        element: this.$refs.peopleInfo.$el
+      });
       let _this = this;
-      this.timer = setInterval(function() {
-        _this.getAllCarTreeData().then(res=>{
+      _this.timer = setInterval(function() {
+        _this.getAllPeopleTreeData().then(res=>{
           _this.sourceData = res.data;
         });
       },600000)
+
     },
   beforeDestroy(){
     clearInterval(this.timer)
@@ -100,26 +125,32 @@ export default {
         ...mapActions('section/common', ['getAllPeopleTreeData']),
         //给后端的数据增加一些前端展示与判断需要的属性
         changeTreeData(arr,deptName){
-            arr.forEach(item=>{
+          const _this = this;
+          arr.forEach(item=>{
                 item.title = item.name;
               item.scopedSlots = { title: 'title' };
+            let pointImg;
                 if(item.isLeaf){
                     item.key = item.id;
                   item.dept = deptName;
-                    if(item.sex=='female'){
+                    if(item.sex === 'female'){
                         if(item.online){
-                            item.slots = {icon: 'female'}
+                          item.slots = {icon: 'female'};
+                          pointImg='female_online';
                         }
                         else{
                             item.slots = {icon: 'female-outline'}
+                          pointImg='female_offline';
                         }
                     }
                     else{
                         if(item.online){
                             item.slots = {icon: 'male'}
+                            pointImg='male_online';
                         }
                         else{
                             item.slots = {icon: 'male-outline'}
+                            pointImg='male_offline';
                         }
                     }
                     item.class = 'itemClass';
@@ -128,6 +159,13 @@ export default {
                     key: item.id
                   }
                   this.allPeopleData.push(temp);
+                  // 通过经纬度生成点位加到地图上
+                  if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                    const feature=_this.mapManager.xyToFeature(item.x,item.y);
+                    feature.set('icon',pointImg);
+                    feature.set('props',item);
+                    _this.peopleFeatures.push(feature);
+                  }
                 }
                 else{
                     item.key = 'dept_' + item.id;
@@ -177,17 +215,24 @@ export default {
             temp.x = needData.x;
             temp.y = needData.y;
             this.peopleInfoData = temp;
-            this.$refs.peopleInfo.$el.style.display = 'block';
-          } else{
-            this.$refs.peopleInfo.$el.style.display = 'none';
+            this.peopleOverlay.setPosition([parseFloat(this.peopleInfoData.x),parseFloat(this.peopleInfoData.y)])
+          }
+        },
+        //地图上人员点击事件处理器
+        peopleMapClickHandler({ pixel, coordinate }){
+          const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
+          if(feature){
+            this.peopleInfoData=feature.get('props');
+            this.peopleOverlay.setPosition(coordinate);
           }
         },
         //人员轨迹触发
         getUserId(data){
             this.$emit('getUserId',data);
         },
+        //关闭地图上的弹窗
         closeTip(){
-            console.log('closeTip');
+          this.peopleOverlay.setPosition(undefined);
         }
     }
 }

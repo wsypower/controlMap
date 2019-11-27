@@ -62,6 +62,15 @@ const frameIn = [
         component: _import('records/page3.vue')
       },
       {
+        path: '/video',
+        name: 'video',
+        meta: {
+          title: '视频管控',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('video/index.vue')
+      },
+      {
         path: '/emergency',
         name: 'emergency',
         meta: {
