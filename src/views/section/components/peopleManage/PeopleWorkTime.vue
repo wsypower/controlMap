@@ -62,12 +62,8 @@
         <people-sign-info ref="peopleSignInfo"
                      style="position:fixed; top: 100px;right:100px;display:none"
                      :info="signInfoData"
-                          @showPhoto="showPhoto"
+                      @showPhoto="showPhoto"
                      @closeTip="closeTip"></people-sign-info>
-        <photo-show ref="photoShow"
-                    :photoList = "photoList"
-                    :toIndex = "toIndex"
-                    @closePhotoShow="closePhotoShow"></photo-show>
     </div>
 </template>
 <script type="text/ecmascript-6">
@@ -77,7 +73,7 @@
     import PeopleSignInfo from './PeopleSignInfo.vue';
     const weekArr = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
     export default {
-        name: 'peopleTrail',
+        name: 'peopleWorkTime',
         props:{
             peopleDataList:{
                 type: Array,
