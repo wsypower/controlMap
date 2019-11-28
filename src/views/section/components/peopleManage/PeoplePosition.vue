@@ -7,16 +7,37 @@
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
         <a-spin tip="数据加载中..."></a-spin>
       </div>
-      <cg-container scroll v-if="!showLoading && treeData.length > 0">
-        <a-tree class="tree-panel" showIcon showLine :treeData="treeData" @select="onSelect">
+      <cg-container scroll v-if="!showLoading && treeData.length > 0 && showTree">
+        <a-tree
+          class="tree-panel"
+          showIcon
+          showLine
+          :treeData="treeData"
+          :expandedKeys="expandedKeys"
+          :autoExpandParent="autoExpandParent"
+          @select="onSelect"
+          @expand="onExpand"
+        >
           <img slot="dept" src="~@img/avatar_dept.png" />
           <img slot="male" src="~@img/avatar-male.png" />
           <img slot="male-outline" src="~@img/avatar-male-outline.png" />
           <img slot="female" src="~@img/avatar-female.png" />
           <img slot="female-outline" src="~@img/avatar-female-outline.png" />
+          <template slot="title" slot-scope="{ title }">
+            <span v-if="title.indexOf(searchValue) > -1">
+              {{ title.substr(0, title.indexOf(searchValue)) }}
+              <span style="color: #f50">{{ searchValue }}</span>
+              {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
+            </span>
+            <span v-else>{{ title }}</span>
+          </template>
         </a-tree>
       </cg-container>
-      <div v-if="!showLoading && treeData.length == 0" class="nodata-panel" flex="main:center cross:center">
+      <div
+        v-if="(!showLoading && treeData.length == 0) || !showTree"
+        class="nodata-panel"
+        flex="main:center cross:center"
+      >
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
@@ -25,7 +46,8 @@
         ref="peopleInfo"
         :info="peopleInfoData"
         @closeTip="closeTip"
-        @getUserId="getUserId"></people-info>
+        @getUserId="getUserId"
+      ></people-info>
     </div>
   </div>
 </template>
@@ -40,12 +62,29 @@ export default {
     },
     data(){
         return {
-            showLoading: false,
-            sourceData: [],
-            peopleInfoData: {},
-            peopleFeatures:[],
-            peopleLayer:null,
-            isLoadData:false,
+          expandedKeys: [],
+          autoExpandParent: true,
+          searchValue: '',
+          showLoading: false,
+          sourceData: [],
+          allPeopleData: [],
+          peopleInfoData: {},
+          showTree: true,
+          timer: null,
+          peopleFeatures: [],
+          peopleLayer: null,
+          isLoadData: false
+        }
+    },
+    computed:{
+        ...mapState('map', ['mapManager']),
+        //获得展示的数据与属性
+        treeData:function(){
+            let data = JSON.parse(JSON.stringify(this.sourceData));
+            this.peopleFeatures=[];
+            this.changeTreeData(data);
+            this.isLoadData=!this.isLoadData;
+            return data;
         }
     },
     watch:{
@@ -56,102 +95,127 @@ export default {
         }
       }
     },
-    computed:{
-       ...mapState('map', ['mapManager']),
-        //获得展示的数据与属性
-       treeData:function(){
-           let data = JSON.parse(JSON.stringify(this.sourceData));
-           this.peopleFeatures=[];
-           this.changeTreeData(data);
-           this.isLoadData=!this.isLoadData;
-           return data;
-       }
-    },
+
     mounted(){
         this.showLoading = true;
         this.getAllPeopleTreeData().then(res=>{
             this.sourceData = res.data;
             this.showLoading = false;
         });
-        this.map = this.mapManager.getMap()
-        this.map.on('click', this.peopleMapClickHandler);
-        this.peopleOverlay = this.mapManager.addOverlay({
-          offset:[0,-20],
-          positioning: 'bottom-center',
-          element: this.$refs.peopleInfo.$el
+      this.map = this.mapManager.getMap()
+      this.map.on('click', this.peopleMapClickHandler);
+      this.peopleOverlay = this.mapManager.addOverlay({
+        offset:[0,-20],
+        positioning: 'bottom-center',
+        element: this.$refs.peopleInfo.$el
+      });
+      let _this = this;
+      _this.timer = setInterval(function() {
+        _this.getAllPeopleTreeData().then(res=>{
+          _this.sourceData = res.data;
         });
+      },600000)
+
     },
+  beforeDestroy(){
+    clearInterval(this.timer)
+  },
     methods:{
         ...mapActions('section/common', ['getAllPeopleTreeData']),
-        onSearch(val){
-            this.showLoading = true;
-            this.getAllPeopleTreeData({searchContent: val}).then(res=>{
-                this.sourceData = res.data;
-                this.showLoading = false;
-            });
-        },
         //给后端的数据增加一些前端展示与判断需要的属性
-        changeTreeData(arr){
-            const _this=this;
-            arr.forEach(item=>{
+        changeTreeData(arr,deptName){
+          const _this = this;
+          arr.forEach(item=>{
                 item.title = item.name;
-                let pointImg;
+              item.scopedSlots = { title: 'title' };
+            let pointImg;
                 if(item.isLeaf){
                     item.key = item.id;
-                    if(item.sex=='female'){
+                  item.dept = deptName;
+                    if(item.sex === 'female'){
                         if(item.online){
-                            item.slots = {icon: 'female'};
-                            pointImg='female_online';
+                          item.slots = {icon: 'female'};
+                          pointImg='female_online';
                         }
                         else{
-                            item.slots = {icon: 'female-outline'};
-                            pointImg='female_offline';
+                            item.slots = {icon: 'female-outline'}
+                          pointImg='female_offline';
                         }
                     }
                     else{
                         if(item.online){
-                            item.slots = {icon: 'male'};
+                            item.slots = {icon: 'male'}
                             pointImg='male_online';
                         }
                         else{
-                            item.slots = {icon: 'male-outline'};
+                            item.slots = {icon: 'male-outline'}
                             pointImg='male_offline';
                         }
                     }
                     item.class = 'itemClass';
-                    // 通过经纬度生成点位加到地图上
-                    if(item.x && item.x.length>0 && item.y && item.y.length>0){
-                      const feature=_this.mapManager.xyToFeature(item.x,item.y);
-                      feature.set('icon',pointImg);
-                      feature.set('props',item);
-                      _this.peopleFeatures.push(feature);
-                    }
+                  let temp = {
+                    title: item.name,
+                    key: item.id
+                  }
+                  this.allPeopleData.push(temp);
+                  // 通过经纬度生成点位加到地图上
+                  if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                    const feature=_this.mapManager.xyToFeature(item.x,item.y);
+                    feature.set('icon',pointImg);
+                    feature.set('props',item);
+                    _this.peopleFeatures.push(feature);
+                  }
                 }
                 else{
                     item.key = 'dept_' + item.id;
-                    item.slots = {icon: 'dept'}
-                    this.changeTreeData(item.children)
+                    item.slots = {icon: 'dept'};
+                    this.changeTreeData(item.children, item.name);
                 }
+
             })
         },
+      onSearch(val){
+        // this.showLoading = true;
+        // this.getAllPeopleTreeData({searchContent: val}).then(res=>{
+        //   this.sourceData = res.data;
+        //   this.showLoading = false;
+        // });
+        this.expandedKeys = [];
+        this.searchValue = val;
+        this.allPeopleData.forEach(item => {
+          if(item.title.indexOf(val)>=0){
+            this.expandedKeys.push(item.key);
+          }
+        });
+        this.autoExpandParent = true;
+        if(this.expandedKeys.length === 0){
+          this.showTree = false;
+        }
+        else{
+          this.showTree = true;
+        }
+      },
+      onExpand(expandedKeys) {
+        this.expandedKeys = expandedKeys;
+        this.autoExpandParent = false;
+      },
         //点击树中某个节点（某个人员）时触发
         onSelect(selectedKeys, e){
-          this.getUserInfoById(this.sourceData,selectedKeys[0],'');
-          this.peopleOverlay.setPosition([parseFloat(this.peopleInfoData.x),parseFloat(this.peopleInfoData.y)])
-        },
-        //获取父节点的一些关键信息存放入peopleInfoData，给peopleInfo使用
-        getUserInfoById(arr,id,dept){
-            for(let i=0;i<arr.length;i++){
-                if(arr[i].isLeaf){
-                    if(arr[i].id == id){
-                        arr[i].dept = dept;
-                        this.peopleInfoData = arr[i];
-                    }
-                }
-                else{
-                    this.getUserInfoById(arr[i].children,id,arr[i].name);
-                }
-            }
+            console.log(selectedKeys, e);
+          if(selectedKeys[0].indexOf('dept_')<0){
+            let needData = e.selectedNodes[0].data.props;
+            let temp = {};
+            temp.id = needData.id;
+            temp.name = needData.name;
+            temp.sex = needData.sex;
+            temp.online = needData.online;
+            temp.phone = needData.phone;
+            temp.dept = needData.dept;
+            temp.x = needData.x;
+            temp.y = needData.y;
+            this.peopleInfoData = temp;
+            this.peopleOverlay.setPosition([parseFloat(this.peopleInfoData.x),parseFloat(this.peopleInfoData.y)])
+          }
         },
         //地图上人员点击事件处理器
         peopleMapClickHandler({ pixel, coordinate }){
@@ -165,6 +229,7 @@ export default {
         getUserId(data){
             this.$emit('getUserId',data);
         },
+        //关闭地图上的弹窗
         closeTip(){
           this.peopleOverlay.setPosition(undefined);
         }

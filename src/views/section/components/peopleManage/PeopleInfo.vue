@@ -2,9 +2,10 @@
     <div class="tip-content">
         <div class="tip-header" flex="dir:left">
             <div class="info-body-left" flex="main:center cross:center">
-                <img v-if="!info.online" src="~@img/avatar_default.png"/>
-                <img v-if="info.online&&info.sex=='male'" src="~@img/avatar_boy.png"/>
-                <img v-if="info.online&&info.sex=='female'" src="~@img/avatar_girl.png"/>
+                <img v-if="!info.online&&info.sex=='male'" src="~@img/avatar-male-outline.png"/>
+                <img v-if="!info.online&&info.sex=='female'" src="~@img/avatar-female-outline.png"/>
+                <img v-if="info.online&&info.sex=='male'" src="~@img/avatar-male.png"/>
+                <img v-if="info.online&&info.sex=='female'" src="~@img/avatar-female.png"/>
             </div>
             <div class="info-body-right">
                 <div flex="dir:left cross:center">
@@ -24,7 +25,7 @@
         </div>
         <div class="tip-body">
             <div flex="dir:left cross:center main:center">
-                <div class="tab_panel">
+                <div class="tab_panel" flex="cross:center">
                     <span :class="{active: activeIndex===0}" @click="clickTab(0)">今日工作</span>
                     <span :class="{active: activeIndex===1}" @click="clickTab(1)">历史工作</span>
                 </div>

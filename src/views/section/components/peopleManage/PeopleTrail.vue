@@ -174,7 +174,7 @@
                     let temp = {
                         userId: this.query.userId,
                         startTime: item.startTime,
-                        startTime: item.endTime
+                        endTime: item.endTime
                     }
                     this.getTrailDetailData(temp).then(res=>{
                         console.log('TrailDetailData',res.data);

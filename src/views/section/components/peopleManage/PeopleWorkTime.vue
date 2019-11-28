@@ -62,13 +62,9 @@
         <people-sign-info ref="peopleSignInfo"
                      style="position:fixed; top: 100px;right:100px;display:none"
                      :info="signInfoData"
-                          @showPhoto="showPhoto"
+                      @showPhoto="showPhoto"
                      @closeTip="closeTip"></people-sign-info>
-        <photo-show ref="photoShow"
-                    :photoList = "photoList"
-                    :toIndex = "toIndex"
-                    @closePhotoShow="closePhotoShow"></photo-show>
-        </div>
+    </div>
 </template>
 <script type="text/ecmascript-6">
     import { mapActions } from 'vuex';
@@ -77,7 +73,7 @@
     import PeopleSignInfo from './PeopleSignInfo.vue';
     const weekArr = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
     export default {
-        name: 'peopleTrail',
+        name: 'peopleWorkTime',
         props:{
             peopleDataList:{
                 type: Array,
@@ -180,6 +176,8 @@
                     console.log('this.signInfoData',this.signInfoData);
                     this.$refs.peopleSignInfo.$el.style.display = 'block';
                 });
+
+
             },
             closeTip(){
                 console.log('close the info');
