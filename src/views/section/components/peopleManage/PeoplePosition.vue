@@ -44,7 +44,6 @@
     <div hidden>
       <people-info
         ref="peopleInfo"
-        style="position:fixed; top: 100px;right:100px;display:none"
         :info="peopleInfoData"
         @closeTip="closeTip"
         @getUserId="getUserId"
