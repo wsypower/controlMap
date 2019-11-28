@@ -1,5 +1,5 @@
 <template>
-  <a-tabs :defaultActiveKey="defaultActiveKey" @change="changeTab" style="height: 100%" class="tab-layer">
+  <a-tabs :defaultActiveKey="defaultActiveKey" @change="changeTab" style="height: 100%" class="tab-layer" ref="tabLayer">
     <a-tab-pane v-for="(item, index) in tabData" :tab="item.name" :key="index">
       <!--统计分析页面需要全局滚动条，其余页面只是页面中的一部分可能需要滚动显示，故只给统计页面增加全局滚动-->
       <cg-container scroll v-if="item.hasScroll">
@@ -22,14 +22,18 @@ export default {
     },
     data(){
         return {
-            defaultActiveKey: 0
+            defaultActiveKey: 0,
+            width: '50%'
         }
     },
-  // computed:{
-  //     nums: function(){
-  //       return this.tabData.length;
-  //     }
-  // },
+  mounted(){
+    let tabLayerNum = this.tabData.length;
+    let width = 100/ tabLayerNum  + '%';
+    let elArr = document.querySelectorAll('.tab-layer>.ant-tabs-bar .ant-tabs-tab');
+    elArr.forEach(item => {
+      item.style.width = width;
+    });
+  },
     methods: {
         changeTab(val){
             console.log('changeTab',val);
@@ -38,12 +42,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@mixin n-items($n) {
-  &:first-of-type:nth-last-of-type(#{$n}),
-  &:first-of-type:nth-last-of-type(#{$n}) ~ & {
-    width: calc(100% / #{$n});
-  }
-}
+//@mixin n-items($n) {
+ // &:first-of-type:nth-last-of-type(#{$n}),
+  //&:first-of-type:nth-last-of-type(#{$n}) ~ & {
+  //  width: calc(100% / #{$n});
+  //}
+//}
 .tab-layer {
   height: 100%;
   /deep/.ant-tabs-bar {
@@ -55,14 +59,14 @@ export default {
       .ant-tabs-tab {
         //width: 50%;
         text-align: center;
-        margin: 0px;
+        margin: 0;
         font-size: 18px;
       }
       .ant-tabs-tab {
-        @include n-items(1);
-        @include n-items(2);
-        @include n-items(3);
-        @include n-items(4);
+        //@include n-items(1);
+        //@include n-items(2);
+        //@include n-items(3);
+        //@include n-items(4);
       }
     }
   }

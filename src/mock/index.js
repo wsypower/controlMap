@@ -15,6 +15,8 @@ if (process.env.NODE_ENV !== 'production') {
   require('./services/common')
   require('./section/statistical')
   require('./section/manage')
+  require('./car/statistical')
+  require('./car/manage')
   require('./video/manage')
   require('./video/statistic')
   Mock.setup({

@@ -68,7 +68,7 @@
                     :photoList = "photoList"
                     :toIndex = "toIndex"
                     @closePhotoShow="closePhotoShow"></photo-show>
-    </div>
+        </div>
 </template>
 <script type="text/ecmascript-6">
     import { mapActions } from 'vuex';
@@ -180,8 +180,6 @@
                     console.log('this.signInfoData',this.signInfoData);
                     this.$refs.peopleSignInfo.$el.style.display = 'block';
                 });
-
-
             },
             closeTip(){
                 console.log('close the info');

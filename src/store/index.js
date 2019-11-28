@@ -17,6 +17,7 @@ import Vuex from 'vuex'
 // import createPersistedState from 'vuex-persistedstate'
 import cgadmin from './modules/cgadmin'
 import section from './modules/section'
+import car from './modules/car'
 import emergency from './modules/emergency'
 import intelligence from './modules/intelligence'
 import map from './modules/map'
@@ -39,6 +40,7 @@ const store = new Vuex.Store({
   modules: {
     cgadmin,
     section,
+    car,
     emergency,
     intelligence,
     map

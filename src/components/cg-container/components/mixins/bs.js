@@ -33,7 +33,7 @@ export default {
         Object.assign(
           {
             mouseWheel: true,
-            click: true,
+            click: false,
             bounce: true,
             preventDefault: false,
             scrollbar: {

@@ -34,6 +34,11 @@ Vue.component('happy-scroll', HappyScroll)
 // 引入css
 import 'vue-happy-scroll/docs/happy-scroll.css'
 
+import 'swiper/dist/css/swiper.css'
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+Vue.use(VueAwesomeSwiper)
+
+
 //mock => 生产环境(上线前请注释！！！)
 import '@/mock'
 
