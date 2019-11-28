@@ -39,18 +39,15 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
-    <car-info
-      ref="carInfo"
-      style="position:fixed; top: 100px;right:100px;display:none"
-      :info="carInfoData"
-      @closeTip="closeTip"
-      @getCarId="getCarId"
-    ></car-info>
+    <div hidden>
+      <car-info ref="carInfo" :info="carInfoData" @closeTip="closeTip" @getCarId="getCarId"></car-info>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
+import { mapState,mapActions } from 'vuex'
 import CarInfo from './CarInfo.vue';
+import {carPointStyle} from '@/utils/util.map.style'
 export default {
     name: '',
     components:{
@@ -66,30 +63,51 @@ export default {
           allCarData: [],
           carInfoData: {},
           showTree: true,
-          timer: null
+          timer: null,
+          carFeatures: [],
+          carLayer: null,
+          isLoadData: false
         }
     },
     computed:{
+      ...mapState('map', ['mapManager']),
         //获得展示的数据与属性
        treeData:function(){
            let data = JSON.parse(JSON.stringify(this.sourceData));
+           this.carFeatures=[];
            this.allCarData = [];
            this.changeTreeData(data,'');
+           this.isLoadData=!this.isLoadData;
            return data
        }
     },
+  watch:{
+    isLoadData:function() {
+      if(this.carFeatures.length>0){
+        const carLayer = this.mapManager.addVectorLayerByFeatures(this.carFeatures,carPointStyle(),3);
+        this.mapManager.getMap().getView().fit(carLayer.getSource().getExtent());
+      }
+    }
+  },
     mounted(){
         this.showLoading = true;
         this.getAllCarTreeData().then(res=>{
             this.sourceData = res.data;
             this.showLoading = false;
         });
+      this.map = this.mapManager.getMap()
+      this.map.on('click', this.peopleMapClickHandler);
+      this.carOverlay = this.mapManager.addOverlay({
+        offset:[0,-20],
+        positioning: 'bottom-center',
+        element: this.$refs.carInfo.$el
+      });
         let _this = this;
-      this.timer = setInterval(function() {
-        _this.getAllCarTreeData().then(res=>{
-          _this.sourceData = res.data;
-        });
-      },600000)
+        this.timer = setInterval(function() {
+          _this.getAllCarTreeData().then(res=>{
+            _this.sourceData = res.data;
+          });
+        },600000)
     },
    beforeDestroy(){
      clearInterval(this.timer)
@@ -98,17 +116,21 @@ export default {
         ...mapActions('car/manage', ['getAllCarTreeData']),
         //给后端的数据增加一些前端展示与判断需要的属性
         changeTreeData(arr,deptName){
+          const _this = this;
             arr.forEach(item=>{
                 item.title = item.name;
                 item.scopedSlots = { title: 'title' };
+              let pointImg;
                 if(item.isLeaf){
                     item.key = item.id;
                     item.dept = deptName;
                     if(item.online){
-                        item.slots = {icon: 'car'}
+                        item.slots = {icon: 'car'};
+                      pointImg='car-online';
                     }
                     else{
-                        item.slots = {icon: 'car-outline'}
+                        item.slots = {icon: 'car-outline'};
+                      pointImg='car-offline';
                     }
                     item.class = 'itemClass';
 
@@ -117,6 +139,13 @@ export default {
                       key: item.id
                     }
                     this.allCarData.push(temp);
+                  // 通过经纬度生成点位加到地图上
+                  if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                    const feature=_this.mapManager.xyToFeature(item.x,item.y);
+                    feature.set('icon',pointImg);
+                    feature.set('props',item);
+                    _this.carFeatures.push(feature);
+                  }
                 }
                 else{
                     item.key = 'dept_' + item.id;
@@ -125,7 +154,7 @@ export default {
                 }
             })
         },
-      onSearch(val){
+        onSearch(val){
         this.expandedKeys = [];
         this.searchValue = val;
         this.allCarData.forEach(item => {
@@ -141,38 +170,44 @@ export default {
           this.showTree = true;
         }
       },
-      onExpand(expandedKeys) {
+        onExpand(expandedKeys) {
         this.expandedKeys = expandedKeys;
         this.autoExpandParent = false;
       },
-      //点击树中某个节点（某个人员）时触发
-      onSelect(selectedKeys, e){
-        console.log(selectedKeys, e);
-        if(selectedKeys[0].indexOf('dept_')<0){
-          let needData = e.selectedNodes[0].data.props;
-          let temp = {};
-          temp.id = needData.id;
-          temp.name = needData.carNumber;
-          temp.code = needData.carNumber;
-          temp.flag = needData.carNumber;
-          temp.phone = needData.phone;
-          temp.dept = needData.dept;
-          temp.gpsTime = needData.gpsTime;
-          temp.x = needData.x;
-          temp.y = needData.y;
-          this.carInfoData = temp;
-          this.$refs.carInfo.$el.style.display = 'block';
-        } else{
-          this.$refs.carInfo.$el.style.display = 'none';
+        //点击树中某个节点（某个人员）时触发
+        onSelect(selectedKeys, e){
+          console.log(selectedKeys, e);
+          if(selectedKeys[0].indexOf('dept_')<0){
+            let needData = e.selectedNodes[0].data.props;
+            let temp = {};
+            temp.id = needData.id;
+            temp.name = needData.carNumber;
+            temp.code = needData.carNumber;
+            temp.flag = needData.carNumber;
+            temp.phone = needData.phone;
+            temp.dept = needData.dept;
+            temp.gpsTime = needData.gpsTime;
+            temp.x = needData.x;
+            temp.y = needData.y;
+            this.carInfoData = temp;
+            this.carOverlay.setPosition([parseFloat(this.carInfoData.x),parseFloat(this.carInfoData.y)])
+          }
+        },
+      //地图上人员点击事件处理器
+      peopleMapClickHandler({ pixel, coordinate }){
+        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
+        if(feature){
+          this.carInfoData=feature.get('props');
+          this.carOverlay.setPosition(coordinate);
         }
       },
-        //人员轨迹触发
-      getCarId(data){
-        this.$emit('getCarId',data);
-      },
-      closeTip(){
-        console.log('closeTip');
-      }
+          //人员轨迹触发
+        getCarId(data){
+          this.$emit('getCarId',data);
+        },
+        closeTip(){
+          this.carOverlay.setPosition(undefined);
+        }
     }
 }
 </script>
