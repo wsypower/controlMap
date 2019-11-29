@@ -8,10 +8,6 @@ import StatisticalAnalysis from './components/StatisticalAnalysis.vue'
 import CarManage from './components/CarManage.vue'
 export default {
   name: 'car',
-  components: {
-    CarManage,
-    StatisticalAnalysis
-  },
   data() {
     return {
       //tab标签

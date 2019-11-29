@@ -43,7 +43,6 @@
 </template>
 
 <script>
-
 import { LayoutMenu, LayoutDrawer, LayoutHeader, Loading } from './components/index'
 import LayoutMap from '@/views/map/olMap.vue'
 import { mapState } from 'vuex'
@@ -64,9 +63,6 @@ export default {
       //缓存页面 ====> keep-alive
       keepAlive: state => state.page.keepAlive
     })
-  },
-  data() {
-    return {}
   },
   methods: {}
 }

@@ -5,7 +5,9 @@
     </div>
     <div class="panel-content">
       <a-radio-group name="radioGroup" defaultValue="all">
-        <a-radio v-for="(item, index) in typeData" :value="item.id" :key="index">{{item.type}}（{{item.num}}）</a-radio>
+        <a-radio v-for="(item, index) in typeData" :value="item.id" :key="index"
+          >{{ item.type }}（{{ item.num }}）</a-radio
+        >
       </a-radio-group>
     </div>
   </div>

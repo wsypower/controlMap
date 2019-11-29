@@ -12,7 +12,7 @@ export default {
   name: 'app',
   data() {
     return {
-        locale: zh_CN
+      locale: zh_CN
     }
   }
 }

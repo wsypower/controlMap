@@ -6,12 +6,14 @@
     <div class="panel-content">
       <div class="car-tab-panel">
         <swiper :options="swiperOption" ref="mySwiper">
-          <swiper-slide v-for="(item, index) in carTypeData" :class="{active: activeTemp == index}"><span @click="setActive(index)" >{{item}}</span></swiper-slide>
-<!--          <swiper-slide :class="{active : activeTemp == 1}"><span @click="setActive(1)" >渣土车</span></swiper-slide>-->
-<!--          <swiper-slide :class="{active : activeTemp == 2}"><span @click="setActive(2)" >环卫车</span></swiper-slide>-->
-<!--          <swiper-slide :class="{active : activeTemp == 3}"><span @click="setActive(3)" >xxxx车</span></swiper-slide>-->
-<!--          <swiper-slide :class="{active : activeTemp == 4}"><span @click="setActive(4)" >yyyy车</span></swiper-slide>-->
-<!--          <swiper-slide :class="{active : activeTemp == 5}"><span @click="setActive(5)" >zzzz车</span></swiper-slide>-->
+          <swiper-slide v-for="(item, index) in carTypeData" :class="{ active: activeTemp == index }"
+            ><span @click="setActive(index)">{{ item }}</span></swiper-slide
+          >
+          <!--          <swiper-slide :class="{active : activeTemp == 1}"><span @click="setActive(1)" >渣土车</span></swiper-slide>-->
+          <!--          <swiper-slide :class="{active : activeTemp == 2}"><span @click="setActive(2)" >环卫车</span></swiper-slide>-->
+          <!--          <swiper-slide :class="{active : activeTemp == 3}"><span @click="setActive(3)" >xxxx车</span></swiper-slide>-->
+          <!--          <swiper-slide :class="{active : activeTemp == 4}"><span @click="setActive(4)" >yyyy车</span></swiper-slide>-->
+          <!--          <swiper-slide :class="{active : activeTemp == 5}"><span @click="setActive(5)" >zzzz车</span></swiper-slide>-->
         </swiper>
         <div class="swiper-button-prev" slot="button-prev"><a-icon type="left" /></div>
         <div class="swiper-button-next" slot="button-next"><a-icon type="right" /></div>
@@ -61,8 +63,8 @@ export default {
         ...mapActions('car/statistical', ['getCarWorkInfoData']),
        //激活某个车辆类型，从而展示该车辆在各个中队的情况
       setActive(index){
-          console.log('go to setActive');
-          this.activeTemp = index;
+        console.log('go to setActive');
+        this.activeTemp = index;
         let tempData = this.sourceData[index].groupData;
         let groupArr = [];
         let totalArr = [];
@@ -307,8 +309,8 @@ export default {
       width: 100%;
       background-color: #f5f5f5;
       position: relative;
-      /deep/.swiper-container{
-        height:100%;
+      /deep/.swiper-container {
+        height: 100%;
         margin: 0px 15px;
         .swiper-slide {
           text-align: center;
@@ -326,7 +328,8 @@ export default {
           border-bottom: 2px solid #2c90f3;
         }
       }
-      .swiper-button-prev, .swiper-button-next{
+      .swiper-button-prev,
+      .swiper-button-next {
         position: absolute;
         top: 0;
         width: 20px;
@@ -337,15 +340,15 @@ export default {
         background-image: unset !important;
         background-color: #eeeeee;
         outline: unset;
-        i{
+        i {
           margin-top: 10px;
-          margin-left:4px;
+          margin-left: 4px;
         }
       }
-      .swiper-button-prev{
+      .swiper-button-prev {
         left: 0px;
       }
-      .swiper-button-next{
+      .swiper-button-next {
         right: 0px;
       }
     }
