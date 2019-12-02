@@ -42,12 +42,7 @@
       </div>
     </div>
     <div hidden>
-      <people-info
-        ref="peopleInfo"
-        :info="peopleInfoData"
-        @closeTip="closeTip"
-        @getUserId="getUserId"
-      ></people-info>
+      <people-info ref="peopleInfo" :info="peopleInfoData" @closeTip="closeTip" @getUserId="getUserId"></people-info>
     </div>
   </div>
 </template>

@@ -5,10 +5,10 @@
 <script>
 export default {
   name: 'AlarmSearch',
-  data(){
+  data() {
     return {}
   },
-  methods:{}
+  methods: {}
 }
 </script>
 

@@ -49,6 +49,7 @@ module.exports = {
   },
   // 默认设置: https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-service/lib/config/base.js
   chainWebpack: config => {
+
     /**
      * 删除懒加载模块的 prefetch preload，降低带宽压力
      * https://cli.vuejs.org/zh/guide/html-and-static-assets.html#prefetch
@@ -104,15 +105,15 @@ module.exports = {
       .end()
     // 重新设置 alias
     config.resolve.alias.set('@', resolve('src')).set('@img', resolve('src/assets/images'))
-    //视频播放需要的依赖配置
-      config.module
-          .rule('swf')
-          .test(/\.swf$/)
-          .use('url-loader')
-          .loader('url-loader')
-          .options({
-              limit: 10000
-          })
+
+    config.module
+      .rule("swf")
+      .test(/\.swf$/)
+      .use("url-loader")
+      .loader("url-loader")
+      .options({
+        limit: 10000
+      });
   },
   devServer: {
     open: true

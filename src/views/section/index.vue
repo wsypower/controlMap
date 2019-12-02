@@ -8,10 +8,6 @@ import StatisticalAnalysis from './components/StatisticalAnalysis.vue'
 import PeopleManage from './components/PeopleManage.vue'
 export default {
   name: 'people',
-  components: {
-    PeopleManage,
-    StatisticalAnalysis
-  },
   data() {
     return {
       //tab标签

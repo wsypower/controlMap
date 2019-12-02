@@ -1,21 +1,15 @@
 <template>
   <div class="page">
-    <!--<content-tabs :tabData="tabData"></content-tabs>-->
-    <vTab tabWidth="119px" :tabs="tabData" class=""></vTab>
+    <content-tabs :tabData="tabData"></content-tabs>
   </div>
 </template>
 
 <script>
-import AlarmSearch from '@/views/video/components/AlarmSearch.vue'
-import AlarmStatistics from '@/views/video/components/AlarmStatistics.vue'
-import VideoDistribute from '@/views/video/components/VideoDistribute.vue'
-import vTab from '@/components/vTab.vue'
-
+import AlarmSearch from './components/AlarmSearch.vue'
+import AlarmStatistics from './components/AlarmStatistics.vue'
+import VideoDistribute from './components/VideoDistribute.vue'
 export default {
-  name: 'page5',
-  components:{
-    vTab
-  },
+  name: 'alarmVideo',
   data() {
     return {
       //tab标签
@@ -23,17 +17,17 @@ export default {
         {
           name: '告警统计',
           component: AlarmStatistics,
-          data:{}
+          hasScroll: true
         },
         {
           name: '告警查询',
           component: AlarmSearch,
-          data:{}
+          hasScroll: false
         },
         {
           name: '监控分布',
           component: VideoDistribute,
-          data:{}
+          hasScroll: false
         }
       ]
     }
@@ -44,6 +38,6 @@ export default {
 <style lang="scss" scoped>
 .page {
   width: 100%;
-  height: 1600px;
+  height: 100%;
 }
 </style>

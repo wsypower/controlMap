@@ -1,18 +1,17 @@
 <template>
   <div class="analysis-panel">
     <div class="panel-header">
-      <span class="title">越界人员分析</span>
+      <span class="title">高发路段</span>
     </div>
-    <div class="panel-content" id="overstep"></div>
+    <div class="panel-content" id="highRoad"></div>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
 export default {
-    name: 'OverstepAnalysis',
+    name: 'HighIncidenceRoadAnalysis',
     data(){
         return {
-
         }
     },
     mounted(){
@@ -21,19 +20,19 @@ export default {
       });
     },
     methods:{
-        ...mapActions('section/statistical', ['getOverstepAnalysisData']),
+        ...mapActions('video/statistical', ['getHighIncidenceRoadAnalysisData']),
         //获取越界数据
         getChartData(){
-            this.getOverstepAnalysisData().then(res=>{
-                console.log('getOverstepAnalysisData',res);
+            this.getHighIncidenceRoadAnalysisData().then(res=>{
+                console.log('getHighIncidenceRoadAnalysisData',res);
                 let data = [],
-                    dayArr = [],
+                    nameArr = [],
                     numArr = [];
                 res.data.forEach(item=>{
-                    dayArr.push(item.day);
+                    nameArr.push(item.name);
                     numArr.push(item.num);
                 })
-                data.push(dayArr);
+                data.push(nameArr);
                 data.push(numArr);
                 this.chartInit(data);
             })
@@ -41,31 +40,31 @@ export default {
         },
         //初始化图表
         chartInit(data){
-            const ChartColumnar = this.$echarts.init(document.getElementById('overstep'));
+            const ChartColumnar = this.$echarts.init(document.getElementById('highRoad'));
             ChartColumnar.setOption({
                 grid: {
-                    top: 50,
+                    top: 60,
                     left: 5,
                     right: 5,
                     bottom: 10,
                     containLabel: true
                 },
-                tooltip: {
-                    show: true,
-                    position: 'top',
-                    backgroundColor: '#febb08',
-                    textStyle:{
-                        color: '#000000'
-                    },
-                    formatter: '人数：{c}'
-                },
-                legend:{
-                    show: true,
-                    top: 10,
-                    right: 1,
-                    itemWidth: 14,
-                    itemHeight: 8
-                },
+                // tooltip: {
+                //     show: true,
+                //     position: 'top',
+                //     backgroundColor: '#febb08',
+                //     textStyle:{
+                //         color: '#000000'
+                //     },
+                //     formatter: '人数：{c}'
+                // },
+                // legend:{
+                //     show: true,
+                //     top: 10,
+                //     right: 1,
+                //     itemWidth: 14,
+                //     itemHeight: 8
+                // },
                 xAxis: {
                     type: 'category',
                     data: data[0],
@@ -109,14 +108,20 @@ export default {
                     }
                 },
                 series: [{
-                    name: '监督员',
-                    type: 'line',
-                    smooth: true,
-                    symbol: 'circle',
-                    itemStyle:{
-                        borderWidth: 1,
-                        borderColor: '#ffffff'
+                    name: '高发路段',
+                    type: 'bar',
+                  barWidth: 8,
+                  itemStyle: {
+                    normal: {
+                      color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: '#6a7bfa'
+                      }, {
+                        offset: 1,
+                        color: '#95a0f4'
+                      }])
                     },
+                  },
                     data: data[1]
                 }]
             });
@@ -127,16 +132,16 @@ export default {
 <style lang="scss" scoped>
 .analysis-panel {
   width: 100%;
-  height: 240px;
-  background-image: -webkit-linear-gradient(180deg, #ffffff 36px, #f5f5f5 36px);
-  background-image: -moz-linear-gradient(180deg, #ffffff 36px, #f5f5f5 36px);
-  background-image: -ms-linear-gradient(180deg, #ffffff 36px, #f5f5f5 36px);
-  background-image: -o-linear-gradient(180deg, #ffffff 36px, #f5f5f5 36px);
-  background-image: linear-gradient(180deg, #ffffff 36px, #f5f5f5 36px);
+  height: 230px;
+  background-image: -webkit-linear-gradient(180deg, #ffffff 40px, #f5f5f5 40px);
+  background-image: -moz-linear-gradient(180deg, #ffffff 40px, #f5f5f5 40px);
+  background-image: -ms-linear-gradient(180deg, #ffffff 40px, #f5f5f5 40px);
+  background-image: -o-linear-gradient(180deg, #ffffff 40px, #f5f5f5 40px);
+  background-image: linear-gradient(180deg, #ffffff 40px, #f5f5f5 40px);
   position: relative;
   .panel-header {
     position: absolute;
-    top: 10px;
+    top: 15px;
     .title {
       font-family: PingFang-SC-Medium;
       font-size: 14px;

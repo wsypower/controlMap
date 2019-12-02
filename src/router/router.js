@@ -74,37 +74,37 @@ const frameIn = [
         path: '/emergency',
         name: 'emergency',
         meta: {
-            title: '应急指挥',
-            role: ['admin', 'super_editor']
+          title: '应急指挥',
+          role: ['admin', 'super_editor']
         },
         component: _import('emergency/page6.vue')
       },
       {
-          path: '/manhole',
-          name: 'manhole',
-          meta: {
-              title: '智能井盖',
-              role: ['admin', 'super_editor']
-          },
-          component: _import('manhole/index.vue')
+        path: '/manhole',
+        name: 'manhole',
+        meta: {
+          title: '智能井盖',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('manhole/index.vue')
       },
       {
-          path: '/dustbin',
-          name: 'dustbin',
-          meta: {
-              title: '智能垃圾桶',
-              role: ['admin', 'super_editor']
-          },
-          component: _import('dustbin/index.vue')
+        path: '/dustbin',
+        name: 'dustbin',
+        meta: {
+          title: '智能垃圾桶',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('dustbin/index.vue')
       },
       {
-          path: '/water',
-          name: 'water',
-          meta: {
-              title: '智能水位计',
-              role: ['admin', 'super_editor']
-          },
-          component: _import('water/index.vue')
+        path: '/water',
+        name: 'water',
+        meta: {
+          title: '智能水位计',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('water/index.vue')
       },
       // 刷新页面 必须保留
       {

@@ -21,7 +21,7 @@
         <span class="title">组别：</span><span>{{ info.dept }}</span>
       </div>
       <div>
-        <span class="title">GPS上报：</span><span>{{new Date(info.gpsTime)|date_format()}}</span>
+        <span class="title">GPS上报：</span><span>{{ new Date(info.gpsTime) | date_format() }}</span>
       </div>
     </div>
     <div class="info-body-operation" @click="lookCarTrail">

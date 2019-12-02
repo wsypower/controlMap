@@ -70,132 +70,132 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
-    import moment from 'moment';
-    import util from '@/utils/util'
-    export default {
-        name: 'peopleTrail',
-        props:{
-            infoId:{
-                type: String,
-                default: ''
+import moment from 'moment';
+import util from '@/utils/util'
+export default {
+    name: 'peopleTrail',
+    props:{
+        infoId:{
+            type: String,
+            default: ''
+        },
+        peopleDataList:{
+            type: Array,
+            default(){
+                return []
+            }
+        }
+    },
+    data(){
+        return {
+            //各项查询条件
+            query: {
+               userId: '',
+               startDay: '',
+               endDay: '',
+               sortType: 'asc',
+               pageNo: 1,
+               pageSize: 20
             },
-            peopleDataList:{
-                type: Array,
-                default(){
-                    return []
-                }
-            }
-        },
-        data(){
-            return {
-                //各项查询条件
-                query: {
-                   userId: '',
-                   startDay: '',
-                   endDay: '',
-                   sortType: 'asc',
-                   pageNo: 1,
-                   pageSize: 20
-                },
-                //查询的时间范围
-                dayRange: [],
-                //查询时的过渡效果
-                showLoading: false,
-                //正序asc、倒序desc
-                activeName: 'asc',
-                //单页数据
-                dataList:[],
-                //总数
-                totalSize: 0
-            }
-        },
-        mounted(){
-            if(this.infoId){
-                this.query.userId = this.infoId;
-            }
-            else{
-                this.query.userId = util.cookies.get('userId');
-            }
+            //查询的时间范围
+            dayRange: [],
+            //查询时的过渡效果
+            showLoading: false,
+            //正序asc、倒序desc
+            activeName: 'asc',
+            //单页数据
+            dataList:[],
+            //总数
+            totalSize: 0
+        }
+    },
+    mounted(){
+        if(this.infoId){
+            this.query.userId = this.infoId;
+        }
+        else{
+            this.query.userId = util.cookies.get('userId');
+        }
+        let day = moment(new Date()).format('YYYY-MM-DD');
+        this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
+        this.query.startDay = day;
+        this.query.endDay = day;
+        this.getDataList();
+    },
+    watch:{
+        infoId:function(val){
+            this.query.userId = val;
             let day = moment(new Date()).format('YYYY-MM-DD');
             this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
             this.query.startDay = day;
             this.query.endDay = day;
             this.getDataList();
-        },
-        watch:{
-            infoId:function(val){
-                this.query.userId = val;
-                let day = moment(new Date()).format('YYYY-MM-DD');
-                this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-                this.query.startDay = day;
-                this.query.endDay = day;
-                this.getDataList();
-            }
-        },
-        methods:{
-            ...mapActions('section/manage', ['getUserTrailDataList','getTrailDetailData']),
-            //获取人员轨迹数据
-            getDataList(){
-                console.log('this.query',this.query);
-                this.showLoading = true;
-                this.getUserTrailDataList(this.query).then(res=>{
-                    this.showLoading = false;
-                    this.dataList = res.data.list.map(item=>{
-                        item.isStart = false;
-                        item.hasDetail = false;
-                        return item
-                    });
-
-                    this.totalSize = res.data.total;
+        }
+    },
+    methods:{
+        ...mapActions('section/manage', ['getUserTrailDataList','getTrailDetailData']),
+        //获取人员轨迹数据
+        getDataList(){
+            console.log('this.query',this.query);
+            this.showLoading = true;
+            this.getUserTrailDataList(this.query).then(res=>{
+                this.showLoading = false;
+                this.dataList = res.data.list.map(item=>{
+                    item.isStart = false;
+                    item.hasDetail = false;
+                    return item
                 });
-            },
-            //查询(默认显示当天，当前登入的用户)
-            onSearch() {
-                this.query.startDay = moment(this.dayRange[0]._d).format("YYYY-MM-DD");
-                this.query.endDay = moment(this.dayRange[1]._d).format("YYYY-MM-DD");
-                this.query.pageNo = 1;
-                this.getDataList()
-            },
-            //翻页
-            changePagination(pageNo, pageSize) {
-                console.log('changePagination', pageNo, pageSize);
-                this.query.pageNo = pageNo;
-                this.getDataList()
-            },
 
-            //按照时间排序（正序、倒序）
-            onSort(sortType){
-                console.log(11111111111,sortType);
-                this.activeName = sortType;
-                this.query.sortType = sortType;
-                this.query.pageNo = 1;
-                this.getDataList();
-            },
-            //开始播放
-            startPlay(item,i){
-                this.dataList[i].isStart = true;
-                if(item.hasDetail){
+                this.totalSize = res.data.total;
+            });
+        },
+        //查询(默认显示当天，当前登入的用户)
+        onSearch() {
+            this.query.startDay = moment(this.dayRange[0]._d).format("YYYY-MM-DD");
+            this.query.endDay = moment(this.dayRange[1]._d).format("YYYY-MM-DD");
+            this.query.pageNo = 1;
+            this.getDataList()
+        },
+        //翻页
+        changePagination(pageNo, pageSize) {
+            console.log('changePagination', pageNo, pageSize);
+            this.query.pageNo = pageNo;
+            this.getDataList()
+        },
 
-                }
-                else{
-                    let temp = {
-                        userId: this.query.userId,
-                        startTime: item.startTime,
-                        endTime: item.endTime
-                    }
-                    this.getTrailDetailData(temp).then(res=>{
-                        console.log('TrailDetailData',res.data);
-                        item.hasDetail = true;
-                    });
-                }
+        //按照时间排序（正序、倒序）
+        onSort(sortType){
+            console.log(11111111111,sortType);
+            this.activeName = sortType;
+            this.query.sortType = sortType;
+            this.query.pageNo = 1;
+            this.getDataList();
+        },
+        //开始播放
+        startPlay(item,i){
+            this.dataList[i].isStart = true;
+            if(item.hasDetail){
 
-            },
-            //暂停播放
-            pausePlay(item,i){
-                this.dataList[i].isStart = false;
             }
+            else{
+                let temp = {
+                    userId: this.query.userId,
+                    startTime: item.startTime,
+                    endTime: item.endTime
+                }
+                this.getTrailDetailData(temp).then(res=>{
+                    console.log('TrailDetailData',res.data);
+                    item.hasDetail = true;
+                });
+            }
+
+        },
+        //暂停播放
+        pausePlay(item,i){
+            this.dataList[i].isStart = false;
         }
     }
+}
 </script>
 <style lang="scss" scoped>
 .people-trail {

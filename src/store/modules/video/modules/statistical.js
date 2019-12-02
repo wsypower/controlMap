@@ -1,17 +1,16 @@
 import {
-  getPeopleAnalysisData,
-  getStatusAnalysisData,
-  getOverstepAnalysisData,
-  getPeopleTopThreeData
-} from '@/api/section/statistical.js'
+  getAlarmTypeAnalysisData,
+  getHighIncidenceRoadAnalysisData,
+  getHighIncidenceTimeAnalysisData
+} from '@/api/video/statistical.js'
 
 export default {
   namespaced: true,
   actions: {
-    getPeopleAnalysisData(state, data) {
+    getAlarmTypeAnalysisData(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
-        getPeopleAnalysisData(data)
+        getAlarmTypeAnalysisData(data)
           .then(res => {
             resolve(res)
           })
@@ -21,10 +20,10 @@ export default {
           })
       })
     },
-    getStatusAnalysisData(state, data) {
+    getHighIncidenceRoadAnalysisData(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
-        getStatusAnalysisData(data)
+        getHighIncidenceRoadAnalysisData(data)
           .then(res => {
             resolve(res)
           })
@@ -34,23 +33,10 @@ export default {
           })
       })
     },
-    getOverstepAnalysisData(state, data) {
+    getHighIncidenceTimeAnalysisData(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
-        getOverstepAnalysisData(data)
-          .then(res => {
-            resolve(res)
-          })
-          .catch(err => {
-            console.log(err)
-            reject(err)
-          })
-      })
-    },
-    getPeopleTopThreeData(state, data) {
-      console.log('store', data)
-      return new Promise((resolve, reject) => {
-        getPeopleTopThreeData(data)
+        getHighIncidenceTimeAnalysisData(data)
           .then(res => {
             resolve(res)
           })
