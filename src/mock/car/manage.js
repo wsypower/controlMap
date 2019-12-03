@@ -25,8 +25,8 @@ const getAllCarTreeData = options => {
               phone: '14212412512',
               gpsTime: 1574730352000,
               online: false,
-              x: '122.206714',
-              y: '30.245535',
+              x: '120.196953',
+              y: '30.278492',
               isLeaf: true
             },
             {
@@ -38,8 +38,8 @@ const getAllCarTreeData = options => {
               phone: '14212412512',
               gpsTime: 1574695055000,
               online: true,
-              x: '122.206714',
-              y: '30.245535',
+              x: '120.196953',
+              y: '30.278492',
               isLeaf: true
             },
             {
@@ -51,8 +51,8 @@ const getAllCarTreeData = options => {
               phone: '14212412512',
               gpsTime: 1574730528000,
               online: true,
-              x: '119.62399883414247',
-              y: '29.07119100775157',
+              x: '120.196953',
+              y: '30.278492',
               isLeaf: true
             }
           ]
@@ -71,8 +71,8 @@ const getAllCarTreeData = options => {
               phone: '14212412512',
               gpsTime: 1574730537000,
               online: true,
-              x: '119.64706984131524',
-              y: '29.09840347291763',
+              x: '120.196953',
+              y: '30.278492',
               isLeaf: true
             },
             {
@@ -84,8 +84,8 @@ const getAllCarTreeData = options => {
               phone: '14212412512',
               gpsTime: 1574653032000,
               online: false,
-              x: '119.6612536774609',
-              y: '29.09780620397094',
+              x: '120.196953',
+              y: '30.278492',
               isLeaf: true
             }
           ]
@@ -113,8 +113,8 @@ const getAllCarTreeData = options => {
               phone: '14212412512',
               gpsTime: 1574729844000,
               online: true,
-              x: '119.64009925849292',
-              y: '29.084221957704376',
+              x: '120.196953',
+              y: '30.278492',
               isLeaf: true
             },
             {
@@ -126,8 +126,8 @@ const getAllCarTreeData = options => {
               phone: '14212412512',
               gpsTime: 1574584935000,
               online: true,
-              x: '119.65797838272466',
-              y: '29.07670247599889',
+              x: '120.196953',
+              y: '30.278492',
               isLeaf: true
             },
             {
@@ -139,8 +139,8 @@ const getAllCarTreeData = options => {
               phone: '14212412512',
               gpsTime: 1574672080000,
               online: true,
-              x: '119.64020518008596',
-              y: '29.084231736936314',
+              x: '120.196953',
+              y: '30.278492',
               isLeaf: true
             }
           ]

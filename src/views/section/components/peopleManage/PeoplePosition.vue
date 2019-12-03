@@ -90,7 +90,6 @@ export default {
         }
       }
     },
-
     mounted(){
         this.showLoading = true;
         this.getAllPeopleTreeData().then(res=>{
