@@ -1,8 +1,60 @@
-import { getAllCameraTreeData } from '@/api/video/manage.js'
+import { getAllAlarmTypeDataList, getAllAlarmDataList, alarmNormalHandle, alarmReportHandle, getAllCameraTreeData } from '@/api/video/manage.js'
 
 export default {
   namespaced: true,
   actions: {
+    getAllAlarmTypeDataList(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getAllAlarmTypeDataList(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getAllAlarmDataList(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getAllAlarmDataList(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    alarmNormalHandle(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        alarmNormalHandle(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    alarmReportHandle(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        alarmReportHandle(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
     getAllCameraTreeData(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
@@ -16,58 +68,6 @@ export default {
           })
       })
     }
-    // getAllCarTreeData(state, data) {
-    //   console.log('store', data)
-    //   return new Promise((resolve, reject) => {
-    //     getAllCarTreeData(data)
-    //       .then(res => {
-    //         resolve(res)
-    //       })
-    //       .catch(err => {
-    //         console.log(err)
-    //         reject(err)
-    //       })
-    //   })
-    // },
-    // getCarTrailDataList(state, data) {
-    //   console.log('store', data)
-    //   return new Promise((resolve, reject) => {
-    //     getCarTrailDataList(data)
-    //       .then(res => {
-    //         resolve(res)
-    //       })
-    //       .catch(err => {
-    //         console.log(err)
-    //         reject(err)
-    //       })
-    //   })
-    // },
-    // getTrailDetailData(state, data) {
-    //   console.log('store', data)
-    //   return new Promise((resolve, reject) => {
-    //     getTrailDetailData(data)
-    //       .then(res => {
-    //         resolve(res)
-    //       })
-    //       .catch(err => {
-    //         console.log(err)
-    //         reject(err)
-    //       })
-    //   })
-    // },
-    // getAllCarCompanyDataList(state, data) {
-    //   console.log('store', data)
-    //   return new Promise((resolve, reject) => {
-    //     getAllCarCompanyDataList(data)
-    //       .then(res => {
-    //         resolve(res)
-    //       })
-    //       .catch(err => {
-    //         console.log(err)
-    //         reject(err)
-    //       })
-    //   })
-    // },
     // getCarViolateRulesDataList(state, data) {
     //   console.log('store', data)
     //   return new Promise((resolve, reject) => {
