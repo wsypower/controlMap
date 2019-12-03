@@ -38,7 +38,7 @@ export function getAllAlarmTypeDataList(data) {
  *     {Number} pageSize: 每页显示条数
  * @method：GET
  * @response：{
- *     {Number} id: 告警类型Id
+ *     {Number} id: 告警Id
  *     {String} typeName: 告警类型名称
  *     {String} dayTime: 告警时间
  *     {Number} position: 告警点位
