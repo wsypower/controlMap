@@ -89,6 +89,6 @@ export default {
 <style scoped lang="scss">
 .video-js {
   width: 100%;
-  max-height: 100%;
+  height: 100%;
 }
 </style>

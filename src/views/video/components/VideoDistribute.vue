@@ -39,7 +39,7 @@
       </div>
     </div>
     <div class="player-panel active" v-if="playerMethod === 'browser'">
-      <my-video-player :videoSrc.sync="videoSrc"></my-video-player>
+      <my-video-player :videoSrc.sync="videoSrc" :multiple="true"></my-video-player>
     </div>
     <iframe width="0" height="0" id="url" v-else></iframe>
   </div>
@@ -62,7 +62,7 @@ export default {
       sourceData: [],
       allCameraData: [],
       showTree: true,
-      playerMethod: 'tool', //browser：flash播放  tool：C端播放
+      playerMethod: 'browser', //browser：flash播放  tool：C端播放
       videoSrc: '',
     }
   },
@@ -111,7 +111,7 @@ export default {
     onSearch(val){
       this.expandedKeys = [];
       this.searchValue = val;
-      this.allPeopleData.forEach(item => {
+      this.allCameraData.forEach(item => {
         if(item.title.indexOf(val)>=0){
           this.expandedKeys.push(item.key);
         }

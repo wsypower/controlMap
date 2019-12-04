@@ -1,28 +1,90 @@
 /*
  * @Author: Mo.xuejuan
- * @Date: 2019-11-26 09:12:20
+ * @Date: 2019-12-02 09:12:20
  */
 
 import request from '@/plugins/axios/axios'
 
 /**
- * @description 获取所有摄像头(列表结构)
+ * @description 获取所有告警类型数据(列表结构)
  * @author moxuejuan
- * @date 2019-11-26 14:53:20
+ * @date 2019-12-03 14:53:20
  * @param 无
  * @method：GET
  * @response：{
- *     {Number} id: 车辆Id
- *     {String} name: 车辆名称
- *     {String} dept: 所属部门
+ *     {Number} id: 告警类型Id
+ *     {String} name: 告警类型名称
  * }
  */
 
-export function getAllCarDataList(data) {
-  console.log('api:getAllCarDataList', data)
+export function getAllAlarmTypeDataList(data) {
+  console.log('api:getAllAlarmTypeDataList', data)
   return request({
-    url: '@test/getAllCarDataList_t=' + new Date().getTime(),
+    url: '@test/getAllAlarmTypeDataList_t=' + new Date().getTime(),
     method: 'get',
+    params: data
+  })
+}
+
+/**
+ * @description 获取所有告警数据(列表结构)
+ * @author moxuejuan
+ * @date 2019-12-03 14:53:20
+ * @param
+ *     {Number} alarmTypeId: 告警类型Id
+ *     {String} startDay: 开始日期
+ *     {String} endDay: 结束日期
+ *     {Number} pageNo: 页码
+ *     {Number} pageSize: 每页显示条数
+ * @method：GET
+ * @response：{
+ *     {Number} id: 告警Id
+ *     {String} typeName: 告警类型名称
+ *     {String} dayTime: 告警时间
+ *     {Number} position: 告警点位
+ *     {Number} cameraName: 监控名称
+ *     {String} videoSrc: 摄像监控数据流
+ *     {String} photoUrl: 摄像头截图
+ * }
+ */
+
+export function getAllAlarmDataList(data) {
+  console.log('api:getAllAlarmDataList', data)
+  return request({
+    url: '@test/getAllAlarmDataList_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * @description 未违规数据处理
+ * @author moxuejuan
+ * @date 2019-12-03 14:53:20
+ * @param {String} id 请求参数 :告警Id
+ * @param {String} remark 请求参数 : 告警备注信息
+ */
+export const alarmNormalHandle = data => {
+  console.log('api:alarmNormalHandle', data)
+  return request({
+    url: `@test/alarmNormalHandle`,
+    method: 'post',
+    params: data
+  })
+}
+
+/**
+ * @description 违规数据上报处理
+ * @author moxuejuan
+ * @date 2019-12-03 14:53:20
+ * @param {String} id 请求参数 :告警Id
+ * @param {String} remark 请求参数 : 告警备注信息
+ */
+export const alarmReportHandle = data => {
+  console.log('api:alarmReportHandle', data)
+  return request({
+    url: `@test/alarmReportHandle`,
+    method: 'post',
     params: data
   })
 }
@@ -30,7 +92,7 @@ export function getAllCarDataList(data) {
 /**
  * @description 获取所有摄像头(树形结构)
  * @author moxuejuan
- * @date 2019-11-28 14:53
+ * @date 2019-12-02 14:53
  * @param 无
  * @method：GET
  * @response：{
@@ -44,112 +106,5 @@ export function getAllCameraTreeData(data) {
     url: '@test/getAllCameraTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
-  })
-}
-
-/**
- * @description 获取车辆轨迹分段数据
- * @author moxuejuan
- * @date 2019-11-26 14:53:20
- * @param {String} carId 请求参数 :用户唯一标识符默认参数）
- * @param {String} startDay 请求参数 :开始日期
- * @param {String} endDay 请求参数 :结束日期
- * @param {String} sortType 时间排序（asc,desc）
- * @param {Number} pageNo页数
- * @param {Number} pageSize每页显示条数
- * @method：POST
- * @response：{
- *
- * }
- */
-export const getCarTrailDataList = data => {
-  console.log('api:getCarTrailDataList', data)
-  return request({
-    url: `@test/getCarTrailDataList`,
-    method: 'post',
-    data
-  })
-}
-
-/**
- * @description 获取车辆某段轨迹的详细数据
- * @author moxuejuan
- * @date 2019-11-27 09:13:26
- * @param {String} carId 请求参数 :车辆唯一标识符默认参数）
- * @param {Number} startTime 请求参数 :开始时间
- * @param {Number} endTime 请求参数 :结束时间
- * @method：GET
- * @response：{
- *     树形结构数据
- * }
- */
-export const getTrailDetailData = data => {
-  console.log('api:getTrailDetailData', data)
-  return request({
-    url: `@test/getTrailDetailData_t=` + new Date().getTime(),
-    method: 'get',
-    params: data
-  })
-}
-
-/**
- * @description 获取车辆所属公司的数据
- * @author moxuejuan
- * @date 2019-11-27 14:13:26
- * @param 无
- * @method：GET
- * @response：{
- *     树形结构数据
- * }
- */
-export const getAllCarCompanyDataList = data => {
-  console.log('api:getAllCarCompanyDataList', data)
-  return request({
-    url: `@test/getAllCarCompanyDataList_t=` + new Date().getTime(),
-    method: 'get',
-    params: data
-  })
-}
-/**
- * @description 获取车辆违规数据()
- * @author moxuejuan
- * @date 2019-11-27 09:14:14
- * @param {String} carId 请求参数 :用户唯一标识符默认参数）
- * @param {String} companyId 请求参数：所属公司ID
- * @param {String} vType 请求参数：违规类型Id
- * @param {String} carType 请求参数：车型Id
- * @param {String} startDay 请求参数 :开始日期
- * @param {String} endDay 请求参数 :结束日期
- * @param {String} searchContent 请求参数 : 车牌号/驾驶员/手机号
- * @method：POST(参数相对多一些，使用POST请求)
- * @response：{
- *     树形结构数据
- * }
- */
-export const getCarViolateRulesDataList = data => {
-  console.log('api:getCarViolateRulesDataList', data)
-  return request({
-    url: `@test/getCarViolateRulesDataList`,
-    method: 'post',
-    data
-  })
-}
-
-/**
- * @description 删除某条车辆非违规数据
- * @author moxuejuan
- * @date 2019-11-27 09:14:50
- * @param {String} id 请求参数 :违规数据唯一Id
- * @method：POST
- * @response：{
- *     树形结构数据
- * }
- */
-export const deleteCarViolateRules = data => {
-  console.log('api:deleteCarViolateRules', data)
-  return request({
-    url: `@test/deleteCarViolateRules`,
-    method: 'post',
-    data
   })
 }
