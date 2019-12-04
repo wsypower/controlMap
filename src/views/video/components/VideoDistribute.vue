@@ -88,6 +88,7 @@ export default {
         isLoadData:function() {
             if(this.videoFeatures.length>0){
                 this.videoLayer = this.mapManager.addVectorLayerByFeatures(this.videoFeatures,videoPointStyle(),3);
+                this.videoLayer.set('featureType','videoDistribute');
                 this.mapManager.getMap().getView().fit(this.videoLayer.getSource().getExtent());
             }
         }
@@ -99,7 +100,7 @@ export default {
       this.sourceData = res.data;
     });
       this.map = this.mapManager.getMap();
-      this.map.on('click', this.peopleMapClickHandler);
+      this.map.on('click', this.videoMapClickHandler);
   },
   methods:{
     ...mapActions('video/manage', ['getAllCameraTreeData']),
@@ -214,6 +215,34 @@ export default {
 
       }
     },
+      videoMapClickHandler() {
+          if (this.playerMethod === 'browser') {
+              //打开摄像头播放
+              this.videoSrc = needData.rmtpUrl;
+          } else {
+              let mpid = needData.mpid;
+              //打开C端工具播放
+              axios.get('http://61.153.37.214:81/api/sp/getSecretApi').then(resultConfig => {
+                  if (resultConfig) {
+                      var PalyType = "PlayReal";
+                      var SvrPort = "443";
+                      var httpsflag = "1";
+                      var data = resultConfig.data;
+                      var SvrIp = data.SvrIp;
+                      var appkey = data.appkey;
+                      var appSecret = data.appSecret;
+                      var time = data.time;
+                      var timeSecret = data.timeSecret;
+                      var CamList = mpid;
+                      //主要是添加了'hikvideoclient://' 和 'VersionTag:artemis'2段字符串
+                      var param = 'hikvideoclient://ReqType:' + PalyType + ';' + 'VersionTag:artemis' + ';' + 'SvrIp:' + SvrIp + ';' + 'SvrPort:' + SvrPort + ';' + 'Appkey:' + appkey + ';' + 'AppSecret:' + appSecret + ';' + 'time:' + time + ';' + 'timesecret:' + timeSecret + ';' + 'httpsflag:' + httpsflag + ';' + 'CamList:' + CamList + ';';
+                      document.getElementById("url").src = param;
+                  }
+              }).catch(err => {
+                  console.log("错误信息---------->" + err);
+              });
+          }
+      }
     // playVideo(){
     //   this.isActive = true;
     //   //rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000015-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12   ok

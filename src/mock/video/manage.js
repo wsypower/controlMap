@@ -39,6 +39,8 @@ const getAllAlarmDataList = options => {
         typeName: '沿街晾晒',
         dayTime: 1574729844000,
         position: '马山街3号',
+          x: '120.196953',
+          y: '30.278492',
         cameraName: '马山街3号监控',
         videoSrc:
           'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000015-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12',
@@ -49,7 +51,9 @@ const getAllAlarmDataList = options => {
         typeName: '机动车违停',
         dayTime: 1574729844000,
         position: '杭州ssss市杭州市杭州杭州市杭州市杭州市ssssssssss市杭州市杭州市杭州',
-        cameraName: '马山街3号监控',
+          x: '120.196953',
+          y: '30.278492',
+          cameraName: '马山街3号监控',
         videoSrc:
           'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000883-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12',
         photoUrl: 'http://61.153.37.213:8087/camera/2019/11/18/20191118080357327335.jpg'
@@ -60,7 +64,9 @@ const getAllAlarmDataList = options => {
         dayTime: 1574729844000,
         position:
           '马山街3号马山街3号监控马山街3号监控马山街3号监控马山街3号监控马山街3号监控马山街3号监控马山街3号监控马山街3号监控',
-        cameraName: '马山街3号监控马山街3号监控',
+          x: '120.196953',
+          y: '30.278492',
+          cameraName: '马山街3号监控马山街3号监控',
         videoSrc:
           'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000005-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12',
         photoUrl: 'http://61.153.37.213:8087/camera/2019/11/18/20191118080357327335.jpg'
@@ -70,6 +76,8 @@ const getAllAlarmDataList = options => {
         typeName: '沿街晾晒',
         dayTime: 1574729844000,
         position: '马山街3号',
+          x: '120.196953',
+          y: '30.278492',
         cameraName: '马山街3号监控',
         videoSrc:
           'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000134-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12',
@@ -80,6 +88,8 @@ const getAllAlarmDataList = options => {
         typeName: '沿街晾晒',
         dayTime: 1574729844000,
         position: '马山街3号',
+          x: '120.196953',
+          y: '30.278492',
         cameraName: '马山街3号监控',
         videoSrc:
           'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000219-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12',
@@ -164,8 +174,8 @@ const getAllCameraTreeData = options => {
     },
     {
       ip: '192.168.100.46',
-        x: '120.56305825710297',
-        y: '30.014031529426575',
+      x: '120.56305825710297',
+      y: '30.014031529426575',
       mpid: '33092104001320010677',
       mpname: '三江购物-全景',
       puid: '33092104001320010677',
@@ -175,8 +185,8 @@ const getAllCameraTreeData = options => {
     },
     {
       ip: '192.168.100.55',
-        x: '120.56305825710297',
-        y: '30.014031529426575',
+      x: '120.56305825710297',
+      y: '30.014031529426575',
       mpid: '33092104001320015002',
       mpname: '新区广电大楼楼顶-球',
       puid: '33092104001320015002',

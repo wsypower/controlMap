@@ -26,7 +26,7 @@ export default {
             width: '50%'
         }
     },
-  mounted(){
+    mounted(){
     let tabLayerNum = this.tabData.length;
     let width = 100/ tabLayerNum  + '%';
     let elArr = document.querySelectorAll('.tab-layer>.ant-tabs-bar .ant-tabs-tab');
@@ -36,8 +36,9 @@ export default {
   },
     methods: {
         changeTab(val){
+            this.$emit('changeTab',val);
             console.log('changeTab',val);
-        }
+        },
     }
 }
 </script>

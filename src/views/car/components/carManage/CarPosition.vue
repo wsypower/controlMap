@@ -95,7 +95,7 @@ export default {
             this.sourceData = res.data;
             this.showLoading = false;
         });
-      this.map = this.mapManager.getMap()
+      this.map = this.mapManager.getMap();
       this.map.on('click', this.peopleMapClickHandler);
       this.carOverlay = this.mapManager.addOverlay({
         offset:[0,-20],

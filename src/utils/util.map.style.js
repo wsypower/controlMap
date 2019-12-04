@@ -54,6 +54,23 @@ export function videoPointStyle() {
 }
 
 /**
+ * @description:告警点位样式
+ * @author:sijianting
+ * @createDate:2019/7/22 14:47
+ */
+export function alarmPointStyle() {
+    return function(feature) {
+        return new Style({
+            image: new Icon({
+                src: require('@/assets/mapImage/carmera_online.png')
+            }),
+            anchor: [0.5, 1],
+        })
+    }
+}
+
+
+/**
  * @description:应急预案应急资源点位样式
  * @author:sijianting
  * @createDate:2019/7/22 14:47
