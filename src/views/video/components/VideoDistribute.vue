@@ -45,8 +45,9 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
+import { mapState,mapActions } from 'vuex'
 import MyVideoPlayer from "./MyVideoPlayer.vue";
+import {videoPointStyle} from '@/utils/util.map.style'
 import axios from 'axios'
 export default {
   name: 'VideoDistribute',
@@ -64,29 +65,47 @@ export default {
       showTree: true,
       playerMethod: 'browser', //browser：flash播放  tool：C端播放
       videoSrc: '',
+      videoFeatures: [],
+      videoLayer: null,
+        isLoadData: false
     }
   },
   computed:{
+      ...mapState('map', ['mapManager']),
     //获得展示的数据与属性
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
+        this.videoFeatures=[];
+      this.allCarData = [];
       if(data.length > 0){
         this.changeTreeData(data,'');
+        this.isLoadData=!this.isLoadData;
       }
       return data;
     }
   },
+    watch:{
+        isLoadData:function() {
+            if(this.videoFeatures.length>0){
+                this.videoLayer = this.mapManager.addVectorLayerByFeatures(this.videoFeatures,videoPointStyle(),3);
+                this.mapManager.getMap().getView().fit(this.videoLayer.getSource().getExtent());
+            }
+        }
+    },
   mounted(){
     this.showLoading = true;
     this.getAllCameraTreeData().then(res=>{
       this.showLoading = false;
       this.sourceData = res.data;
     });
+      this.map = this.mapManager.getMap();
+      this.map.on('click', this.peopleMapClickHandler);
   },
   methods:{
     ...mapActions('video/manage', ['getAllCameraTreeData']),
     //给后端的数据增加一些前端展示与判断需要的属性
     changeTreeData(arr,deptName){
+        const _this = this;
       arr.forEach(item=>{
         item.title = item.mpname;
         item.scopedSlots = { title: 'title' };
@@ -100,6 +119,13 @@ export default {
             key: item.mpid
           }
           this.allCameraData.push(temp);
+            // 通过经纬度生成点位加到地图上
+            if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                const feature=_this.mapManager.xyToFeature(item.x,item.y);
+                feature.set('icon','carmera_online');
+                feature.set('props',item);
+                _this.videoFeatures.push(feature);
+            }
         }
         else{
           item.key = 'dept_' + item.mpid;
