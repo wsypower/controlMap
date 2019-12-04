@@ -17,8 +17,10 @@ if (process.env.NODE_ENV !== 'production') {
   require('./section/manage')
   require('./car/statistical')
   require('./car/manage')
+  require('./records/manage')
+  require('./records/statistical')
   require('./video/manage')
-  require('./video/statistic')
+  require('./video/statistical')
   Mock.setup({
     timeout: 800 // setter delay time
   })

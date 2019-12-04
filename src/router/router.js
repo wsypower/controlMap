@@ -59,7 +59,7 @@ const frameIn = [
           title: '案卷管控',
           role: ['admin', 'super_editor']
         },
-        component: _import('records/page3.vue')
+        component: _import('records/index.vue')
       },
       {
         path: '/video',
