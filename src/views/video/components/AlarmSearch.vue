@@ -157,6 +157,7 @@ export default {
     this.map = this.mapManager.getMap();
     this.map.on('click', this.alarmMapClickHandler);
     this.alarmOverlay = this.mapManager.addOverlay({
+        id:'alarmOverlay',
         offset:[0,-20],
         positioning: 'bottom-center',
         element: this.$refs.alarmInfo.$el
@@ -184,7 +185,6 @@ export default {
                   return feature;
               }
           });
-        console.log('alarmFeature',this.alarmFeatures);
         if(this.alarmFeatures.length>0){
             _this.alarmLayer = _this.mapManager.addVectorLayerByFeatures(this.alarmFeatures,alarmPointStyle(),3);
             _this.alarmLayer.set('featureType','alarmSearch');
@@ -198,13 +198,13 @@ export default {
       this.query.startDay = moment(this.dayRange[0]._d).format("YYYY-MM-DD");
       this.query.endDay = moment(this.dayRange[1]._d).format("YYYY-MM-DD");
       this.query.pageNo = 1;
-      this.getDataList()
+      this.getDataList();
     },
     //翻页
     changePagination(pageNo, pageSize) {
       console.log('changePagination', pageNo, pageSize);
       this.query.pageNo = pageNo;
-      this.getDataList()
+      this.getDataList();
     },
     clickDataItem(index){
       this.activeIndex = index;

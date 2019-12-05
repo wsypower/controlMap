@@ -42,45 +42,23 @@ export default {
     methods:{
       changeTab(val){
           const layers=this.map.getLayers().array_;
+          //切换时清除地图上的一些操作
           layers.forEach(l=>{
               if(l.get('featureType')){
-                  // switch (l.get('featureType')) {
-                  //     case '0':
-                  //         if (l.get('featureType') == 'alarmSearch'||l.get('featureType') == 'videoDistribute') {
-                  //             l.setVisible(false);
-                  //         }
-                  //         break;
-                  //     case '1':
-                  //         if (l.get('featureType') == 'alarmSearch') {
-                  //             l.setVisible(true);
-                  //             this.map.getView().fit(l.getSource().getExtent());
-                  //         }else{
-                  //             l.setVisible(false);
-                  //         }
-                  //         break;
-                  //     case '2':
-                  //         if (l.get('featureType') == 'videoDistribute') {
-                  //             l.setVisible(true);
-                  //             this.map.getView().fit(l.getSource().getExtent());
-                  //         }else{
-                  //             l.setVisible(false);
-                  //         }
-                  //         break;
-                  //     default:
-                  //         break;
-                  // }
-                  if (val == '0') {
+                  if (val == '0') { //告警统计
+                      this.map.getOverlayById('alarmOverlay').setPosition(undefined);
                       if (l.get('featureType') == 'alarmSearch'||l.get('featureType') == 'videoDistribute') {
                           l.setVisible(false);
                       }
-                  } else if (val == '1') {
+                  } else if (val == '1') { //告警查询
                       if (l.get('featureType') == 'alarmSearch') {
                           l.setVisible(true);
                           this.map.getView().fit(l.getSource().getExtent());
                       }else{
                           l.setVisible(false);
                       }
-                  }else if (val == '2'){
+                  }else if (val == '2'){ //监控分布
+                      this.map.getOverlayById('alarmOverlay').setPosition(undefined);
                       if (l.get('featureType') == 'videoDistribute') {
                           l.setVisible(true);
                           this.map.getView().fit(l.getSource().getExtent());
@@ -89,7 +67,7 @@ export default {
                       }
                   }
               }
-          })
+          });
       }
     }
 }
