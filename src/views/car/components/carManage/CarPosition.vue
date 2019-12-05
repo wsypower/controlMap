@@ -84,7 +84,7 @@ export default {
   watch:{
     isLoadData:function() {
       if(this.carFeatures.length>0){
-        const carLayer = this.mapManager.addVectorLayerByFeatures(this.carFeatures,carPointStyle(),3);
+        this.carLayer = this.mapManager.addVectorLayerByFeatures(this.carFeatures,carPointStyle(),3);
         this.mapManager.getMap().getView().fit(carLayer.getSource().getExtent());
       }
     }
@@ -95,19 +95,19 @@ export default {
             this.sourceData = res.data;
             this.showLoading = false;
         });
-      this.map = this.mapManager.getMap()
+      this.map = this.mapManager.getMap();
       this.map.on('click', this.peopleMapClickHandler);
       this.carOverlay = this.mapManager.addOverlay({
         offset:[0,-20],
         positioning: 'bottom-center',
         element: this.$refs.carInfo.$el
       });
-        let _this = this;
-        this.timer = setInterval(function() {
-          _this.getAllCarTreeData().then(res=>{
-            _this.sourceData = res.data;
-          });
-        },600000)
+      let _this = this;
+      this.timer = setInterval(function() {
+        _this.getAllCarTreeData().then(res=>{
+          _this.sourceData = res.data;
+        });
+      },600000)
     },
    beforeDestroy(){
      clearInterval(this.timer)

@@ -33,45 +33,102 @@ const getUserTrailDataList = options => {
   console.log('getUserTrailDataList options', options)
   const queryParameters = getQueryParameters(options)
   console.log('getUserTrailDataList query', queryParameters)
-  let data = {
-    list: [
-      {
-        index: '01',
-        startTime: 1564961494783,
-        endTime: 1564961880960
-      },
-      {
-        index: '02',
-        startTime: 1564962352718,
-        endTime: 1564963660184
-      },
-      {
-        index: '03',
-        startTime: 1564964046637,
-        endTime: 1564964340783
-      },
-      {
-        index: '04',
-        startTime: 1565163204326,
-        endTime: 1565164464569
-      },
-      {
-        index: '05',
-        startTime: 1565164703221,
-        endTime: 1565165818051
-      },
-      {
-        index: '06',
-        startTime: 1565752350553,
-        endTime: 1565755772150
-      }
-    ],
-    total: 6
-  }
+  let data = [
+    {
+      geom: 'geom',
+      gpstime: 1575159980430,
+      gpsx: '120.56305825710297',
+      gpsy: '30.014031529426575',
+      id: '32921af013d111ea9377，fd3722df40e0',
+      operate: '99',
+      remark: 'true',
+      userId: '7bf0dd70c30011e909aee9bbd1fd8aa8'
+    },
+    {
+      geom: 'geom',
+      gpstime: 1575160010442,
+      gpsx: '120.56305825710297',
+      gpsy: '30.014031529426575',
+      id: '44740c1013d111ea48ac26c7dad4454b',
+      operate: '99',
+      remark: 'true',
+      userId: '7bf0dd70c30011e909aee9bbd1fd8aa8'
+    },
+    {
+      geom: 'geom',
+      gpstime: 1575160040510,
+      gpsx: '120.56305825710297',
+      gpsy: '30.014031529426575',
+      id: '5665668013d111ea9377fd3722df40e0',
+      operate: '99',
+      remark: 'true',
+      userId: '7bf0dd70c30011e909aee9bbd1fd8aa8'
+    },
+    {
+      geom: 'geom',
+      gpstime: 1575160047381,
+      gpsx: '120.56305825710297',
+      gpsy: '30.014031529426575',
+      id: '5a7681f013d111ea5362bbf5dd149398',
+      operate: '0',
+      remark: 'true',
+      userId: '7bf0dd70c30011e909aee9bbd1fd8aa8'
+    },
+    {
+      geom: 'geom',
+      gpstime: 1575160110882,
+      gpsx: '120.56790797',
+      gpsy: '30.01113311',
+      id: '8054438013d111eaf4dbf9a691456100',
+      operate: '99',
+      remark: 'true',
+      userId: '7bf0dd70c30011e909aee9bbd1fd8aa8'
+    },
+    {
+      geom: 'geom',
+      gpstime: 1575160884680,
+      gpsx: '120.56790797',
+      gpsy: '30.01113311',
+      id: '4d8c50d013d311ea23da96bf4973eaa3',
+      operate: '99',
+      remark: 'true',
+      userId: '7bf0dd70c30011e909aee9bbd1fd8aa8'
+    },
+    {
+      geom: 'geom',
+      gpstime: 1575161348082,
+      gpsx: '120.56790797',
+      gpsy: '30.01113311',
+      id: '61c534d013d411eaf4dbf9a691456100',
+      operate: '99',
+      remark: 'true',
+      userId: '7bf0dd70c30011e909aee9bbd1fd8aa8'
+    },
+    {
+      geom: 'geom',
+      gpstime: 1575161372961,
+      gpsx: '120.56790797',
+      gpsy: '30.01113311',
+      id: '7091336013d411ea5362bbf5dd149398',
+      operate: '99',
+      remark: 'true',
+      userId: '7bf0dd70c30011e909aee9bbd1fd8aa8'
+    },
+    {
+      geom: 'geom',
+      gpstime: 1575161487908,
+      gpsx: '120.56790797',
+      gpsy: '30.01113311',
+      id: 'b51f66f013d411ea9377fd3722df40e0',
+      operate: '99',
+      remark: 'true',
+      userId: '7bf0dd70c30011e909aee9bbd1fd8aa8'
+    }
+  ]
   return builder(
     {
       code: 0,
-      data: data,
+      result: data,
       msg: '操作成功'
     },
     '请求成功',

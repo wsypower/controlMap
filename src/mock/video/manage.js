@@ -39,6 +39,8 @@ const getAllAlarmDataList = options => {
         typeName: '沿街晾晒',
         dayTime: 1574729844000,
         position: '马山街3号',
+          x: '120.196953',
+          y: '30.278492',
         cameraName: '马山街3号监控',
         videoSrc:
           'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000015-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12',
@@ -49,7 +51,9 @@ const getAllAlarmDataList = options => {
         typeName: '机动车违停',
         dayTime: 1574729844000,
         position: '杭州ssss市杭州市杭州杭州市杭州市杭州市ssssssssss市杭州市杭州市杭州',
-        cameraName: '马山街3号监控',
+          x: '120.196953',
+          y: '30.278492',
+          cameraName: '马山街3号监控',
         videoSrc:
           'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000883-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12',
         photoUrl: 'http://61.153.37.213:8087/camera/2019/11/18/20191118080357327335.jpg'
@@ -60,7 +64,9 @@ const getAllAlarmDataList = options => {
         dayTime: 1574729844000,
         position:
           '马山街3号马山街3号监控马山街3号监控马山街3号监控马山街3号监控马山街3号监控马山街3号监控马山街3号监控马山街3号监控',
-        cameraName: '马山街3号监控马山街3号监控',
+          x: '120.196953',
+          y: '30.278492',
+          cameraName: '马山街3号监控马山街3号监控',
         videoSrc:
           'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000005-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12',
         photoUrl: 'http://61.153.37.213:8087/camera/2019/11/18/20191118080357327335.jpg'
@@ -70,6 +76,8 @@ const getAllAlarmDataList = options => {
         typeName: '沿街晾晒',
         dayTime: 1574729844000,
         position: '马山街3号',
+          x: '120.196953',
+          y: '30.278492',
         cameraName: '马山街3号监控',
         videoSrc:
           'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000134-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12',
@@ -80,6 +88,8 @@ const getAllAlarmDataList = options => {
         typeName: '沿街晾晒',
         dayTime: 1574729844000,
         position: '马山街3号',
+          x: '120.196953',
+          y: '30.278492',
         cameraName: '马山街3号监控',
         videoSrc:
           'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000219-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12',
@@ -153,8 +163,8 @@ const getAllCameraTreeData = options => {
     //   children: [
     {
       ip: '192.168.100.46',
-      latitude: '30.247886',
-      longitude: '122.202261',
+      x: '120.56305825710297',
+      y: '30.014031529426575',
       mpid: '33092104001320015992',
       mpname: '三江购物-球',
       puid: '33092104001320015992',
@@ -164,8 +174,8 @@ const getAllCameraTreeData = options => {
     },
     {
       ip: '192.168.100.46',
-      latitude: '30.247886',
-      longitude: '122.202261',
+      x: '120.56305825710297',
+      y: '30.014031529426575',
       mpid: '33092104001320010677',
       mpname: '三江购物-全景',
       puid: '33092104001320010677',
@@ -175,8 +185,8 @@ const getAllCameraTreeData = options => {
     },
     {
       ip: '192.168.100.55',
-      latitude: '30.265587',
-      longitude: '122.218019',
+      x: '120.56305825710297',
+      y: '30.014031529426575',
       mpid: '33092104001320015002',
       mpname: '新区广电大楼楼顶-球',
       puid: '33092104001320015002',
@@ -186,8 +196,8 @@ const getAllCameraTreeData = options => {
     },
     {
       ip: '192.168.100.55',
-      latitude: '30.265587',
-      longitude: '122.218019',
+        x: '120.56305825710297',
+        y: '30.014031529426575',
       mpid: '33092104001320011649',
       mpname: '新区广电大楼楼顶-全景',
       puid: '33092104001320011649',
@@ -197,8 +207,8 @@ const getAllCameraTreeData = options => {
     },
     {
       ip: '192.168.100.70',
-      latitude: '30.245140',
-      longitude: '122.208213',
+        x: '120.56305825710297',
+        y: '30.014031529426575',
       mpid: '33092104001320013870',
       mpname: '蓬莱公园铁塔-球',
       puid: '33092104001320013870',
@@ -208,8 +218,8 @@ const getAllCameraTreeData = options => {
     },
     {
       ip: '192.168.100.70',
-      latitude: '30.245140',
-      longitude: '122.208213',
+        x: '120.56305825710297',
+        y: '30.014031529426575',
       mpid: '33092104001320017369',
       mpname: '蓬莱公园铁塔-全景',
       puid: '33092104001320017369',
@@ -219,8 +229,8 @@ const getAllCameraTreeData = options => {
     },
     {
       ip: '192.168.100.77',
-      latitude: '30.252779',
-      longitude: '122.220688',
+        x: '120.56305825710297',
+        y: '30.014031529426575',
       mpid: '33092104001320010611',
       mpname: '交通大楼全景-球',
       puid: '33092104001320010611',
@@ -230,8 +240,8 @@ const getAllCameraTreeData = options => {
     },
     {
       ip: '192.168.100.77',
-      latitude: '30.252779',
-      longitude: '122.220688',
+        x: '120.56305825710297',
+        y: '30.014031529426575',
       mpid: '33092104001320012341',
       mpname: '交通大楼全景',
       puid: '33092104001320012341',

@@ -78,20 +78,22 @@
     <div class="player-panel active">
       <my-video-player :videoSrc.sync="videoSrc" :multiple="false"></my-video-player>
     </div>
-    <alarm-info
-      ref="alarmInfo"
-      style="position:fixed; top: 100px;right:100px;"
-      :info="alarmInfoData"
-      @closeTip="closeTip"
-    ></alarm-info>
+    <div hidden>
+      <alarm-info
+              ref="alarmInfo"
+              :info="alarmInfoData"
+              @closeTip="closeTip"
+      ></alarm-info>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
+import { mapState,mapActions } from 'vuex'
 import moment from 'moment';
 import Pin from '../../emergency/components/Position.vue';
 import MyVideoPlayer from "./MyVideoPlayer.vue";
 import AlarmInfo from './AlarmInfo.vue';
+import {alarmPointStyle} from '@/utils/util.map.style'
 export default {
   name: 'alarmSearch',
   components:{
@@ -130,12 +132,35 @@ export default {
         position: '',
         dayTime: null,
         type: ''
-      }
+      },
+        alarmFeatures:[],
+        alarmLayer:null,
+        alarmOverlay:null
     }
+  },
+  computed:{
+      ...mapState('map', ['mapManager']),
+      //获得展示的数据与属性
+      treeData:function(){
+          let data = JSON.parse(JSON.stringify(this.sourceData));
+          this.carFeatures=[];
+          this.allCarData = [];
+          this.changeTreeData(data,'');
+          this.isLoadData=!this.isLoadData;
+          return data
+      }
   },
   mounted(){
     this.getAllAlarmTypeDataList().then(res=>{
       this.alarmTypeList = res.data;
+    });
+    this.map = this.mapManager.getMap();
+    this.map.on('click', this.alarmMapClickHandler);
+    this.alarmOverlay = this.mapManager.addOverlay({
+        id:'alarmOverlay',
+        offset:[0,-20],
+        positioning: 'bottom-center',
+        element: this.$refs.alarmInfo.$el
     });
     let day = moment(new Date()).format('YYYY-MM-DD');
     this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
@@ -147,11 +172,24 @@ export default {
     ...mapActions('video/manage', ['getAllAlarmTypeDataList','getAllAlarmDataList']),
     //获取人员轨迹数据
     getDataList(){
+        const _this=this;
       console.log('this.query',this.query);
       this.showLoading = true;
       this.getAllAlarmDataList(this.query).then(res=>{
         this.showLoading = false;
         this.dataList = res.data.list;
+          _this.alarmFeatures=this.dataList.map((d)=>{
+              if(d.x&&d.x.length>0&&d.y&&d.y.length>0){
+                  const feature = _this.mapManager.xyToFeature(d.x,d.y);
+                  feature.set('props',d);
+                  return feature;
+              }
+          });
+        if(this.alarmFeatures.length>0){
+            _this.alarmLayer = _this.mapManager.addVectorLayerByFeatures(this.alarmFeatures,alarmPointStyle(),3);
+            _this.alarmLayer.set('featureType','alarmSearch');
+            _this.mapManager.getMap().getView().fit(_this.alarmLayer.getSource().getExtent());
+        }
         this.totalSize = res.data.total;
       });
     },
@@ -160,26 +198,38 @@ export default {
       this.query.startDay = moment(this.dayRange[0]._d).format("YYYY-MM-DD");
       this.query.endDay = moment(this.dayRange[1]._d).format("YYYY-MM-DD");
       this.query.pageNo = 1;
-      this.getDataList()
+      this.getDataList();
     },
     //翻页
     changePagination(pageNo, pageSize) {
       console.log('changePagination', pageNo, pageSize);
       this.query.pageNo = pageNo;
-      this.getDataList()
+      this.getDataList();
     },
     clickDataItem(index){
       this.activeIndex = index;
       this.alarmInfoData = this.dataList[index];
+      this.alarmOverlay.setPosition([parseFloat(this.alarmInfoData.x),parseFloat(this.alarmInfoData.y)])
     },
     playVideo(videoSrc){
       this.videoSrc = videoSrc;
     },
+    //地图上告警点位图标点击事件处理器
+    alarmMapClickHandler({ pixel, coordinate }){
+        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
+        if(feature){
+            this.alarmInfoData=feature.get('props');
+            this.alarmOverlay.setPosition(coordinate);
+        }
+    },
     //关闭地图上的弹窗
     closeTip(){
-
+        this.alarmOverlay.setPosition(undefined);
     }
-  }
+  },
+    beforeDestroy(){
+      console.log('tttttttttttttttttt');
+    }
 }
 </script>
 <style lang="scss" scoped>

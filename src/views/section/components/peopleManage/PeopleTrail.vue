@@ -145,8 +145,7 @@ export default {
                     item.hasDetail = false;
                     return item
                 });
-
-                this.totalSize = res.data.total;
+              this.totalSize = res.data.total;
             });
         },
         //查询(默认显示当天，当前登入的用户)
@@ -188,7 +187,6 @@ export default {
                     item.hasDetail = true;
                 });
             }
-
         },
         //暂停播放
         pausePlay(item,i){
