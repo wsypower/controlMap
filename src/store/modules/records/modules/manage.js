@@ -1,20 +1,18 @@
 import {
-  getAllCarDataList,
-  getAllCarTreeData,
-  getCarTrailDataList,
-  getTrailDetailData,
-  getCarViolateRulesDataList,
-  deleteCarViolateRules,
-  getAllCarCompanyDataList
-} from '@/api/car/manage.js'
+  getAllAddressData,
+  getAllRecordsDataList,
+  getRecordDetailData,
+  getRecordPhotosData,
+  getRecordLogsData
+} from '@/api/records/manage.js'
 
 export default {
   namespaced: true,
   actions: {
-    getAllCarDataList(state, data) {
+    getAllAddressData(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
-        getAllCarDataList(data)
+        getAllAddressData(data)
           .then(res => {
             resolve(res)
           })
@@ -24,10 +22,10 @@ export default {
           })
       })
     },
-    getAllCarTreeData(state, data) {
+    getAllRecordsDataList(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
-        getAllCarTreeData(data)
+        getAllRecordsDataList(data)
           .then(res => {
             resolve(res)
           })
@@ -37,10 +35,10 @@ export default {
           })
       })
     },
-    getCarTrailDataList(state, data) {
+    getRecordDetailData(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
-        getCarTrailDataList(data)
+        getRecordDetailData(data)
           .then(res => {
             resolve(res)
           })
@@ -50,10 +48,10 @@ export default {
           })
       })
     },
-    getTrailDetailData(state, data) {
+    getRecordPhotosData(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
-        getTrailDetailData(data)
+        getRecordPhotosData(data)
           .then(res => {
             resolve(res)
           })
@@ -63,36 +61,10 @@ export default {
           })
       })
     },
-    getAllCarCompanyDataList(state, data) {
+    getRecordLogsData(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
-        getAllCarCompanyDataList(data)
-          .then(res => {
-            resolve(res)
-          })
-          .catch(err => {
-            console.log(err)
-            reject(err)
-          })
-      })
-    },
-    getCarViolateRulesDataList(state, data) {
-      console.log('store', data)
-      return new Promise((resolve, reject) => {
-        getCarViolateRulesDataList(data)
-          .then(res => {
-            resolve(res)
-          })
-          .catch(err => {
-            console.log(err)
-            reject(err)
-          })
-      })
-    },
-    deleteCarViolateRules(state, data) {
-      console.log('store', data)
-      return new Promise((resolve, reject) => {
-        deleteCarViolateRules(data)
+        getRecordLogsData(data)
           .then(res => {
             resolve(res)
           })
