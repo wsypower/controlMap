@@ -41,6 +41,8 @@ export function getAllAddressData(data) {
  *    {String}typeName: 案卷类型,
  *    {String}description: 案卷描述,
  *    {String}photoUrl: 照片URL
+ *    {String}x: 经度
+ *    {String}y: 纬度
  * }
  */
 export const getAllRecordsDataList = data => {
@@ -59,7 +61,23 @@ export const getAllRecordsDataList = data => {
  * @param {String} code 请求参数 :案卷code
  * @method：GET
  * @response：{
- *
+ *    {String} id: 案卷ID,
+ *    {String} code: 案卷编码,
+ *    {String} sourceName: 案卷来源
+ *    {String} type1Name: 事件类型
+ *    {String} type2Name: 大类
+ *    {String} type3Name: 小类
+ *    {String} description: 案卷描述
+ *    {String} hsResult: 核实结果
+ *    {String} hcResult: 核查结果
+ *    {String} streetName: 街道
+ *    {String} countryName: 社区
+ *    {String} gridName: 网格
+ *    {String} address: 地址
+ *    {String} creator: 受理员
+ *    {String} supervisor: 监督员
+ *    {String} reporterName: 举报人
+ *    {String} reporterPhone: 联系方式
  * }
  */
 export const getRecordDetailData = data => {
@@ -78,7 +96,14 @@ export const getRecordDetailData = data => {
  * @param {String} code 请求参数 :案卷code
  * @method：GET
  * @response：{
- *
+ *    {Object} handleBefore: {
+        {Number} uploadTime: 上传时间????,
+        {Array} photosList: 照片集
+    },
+    {Object} handleAfter: {
+        {Number} uploadTime: 上传时间????,
+        {Array} photosList: 照片集
+    }
  * }
  */
 export const getRecordPhotosData = data => {

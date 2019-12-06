@@ -95,8 +95,10 @@ export function getHighIncidenceTOP5Data(data) {
  * @param {String} year: 年份
  * @method：GET
  * @response：{
- *     {String} name: 问题类型名称
- *     {Array} num: 问题数量
+ *     {String} month: 月份
+ *     {Number} num1: 上报总数
+ *     {Number} num2: 立案总数
+ *     {Number} num3: 处置总数
  * }
  */
 
