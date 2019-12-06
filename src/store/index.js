@@ -18,6 +18,7 @@ import Vuex from 'vuex'
 import cgadmin from './modules/cgadmin'
 import section from './modules/section'
 import car from './modules/car'
+import records from './modules/records'
 import video from './modules/video'
 import emergency from './modules/emergency'
 import intelligence from './modules/intelligence'
@@ -42,6 +43,7 @@ const store = new Vuex.Store({
     cgadmin,
     section,
     car,
+    records,
     video,
     emergency,
     intelligence,
