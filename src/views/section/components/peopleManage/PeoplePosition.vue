@@ -1,7 +1,7 @@
 <template>
   <div class="people-manage" flex="dir:top">
     <div class="search-panel">
-      <a-input-search placeholder="输入关键词搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
+      <a-input-search placeholder="输入关键词搜索" v-model="searchValue" @search="onSearch" @change="onChange" enterButton="搜 索"></a-input-search>
     </div>
     <div class="yuan_dialog_body">
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
@@ -50,6 +50,7 @@
 import { mapActions,mapState } from 'vuex'
 import PeopleInfo from './PeopleInfo.vue';
 import {PeoplePointStyle} from '@/utils/util.map.style'
+import util from '@/utils/util'
 export default {
     name: '',
     components:{
@@ -57,17 +58,29 @@ export default {
     },
     data(){
         return {
+          //展开的节点key
           expandedKeys: [],
+          //是否自动展开父节点
           autoExpandParent: true,
+          //查询输入
           searchValue: '',
+          //获取数据时的动效
           showLoading: false,
+          //获取人员的原始数据
           sourceData: [],
+          //收入所有人员的名称与ID，给查询使用
           allPeopleData: [],
+          //获取某个人员的详细数据，用于弹窗显示
           peopleInfoData: {},
+          //当查询时没哟数据时，需要展示无数据图片
           showTree: true,
+          //人员数据需要定时刷新
           timer: null,
+          //地图相关
           peopleFeatures: [],
+          //地图相关
           peopleLayer: null,
+          //触发地图刷新
           isLoadData: false
         }
     },
@@ -77,8 +90,9 @@ export default {
         treeData:function(){
             let data = JSON.parse(JSON.stringify(this.sourceData));
             this.peopleFeatures=[];
+            //添加展示属性
             this.changeTreeData(data);
-            this.isLoadData=!this.isLoadData;
+            this.isLoadData =! this.isLoadData;
             return data;
         }
     },
@@ -91,11 +105,12 @@ export default {
       }
     },
     mounted(){
-        this.showLoading = true;
-        this.getAllPeopleTreeData().then(res=>{
-            this.sourceData = res.data;
-            this.showLoading = false;
-        });
+      const userId = util.cookies.get('userId')
+      this.showLoading = true;
+      this.getAllPeopleTreeData({userId:userId}).then(res=>{
+        this.sourceData = res;
+        this.showLoading = false;
+      });
       this.map = this.mapManager.getMap()
       this.map.on('click', this.peopleMapClickHandler);
       this.peopleOverlay = this.mapManager.addOverlay({
@@ -105,8 +120,8 @@ export default {
       });
       let _this = this;
       _this.timer = setInterval(function() {
-        _this.getAllPeopleTreeData().then(res=>{
-          _this.sourceData = res.data;
+        _this.getAllPeopleTreeData({userId:userId}).then(res=>{
+          _this.sourceData = res;
         });
       },600000)
 
@@ -120,54 +135,58 @@ export default {
         changeTreeData(arr,deptName){
           const _this = this;
           arr.forEach(item=>{
-                item.title = item.name;
-              item.scopedSlots = { title: 'title' };
+            item.title = item.name;
+            item.scopedSlots = { title: 'title' };
             let pointImg;
-                if(item.isLeaf){
-                    item.key = item.id;
-                  item.dept = deptName;
-                    if(item.sex === 'female'){
-                        if(item.online){
-                          item.slots = {icon: 'female'};
-                          pointImg='female_online';
-                        }
-                        else{
-                            item.slots = {icon: 'female-outline'}
-                          pointImg='female_offline';
-                        }
-                    }
-                    else{
-                        if(item.online){
-                            item.slots = {icon: 'male'}
-                            pointImg='male_online';
-                        }
-                        else{
-                            item.slots = {icon: 'male-outline'}
-                            pointImg='male_offline';
-                        }
-                    }
-                    item.class = 'itemClass';
-                  let temp = {
-                    title: item.name,
-                    key: item.id
-                  }
-                  this.allPeopleData.push(temp);
-                  // 通过经纬度生成点位加到地图上
-                  if(item.x && item.x.length>0 && item.y && item.y.length>0){
-                    const feature=_this.mapManager.xyToFeature(item.x,item.y);
-                    feature.set('icon',pointImg);
-                    feature.set('props',item);
-                    _this.peopleFeatures.push(feature);
-                  }
+            if(item.isLeaf){
+              item.key = item.id;
+              item.dept = deptName;
+              if(item.sex === '1'){
+                if(item.online){
+                  item.slots = {icon: 'female'};
+                  pointImg='female_online';
                 }
                 else{
-                    item.key = 'dept_' + item.id;
-                    item.slots = {icon: 'dept'};
-                    this.changeTreeData(item.children, item.name);
+                  item.slots = {icon: 'female-outline'}
+                  pointImg='female_offline';
                 }
-
-            })
+              }
+              else{
+                if(item.online){
+                  item.slots = {icon: 'male'}
+                  pointImg='male_online';
+                }
+                else{
+                  item.slots = {icon: 'male-outline'}
+                  pointImg='male_offline';
+                }
+              }
+              item.class = 'itemClass';
+              let temp = {
+                title: item.name,
+                key: item.id
+              }
+              this.allPeopleData.push(temp);
+              // 通过经纬度生成点位加到地图上
+              if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                const feature=_this.mapManager.xyToFeature(item.x,item.y);
+                feature.set('icon',pointImg);
+                feature.set('props',item);
+                _this.peopleFeatures.push(feature);
+              }
+            }
+            else{
+              item.key = 'dept_' + item.id;
+              item.slots = {icon: 'dept'};
+              this.changeTreeData(item.children, item.name);
+            }
+          })
         },
+      onChange(){
+        this.onSearch(this.searchValue);
+        //this.searchValue
+      },
+      //查询后直接筛选数据，不走后端接口调用
       onSearch(val){
         // this.showLoading = true;
         // this.getAllPeopleTreeData({searchContent: val}).then(res=>{
@@ -189,13 +208,14 @@ export default {
           this.showTree = true;
         }
       },
+      //展开时触发
       onExpand(expandedKeys) {
         this.expandedKeys = expandedKeys;
         this.autoExpandParent = false;
       },
         //点击树中某个节点（某个人员）时触发
         onSelect(selectedKeys, e){
-            console.log(selectedKeys, e);
+          console.log(selectedKeys, e);
           if(selectedKeys[0].indexOf('dept_')<0){
             let needData = e.selectedNodes[0].data.props;
             let temp = {};

@@ -3,7 +3,7 @@
  * @Date: 2019-09-06 14:53:20
  */
 
-import request from '@/plugins/axios/axios'
+import request from '@/plugins/axios/axios2'
 
 /**
  * @description 获取用户工作数据信息
@@ -14,7 +14,7 @@ import request from '@/plugins/axios/axios'
 export const getUserWorkInfoData = data => {
   console.log('api:getUserWorkInfoData', data)
   return request({
-    url: `@test/getUserWorkInfoData?_t=` + new Date().getTime(),
+    url: `people/getUserWorkInfoData?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -48,7 +48,7 @@ export const getUserTrailDataList = data => {
 export const getTrailDetailData = data => {
   console.log('api:getTrailDetailData', data)
   return request({
-    url: `@test/getTrailDetailData_t=` + new Date().getTime(),
+    url: `@test/getTrailDetailData?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -65,7 +65,7 @@ export const getTrailDetailData = data => {
 export const getUserWorkTimeDataList = data => {
   console.log('api:getUserWorkTimeDataList', data)
   return request({
-    url: `@test/getUserWorkTimeDataList_t=` + new Date().getTime(),
+    url: `people/getUserWorkTimeDataList?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -81,7 +81,7 @@ export const getUserWorkTimeDataList = data => {
 export const getUserSignDetailData = data => {
   console.log('api:getUserSignDetailData', data)
   return request({
-    url: `@test/getUserSignDetailData_t=` + new Date().getTime(),
+    url: `@test/getUserSignDetailData?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -91,14 +91,14 @@ export const getUserSignDetailData = data => {
  * @description 获取用户违规数据()
  * @author moxuejuan
  * @date 2019-09-11 14:53:20
- * @param {String} userId 请求参数 :用户唯一标识符默认参数）
+ * @param {String} peopleId 请求参数 :用户Id 为空时表示全部
  * @param {String} startDay 请求参数 :开始日期
  * @param {String} endDay 请求参数 :结束日期
  */
 export const getUserViolateRulesDataList = data => {
   console.log('api:getUserViolateRulesDataList', data)
   return request({
-    url: `@test/getUserViolateRulesDataList_t=` + new Date().getTime(),
+    url: `people/getUserViolateRulesDataList?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -113,7 +113,7 @@ export const getUserViolateRulesDataList = data => {
 export const deleteUserViolateRules = data => {
   console.log('api:deleteUserViolateRules', data)
   return request({
-    url: `@test/deleteUserViolateRules`,
+    url: `people/deleteUserViolateRules`,
     method: 'post',
     params: data
   })

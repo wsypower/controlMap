@@ -57,7 +57,9 @@ export default {
     }
   },
     mounted(){
+      this.$nextTick(() => {
         this.getChartData();
+      });
     },
     methods:{
         ...mapActions('car/statistical', ['getCarWorkInfoData']),

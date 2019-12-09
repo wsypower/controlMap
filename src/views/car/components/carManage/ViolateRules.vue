@@ -89,6 +89,7 @@
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex';
 import moment from 'moment';
+import util from '@/utils/util';
 export default {
     name: 'carViolateRules',
     props:{},

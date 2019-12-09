@@ -2,10 +2,10 @@
   <div class="tip-content">
     <div class="tip-header" flex="dir:left">
       <div class="info-body-left" flex="main:center cross:center">
-        <img v-if="!info.online && info.sex == 'male'" src="~@img/avatar-male-outline.png" />
-        <img v-if="!info.online && info.sex == 'female'" src="~@img/avatar-female-outline.png" />
-        <img v-if="info.online && info.sex == 'male'" src="~@img/avatar-male.png" />
-        <img v-if="info.online && info.sex == 'female'" src="~@img/avatar-female.png" />
+        <img v-if="!info.online && info.sex == '0'" src="~@img/avatar-male-outline.png" />
+        <img v-if="!info.online && info.sex == '1'" src="~@img/avatar-female-outline.png" />
+        <img v-if="info.online && info.sex == '0'" src="~@img/avatar-male.png" />
+        <img v-if="info.online && info.sex == '1'" src="~@img/avatar-female.png" />
       </div>
       <div class="info-body-right">
         <div flex="dir:left cross:center">
@@ -43,10 +43,10 @@
           <span>{{ todayData.num3 }}</span
           ><span>核查数</span>
         </div>
-        <div>
-          <span>{{ todayData.num4 }}</span
-          ><span>废弃数</span>
-        </div>
+<!--        <div>-->
+<!--          <span>{{ todayData.num4 }}</span-->
+<!--          ><span>废弃数</span>-->
+<!--        </div>-->
       </div>
       <div class="data_panel" v-show="activeIndex === 1" flex="dir:left cross:center main:center">
         <div>
@@ -61,10 +61,10 @@
           <span>{{ historyData.num3 }}</span
           ><span>核查数</span>
         </div>
-        <div>
-          <span>{{ historyData.num4 }}</span
-          ><span>废弃数</span>
-        </div>
+<!--        <div>-->
+<!--          <span>{{ historyData.num4 }}</span-->
+<!--          ><span>废弃数</span>-->
+<!--        </div>-->
       </div>
     </div>
     <div class="info-body-operation" @click="lookPeopleTrail">
@@ -117,18 +117,18 @@ export default{
     watch: {
         'info.id':function(val){
             this.getUserWorkInfoData({userId:this.info.id}).then(res=>{
-                console.log('',res.data);
+                console.log('getUserWorkInfoData res',res);
+                //获取今日数据
                 this.todayData = {
-                    num1: res.data.br_sbs,
-                    num2: res.data.br_hss,
-                    num3: res.data.br_hcs,
-                    num4: res.data.br_fqs,
+                    num1: res.brSbs,
+                    num2: res.brHss,
+                    num3: res.brHcs
                 }
+                //获取历史数据
                 this.historyData = {
-                    num1: res.data.bh_sbs,
-                    num2: res.data.bh_hss,
-                    num3: res.data.bh_hcs,
-                    num4: res.data.bh_fqs,
+                    num1: res.bhSbs,
+                    num2: res.bhHss,
+                    num3: res.bhHcs
                 }
             })
         }
@@ -144,6 +144,7 @@ export default{
         lookPeopleTrail(){
             this.$emit('getUserId',this.info.id);
         },
+        //触发父组件方法，关闭当前弹窗
         closeDialog(){
             this.$emit('closeTip')
         }
@@ -198,8 +199,8 @@ export default{
     }
     .close {
       position: absolute;
-      right: 0px;
-      top: 0px;
+      right: 8px;
+      top: 8px;
       width: 24px;
       height: 24px;
       line-height: 24px;

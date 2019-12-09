@@ -15,6 +15,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
+import util from '@/utils/util';
 import CarPosition from './carManage/CarPosition'
 import CarTrail from './carManage/CarTrail'
 import ViolateRules from './carManage/ViolateRules'
@@ -33,9 +34,10 @@ export default {
       ViolateRules
     },
     mounted(){
-        this.getAllCarDataList().then(res=>{
-            this.carDataList = res.data;
-        });
+      const userId = util.cookies.get('userId');
+      this.getAllCarDataList({userId:userId}).then(res=>{
+        this.carDataList = res;
+      });
     },
     methods:{
         ...mapActions('car/manage', ['getAllCarDataList']),

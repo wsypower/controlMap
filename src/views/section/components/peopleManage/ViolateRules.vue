@@ -7,7 +7,7 @@
       </div>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
         <label style="width: 90px;">选择人员：</label>
-        <a-select v-model="query.userId" showSearch placeholder="请选择" style="width: 100%;">
+        <a-select v-model="query.peopleId" showSearch placeholder="请选择" style="width: 100%;">
           <a-select-option value="" key="-1">全部</a-select-option>
           <a-select-option v-for="(people, index) in peopleDataList" :value="people.id" :key="index"
             >{{ people.name }}（{{ people.dept }}）</a-select-option
@@ -19,7 +19,7 @@
         <a-select v-model="query.vType" showSearch placeholder="请选择" style="width: 100%;">
           <a-select-option value="">全部</a-select-option>
           <a-select-option value="越界">越界</a-select-option>
-          <a-select-option value="不在岗">不在岗</a-select-option>
+<!--          <a-select-option value="不在岗">不在岗</a-select-option>-->
         </a-select>
       </div>
       <a-button type="primary" style="width: 100%" @click="onSearch">查询</a-button>
@@ -43,7 +43,7 @@
               <span
                 v-for="vType in item.vTypeList"
                 :class="{ yuejie: vType == '越界', buzaigang: vType == '不在岗' }"
-                >{{ vType }}</span
+                :key="vType">{{ vType }}</span
               >
             </div>
             <div class="right-top-panel">违规{{ item.vLog.length }}次</div>
@@ -77,6 +77,7 @@
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex';
 import moment from 'moment';
+import util from '@/utils/util';
 export default {
     name: 'peopleViolateRules',
     props:{
@@ -92,6 +93,7 @@ export default {
             //查询条件--不分页
             query: {
                 userId: '',
+                peopleId: '',
                 startDay: '',
                 endDay: '',
                 //违规类型
@@ -105,11 +107,13 @@ export default {
         }
     },
     mounted(){
-        let day = moment(new Date()).format('YYYY-MM-DD');
-        this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-        this.query.startDay = day;
-        this.query.endDay = day;
-        this.getDataList();
+      this.query.userId = util.cookies.get('userId');
+      //获取当前日期并进行转化与显示
+      let day = moment(new Date()).format('YYYY-MM-DD');
+      this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
+      this.query.startDay = new Date(day).getTime();
+      this.query.endDay =  new Date(day).getTime();
+      this.getDataList();
     },
     methods:{
         ...mapActions('section/manage', ['getUserViolateRulesDataList','getTrailDetailData','deleteUserViolateRules']),
@@ -118,7 +122,7 @@ export default {
             console.log('this.query',this.query);
             this.showLoading = true;
             this.getUserViolateRulesDataList(this.query).then(res=>{
-                this.dataList = res.data.map(item=>{
+                this.dataList = res.map(item=>{
                     item.expend = false;
                     let typeArr = [];
                     item.vLog.forEach(log=>{
@@ -139,9 +143,8 @@ export default {
         },
         //搜索查询
         onSearch() {
-            this.query.startDay = moment(this.dayRange[0]._d).format("YYYY-MM-DD");
-            this.query.endDay = moment(this.dayRange[1]._d).format("YYYY-MM-DD");
-            this.query.pageNo = 1;
+            this.query.startDay = this.dayRange[0]._d.getTime();
+            this.query.endDay = this.dayRange[1]._d.getTime();
             this.getDataList();
         },
         //展开或者收起违规详情
@@ -167,7 +170,7 @@ export default {
                 let temp = {
                     userId: log.userId,
                     startTime: log.startTime,
-                    startTime: log.endTime
+                    endTime: log.endTime
                 }
                 this.getTrailDetailData(temp).then(res=>{
                     console.log('TrailDetailData',res.data);
@@ -179,22 +182,21 @@ export default {
         },
         //暂停播放
         pausePlay(log){
-            //地图上处理暂停播放
-            log.isStart = false;
+          //地图上处理暂停播放
+          log.isStart = false;
         },
         //删除某条非违规记录
         deleteVLog(log,i,index){
-            this.deleteUserViolateRules({id: log.id}).then(res=>{
-                this.dataList[index].vLog.splice(i,1);
-                //删除记录后，高度需要重新计算
-                setTimeout(()=>{
-                    let height = this.$refs.animateContent[index].offsetHeight;
-                    if(this.dataList[index].expend){
-                        this.$refs.animatePanel[index].style.height = height + 'px';
-                    }
-                },200)
-
-            });
+          this.deleteUserViolateRules({id: log.id}).then(res=>{
+            this.dataList[index].vLog.splice(i,1);
+            //删除记录后，高度需要重新计算
+            setTimeout(()=>{
+              let height = this.$refs.animateContent[index].offsetHeight;
+              if(this.dataList[index].expend){
+                this.$refs.animatePanel[index].style.height = height + 'px';
+              }
+            },200)
+          });
         }
     }
 }

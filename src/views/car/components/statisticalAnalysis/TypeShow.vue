@@ -22,7 +22,9 @@ export default {
     }
   },
   mounted(){
-    this.getChartData();
+    this.$nextTick(() => {
+      this.getChartData();
+    });
   },
   methods:{
     ...mapActions('car/statistical', ['getCarTypeAnalysisData']),

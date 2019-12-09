@@ -3,7 +3,7 @@
  * @Date: 2019-11-25 14:53:20
  */
 
-import request from '@/plugins/axios/axios'
+import request from '@/plugins/axios/axios2'
 
 /**
  * @description 获取所有人员(列表结构)
@@ -21,7 +21,7 @@ import request from '@/plugins/axios/axios'
 export function getAllPeopleDataList(data) {
   console.log('api:getAllPeopleDataList', data)
   return request({
-    url: '@test/getAllPeopleDataList?_t=' + new Date().getTime(),
+    url: 'people/getAllPeopleDataList?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -40,7 +40,7 @@ export function getAllPeopleDataList(data) {
 export function getAllPeopleTreeData(data) {
   console.log('api:getAllPeopleTreeData', data)
   return request({
-    url: '@test/getAllPeopleTreeData?_t=' + new Date().getTime(),
+    url: 'people/getAllPeopleTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

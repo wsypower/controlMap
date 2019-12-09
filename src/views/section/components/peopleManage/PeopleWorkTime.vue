@@ -98,7 +98,7 @@ export default {
                 startDay: '',
                 endDay: '',
                 sortType: 'asc',
-                pageNo: 1,
+                curPage: 1,
                 pageSize: 20
             },
             dayRange: [],
@@ -120,41 +120,41 @@ export default {
         this.query.userId = util.cookies.get('userId');
         let day = moment(new Date()).format('YYYY-MM-DD');
         this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-        this.query.startDay = day;
-        this.query.endDay = day;
+        this.query.startDay = new Date(day).getTime();
+        this.query.endDay = new Date(day).getTime();
         this.getDataList();
     },
     methods:{
         ...mapActions('section/manage', ['getUserWorkTimeDataList','getUserSignDetailData']),
-        //获取人员轨迹数据
+        //获取人员签到签退数据
         getDataList(){
             console.log('this.query',this.query);
             this.showLoading = true;
             this.getUserWorkTimeDataList(this.query).then(res=>{
                 this.showLoading = false;
-                this.dataList = res.data.list.map(item=>{
+                this.dataList = res.list.map(item=>{
                     item.hasDetail = false;
                     let week = new Date(item.day).getDay();
                     item.weekDay = weekArr[week];
                     return item
                 });
 
-                this.totalSize = res.data.total;
+                this.totalSize = res.total;
             });
         },
 
         //查询(默认显示当天，当前登入的用户)
         onSearch() {
-            this.query.startDay = moment(this.dayRange[0]._d).format("YYYY-MM-DD");
-            this.query.endDay = moment(this.dayRange[1]._d).format("YYYY-MM-DD");
-            this.query.pageNo = 1;
+            this.query.startDay = this.dayRange[0]._d.getTime();
+            this.query.endDay = this.dayRange[0]._d.getTime();
+            this.query.curPage = 1;
             this.getDataList()
         },
 
         //翻页
         changePagination(pageNo, pageSize) {
             console.log('changePagination', pageNo, pageSize);
-            this.query.pageNo = pageNo;
+            this.query.curPage = pageNo;
             this.getDataList()
         },
 
@@ -163,7 +163,7 @@ export default {
             console.log(11111111111,sortType);
             this.activeName = sortType;
             this.query.sortType = sortType;
-            this.query.pageNo = 1;
+            this.query.curPage = 1;
             this.getDataList();
         },
         //查看详情
@@ -191,6 +191,7 @@ export default {
         closeTip(){
             console.log('close the info');
         },
+      //无用，后续需要清除
         showPhoto(index){
             this.photoList = this.signInfoData.photoList;
             this.toIndex = index;

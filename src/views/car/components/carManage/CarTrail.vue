@@ -70,6 +70,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
+import util from '@/utils/util';
 import moment from 'moment';
 export default {
     name: 'carTrail',

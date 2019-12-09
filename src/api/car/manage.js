@@ -3,7 +3,7 @@
  * @Date: 2019-11-26 09:12:20
  */
 
-import request from '@/plugins/axios/axios'
+import request from '@/plugins/axios/axios2'
 
 /**
  * @description 获取所有车辆(列表结构)
@@ -21,7 +21,7 @@ import request from '@/plugins/axios/axios'
 export function getAllCarDataList(data) {
   console.log('api:getAllCarDataList', data)
   return request({
-    url: '@test/getAllCarDataList_t=' + new Date().getTime(),
+    url: 'car/getAllCarDataList?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -41,7 +41,7 @@ export function getAllCarDataList(data) {
 export function getAllCarTreeData(data) {
   console.log('api:getAllCarTreeData', data)
   return request({
-    url: '@test/getAllCarTreeData_t=' + new Date().getTime(),
+    url: 'car/getAllCarTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -86,7 +86,7 @@ export const getCarTrailDataList = data => {
 export const getTrailDetailData = data => {
   console.log('api:getTrailDetailData', data)
   return request({
-    url: `@test/getTrailDetailData_t=` + new Date().getTime(),
+    url: `@test/getTrailDetailData?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -105,7 +105,7 @@ export const getTrailDetailData = data => {
 export const getAllCarCompanyDataList = data => {
   console.log('api:getAllCarCompanyDataList', data)
   return request({
-    url: `@test/getAllCarCompanyDataList_t=` + new Date().getTime(),
+    url: `@test/getAllCarCompanyDataList?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })

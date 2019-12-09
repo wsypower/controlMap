@@ -22,6 +22,7 @@ import PeoplePosition from './peopleManage/PeoplePosition'
 import PeopleTrail from './peopleManage/PeopleTrail'
 import ViolateRules from './peopleManage/ViolateRules'
 import PeopleWorkTime from './peopleManage/PeopleWorkTime'
+import util from '@/utils/util'
 export default {
     name: 'peopleManage',
     data(){
@@ -38,10 +39,10 @@ export default {
         PeopleWorkTime
     },
     mounted(){
-        //getAllPeopleDataList
-        this.getAllPeopleDataList().then(res=>{
-            this.peopleDataList = res.data;
-        });
+      const userId = util.cookies.get('userId')
+      this.getAllPeopleDataList({userId: userId}).then(res=>{
+        this.peopleDataList = res;
+      });
     },
     methods:{
         ...mapActions('section/common', ['getAllPeopleDataList']),
