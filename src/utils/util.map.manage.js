@@ -4,8 +4,8 @@
  * @createDate:2019/7/11 9:48
  */
 import VectorLayer from 'ol/layer/Vector'
-import { Heatmap as HeatmapLayer } from 'ol/layer'
 import VectorSource from 'ol/source/Vector'
+import { Heatmap as HeatmapLayer } from 'ol/layer'
 import GeoJSON from 'ol/format/GeoJSON'
 import Overlay from 'ol/Overlay'
 import Draw, {createRegularPolygon, createBox} from 'ol/interaction/Draw.js';

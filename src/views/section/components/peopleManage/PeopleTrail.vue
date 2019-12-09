@@ -48,8 +48,8 @@
           </div>
           <div flex="cross:center main:center">
             <!--<cg-icon-svg name="telephone" class="svg_icon_telephone" @click="onSort('desc')"></cg-icon-svg>-->
-            <a-icon v-show="!item.isStart" type="play-circle" theme="filled" @click="startPlay(item, index)" />
-            <a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="pausePlay(item, index)" />
+            <a-icon v-show="!item.isStart" type="play-circle" theme="filled" @click="trackPlayHandler(item, index)" />
+            <a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="trackPlayHandler(item, index)" />
           </div>
         </div>
         <!--<div v-if="dataList.length > 20" class="pagination-panel">-->
@@ -74,7 +74,8 @@ import moment from 'moment';
 import util from '@/utils/util';
 import {stampConvertToTime} from '@/utils/util.tool';
 import { trackByLocationList,pointByCoord } from '@/utils/util.map.manage';
-import {trackStyle,trackPointStyle} from '@/utils/util.map.style'
+import {trackStyle,trackPointStyle,alarmPointStyle} from '@/utils/util.map.style';
+import {TrackPlaying} from '@/utils/util.map.trackPlaying'
 export default {
     name: 'peopleTrail',
     props:{
@@ -114,13 +115,17 @@ export default {
             currentQueryTracks:[],
             trackLayer:null,
             eventFeatures:[],
-            eventLayer:null
+            eventLayer:null,
+            trackPlaying:null,
+            isPlayingTrack:null,
+            trackIndex:0,
         }
     },
     computed:{
         ...mapState('map', ['mapManager']),
     },
     mounted(){
+        this.map=this.mapManager.getMap();
         if(this.infoId){
             this.query.userId = this.infoId;
         }
@@ -173,7 +178,9 @@ export default {
             let currentCoord = coords[0];
             let nextCoord = null;
             let lineCoordinates = [];
+            let lineCoords = [];
             lineCoordinates.push(currentCoord); // 加载第一个点
+            lineCoords.push([parseFloat(currentCoord.gpsx),parseFloat(currentCoord.gpsy)]);
             if(currentCoord.operate=="2" ||currentCoord.operate=="0" ||currentCoord.operate=="1"
                 || currentCoord.operate=="5"|| currentCoord.operate=="99" ) {//上报、签到、签退、核查、普通轨迹点
                 const feature =pointByCoord([parseFloat(currentCoord.gpsx),parseFloat(currentCoord.gpsy)]);
@@ -209,6 +216,42 @@ export default {
             }
             console.log('轨迹=====',this.trackSegments);
 
+        },
+        //轨迹播放处理
+        trackPlayHandler(item,index){
+            // this.isPlayingTrack=!this.isPlayingTrack;
+            if(this.trackIndex !== index){
+                this.trackIndex=index;
+                this.isPlayingTrack = null;
+                if(this.trackPlaying){
+                    this.trackPlaying.StopMoving();
+                    this.trackPlaying.ClearLayer();
+                    this.trackPlaying=null;
+                }
+                item.isStart=true;
+            }
+            if(this.isPlayingTrack === null) {
+                if (!this.trackPlaying) {
+                    this.trackPlaying = new TrackPlaying(this.map, item, trackStyle(), alarmPointStyle(), 'people');
+                } else {
+                    this.trackPlaying.data = item;
+                }
+                this.trackPlaying.clearLayer();
+                this.trackPlaying.speed = 5;
+                this.trackPlaying.dealCoordsData();
+                this.trackPlaying.drawLine();
+                this.trackPlaying.trackMoving();
+                this.map.render();
+                this.isPlayingTrack = true;
+            }else if(this.isPlayingTrack === false){ //继续播放
+                item.isStart=false;
+                this.trackPlaying.continueMoving();
+                this.isPlayingTrack = true;
+            }else if(this.isPlayingTrack === true){ // 暂停播放
+                item.isStart=true;
+                this.trackPlaying.pauseMoving();
+                this.isPlayingTrack = false;
+            }
         },
         //查询(默认显示当天，当前登入的用户)
         onSearch() {

@@ -109,7 +109,6 @@ export default {
           _this.sourceData = res.data;
         });
       },600000)
-
     },
   beforeDestroy(){
     clearInterval(this.timer)
