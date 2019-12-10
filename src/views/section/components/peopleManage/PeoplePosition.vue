@@ -124,7 +124,6 @@ export default {
           _this.sourceData = res;
         });
       },600000)
-
     },
   beforeDestroy(){
     clearInterval(this.timer)

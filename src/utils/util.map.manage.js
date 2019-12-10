@@ -4,8 +4,8 @@
  * @createDate:2019/7/11 9:48
  */
 import VectorLayer from 'ol/layer/Vector'
-import { Heatmap as HeatmapLayer } from 'ol/layer'
 import VectorSource from 'ol/source/Vector'
+import { Heatmap as HeatmapLayer } from 'ol/layer'
 import GeoJSON from 'ol/format/GeoJSON'
 import Overlay from 'ol/Overlay'
 import Draw, {createRegularPolygon, createBox} from 'ol/interaction/Draw.js';
@@ -15,6 +15,7 @@ import Feature from 'ol/Feature';
 import MultiPolygon from 'ol/geom/MultiPolygon';
 import { fromCircle } from 'ol/geom/Polygon';
 import Point from 'ol/geom/Point';
+import LineString from 'ol/geom/LineString'
 
 export class MapManager {
   constructor(map) {
@@ -77,8 +78,6 @@ export class MapManager {
       zIndex
     })
     source.addFeatures(features);
-    console.log('source',source.getFeatures());
-    console.log('加载要素',features);
     this.map.addLayer(vectorLayer)
     return vectorLayer
   }
@@ -237,4 +236,45 @@ export function circleToPloygon(feature) {
     geometry: mutiPolygon
   })
   return feature;
+}
+
+/**
+ * @description:根据请求到的点位列表数据生成轨迹矢量集合
+ * @author:sijianting
+ * @createDate:2019/12/5 15:31
+ */
+export function trackByLocationList(list) {
+    const features = []
+    const coords = []
+    // 根据点列生成轨迹线
+    list.forEach(trackPt => {
+        if (trackPt.gpsx && trackPt.gpsy) {
+            const coord = [Number(trackPt.gpsx), Number(trackPt.gpsy)];
+            coords.push(coord);
+        }
+    });
+    if (coords.length > 0) {
+        // 根据数据生成feature
+        const trackLine = trackFeatureByCoords(coords)
+        // const firstPoint = pointByCoord(coords[0])
+        // const lastPoint = pointByCoord(coords[coords.length - 1])
+        features.push(trackLine)
+    }
+    return features
+}
+/**
+ * 根据点列生成点位轨迹feature
+ * @param  {[type]} coords [description]
+ * @return {[type]}        [description]
+ */
+export function trackFeatureByCoords (coords) {
+    return new Feature(new LineString(coords))
+}
+/**
+ * 根据点生成点位feature
+ * @param  {[type]} coords [description]
+ * @return {[type]}        [description]
+ */
+export function pointByCoord (coord) {
+    return new Feature(new Point(coord))
 }

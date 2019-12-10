@@ -3,10 +3,7 @@
  * @author:sijianting
  * @createDate:2019/7/11 11:16
  */
-import Icon from 'ol/style/Icon'
-import Style from 'ol/style/Style'
-import Fill from 'ol/style/Fill';
-import Stroke from 'ol/style/Stroke';
+import {Fill, Stroke, Circle, Style,Icon} from 'ol/style';
 /**
  * @description:人员点位样式
  * @author:sijianting
@@ -22,6 +19,43 @@ export function PeoplePointStyle() {
     })
   }
 }
+/**
+ * @description:普通轨迹样式
+ * @author:sijianting
+ * @createDate:2019/12/6 10:36
+ */
+export function trackStyle() {
+    return new Style({//红线
+        stroke: new Stroke({
+            color: 'red',
+            width: 5
+        })
+    })
+}
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2019/12/6 10:46
+ */
+export function trackPointStyle() {
+    return function(feature) {
+        if (feature.get('operate')) {//是案卷点
+            return new Style({//普通轨迹点样式
+                image: new Circle({
+                    radius: 5,
+                    fill: new Fill({
+                        color: '#3399CC'
+                    }),
+                    stroke: new Stroke({
+                        color: '#fff',
+                        width: 2
+                    })
+                })
+            });
+        }
+    }
+}
+
 /**
  * @description:车辆点位样式
  * @author:sijianting
