@@ -101,8 +101,6 @@ export default {
                startDay: '',
                endDay: '',
                sortType: 'asc',
-               pageNo: 1,
-               pageSize: 20
             },
             //查询的时间范围
             dayRange: [],
@@ -137,8 +135,8 @@ export default {
         }
         let day = moment(new Date()).format('YYYY-MM-DD');
         this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-        this.query.startDay = day;
-        this.query.endDay = day;
+        this.query.startDay = new Date(day).getTime();
+        this.query.endDay = new Date(day).getTime();
         this.getDataList();
     },
     watch:{
@@ -146,8 +144,8 @@ export default {
             this.query.userId = val;
             let day = moment(new Date()).format('YYYY-MM-DD');
             this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-            this.query.startDay = day;
-            this.query.endDay = day;
+            this.query.startDay = new Date(day).getTime();
+            this.query.endDay = new Date(day).getTime();
             this.getDataList();
         }
     },
@@ -265,9 +263,8 @@ export default {
         },
         //查询(默认显示当天，当前登入的用户)
         onSearch() {
-            this.query.startDay = moment(this.dayRange[0]._d).format("YYYY-MM-DD");
-            this.query.endDay = moment(this.dayRange[1]._d).format("YYYY-MM-DD");
-            this.query.pageNo = 1;
+            this.query.startDay = this.dayRange[0]._d.getTime();
+            this.query.endDay = this.dayRange[1]._d.getTime();
             this.getDataList();
             this.map.removeLayer(this.trackLayer);
             this.map.removeLayer(this.eventLayer);
@@ -286,7 +283,6 @@ export default {
             console.log(11111111111,sortType);
             this.activeName = sortType;
             this.query.sortType = sortType;
-            this.query.pageNo = 1;
             this.getDataList();
         },
         //开始播放
