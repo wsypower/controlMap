@@ -52,7 +52,7 @@
             <span class="look" @click="lookDetail(item)">查看</span>
           </div>
         </div>
-        <div v-if="dataList.length > 20" class="pagination-panel">
+        <div class="pagination-panel">
           <a-pagination
             :total="totalSize"
             :showTotal="total => `共 ${total} 条`"
@@ -132,21 +132,21 @@ export default {
             this.showLoading = true;
             this.getUserWorkTimeDataList(this.query).then(res=>{
                 this.showLoading = false;
-                this.dataList = res.list.map(item=>{
+                this.dataList = res.queryList.map(item=>{
                     item.hasDetail = false;
                     let week = new Date(item.day).getDay();
                     item.weekDay = weekArr[week];
                     return item
                 });
 
-                this.totalSize = res.total;
+                this.totalSize = res.count;
             });
         },
 
         //查询(默认显示当天，当前登入的用户)
         onSearch() {
             this.query.startDay = this.dayRange[0]._d.getTime();
-            this.query.endDay = this.dayRange[0]._d.getTime();
+            this.query.endDay = this.dayRange[1]._d.getTime();
             this.query.curPage = 1;
             this.getDataList()
         },
@@ -175,11 +175,12 @@ export default {
             this.getUserSignDetailData(params).then(res=>{
                 console.log('signDetail',res);
                 item.hasDetail = true;
+                //如果点击签到  则显示签到的信息   如果是签退，则signInfoData存放签退的信息，isSignIn设置为false
                 this.signInfoData = {
-                    photoUrl: res.data.signIn.fileList[0].url,
-                    photoName: res.data.signIn.fileList[0].name,
-                    photoList: res.data.signIn.fileList,
-                    signTime: res.data.signIn.time,
+                    photoUrl: res.signIn.fileList[0].url,
+                    photoName: res.signIn.fileList[0].name,
+                    photoList: res.signIn.fileList,
+                    signTime: res.signIn.time,
                     isSignIn: true
                 }
                 console.log('this.signInfoData',this.signInfoData);
@@ -253,6 +254,9 @@ export default {
       border-right: solid 1px #f5f5f5;
       border-left: solid 1px #f5f5f5;
       border-bottom: 1px solid #dddddd;
+      &:nth-last-child(2) {
+        border-bottom: solid 1px #f5f5f5;
+      }
       &:hover {
         background-color: #e9f6ff;
         border: solid 1px #2b90f3;
@@ -318,6 +322,7 @@ export default {
     .pagination-panel {
       text-align: right;
       padding: 20px 20px 0px 0px;
+      background-color: #ffffff;
     }
     .nodata-panel,
     .spin-panel {

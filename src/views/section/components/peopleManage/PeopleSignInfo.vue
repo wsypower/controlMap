@@ -6,7 +6,16 @@
       <div class="close" flex="main:center cross:center" @click="closeDialog"></div>
     </div>
     <div class="tip-body">
-      <img :src="info.photoUrl" @click="showPhoto" />
+<!--      <img :src="info.photoUrl"/>-->
+      <div class="tip-body-content">
+        <swiper :options="swiperOption" ref="mySwiper">
+          <swiper-slide v-for="(item, index) in info.photoList" :key="index">
+            <img :src="item.url" :alt="item.name"/>
+          </swiper-slide>
+        </swiper>
+        <div class="swiper-button-prev" slot="button-prev"><a-icon type="left" /></div>
+        <div class="swiper-button-next" slot="button-next"><a-icon type="right" /></div>
+      </div>
     </div>
     <div class="tooltip__arrow"></div>
   </div>
@@ -16,32 +25,40 @@ export default{
     name: 'peopleSignInfo',
     data(){
         return {
-
+          swiperOption: {
+            loop: false,
+            slidesPerView: 1,
+            navigation: {
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev'
+            }
+          }
         };
     },
-    props:{
-        info:{
-            default(){
-                return {
-                    photoUrl: '',
-                    photoName: '',
-                    signTime: '',
-                    isSignIn: true
-                }
-            }
-        },
-        closeCallBack:{
-            type: Function,
-            default(){
-                return null
-            }
+  props:{
+    info:{
+      default(){
+        return {
+          photoUrl: '',
+          photoName: '',
+          photoList: [],
+          signTime: '',
+          isSignIn: true
         }
+      }
     },
+    closeCallBack:{
+      type: Function,
+      default(){
+        return null
+      }
+    }
+  },
     mounted(){},
     methods:{
-        showPhoto(){
-            this.$emit('showPhoto',0)
-        },
+        // showPhoto(){
+        //     this.$emit('showPhoto',0)
+        // },
         closeDialog(){
             this.$emit('closeTip')
         }
@@ -55,7 +72,6 @@ export default{
   height: 240px;
   border-radius: 6px;
   box-shadow: -1px 0px 4px 0px rgba(0, 0, 0, 0.12);
-  border: solid 1px #dddddd;
   background-color: #ffffff;
   .tip-header {
     height: 40px;
@@ -91,10 +107,48 @@ export default{
     height: calc(100% - 45px);
     overflow: hidden;
     background-color: #ffffff;
-    img {
+    text-align: center;
+    padding: 10px;
+    .tip-body-content {
+      position: relative;
       width: 100%;
       height: 100%;
-      cursor: zoom-in;
+    }
+    /deep/.swiper-container {
+      height: 100%;
+      margin: 0px 15px;
+      .swiper-slide {
+        text-align: center;
+        line-height: 34px;
+        img {
+          //width: 100%;
+          height: 100%;
+          cursor: zoom-in;
+        }
+      }
+    }
+    .swiper-button-prev,
+    .swiper-button-next {
+      position: absolute;
+      top: 42%;
+      width: 20px;
+      height: 34px;
+      margin-top: 0px;
+      z-index: 10;
+      cursor: pointer;
+      background-image: unset !important;
+      background-color: #eeeeee;
+      outline: unset;
+      i {
+        margin-top: 10px;
+        margin-left: 4px;
+      }
+    }
+    .swiper-button-prev {
+      left: 0px;
+    }
+    .swiper-button-next {
+      right: 0px;
     }
   }
 

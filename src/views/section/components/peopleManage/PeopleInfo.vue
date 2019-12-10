@@ -76,79 +76,80 @@
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
 export default{
-    name: 'peopleInfo',
-    data(){
+  name: 'peopleInfo',
+  data(){
+    return {
+      activeIndex: 0,
+      todayData: {
+        num1: 0,
+        num2: 0,
+        num3: 0,
+        num4: 0
+      },
+      historyData: {
+        num1: 0,
+        num2: 0,
+        num3: 0,
+        num4: 0
+      }
+    };
+  },
+  props:{
+    info:{
+      default(){
         return {
-            activeIndex: 0,
-            todayData: {
-                num1: 0,
-                num2: 0,
-                num3: 0,
-                num4: 0
-            },
-            historyData: {
-                num1: 0,
-                num2: 0,
-                num3: 0,
-                num4: 0
-            }
-        };
-    },
-    props:{
-        info:{
-            default(){
-                return {
-                    id: '',
-                    sex: '',
-                    name: '',
-                    phone: '',
-                    dept: '',
-                    online: true,
-                }
-            }
-        },
-        closeCallBack:{
-            type: Function,
-            default(){
-                return null
-            }
+          id: '',
+          sex: '',
+          name: '',
+          phone: '',
+          dept: '',
+          online: true,
         }
+      }
     },
-    watch: {
-        'info.id':function(val){
-            this.getUserWorkInfoData({userId:this.info.id}).then(res=>{
-                console.log('getUserWorkInfoData res',res);
-                //获取今日数据
-                this.todayData = {
-                    num1: res.brSbs,
-                    num2: res.brHss,
-                    num3: res.brHcs
-                }
-                //获取历史数据
-                this.historyData = {
-                    num1: res.bhSbs,
-                    num2: res.bhHss,
-                    num3: res.bhHcs
-                }
-            })
-        }
-    },
-    mounted(){},
-    methods:{
-        ...mapActions('section/manage', ['getUserWorkInfoData']),
-        //今日工作与历史工作的切换
-        clickTab(tab){
-            this.activeIndex = tab;
-        },
-        //查看轨迹，触发父组件的方法
-        lookPeopleTrail(){
-            this.$emit('getUserId',this.info.id);
-        },
-        //触发父组件方法，关闭当前弹窗
-        closeDialog(){
-            this.$emit('closeTip')
-        }
+    closeCallBack:{
+      type: Function,
+      default(){
+        return null
+      }
     }
+  },
+  watch: {
+    'info.id':function(val){
+      this.getUserWorkInfoData({userId:this.info.id}).then(res=>{
+        console.log('getUserWorkInfoData res',res);
+        //获取今日数据
+        this.todayData = {
+          num1: res.brSbs,
+          num2: res.brHss,
+          num3: res.brHcs
+        }
+        //获取历史数据
+        this.historyData = {
+          num1: res.bhSbs,
+          num2: res.bhHss,
+          num3: res.bhHcs
+        }
+      })
+    }
+  },
+  mounted(){},
+  methods:{
+    ...mapActions('section/manage', ['getUserWorkInfoData']),
+    //今日工作与历史工作的切换
+    clickTab(tab){
+      this.activeIndex = tab;
+    },
+    //查看轨迹，触发父组件的方法
+    lookPeopleTrail(){
+      this.$emit('getUserId',this.info.id);
+    },
+    //触发父组件方法，关闭当前弹窗
+    closeDialog(){
+      this.activeIndex = 0;
+      this.$emit('closeTip')
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -159,7 +160,6 @@ export default{
   background-image: linear-gradient(90deg, #0065ea 0%, #00a5ff 100%);
   border-radius: 6px;
   box-shadow: -1px 0px 4px 0px rgba(0, 0, 0, 0.12);
-  border: solid 1px #dddddd;
   .tip-header {
     height: 96px;
     width: 100%;

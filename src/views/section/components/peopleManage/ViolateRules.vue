@@ -18,8 +18,8 @@
         <label style="width: 90px;">违规类型：</label>
         <a-select v-model="query.vType" showSearch placeholder="请选择" style="width: 100%;">
           <a-select-option value="">全部</a-select-option>
-          <a-select-option value="越界">越界</a-select-option>
-<!--          <a-select-option value="不在岗">不在岗</a-select-option>-->
+          <a-select-option value="1">越界</a-select-option>
+<!--          <a-select-option value="2">不在岗</a-select-option>-->
         </a-select>
       </div>
       <a-button type="primary" style="width: 100%" @click="onSearch">查询</a-button>
@@ -42,8 +42,8 @@
             <div class="type">
               <span
                 v-for="vType in item.vTypeList"
-                :class="{ yuejie: vType == '越界', buzaigang: vType == '不在岗' }"
-                :key="vType">{{ vType }}</span
+                :class="{ yuejie: vType == '1', buzaigang: vType == '2' }"
+                :key="vType">{{ vType == '1' ? '越界':'不在岗' }}</span
               >
             </div>
             <div class="right-top-panel">违规{{ item.vLog.length }}次</div>
@@ -57,8 +57,8 @@
               <li v-for="(log, i) in item.vLog" :key="i">
                 <span>{{ log.day }}</span>
                 <span>{{ log.startTimeStr }}~{{ log.endTimeStr }}</span>
-                <span :class="{ yuejie: log.vType === '越界', buzaigang: log.vType === '不在岗' }">{{
-                  log.vType
+                <span :class="{ yuejie: log.vType === '1', buzaigang: log.vType === '2' }">{{
+                  log.vType=='1' ? '越界' : '不在岗'
                 }}</span>
                 <span v-if="!log.isStart" @click="startPlay(log)">播放</span>
                 <span v-else @click="pausePlay(log)">暂停</span>
@@ -126,6 +126,7 @@ export default {
                     item.expend = false;
                     let typeArr = [];
                     item.vLog.forEach(log=>{
+                      log.userId = item.userId;
                         log.day = moment(log.startTime).format('YYYY-MM-DD');
                         log.startTimeStr = moment(log.startTime).format('HH:mm');
                         log.endTimeStr = moment(log.endTime).format('HH:mm');

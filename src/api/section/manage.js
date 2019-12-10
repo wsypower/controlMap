@@ -48,7 +48,7 @@ export const getUserTrailDataList = data => {
 export const getTrailDetailData = data => {
   console.log('api:getTrailDetailData', data)
   return request({
-    url: `@test/getTrailDetailData?_t=` + new Date().getTime(),
+    url: `people/getTrailDetailData?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -81,7 +81,7 @@ export const getUserWorkTimeDataList = data => {
 export const getUserSignDetailData = data => {
   console.log('api:getUserSignDetailData', data)
   return request({
-    url: `@test/getUserSignDetailData?_t=` + new Date().getTime(),
+    url: `people/getUserSignDetailData?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
