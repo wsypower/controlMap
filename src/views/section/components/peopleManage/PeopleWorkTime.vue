@@ -52,7 +52,7 @@
             <span class="look" @click="lookDetail(item)">查看</span>
           </div>
         </div>
-        <div class="pagination-panel">
+        <div class="pagination-panel" v-if="dataList.length > 20">
           <a-pagination
             :total="totalSize"
             :showTotal="total => `共 ${total} 条`"

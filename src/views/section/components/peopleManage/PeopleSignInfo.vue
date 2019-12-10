@@ -82,6 +82,8 @@ export default{
     position: relative;
     color: #ffffff;
     font-size: 16px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
     .close {
       position: absolute;
       right: 5px;

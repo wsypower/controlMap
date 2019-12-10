@@ -48,7 +48,7 @@ export const getUserTrailDataList = data => {
 export const getTrailDetailData = data => {
   console.log('api:getTrailDetailData', data)
   return request({
-    url: `people/getTrailDetailData?_t=` + new Date().getTime(),
+    url: `@test/getTrailDetailData?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
