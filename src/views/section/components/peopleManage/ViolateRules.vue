@@ -116,7 +116,7 @@ export default {
       this.getDataList();
     },
     methods:{
-        ...mapActions('section/manage', ['getUserViolateRulesDataList','getTrailDetailData','deleteUserViolateRules']),
+        ...mapActions('section/manage', ['getUserViolateRulesDataList','getUserTrailDataList','deleteUserViolateRules']),
         //获取人员违规数据
         getDataList(){
             console.log('this.query',this.query);
@@ -173,7 +173,7 @@ export default {
                     startTime: log.startTime,
                     endTime: log.endTime
                 }
-                this.getTrailDetailData(temp).then(res=>{
+                this.getUserTrailDataList(temp).then(res=>{
                     console.log('TrailDetailData',res.data);
                     log.hasDetail = true;
                     //轨迹数据在res.data中，直接在地图上播放
