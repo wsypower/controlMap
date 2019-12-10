@@ -157,13 +157,13 @@ export default {
             this.showLoading = true;
             this.getUserTrailDataList(this.query).then(res=>{
                 this.showLoading = false;
-                this.dataList = res.result.map(item=>{
+                this.dataList = res.map(item=>{
                     item.isStart = false;
                     item.hasDetail = false;
                     item.time=stampConvertToTime(item.gpstime);
                     return item;
                 });
-                this.trackDataHandler(res.result);
+                this.trackDataHandler(res);
                 const trackLineFeature=trackByLocationList(this.dataList);
                 this.trackLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature,trackStyle(),3);
                 this.eventLayer= this.mapManager.addVectorLayerByFeatures(this.eventFeatures,trackPointStyle(),3);
