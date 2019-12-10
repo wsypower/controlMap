@@ -239,7 +239,7 @@ export default {
                 item.isStart=true;
             }
             if(this.isPlayingTrack === null) {
-                item.isStart=false;
+                item.isStart=true;
                 const routeCoords = this.currentQueryTracks[index];
                 if (!this.trackPlaying) {
                     this.trackPlaying = new TrackPlaying(this.map, routeCoords, null,null, 'people');
@@ -254,11 +254,11 @@ export default {
                 this.map.render();
                 this.isPlayingTrack = true;
             }else if(this.isPlayingTrack === false){ //继续播放
-                item.isStart=false;
+                item.isStart=true;
                 this.trackPlaying.continueMoving();
                 this.isPlayingTrack = true;
             }else if(this.isPlayingTrack === true){ // 暂停播放
-                item.isStart=true;
+                item.isStart=false;
                 this.trackPlaying.pauseMoving();
                 this.isPlayingTrack = false;
             }
@@ -268,7 +268,11 @@ export default {
             this.query.startDay = moment(this.dayRange[0]._d).format("YYYY-MM-DD");
             this.query.endDay = moment(this.dayRange[1]._d).format("YYYY-MM-DD");
             this.query.pageNo = 1;
-            this.getDataList()
+            this.getDataList();
+            this.map.removeLayer(this.trackLayer);
+            this.map.removeLayer(this.eventLayer);
+            this.trackPlaying.stopMoving();
+            this.trackPlaying.clearLayer();
         },
         // //翻页
         // changePagination(pageNo, pageSize) {
