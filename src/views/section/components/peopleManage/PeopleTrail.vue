@@ -239,7 +239,7 @@ export default {
                 item.isStart=true;
             }
             if(this.isPlayingTrack === null) {
-                item.isStart=true;
+                this.dataList[index].isStart = true;
                 const routeCoords = this.currentQueryTracks[index];
                 if (!this.trackPlaying) {
                     this.trackPlaying = new TrackPlaying(this.map, routeCoords, null,null, 'people');
@@ -254,11 +254,11 @@ export default {
                 this.map.render();
                 this.isPlayingTrack = true;
             }else if(this.isPlayingTrack === false){ //继续播放
-                item.isStart=true;
+                this.dataList[index].isStart= true;
                 this.trackPlaying.continueMoving();
                 this.isPlayingTrack = true;
             }else if(this.isPlayingTrack === true){ // 暂停播放
-                item.isStart=false;
+                this.dataList[index].isStart=false;
                 this.trackPlaying.pauseMoving();
                 this.isPlayingTrack = false;
             }
