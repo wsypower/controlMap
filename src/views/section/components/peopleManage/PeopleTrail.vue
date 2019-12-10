@@ -47,6 +47,9 @@
             <p><span class="dot red"></span>{{ item[item.length-1].time }}</p>
           </div>
           <div flex="cross:center main:center">
+              <!--<div @click="trackPlayHandler(item, index)">-->
+                  <!--<a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="trackPlayHandler(item, index)" />-->
+              <!--</div>-->
             <!--<cg-icon-svg name="telephone" class="svg_icon_telephone" @click="onSort('desc')"></cg-icon-svg>-->
             <a-icon v-show="!item.isStart" type="play-circle" theme="filled" @click="trackPlayHandler(item, index)" />
             <a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="trackPlayHandler(item, index)" />
@@ -187,7 +190,6 @@ export default {
                 feature.setProperties(currentCoord);
                 this.eventFeatures.push(feature);
             }
-
             for (let i = 1; i < coords.length - 1; i++) {
                 nextCoord = coords[i];
                 if(nextCoord.operate=="2" ||nextCoord.operate=="0" ||nextCoord.operate=="1"|| nextCoord.operate=="5"||i % 1 == 0){//配置轨迹点抽稀
@@ -198,24 +200,30 @@ export default {
                 if(nextCoord.operate=="99") {//只串联普通轨迹点
                     if (nextCoord.gpstime - currentCoord.gpstime <= 60 * 1000 * 30) { // 小于间隔时间 30分钟
                         lineCoordinates.push(nextCoord); // 加入当前线段
+                        lineCoords.push([parseFloat(nextCoord.gpsx),parseFloat(nextCoord.gpsy)])
                     }
                     else { // 大于间隔时间
                         if (lineCoordinates.length > 3) {
                             this.trackSegments.push(lineCoordinates);
+                            this.currentQueryTracks.push(lineCoords);
+                        }else{ //如果轨迹点数小于3的则不计入轨迹段中
+
                         }
                         lineCoordinates = [];
+                        lineCoords = [];
                         // 将下一个线段的第一点加入
                         lineCoordinates.push(nextCoord); // 加入当前线段
+                        lineCoords.push([parseFloat(nextCoord.gpsx),parseFloat(nextCoord.gpsy)]);
                     }
                 }
-                currentCoord = nextCoord
+                currentCoord = nextCoord;
             }
             // 处理最后一次
             if (lineCoordinates.length > 0) {
                 this.trackSegments.push(lineCoordinates);
+                this.currentQueryTracks.push(lineCoords);
             }
             console.log('轨迹=====',this.trackSegments);
-
         },
         //轨迹播放处理
         trackPlayHandler(item,index){
@@ -224,17 +232,19 @@ export default {
                 this.trackIndex=index;
                 this.isPlayingTrack = null;
                 if(this.trackPlaying){
-                    this.trackPlaying.StopMoving();
-                    this.trackPlaying.ClearLayer();
+                    this.trackPlaying.stopMoving();
+                    this.trackPlaying.clearLayer();
                     this.trackPlaying=null;
                 }
                 item.isStart=true;
             }
             if(this.isPlayingTrack === null) {
+                item.isStart=false;
+                const routeCoords = this.currentQueryTracks[index];
                 if (!this.trackPlaying) {
-                    this.trackPlaying = new TrackPlaying(this.map, item, trackStyle(), alarmPointStyle(), 'people');
+                    this.trackPlaying = new TrackPlaying(this.map, routeCoords, null,null, 'people');
                 } else {
-                    this.trackPlaying.data = item;
+                    this.trackPlaying.data = routeCoords;
                 }
                 this.trackPlaying.clearLayer();
                 this.trackPlaying.speed = 5;

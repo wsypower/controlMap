@@ -7,7 +7,7 @@ import {Fill, Stroke, Circle, Style,Icon} from 'ol/style';
 import {transform} from 'ol/proj';
 import {getDistance} from 'ol/sphere';
 import Point from 'ol/geom/Point';
-import LineString from 'ol/geom/LineString'
+import LineString from 'ol/geom/LineString';
 import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
@@ -66,7 +66,7 @@ export class TrackPlaying{
             if (x === x1 && y === y1) {
                 continue;
             }
-            if (x&&x.length>0&&y&&y.length>0) {
+            if ( x && x>0 && y && y>0) {
                 x = parseFloat(x);
                 y = parseFloat(y);
                 x1 = parseFloat(x1);
@@ -79,9 +79,9 @@ export class TrackPlaying{
                     distance = Math.floor(distance / speed);
                 }
                 const arcGenerator = new GreatCircle({x: x, y: y}, {x: x1, y: y1});
-                var arcLine = arcGenerator.arc(distance, {offset: 0});//在两个点之间生成n个点
-                var coords = arcLine.geometries[0].coords;//获取生成的所有坐标点
-                for (var j = 0; j < coords.length; j++) {
+                let arcLine = arcGenerator.arc(distance, {offset: 0});//在两个点之间生成n个点
+                let coords = arcLine[0].coords;//获取生成的所有坐标点
+                for (let j = 0; j < coords.length; j++) {
                     newArray.push([coords[j][0], coords[j][1]]);
                 }
             }
@@ -92,16 +92,18 @@ export class TrackPlaying{
     }
     //在地图上画出路线
     drawLine(){
-        var data = this.trackCoords;
+        const data = this.trackCoords;
         if (data === null || data === undefined || data === "" || data.length <= 0) {
             console.log("经纬度数据为空！"); return;
         };
         //定义线条要素,把线条要素添加进去
-        var geometry = new LineString();
-        for (var i = 0; i < data.length; i++) {
-            geometry.appendCoordinate([parseFloat(data[i][0]), parseFloat(data[i][1])]);
-        };
-        var routeFeature = new Feature({
+        let lineArr=[];
+        for (let i = 0; i < data.length; i++) {
+            lineArr.push([parseFloat(data[i][0]), parseFloat(data[i][1])]);
+            // geometry.appendCoordinate([parseFloat(data[i][0]), parseFloat(data[i][1])]);
+        }
+        const geometry = new LineString(lineArr);
+        let routeFeature = new Feature({
             geometry:geometry
         });
         routeFeature.setStyle(this.routeStyle);
@@ -151,7 +153,7 @@ export class TrackPlaying{
             let this_img;
             if(this.type=='people'){
                 this_img=new Icon({
-                    src: '@/assets/mapImage/track/people/'+num+suffix+'.png',
+                    src: require('@/assets/mapImage/track/people/'+num+suffix+'.png'),
                     rotateWithView: false,
                     scale:0.3,
                     anchor:[0.5,1],
@@ -160,7 +162,7 @@ export class TrackPlaying{
             }
             else{
                 this_img=new Icon({
-                    src: '@/assets/mapImage/track/car/car_track.png',
+                    src: require('@/assets/mapImage/track/car/car_track.png'),
                     rotateWithView: false,
                     scale:0.3,
                     anchor:[0.5,1],
@@ -223,6 +225,8 @@ export class TrackPlaying{
 
 export class GreatCircle{
     constructor(start,end){
+        this.properties = {};
+        this.geometries = [];
         if (!start || start.x === undefined || start.y === undefined) {
             return;
         }
@@ -346,15 +350,25 @@ export class GreatCircle{
                 poNewLS0.push([first_pass[l][0],first_pass[l][1]]);
             }
         }
-        this.properties = {};
-        this.geometries = [];
         for (let m = 0; m < poMulti.length; ++m) {
-            let line = new LineString();
+            let line = new lineString();
             this.geometries.push(line);
             const points = poMulti[m];
             for (let j0 = 0; j0 < points.length; ++j0) {
                 line.move_to(points[j0]);
             }
         }
+        return this.geometries;
+    }
+}
+
+export class lineString {
+    constructor(){
+        this.coords = [];
+        this.length = 0;
+    }
+    move_to(coord){
+        this.length++;
+        this.coords.push(coord);
     }
 }
