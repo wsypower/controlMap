@@ -110,6 +110,45 @@ export const getAllCarCompanyDataList = data => {
     params: data
   })
 }
+
+/**
+ * @description 获取车辆所属中队的数据
+ * @author moxuejuan
+ * @date 2019-12-10 16:13:26
+ * @param 无
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+export const getAllGroupDataList = data => {
+  console.log('api:getAllGroupDataList', data)
+  return request({
+    url: `car/getAllGroupDataList?_t=` + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * @description 获取车辆所有类型的数据
+ * @author moxuejuan
+ * @date 2019-12-10 16:24:26
+ * @param 无
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+export const getAllCarTypeDataList = data => {
+  console.log('api:getAllCarTypeDataList', data)
+  return request({
+    url: `car/getAllCarTypeDataList?_t=` + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
 /**
  * @description 获取车辆违规数据()
  * @author moxuejuan

@@ -6,8 +6,8 @@
         <a-range-picker v-model="dayRange" style="width: 100%" />
       </div>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
-        <label style="width: 90px;">选择人员：</label>
-        <a-select v-model="query.peopleId" showSearch placeholder="请选择" style="width: 100%;">
+        <label style="width: 70px;">选择人员：</label>
+        <a-select v-model="query.peopleId" showSearch placeholder="请选择" style="flex:1;width:246px;">
           <a-select-option value="" key="-1">全部</a-select-option>
           <a-select-option v-for="(people, index) in peopleDataList" :value="people.id" :key="index"
             >{{ people.name }}（{{ people.dept }}）</a-select-option
