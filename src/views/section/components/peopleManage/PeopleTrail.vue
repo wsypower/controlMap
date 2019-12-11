@@ -20,14 +20,14 @@
       <div>
         <span>起止时间</span>
         <span class="sort-icon">
-          <i @click="onSort('asc')">
-            <cg-icon-svg name="caret-up" class="svg_icon_up" :class="{ active: activeName === 'asc' }"></cg-icon-svg>
-          </i>
           <i @click="onSort('desc')">
+            <cg-icon-svg name="caret-up" class="svg_icon_up" :class="{ active: activeName === 'desc' }"></cg-icon-svg>
+          </i>
+          <i @click="onSort('asc')">
             <cg-icon-svg
               name="caret-down"
               class="svg_icon_down"
-              :class="{ active: activeName === 'desc' }"
+              :class="{ active: activeName === 'asc' }"
             ></cg-icon-svg>
           </i>
         </span>
@@ -100,14 +100,14 @@ export default {
                userId: '',
               startTime: '',
               endTime: '',
-               // sortType: 'asc',
+               sortType: 'desc',
             },
             //查询的时间范围
             dayRange: [],
             //查询时的过渡效果
             showLoading: false,
             //正序asc、倒序desc
-            activeName: 'asc',
+            activeName: 'desc',
             //单页数据
             dataList:[],
             //总数
@@ -300,7 +300,7 @@ export default {
         //开始播放
         startPlay(item,i){
             this.dataList[i].isStart = true;
-            if(item.hasDetail){
+            if(item.hasDetail) {
 
             }
             else{
@@ -386,6 +386,8 @@ export default {
             padding: 5px 8px;
             background-color: #2b90f3;
             border-radius: 4px;
+            width: 35px;
+            text-align: center;
           }
         }
         &:nth-child(2) {
