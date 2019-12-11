@@ -43,8 +43,8 @@
             <span>{{ index }}</span>
           </div>
           <div>
-            <p><span class="dot green"></span>{{ item[0].time }}</p>
-            <p><span class="dot red"></span>{{ item[item.length-1].time }}</p>
+            <p><span class="dot green"></span>{{ item.coordinates[0].time }}</p>
+            <p><span class="dot red"></span>{{ item.coordinates[item.coordinates.length-1].time }}</p>
           </div>
           <div flex="cross:center main:center">
               <!--<div @click="trackPlayHandler(item, index)">-->
@@ -98,9 +98,9 @@ export default {
             //各项查询条件
             query: {
                userId: '',
-               startDay: '',
-               endDay: '',
-               sortType: 'asc',
+              startTime: '',
+              endTime: '',
+               // sortType: 'asc',
             },
             //查询的时间范围
             dayRange: [],
@@ -135,8 +135,8 @@ export default {
         }
         let day = moment(new Date()).format('YYYY-MM-DD');
         this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-        this.query.startDay = new Date(day).getTime();
-        this.query.endDay = new Date(day).getTime();
+        this.query.startTime = new Date(day).getTime();
+        this.query.endTime = new Date(day).getTime();
         this.getDataList();
     },
     watch:{
@@ -144,8 +144,8 @@ export default {
             this.query.userId = val;
             let day = moment(new Date()).format('YYYY-MM-DD');
             this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-            this.query.startDay = new Date(day).getTime();
-            this.query.endDay = new Date(day).getTime();
+            this.query.startTime = new Date(day).getTime();
+            this.query.endTime = new Date(day).getTime();
             this.getDataList();
         }
     },
@@ -163,11 +163,15 @@ export default {
                     item.time=stampConvertToTime(item.gpstime);
                     return item;
                 });
-                this.trackDataHandler(res);
-                const trackLineFeature=trackByLocationList(this.dataList);
-                this.trackLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature,trackStyle(),3);
-                this.eventLayer= this.mapManager.addVectorLayerByFeatures(this.eventFeatures,trackPointStyle(),3);
-                this.mapManager.getMap().getView().fit(this.trackLayer.getSource().getExtent());
+                if(res.length>0){
+                    this.trackDataHandler(res);
+                    const trackLineFeature=trackByLocationList(this.dataList);
+                    this.trackLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature,trackStyle(),3);
+                    this.eventLayer= this.mapManager.addVectorLayerByFeatures(this.eventFeatures,trackPointStyle(),3);
+                    this.mapManager.getMap().getView().fit(this.trackLayer.getSource().getExtent());
+                }else{
+                    this.$message.warning('未查询到轨迹数据！！！');
+                }
                // this.totalSize = res.data.total;
             });
         },
@@ -202,7 +206,10 @@ export default {
                     }
                     else { // 大于间隔时间
                         if (lineCoordinates.length > 3) {
-                            this.trackSegments.push(lineCoordinates);
+                            this.trackSegments.push({
+                                coordinates:lineCoordinates,
+                                isStart:false
+                            });
                             this.currentQueryTracks.push(lineCoords);
                         }else{ //如果轨迹点数小于3的则不计入轨迹段中
 
@@ -218,7 +225,10 @@ export default {
             }
             // 处理最后一次
             if (lineCoordinates.length > 0) {
-                this.trackSegments.push(lineCoordinates);
+                this.trackSegments.push({
+                    coordinates:lineCoordinates,
+                    isStart:false
+                });
                 this.currentQueryTracks.push(lineCoords);
             }
             console.log('轨迹=====',this.trackSegments);
@@ -234,10 +244,10 @@ export default {
                     this.trackPlaying.clearLayer();
                     this.trackPlaying=null;
                 }
-                item.isStart=true;
+                this.trackSegments[index].isStart=true;
             }
             if(this.isPlayingTrack === null) {
-                this.dataList[index].isStart = true;
+                this.trackSegments[index].isStart = true;
                 const routeCoords = this.currentQueryTracks[index];
                 if (!this.trackPlaying) {
                     this.trackPlaying = new TrackPlaying(this.map, routeCoords, null,null, 'people');
@@ -252,24 +262,26 @@ export default {
                 this.map.render();
                 this.isPlayingTrack = true;
             }else if(this.isPlayingTrack === false){ //继续播放
-                this.dataList[index].isStart= true;
+                this.trackSegments[index].isStart= true;
                 this.trackPlaying.continueMoving();
                 this.isPlayingTrack = true;
             }else if(this.isPlayingTrack === true){ // 暂停播放
-                this.dataList[index].isStart=false;
+                this.trackSegments[index].isStart=false;
                 this.trackPlaying.pauseMoving();
                 this.isPlayingTrack = false;
             }
         },
         //查询(默认显示当天，当前登入的用户)
         onSearch() {
-            this.query.startDay = this.dayRange[0]._d.getTime();
-            this.query.endDay = this.dayRange[1]._d.getTime();
+            this.query.startTime = this.dayRange[0]._d.getTime();
+            this.query.endTime = this.dayRange[1]._d.getTime();
             this.getDataList();
             this.map.removeLayer(this.trackLayer);
             this.map.removeLayer(this.eventLayer);
-            this.trackPlaying.stopMoving();
-            this.trackPlaying.clearLayer();
+            if(this.trackPlaying){
+                this.trackPlaying.stopMoving();
+                this.trackPlaying.clearLayer();
+            }
         },
         // //翻页
         // changePagination(pageNo, pageSize) {

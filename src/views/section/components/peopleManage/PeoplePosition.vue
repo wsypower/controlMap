@@ -227,7 +227,9 @@ export default {
             temp.x = needData.x;
             temp.y = needData.y;
             this.peopleInfoData = temp;
-            this.peopleOverlay.setPosition([parseFloat(this.peopleInfoData.x),parseFloat(this.peopleInfoData.y)])
+            const coordinate=[parseFloat(this.peopleInfoData.x),parseFloat(this.peopleInfoData.y)];
+            this.peopleOverlay.setPosition(coordinate);
+            this.mapManager.locateTo(coordinate);
           }
         },
         //地图上人员点击事件处理器
