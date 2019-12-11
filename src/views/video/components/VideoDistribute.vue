@@ -46,9 +46,11 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapState,mapActions } from 'vuex'
+import util from '@/utils/util';
 import MyVideoPlayer from "./MyVideoPlayer.vue";
 import {videoPointStyle} from '@/utils/util.map.style'
 import axios from 'axios'
+const userId = util.cookies.get('userId');
 export default {
   name: 'VideoDistribute',
   components:{
@@ -56,57 +58,66 @@ export default {
   },
   data(){
     return {
+      //展开节点key
       expandedKeys: [],
+      //是否展开父节点
       autoExpandParent: true,
+      //查询输入值
       searchValue: '',
+      //展示数据的过渡效果
       showLoading: false,
+      //后台传过来的数据
       sourceData: [],
       allCameraData: [],
+      //查询没有数据时展示
       showTree: true,
+      //摄像头播放效果
       playerMethod: 'browser', //browser：flash播放  tool：C端播放
+      //视频流URL
       videoSrc: '',
+      //地图相关
       videoFeatures: [],
+      //地图相关
       videoLayer: null,
         isLoadData: false
     }
   },
   computed:{
-      ...mapState('map', ['mapManager']),
+    ...mapState('map', ['mapManager']),
     //获得展示的数据与属性
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
-        this.videoFeatures=[];
-      this.allCarData = [];
-      if(data.length > 0){
-        this.changeTreeData(data,'');
-        this.isLoadData=!this.isLoadData;
-      }
+      this.videoFeatures=[];
+      this.allCameraData = [];
+      this.changeTreeData(data,'');
+      this.isLoadData=!this.isLoadData;
       return data;
     }
   },
-    watch:{
-        isLoadData:function() {
-            if(this.videoFeatures.length>0){
-                this.videoLayer = this.mapManager.addVectorLayerByFeatures(this.videoFeatures,videoPointStyle(),3);
-                this.videoLayer.set('featureType','videoDistribute');
-                this.mapManager.getMap().getView().fit(this.videoLayer.getSource().getExtent());
-            }
-        }
-    },
+  watch:{
+    isLoadData:function() {
+      if(this.videoFeatures.length>0){
+        this.videoLayer = this.mapManager.addVectorLayerByFeatures(this.videoFeatures,videoPointStyle(),3);
+        this.videoLayer.set('featureType','videoDistribute');
+        this.mapManager.getMap().getView().fit(this.videoLayer.getSource().getExtent());
+      }
+    }
+  },
   mounted(){
     this.showLoading = true;
-    this.getAllCameraTreeData().then(res=>{
+    this.map = this.mapManager.getMap();
+    this.map.on('click', this.videoMapClickHandler);
+    this.getAllCameraTreeData({userId:userId}).then(res=>{
+      console.log('getAllCameraTreeData',res);
+      this.sourceData = res;
       this.showLoading = false;
-      this.sourceData = res.data;
     });
-      this.map = this.mapManager.getMap();
-      this.map.on('click', this.videoMapClickHandler);
   },
   methods:{
-    ...mapActions('video/manage', ['getAllCameraTreeData']),
+    ...mapActions('video/manage', ['getAllCameraTreeData','getCameraUrl']),
     //给后端的数据增加一些前端展示与判断需要的属性
     changeTreeData(arr,deptName){
-        const _this = this;
+      const _this = this;
       arr.forEach(item=>{
         item.title = item.mpname;
         item.scopedSlots = { title: 'title' };
@@ -120,13 +131,13 @@ export default {
             key: item.mpid
           }
           this.allCameraData.push(temp);
-            // 通过经纬度生成点位加到地图上
-            if(item.x && item.x.length>0 && item.y && item.y.length>0){
-                const feature=_this.mapManager.xyToFeature(item.x,item.y);
-                feature.set('icon','carmera_online');
-                feature.set('props',item);
-                _this.videoFeatures.push(feature);
-            }
+          // 通过经纬度生成点位加到地图上
+          if(item.x && item.x.length>0 && item.y && item.y.length>0){
+            const feature=_this.mapManager.xyToFeature(item.x,item.y);
+            feature.set('icon','carmera_online');
+            feature.set('props',item);
+            _this.videoFeatures.push(feature);
+          }
         }
         else{
           item.key = 'dept_' + item.mpid;
@@ -160,11 +171,13 @@ export default {
       console.log(selectedKeys, e);
       if(selectedKeys[0].indexOf('dept_')<0){
         let needData = e.selectedNodes[0].data.props;
+        let mpid = needData.mpid;
         if(this.playerMethod === 'browser'){
           //打开摄像头播放
-          this.videoSrc = needData.rmtpUrl;
+          this.getCameraUrl({userId: userId, mpId: mpid}).then(res => {
+            this.videoSrc = res.mediaURL;
+          });
         }else {
-          let mpid = needData.mpid;
           //打开C端工具播放
           axios.get('http://61.153.37.214:81/api/sp/getSecretApi').then(resultConfig=>{
             if(resultConfig){
@@ -243,20 +256,6 @@ export default {
               });
           }
       }
-    // playVideo(){
-    //   this.isActive = true;
-    //   //rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000015-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12   ok
-    //   //rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000883-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12   ok
-    //   //rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000005-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12
-    //   //rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000028-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12
-    //   //rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000048-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12
-    //   //rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000065-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12
-    //   //rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000134-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12
-    //   //rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000219-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12
-    //   this.videoSrc = "rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000883-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12";
-    //   // this.$refs["playerObj0"].videoSrc = "rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000015-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12";
-    //   // this.$refs["playerObj0"].playerOptions.sources[0].src = "rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000015-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12";
-    // }
   }
 }
 </script>

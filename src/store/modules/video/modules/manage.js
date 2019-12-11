@@ -1,4 +1,11 @@
-import { getAllAlarmTypeDataList, getAllAlarmDataList, alarmNormalHandle, alarmReportHandle, getAllCameraTreeData } from '@/api/video/manage.js'
+import {
+  getAllAlarmTypeDataList,
+  getAllAlarmDataList,
+  getCameraUrl,
+  alarmNormalHandle,
+  alarmReportHandle,
+  getAllCameraTreeData
+} from '@/api/video/manage.js'
 
 export default {
   namespaced: true,
@@ -20,6 +27,19 @@ export default {
       console.log('store', data)
       return new Promise((resolve, reject) => {
         getAllAlarmDataList(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getCameraUrl(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getCameraUrl(data)
           .then(res => {
             resolve(res)
           })
@@ -68,31 +88,5 @@ export default {
           })
       })
     }
-    // getCarViolateRulesDataList(state, data) {
-    //   console.log('store', data)
-    //   return new Promise((resolve, reject) => {
-    //     getCarViolateRulesDataList(data)
-    //       .then(res => {
-    //         resolve(res)
-    //       })
-    //       .catch(err => {
-    //         console.log(err)
-    //         reject(err)
-    //       })
-    //   })
-    // },
-    // deleteCarViolateRules(state, data) {
-    //   console.log('store', data)
-    //   return new Promise((resolve, reject) => {
-    //     deleteCarViolateRules(data)
-    //       .then(res => {
-    //         resolve(res)
-    //       })
-    //       .catch(err => {
-    //         console.log(err)
-    //         reject(err)
-    //       })
-    //   })
-    // }
   }
 }

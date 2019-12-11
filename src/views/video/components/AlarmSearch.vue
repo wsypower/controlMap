@@ -33,13 +33,13 @@
           :class="{ active: activeIndex === index }"
         >
           <div class="item-left">
-            <pin :content="index" :isActive="activeIndex === index"></pin>
+            <pin :isActive="activeIndex === index"></pin>
           </div>
           <div class="item-right" flex="dir:top">
             <div class="top" flex="cross: center main:justify">
               <div class="name-panel" :title="itemData.name">告警类型：{{ itemData.typeName }}</div>
               <div class="camera-panel">
-                <span class="icon_camera" @click="playVideo(itemData.videoSrc)"></span>
+                <span class="icon_camera" @click.stop="playVideo(itemData.mpId)"></span>
               </div>
             </div>
             <div class="item_body" flex="cross:center">
@@ -61,12 +61,13 @@
             </div>
           </div>
         </div>
-        <div v-if="dataList.length > 20" class="pagination-panel">
+        <div v-if="totalSize > 20" class="pagination-panel">
           <a-pagination
             :total="totalSize"
             :showTotal="total => `共 ${total} 条`"
-            :pageSize="20"
-            :defaultCurrent="1"
+            :pageSize="query.pageSize"
+            :current="query.curPage"
+            size="small"
             @change="changePagination"
           />
         </div>
@@ -89,11 +90,13 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapState,mapActions } from 'vuex'
+import util from '@/utils/util';
 import moment from 'moment';
 import Pin from '../../emergency/components/Position.vue';
 import MyVideoPlayer from "./MyVideoPlayer.vue";
 import AlarmInfo from './AlarmInfo.vue';
 import {alarmPointStyle} from '@/utils/util.map.style'
+const userId = util.cookies.get('userId');
 export default {
   name: 'alarmSearch',
   components:{
@@ -107,11 +110,12 @@ export default {
       alarmTypeList: [],
       //各项查询条件
       query: {
+        userId: userId,
         startDay: '',
         endDay: '',
         alarmTypeId: '',
-        pageNo: 1,
-        pageSize: 20
+        curPage: 1,
+        pageSize: 100
       },
       //查询的时间范围
       dayRange: [],
@@ -133,26 +137,17 @@ export default {
         dayTime: null,
         type: ''
       },
-        alarmFeatures:[],
-        alarmLayer:null,
-        alarmOverlay:null
+      alarmFeatures:[],
+      alarmLayer:null,
+      alarmOverlay:null
     }
   },
   computed:{
-      ...mapState('map', ['mapManager']),
-      //获得展示的数据与属性
-      treeData:function(){
-          let data = JSON.parse(JSON.stringify(this.sourceData));
-          this.carFeatures=[];
-          this.allCarData = [];
-          this.changeTreeData(data,'');
-          this.isLoadData=!this.isLoadData;
-          return data
-      }
+    ...mapState('map', ['mapManager']),
   },
   mounted(){
-    this.getAllAlarmTypeDataList().then(res=>{
-      this.alarmTypeList = res.data;
+    this.getAllAlarmTypeDataList({userId: userId}).then(res=>{
+      this.alarmTypeList = res;
     });
     this.map = this.mapManager.getMap();
     this.map.on('click', this.alarmMapClickHandler);
@@ -164,46 +159,46 @@ export default {
     });
     let day = moment(new Date()).format('YYYY-MM-DD');
     this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-    this.query.startDay = day;
-    this.query.endDay = day;
+    this.query.startDay = new Date(day).getTime();
+    this.query.endDay = new Date(day).getTime();
     this.getDataList();
   },
   methods:{
-    ...mapActions('video/manage', ['getAllAlarmTypeDataList','getAllAlarmDataList']),
+    ...mapActions('video/manage', ['getAllAlarmTypeDataList','getAllAlarmDataList','getCameraUrl']),
     //获取人员轨迹数据
     getDataList(){
-        const _this=this;
+      const _this=this;
       console.log('this.query',this.query);
       this.showLoading = true;
       this.getAllAlarmDataList(this.query).then(res=>{
-        this.showLoading = false;
-        this.dataList = res.data.list;
-          _this.alarmFeatures=this.dataList.map((d)=>{
-              if(d.x&&d.x.length>0&&d.y&&d.y.length>0){
-                  const feature = _this.mapManager.xyToFeature(d.x,d.y);
-                  feature.set('props',d);
-                  return feature;
-              }
-          });
-        if(this.alarmFeatures.length>0){
+        _this.showLoading = false;
+        _this.dataList = res.data;
+        _this.alarmFeatures = this.dataList.map((d)=>{
+          if(d.x&&d.x.length>0&&d.y&&d.y.length>0){
+            const feature = _this.mapManager.xyToFeature(d.x,d.y);
+            feature.set('props',d);
+            return feature;
+          }
+        });
+        if(_this.alarmFeatures.length>0){
             _this.alarmLayer = _this.mapManager.addVectorLayerByFeatures(this.alarmFeatures,alarmPointStyle(),3);
             _this.alarmLayer.set('featureType','alarmSearch');
             _this.mapManager.getMap().getView().fit(_this.alarmLayer.getSource().getExtent());
         }
-        this.totalSize = res.data.total;
+        this.totalSize = res.count;
       });
     },
     //查询(默认显示当天，当前登入的用户)
     onSearch() {
-      this.query.startDay = moment(this.dayRange[0]._d).format("YYYY-MM-DD");
-      this.query.endDay = moment(this.dayRange[1]._d).format("YYYY-MM-DD");
-      this.query.pageNo = 1;
+      this.query.startDay = this.dayRange[0]._d.getTime()
+      this.query.endDay = this.dayRange[1]._d.getTime();
+      this.query.curPage = 1;
       this.getDataList();
     },
     //翻页
     changePagination(pageNo, pageSize) {
       console.log('changePagination', pageNo, pageSize);
-      this.query.pageNo = pageNo;
+      this.query.curPage = pageNo;
       this.getDataList();
     },
     clickDataItem(index){
@@ -211,8 +206,11 @@ export default {
       this.alarmInfoData = this.dataList[index];
       this.alarmOverlay.setPosition([parseFloat(this.alarmInfoData.x),parseFloat(this.alarmInfoData.y)])
     },
-    playVideo(videoSrc){
-      this.videoSrc = videoSrc;
+
+    playVideo(mpId){
+      this.getCameraUrl({userId: userId, mpId: mpId}).then(res => {
+        this.videoSrc = res.mediaURL;
+      });
     },
     //地图上告警点位图标点击事件处理器
     alarmMapClickHandler({ pixel, coordinate }){
@@ -223,8 +221,11 @@ export default {
         }
     },
     //关闭地图上的弹窗
-    closeTip(){
+    closeTip(isRefresh){
         this.alarmOverlay.setPosition(undefined);
+        if(isRefresh){
+          this.getDataList();
+        }
     }
   },
     beforeDestroy(){
@@ -343,7 +344,7 @@ export default {
     }
     .pagination-panel {
       text-align: right;
-      padding: 20px 20px 0px 0px;
+      padding: 10px 10px 20px 0px;
     }
     .nodata-panel,
     .spin-panel {
