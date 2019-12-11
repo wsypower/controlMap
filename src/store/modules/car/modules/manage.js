@@ -3,9 +3,10 @@ import {
   getAllCarTreeData,
   getCarTrailDataList,
   getTrailDetailData,
+  getAllGroupDataList,
+  getAllCarTypeDataList,
   getCarViolateRulesDataList,
-  deleteCarViolateRules,
-  getAllCarCompanyDataList
+  deleteCarViolateRules
 } from '@/api/car/manage.js'
 
 export default {
@@ -63,10 +64,23 @@ export default {
           })
       })
     },
-    getAllCarCompanyDataList(state, data) {
+    getAllGroupDataList(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
-        getAllCarCompanyDataList(data)
+        getAllGroupDataList(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getAllCarTypeDataList(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getAllCarTypeDataList(data)
           .then(res => {
             resolve(res)
           })

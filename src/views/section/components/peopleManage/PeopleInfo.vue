@@ -166,6 +166,8 @@ export default{
     padding-left: 10px;
     padding-right: 10px;
     position: relative;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
     .info-body-left {
       width: 80px;
       height: 100%;
@@ -265,6 +267,8 @@ export default{
     color: #2b90f3;
     background-color: #ffffff;
     cursor: pointer;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
   }
   .tooltip__arrow {
     width: 50px;

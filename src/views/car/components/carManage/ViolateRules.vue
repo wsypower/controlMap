@@ -6,11 +6,11 @@
         <a-range-picker v-model="dayRange" style="flex:1" />
       </div>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
-        <label style="width: 70px;">所属公司：</label>
-        <a-select v-model="query.companyId" showSearch placeholder="请选择" style="flex:1">
+        <label style="width: 70px;">所属中队：</label>
+        <a-select v-model="query.groupId" showSearch placeholder="请选择" style="flex:1">
           <a-select-option value="" key="-1">所有</a-select-option>
-          <a-select-option v-for="(company, index) in companyDataList" :value="company.id" :key="index">{{
-            company.name
+          <a-select-option v-for="(group, index) in groupDataList" :value="group.id" :key="index">{{
+            group.name
           }}</a-select-option>
         </a-select>
       </div>
@@ -18,16 +18,19 @@
         <label style="width: 70px;">违规类型：</label>
         <a-select v-model="query.vType" showSearch placeholder="请选择" style="width:100px;">
           <a-select-option value="">所有</a-select-option>
-          <a-select-option value="超时停留">超时停留</a-select-option>
-          <a-select-option value="超范围">超范围</a-select-option>
-          <a-select-option value="超速">超速</a-select-option>
+<!--          <a-select-option value="超时停留">超时停留</a-select-option>-->
+          <a-select-option value="1">越界</a-select-option>
+          <a-select-option value="2">超速</a-select-option>
         </a-select>
         <label style="margin-left:7px;">车型：</label>
-        <a-select v-model="query.carType" showSearch placeholder="请选择" style="width:100px;">
+        <a-select v-model="query.carTypeId" showSearch placeholder="请选择" style="width:100px;">
           <a-select-option value="">所有</a-select-option>
-          <a-select-option value="C1">C1</a-select-option>
-          <a-select-option value="C2">C2</a-select-option>
-          <a-select-option value="A1">A1</a-select-option>
+          <a-select-option v-for="(type, index) in carTypeList" :value="type.id" :key="index">{{
+            type.name
+            }}</a-select-option>
+<!--          <a-select-option value="C1">C1</a-select-option>-->
+<!--          <a-select-option value="C2">C2</a-select-option>-->
+<!--          <a-select-option value="A1">A1</a-select-option>-->
         </a-select>
       </div>
       <div flex="fir:left cross:center">
@@ -90,131 +93,135 @@
 import { mapActions } from 'vuex';
 import moment from 'moment';
 import util from '@/utils/util';
+const userId = util.cookies.get('userId');
 export default {
-    name: 'carViolateRules',
-    props:{},
-    data(){
-        return {
-            companyDataList: [],
-            //查询条件--不分页
-            query: {
-                companyId: '',
-                startDay: '',
-                endDay: '',
-                //违规类型
-                vType: '',
-                //车型
-                carType: '',
-                //车牌/驾驶员/手机号
-               searchContent: ''
-            },
-            //时间范围
-            dayRange: [],
-            //查询数据的过渡效果
-            showLoading: false,
-            dataList:[],
-          //违规次数
-           times: 0
-        }
-    },
-    mounted(){
-
-      this.getAllCarCompanyDataList().then(res=>{
-        this.companyDataList = res.data;
-      });
-        let day = moment(new Date()).format('YYYY-MM-DD');
-        this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-        this.query.startDay = day;
-        this.query.endDay = day;
-        this.getDataList();
-    },
-    methods:{
-        ...mapActions('car/manage', ['getCarViolateRulesDataList','getTrailDetailData','deleteCarViolateRules','getAllCarCompanyDataList']),
-        //获取人员违规数据
-        getDataList(){
-            console.log('this.query',this.query);
-            this.showLoading = true;
-            this.getCarViolateRulesDataList(this.query).then(res=>{
-                this.dataList = res.data.map(item=>{
-                    item.expend = false;
-                    let typeArr = [];
-                    item.vLog.forEach(log=>{
-                        log.day = moment(log.startTime).format('YYYY-MM-DD');
-                        log.startTimeStr = moment(log.startTime).format('HH:mm');
-                        log.endTimeStr = moment(log.endTime).format('HH:mm');
-                        log.isStart = false;
-                        log.hasDetail = false;
-                        if(typeArr.indexOf(log.vType)<0){
-                            typeArr.push(log.vType);
-                        }
-                    })
-                    item.vTypeList = typeArr;
-                    this.times += item.vLog.length;
-                    return item
-                })
-                this.showLoading = false;
-            });
-        },
-        //搜索查询
-        onSearch() {
-            this.query.startDay = moment(this.dayRange[0]._d).format("YYYY-MM-DD");
-            this.query.endDay = moment(this.dayRange[1]._d).format("YYYY-MM-DD");
-            this.query.pageNo = 1;
-            this.getDataList();
-        },
-        //展开或者收起违规详情
-        onExpend(index,item){
-            //由于高度是由内容撑开的，所以不是固定值，而动效需要固定高度才能触发，故每一次都需要去计算一下
-            let height = this.$refs.animateContent[index].offsetHeight;
-            console.log('onExpend',height);
-            item.expend = !item.expend;
-            if(item.expend){
-                this.$refs.animatePanel[index].style.height = height + 'px';
-            }
-            else{
-                this.$refs.animatePanel[index].style.height = '0px';
-            }
-        },
-        //开始播放
-        startPlay(log){
-            log.isStart = true;
-            if(log.hasDetail){
-                //已经有轨迹数据，直接在地图上播放
-            }
-            else{
-                let temp = {
-                    userId: log.userId,
-                    startTime: log.startTime,
-                    endTime: log.endTime
-                }
-                this.getTrailDetailData(temp).then(res=>{
-                    console.log('TrailDetailData',res.data);
-                    log.hasDetail = true;
-                    //轨迹数据在res.data中，直接在地图上播放
-                });
-            }
-
-        },
-        //暂停播放
-        pausePlay(log){
-            //地图上处理暂停播放
-            log.isStart = false;
-        },
-        //删除某条非违规记录
-        deleteVLog(log,i,index){
-            this.deleteCarViolateRules({id: log.id}).then(res=>{
-                this.dataList[index].vLog.splice(i,1);
-                //删除记录后，高度需要重新计算
-                setTimeout(()=>{
-                    let height = this.$refs.animateContent[index].offsetHeight;
-                    if(this.dataList[index].expend){
-                        this.$refs.animatePanel[index].style.height = height + 'px';
-                    }
-                },200)
-
-            });
-        }
+  name: 'carViolateRules',
+  props:{},
+  data(){
+    return {
+      //中队数据
+      groupDataList: [],
+      //车辆类型数据
+      carTypeList: [],
+      //查询条件--不分页
+      query: {
+        userId: userId,
+        groupId: '',
+        startDay: '',
+        endDay: '',
+        //违规类型
+        vType: '',
+        //车辆类型
+        carTypeId: '',
+        //车牌/驾驶员/手机号
+        searchContent: ''
+      },
+      //时间范围
+      dayRange: [],
+      //查询数据的过渡效果
+      showLoading: false,
+      dataList:[],
+      //违规次数
+      times: 0
     }
+  },
+  mounted(){
+    this.getAllGroupDataList({userId: userId}).then(res=>{
+      this.groupDataList = res;
+    });
+    this.getAllCarTypeDataList({userId: userId}).then(res=>{
+      this.groupDataList = res;
+    });
+    let day = moment(new Date()).format('YYYY-MM-DD');
+    this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
+    this.query.startDay = new Date(day).getTime();
+    this.query.endDay = new Date(day).getTime();
+    this.getDataList();
+  },
+  methods:{
+    ...mapActions('car/manage', ['getCarViolateRulesDataList','getTrailDetailData','deleteCarViolateRules','getAllGroupDataList', 'getAllCarTypeDataList']),
+    //获取人员违规数据
+    getDataList(){
+      console.log('this.query',this.query);
+      this.showLoading = true;
+      this.getCarViolateRulesDataList(this.query).then(res=>{
+        this.dataList = res.data.map(item=>{
+          item.expend = false;
+          let typeArr = [];
+          item.vLog.forEach(log=>{
+            log.day = moment(log.startTime).format('YYYY-MM-DD');
+            log.startTimeStr = moment(log.startTime).format('HH:mm');
+            log.endTimeStr = moment(log.endTime).format('HH:mm');
+            log.isStart = false;
+            log.hasDetail = false;
+            if(typeArr.indexOf(log.vType)<0){
+              typeArr.push(log.vType);
+            }
+          })
+          item.vTypeList = typeArr;
+          this.times += item.vLog.length;
+          return item
+        })
+        this.showLoading = false;
+      });
+    },
+    //搜索查询
+    onSearch() {
+      this.query.startDay = this.dayRange[0]._d.getTime();
+      this.query.endDay = this.dayRange[1]._d.getTime();
+      this.getDataList();
+    },
+    //展开或者收起违规详情
+    onExpend(index,item){
+      //由于高度是由内容撑开的，所以不是固定值，而动效需要固定高度才能触发，故每一次都需要去计算一下
+      let height = this.$refs.animateContent[index].offsetHeight;
+      console.log('onExpend',height);
+      item.expend = !item.expend;
+      if(item.expend){
+        this.$refs.animatePanel[index].style.height = height + 'px';
+      }
+      else{
+        this.$refs.animatePanel[index].style.height = '0px';
+      }
+    },
+    //开始播放
+    startPlay(log){
+      log.isStart = true;
+      if(log.hasDetail){
+        //已经有轨迹数据，直接在地图上播放
+      }
+      else{
+        let temp = {
+          userId: log.userId,
+          startTime: log.startTime,
+          endTime: log.endTime
+        }
+        this.getTrailDetailData(temp).then(res=>{
+          console.log('TrailDetailData',res.data);
+          log.hasDetail = true;
+          //轨迹数据在res.data中，直接在地图上播放
+        });
+      }
+    },
+    //暂停播放
+    pausePlay(log){
+      //地图上处理暂停播放
+      log.isStart = false;
+    },
+    //删除某条非违规记录
+    deleteVLog(log,i,index){
+      this.deleteCarViolateRules({id: log.id}).then(res=>{
+        this.dataList[index].vLog.splice(i,1);
+        //删除记录后，高度需要重新计算
+        setTimeout(()=>{
+          let height = this.$refs.animateContent[index].offsetHeight;
+          if(this.dataList[index].expend){
+            this.$refs.animatePanel[index].style.height = height + 'px';
+          }
+        },200)
+      });
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

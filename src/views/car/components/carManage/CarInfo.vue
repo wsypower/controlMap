@@ -79,7 +79,6 @@ export default{
   background-image: linear-gradient(90deg, #0065ea 0%, #00a5ff 100%);
   border-radius: 6px;
   box-shadow: -1px 0px 4px 0px rgba(0, 0, 0, 0.12);
-  border: solid 1px #dddddd;
   .tip-header {
     height: 40px;
     width: 100%;
@@ -124,8 +123,8 @@ export default{
     }
     .close {
       position: absolute;
-      right: 0px;
-      top: 0px;
+      right: 6px;
+      top: 6px;
       width: 24px;
       height: 24px;
       line-height: 24px;
@@ -167,6 +166,8 @@ export default{
     color: #2b90f3;
     background-color: #ffffff;
     cursor: pointer;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
   }
   .tooltip__arrow {
     width: 50px;
