@@ -19,14 +19,14 @@
       <div>
         <span>星期</span>
         <span class="sort-icon">
-          <i @click="onSort('asc')">
-            <cg-icon-svg name="caret-up" class="svg_icon_up" :class="{ active: activeName === 'asc' }"></cg-icon-svg>
-          </i>
           <i @click="onSort('desc')">
+            <cg-icon-svg name="caret-up" class="svg_icon_up" :class="{ active: activeName === 'desc' }"></cg-icon-svg>
+          </i>
+          <i @click="onSort('asc')">
             <cg-icon-svg
               name="caret-down"
               class="svg_icon_down"
-              :class="{ active: activeName === 'desc' }"
+              :class="{ active: activeName === 'asc' }"
             ></cg-icon-svg>
           </i>
         </span>
@@ -52,12 +52,12 @@
             <span class="look" @click="lookDetail(item)">查看</span>
           </div>
         </div>
-        <div class="pagination-panel" v-if="dataList.length > 20">
+        <div class="pagination-panel" v-if="totalSize > 20">
           <a-pagination
             :total="totalSize"
             :showTotal="total => `共 ${total} 条`"
             :pageSize="20"
-            :defaultCurrent="1"
+            :current="query.curPage"
             @change="changePagination"
           />
         </div>
@@ -97,14 +97,14 @@ export default {
                 userId: '',
                 startDay: '',
                 endDay: '',
-                sortType: 'asc',
+                sortType: 'desc',
                 curPage: 1,
                 pageSize: 20
             },
             dayRange: [],
 
             showLoading: false,
-            activeName: 'asc',
+            activeName: 'desc',
             activeIndex: null,
             dataList:[],
             totalSize: 0,
