@@ -65,7 +65,7 @@ export function getAllCarTreeData(data) {
 export const getCarTrailDataList = data => {
   console.log('api:getCarTrailDataList', data)
   return request({
-    url: `@test/getCarTrailDataList`,
+    url: `car/getTrailDetailData?_t=`+ new Date().getTime(),
     method: 'post',
     data
   })
