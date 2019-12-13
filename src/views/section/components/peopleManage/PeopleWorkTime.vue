@@ -95,8 +95,8 @@ export default {
         return {
             query: {
                 userId: '',
-                startDay: '',
-                endDay: '',
+                startTime: '',
+                endTime: '',
                 sortType: 'desc',
                 curPage: 1,
                 pageSize: 20
@@ -120,8 +120,8 @@ export default {
         this.query.userId = util.cookies.get('userId');
         let day = moment(new Date()).format('YYYY-MM-DD');
         this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-        this.query.startDay = new Date(day).getTime();
-        this.query.endDay = new Date(day).getTime();
+        this.query.startTime = new Date(day).getTime();
+        this.query.endTime = new Date(day).getTime();
         this.getDataList();
     },
     methods:{
@@ -145,8 +145,8 @@ export default {
 
         //查询(默认显示当天，当前登入的用户)
         onSearch() {
-            this.query.startDay = this.dayRange[0]._d.getTime();
-            this.query.endDay = this.dayRange[1]._d.getTime();
+            this.query.startTime = this.dayRange[0]._d.getTime();
+            this.query.endTime = this.dayRange[1]._d.getTime();
             this.query.curPage = 1;
             this.getDataList()
         },

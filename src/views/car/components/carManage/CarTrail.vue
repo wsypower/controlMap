@@ -95,14 +95,10 @@ export default {
             //各项查询条件
             query: {
                carId: '',
-               userId:'e0f48f30a4e511e856f64dd5bc2aa7bb',
+               userId:'',
                 startTime: '',
                 endTime: '',
-               // startDay: '',
-               // endDay: '',
-               // sortType: 'asc',
-               // pageNo: 1,
-               // pageSize: 20
+               sortType: 'desc',
             },
             //查询的时间范围
             dayRange: [],
@@ -128,6 +124,8 @@ export default {
         ...mapState('map', ['mapManager']),
     },
     mounted(){
+        const userId = util.cookies.get('userId');
+        this.query.userId = userId;
         this.map=this.mapManager.getMap();
         if(this.infoId){
             this.query.carId = this.infoId;

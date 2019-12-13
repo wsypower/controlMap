@@ -52,8 +52,8 @@ export function getAllCarTreeData(data) {
  * @author moxuejuan
  * @date 2019-11-26 14:53:20
  * @param {String} carId 请求参数 :用户唯一标识符默认参数）
- * @param {String} startDay 请求参数 :开始日期
- * @param {String} endDay 请求参数 :结束日期
+ * @param {String} startTime 请求参数 :开始日期
+ * @param {String} endTime 请求参数 :结束日期
  * @param {String} sortType 时间排序（asc,desc）
  * @param {Number} pageNo页数
  * @param {Number} pageSize每页显示条数
@@ -86,7 +86,7 @@ export const getCarTrailDataList = data => {
 export const getTrailDetailData = data => {
   console.log('api:getTrailDetailData', data)
   return request({
-    url: `@test/getTrailDetailData?_t=` + new Date().getTime(),
+    url: `car/getTrailDetailData?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -157,8 +157,8 @@ export const getAllCarTypeDataList = data => {
  * @param {String} companyId 请求参数：所属公司ID
  * @param {String} vType 请求参数：违规类型Id
  * @param {String} carType 请求参数：车型Id
- * @param {String} startDay 请求参数 :开始日期
- * @param {String} endDay 请求参数 :结束日期
+ * @param {String} startTime 请求参数 :开始日期
+ * @param {String} endTime 请求参数 :结束日期
  * @param {String} searchContent 请求参数 : 车牌号/驾驶员/手机号
  * @method：POST(参数相对多一些，使用POST请求)
  * @response：{
@@ -168,7 +168,7 @@ export const getAllCarTypeDataList = data => {
 export const getCarViolateRulesDataList = data => {
   console.log('api:getCarViolateRulesDataList', data)
   return request({
-    url: `@test/getCarViolateRulesDataList`,
+    url: `car/getCarViolateRulesDataList`,
     method: 'post',
     data
   })
@@ -187,7 +187,7 @@ export const getCarViolateRulesDataList = data => {
 export const deleteCarViolateRules = data => {
   console.log('api:deleteCarViolateRules', data)
   return request({
-    url: `@test/deleteCarViolateRules`,
+    url: `car/deleteCarViolateRules`,
     method: 'post',
     data
   })

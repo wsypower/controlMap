@@ -97,10 +97,10 @@ export default {
         return {
             //各项查询条件
             query: {
-               userId: '',
-              startTime: '',
-              endTime: '',
-               sortType: 'desc',
+                userId: '',
+                startTime: '',
+                endTime: '',
+                sortType: 'desc',
             },
             //查询的时间范围
             dayRange: [],

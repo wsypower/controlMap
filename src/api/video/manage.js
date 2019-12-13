@@ -32,8 +32,8 @@ export function getAllAlarmTypeDataList(data) {
  * @date 2019-12-03 14:53:20
  * @param
  *     {Number} alarmTypeId: 告警类型Id
- *     {String} startDay: 开始日期
- *     {String} endDay: 结束日期
+ *     {String} startTime: 开始日期
+ *     {String} endTime: 结束日期
  *     {Number} pageNo: 页码
  *     {Number} pageSize: 每页显示条数
  * @method：GET
