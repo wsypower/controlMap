@@ -249,7 +249,7 @@ export default {
                 this.trackSegments[index].isStart = true;
                 const routeCoords = this.currentQueryTracks[index];
                 if (!this.trackPlaying) {
-                    this.trackPlaying = new TrackPlaying(this.map, routeCoords, null,null, 'car');
+                    this.trackPlaying = new TrackPlaying(this.map, routeCoords, null,null, 'car',this.stopPlayer,index);
                 } else {
                     this.trackPlaying.data = routeCoords;
                 }
@@ -269,6 +269,11 @@ export default {
                 this.trackPlaying.pauseMoving();
                 this.isPlayingTrack = false;
             }
+        },
+        //播放停止
+        stopPlayer(index){
+            this.trackSegments[index].isStart= false;
+            console.log('回调========')
         },
         //查询(默认显示当天，当前登入的用户)
         onSearch() {

@@ -12,7 +12,7 @@ import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 export class TrackPlaying{
-    constructor(map, data, routeStyle, trackPointStyle,type) {
+    constructor(map, data, routeStyle, trackPointStyle,type,callbackFn,index) {
         this.map = map;
         this.data = data;
         this.cycleNumber = 0;
@@ -21,6 +21,8 @@ export class TrackPlaying{
         this.trackLength = 0;//轨迹点总数
         this.speed=0.1;
         this.animation=null;//定义requestAnimationFrame变量
+        this.callbackFn = callbackFn;
+        this.index=index;
         this.routeStyle = routeStyle || new Style({
             stroke: new Stroke({
                 color: 'blue',
@@ -181,7 +183,7 @@ export class TrackPlaying{
         if (this.cycleNumber < this.trackLength) {
             this.animation = window.requestAnimationFrame(this.trackMoving.bind(this));
         }else{ //播放完毕,暂停按钮要换成播放按钮
-
+            this.callbackFn(this.index);
         }
     }
     //停止移动
