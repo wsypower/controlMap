@@ -151,6 +151,10 @@ export default {
         //获取人员轨迹数据
         getDataList(){
             console.log('this.query',this.query);
+            if(!this.query.carId){
+              this.$message.warning('没有选择车辆！！！');
+              return
+            }
             this.showLoading = true;
             this.getCarTrailDataList(this.query).then(res=>{
                 this.showLoading = false;
@@ -169,7 +173,6 @@ export default {
                 }else{
                     this.$message.warning('未查询到轨迹数据！！！');
                 }
-                // this.totalSize = res.data.total;
             });
         },
         // 传过来的轨迹点位分段处理并保存

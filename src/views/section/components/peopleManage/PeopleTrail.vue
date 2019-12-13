@@ -3,8 +3,8 @@
     <div class="search-panel">
       <div flex="fir:left cross:center">
         <label style="width: 70px;">选择人员：</label>
-        <a-select v-model="query.userId" showSearch placeholder="请选择" style="flex:1;width: 246px;">
-          <a-select-option v-for="(people, index) in peopleDataList" :value="people.id" :key="index"
+        <a-select v-model="query.userDisplayId" showSearch placeholder="请选择" style="flex:1;width: 246px;">
+          <a-select-option v-for="(people, index) in peopleDataList" :value="people.userDisplayId" :key="index"
             >{{ people.name }}（{{ people.dept }}）</a-select-option
           >
         </a-select>
@@ -98,6 +98,7 @@ export default {
             //各项查询条件
             query: {
                 userId: '',
+                userDisplayId: '',
                 startTime: '',
                 endTime: '',
                 sortType: 'desc',
@@ -123,16 +124,21 @@ export default {
         }
     },
     computed:{
-        ...mapState('map', ['mapManager']),
+        ...mapState('map', ['mapManager'])
     },
     mounted(){
         this.map=this.mapManager.getMap();
+        let userId = '';
         if(this.infoId){
-            this.query.userId = this.infoId;
+            userId = this.infoId;
         }
         else{
-            this.query.userId = util.cookies.get('userId');
+            userId = util.cookies.get('userId');
         }
+        let temp = this.peopleDataList.find(item => item.id === userId );
+        this.query.userId = userId;
+        this.query.userDisplayId = temp.userDisplayId;
+
         let day = moment(new Date()).format('YYYY-MM-DD');
         this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
         this.query.startTime = new Date(day).getTime();
@@ -141,7 +147,12 @@ export default {
     },
     watch:{
         infoId:function(val){
-            this.query.userId = val;
+            if(val) {
+                console.log('infoId',val);
+                let temp = this.peopleDataList.find(item => item.id === val );
+                this.query.userId = val;
+                this.query.userDisplayId = temp.userDisplayId;
+            }
             let day = moment(new Date()).format('YYYY-MM-DD');
             this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
             this.query.startTime = new Date(day).getTime();

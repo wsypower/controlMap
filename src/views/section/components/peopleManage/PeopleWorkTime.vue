@@ -3,8 +3,8 @@
     <div class="search-panel">
       <div flex="fir:left cross:center">
         <label style="width: 70px;">选择人员：</label>
-        <a-select v-model="query.userId" showSearch placeholder="请选择" style="flex:1;width:246px;">
-          <a-select-option v-for="(people, index) in peopleDataList" :value="people.id" :key="index"
+        <a-select v-model="query.userDisplayId" showSearch placeholder="请选择" style="flex:1;width:246px;">
+          <a-select-option v-for="(people, index) in peopleDataList" :value="people.userDisplayId" :key="index"
             >{{ people.name }}（{{ people.dept }}）</a-select-option
           >
         </a-select>
@@ -95,6 +95,7 @@ export default {
         return {
             query: {
                 userId: '',
+                userDisplayId: '',
                 startTime: '',
                 endTime: '',
                 sortType: 'desc',
@@ -118,6 +119,9 @@ export default {
     },
     mounted(){
         this.query.userId = util.cookies.get('userId');
+        let temp = this.peopleDataList.find(item => item.id === this.query.userId );
+        this.query.userDisplayId = temp.userDisplayId;
+
         let day = moment(new Date()).format('YYYY-MM-DD');
         this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
         this.query.startTime = new Date(day).getTime();

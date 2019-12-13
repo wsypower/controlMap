@@ -36,7 +36,10 @@ export default {
     mounted(){
       const userId = util.cookies.get('userId');
       this.getAllCarDataList({userId:userId}).then(res=>{
-        this.carDataList = res;
+        res.forEach(item => {
+          item.carDisplayId = item.id + '_' + item.name;
+          this.carDataList.push(item);
+        });
       });
     },
     methods:{

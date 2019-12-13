@@ -7,9 +7,9 @@
       </div>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
         <label style="width: 70px;">选择人员：</label>
-        <a-select v-model="query.peopleId" showSearch placeholder="请选择" style="flex:1;width:246px;">
+        <a-select v-model="query.userDisplayId" showSearch placeholder="请选择" style="flex:1;width:246px;">
           <a-select-option value="" key="-1">全部</a-select-option>
-          <a-select-option v-for="(people, index) in peopleDataList" :value="people.id" :key="index"
+          <a-select-option v-for="(people, index) in peopleDataList" :value="people.userDisplayId" :key="index"
             >{{ people.name }}（{{ people.dept }}）</a-select-option
           >
         </a-select>
@@ -94,6 +94,7 @@ export default {
             query: {
                 userId: '',
                 peopleId: '',
+                userDisplayId: '',
                 startTime: '',
                 endTime: '',
                 //违规类型
@@ -108,6 +109,8 @@ export default {
     },
     mounted(){
       this.query.userId = util.cookies.get('userId');
+      let temp = this.peopleDataList.find(item => item.id === this.query.userId );
+      this.query.userDisplayId = temp.userDisplayId;
       //获取当前日期并进行转化与显示
       let day = moment(new Date()).format('YYYY-MM-DD');
       this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
@@ -121,6 +124,7 @@ export default {
         getDataList(){
             console.log('this.query',this.query);
             this.showLoading = true;
+            this.query.peopleId = this.query.userDisplayId.split('_')[0];
             this.getUserViolateRulesDataList(this.query).then(res=>{
                 this.dataList = res.map(item=>{
                     item.expend = false;

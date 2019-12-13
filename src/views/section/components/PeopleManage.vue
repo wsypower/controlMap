@@ -41,7 +41,10 @@ export default {
     mounted(){
       const userId = util.cookies.get('userId')
       this.getAllPeopleDataList({userId: userId}).then(res=>{
-        this.peopleDataList = res;
+          res.forEach(item => {
+            item.userDisplayId = item.id + '_' + item.name;
+            this.peopleDataList.push(item);
+          });
       });
     },
     methods:{
