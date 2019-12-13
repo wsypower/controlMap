@@ -79,7 +79,7 @@ export default {
       videoFeatures: [],
       //地图相关
       videoLayer: null,
-        isLoadData: false
+      isLoadData: false
     }
   },
   computed:{
@@ -109,7 +109,7 @@ export default {
     this.map.on('click', this.videoMapClickHandler);
     this.getAllCameraTreeData({userId:userId}).then(res=>{
       console.log('getAllCameraTreeData',res);
-      this.sourceData = res;
+      this.sourceData = res.data[0].children;
       this.showLoading = false;
     });
   },
@@ -119,9 +119,9 @@ export default {
     changeTreeData(arr,deptName){
       const _this = this;
       arr.forEach(item=>{
-        item.title = item.mpname;
         item.scopedSlots = { title: 'title' };
         if(item.isLeaf){
+          item.title = item.mpname;
           item.key = item.mpid;
           item.dept = deptName;
           item.slots = {icon: 'camera'};
@@ -140,7 +140,8 @@ export default {
           }
         }
         else{
-          item.key = 'dept_' + item.mpid;
+          item.title = item.name;
+          item.key = 'dept_' + item.id;
           item.slots = {icon: 'dept'};
           this.changeTreeData(item.children, item.mpname);
         }
@@ -172,90 +173,41 @@ export default {
       if(selectedKeys[0].indexOf('dept_')<0){
         let needData = e.selectedNodes[0].data.props;
         let mpid = needData.mpid;
-        if(this.playerMethod === 'browser'){
-          //打开摄像头播放
-          this.getCameraUrl({userId: userId, mpId: mpid}).then(res => {
-            this.videoSrc = res.mediaURL;
-          });
-        }else {
-          //打开C端工具播放
-          axios.get('http://61.153.37.214:81/api/sp/getSecretApi').then(resultConfig=>{
-            if(resultConfig){
-              var PalyType = "PlayReal";
-              var SvrPort = "443";
-              var httpsflag = "1";
-              var data = resultConfig.data;
-              var SvrIp = data.SvrIp;
-              var appkey = data.appkey;
-              var appSecret = data.appSecret;
-              var time = data.time;
-              var timeSecret = data.timeSecret;
-              var CamList = mpid;
-              //主要是添加了'hikvideoclient://' 和 'VersionTag:artemis'2段字符串
-              var param = 'hikvideoclient://ReqType:' + PalyType + ';' + 'VersionTag:artemis' + ';' + 'SvrIp:' + SvrIp + ';' + 'SvrPort:' + SvrPort + ';' + 'Appkey:' + appkey + ';' + 'AppSecret:' + appSecret + ';' + 'time:' + time + ';' + 'timesecret:' + timeSecret + ';' + 'httpsflag:' + httpsflag + ';' + 'CamList:' + CamList + ';';
-              document.getElementById("url").src = param;
-            }
-          }).catch(err=>{
-            console.log("错误信息---------->" + err);
-          });
-          // $.ajax({
-          //   url:"http://61.153.37.214:81/api/sp/getSecretApi",
-          //   dataType:"json",
-          //   async:false,
-          //   type:"GET",
-          //   success:function(resultConfig){
-          //     if(resultConfig){
-          //       var PalyType = "PlayReal";
-          //       var SvrPort = "443";
-          //       var httpsflag = "1";
-          //       var data = resultConfig.data;
-          //       var SvrIp = data.SvrIp;
-          //       var appkey = data.appkey;
-          //       var appSecret = data.appSecret;
-          //       var time = data.time;
-          //       var timeSecret = data.timeSecret;
-          //       var CamList = mpid;
-          //       //主要是添加了'hikvideoclient://' 和 'VersionTag:artemis'2段字符串
-          //       var param = 'hikvideoclient://ReqType:' + PalyType + ';' + 'VersionTag:artemis' + ';' + 'SvrIp:' + SvrIp + ';' + 'SvrPort:' + SvrPort + ';' + 'Appkey:' + appkey + ';' + 'AppSecret:' + appSecret + ';' + 'time:' + time + ';' + 'timesecret:' + timeSecret + ';' + 'httpsflag:' + httpsflag + ';' + 'CamList:' + CamList + ';';
-          //       document.getElementById("url").src = param;
-          //     }
-          //   },
-          //   error: function (e) {
-          //     console.log("错误信息---------->" + e);
-          //   }
-          // });
-        }
-
+        this.playVideo(mpid);
       }
     },
       videoMapClickHandler() {
-          if (this.playerMethod === 'browser') {
-              //打开摄像头播放
-              this.videoSrc = needData.rmtpUrl;
-          } else {
-              let mpid = needData.mpid;
-              //打开C端工具播放
-              axios.get('http://61.153.37.214:81/api/sp/getSecretApi').then(resultConfig => {
-                  if (resultConfig) {
-                      var PalyType = "PlayReal";
-                      var SvrPort = "443";
-                      var httpsflag = "1";
-                      var data = resultConfig.data;
-                      var SvrIp = data.SvrIp;
-                      var appkey = data.appkey;
-                      var appSecret = data.appSecret;
-                      var time = data.time;
-                      var timeSecret = data.timeSecret;
-                      var CamList = mpid;
-                      //主要是添加了'hikvideoclient://' 和 'VersionTag:artemis'2段字符串
-                      var param = 'hikvideoclient://ReqType:' + PalyType + ';' + 'VersionTag:artemis' + ';' + 'SvrIp:' + SvrIp + ';' + 'SvrPort:' + SvrPort + ';' + 'Appkey:' + appkey + ';' + 'AppSecret:' + appSecret + ';' + 'time:' + time + ';' + 'timesecret:' + timeSecret + ';' + 'httpsflag:' + httpsflag + ';' + 'CamList:' + CamList + ';';
-                      document.getElementById("url").src = param;
-                  }
-              }).catch(err => {
-                  console.log("错误信息---------->" + err);
-              });
+          this.playVideo(mpid);
+      },
+    playVideo(mpid){
+      if (this.playerMethod === 'browser') {
+        //打开摄像头播放
+        this.getCameraUrl({userId: userId, mpId: mpid}).then(res => {
+          this.videoSrc = res.mediaURL;
+        });
+      } else {
+        //打开C端工具播放
+        axios.get('http://61.153.37.214:81/api/sp/getSecretApi').then(resultConfig => {
+          if (resultConfig) {
+            var PalyType = "PlayReal";
+            var SvrPort = "443";
+            var httpsflag = "1";
+            var data = resultConfig.data;
+            var SvrIp = data.SvrIp;
+            var appkey = data.appkey;
+            var appSecret = data.appSecret;
+            var time = data.time;
+            var timeSecret = data.timeSecret;
+            var CamList = mpid;
+            //主要是添加了'hikvideoclient://' 和 'VersionTag:artemis'2段字符串
+            var param = 'hikvideoclient://ReqType:' + PalyType + ';' + 'VersionTag:artemis' + ';' + 'SvrIp:' + SvrIp + ';' + 'SvrPort:' + SvrPort + ';' + 'Appkey:' + appkey + ';' + 'AppSecret:' + appSecret + ';' + 'time:' + time + ';' + 'timesecret:' + timeSecret + ';' + 'httpsflag:' + httpsflag + ';' + 'CamList:' + CamList + ';';
+            document.getElementById("url").src = param;
           }
+        }).catch(err => {
+          console.log("错误信息---------->" + err);
+        });
       }
+    }
   }
 }
 </script>
