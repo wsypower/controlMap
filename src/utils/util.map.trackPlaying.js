@@ -24,7 +24,7 @@ export class TrackPlaying{
         this.routeStyle = routeStyle || new Style({
             stroke: new Stroke({
                 color: 'blue',
-                width: 2
+                width: 4
             })
         });
         this.trackPointStyle = trackPointStyle || new Style({
@@ -37,9 +37,12 @@ export class TrackPlaying{
         });
         this.geoMarker = new Feature();//轨迹开始点
         this.lineSource = new VectorSource();//线条数据源
-        this.lineLayer = new VectorLayer();//定义线条图层
+        this.lineLayer = new VectorLayer({
+            zIndex:4
+        });//定义线条图层
         this.trackLayer = new VectorLayer({//定义轨迹图层
-            source: new VectorSource({})
+            source: new VectorSource({}),
+            zIndex:4
         });
         this.init();
     }
@@ -177,6 +180,8 @@ export class TrackPlaying{
         };
         if (this.cycleNumber < this.trackLength) {
             this.animation = window.requestAnimationFrame(this.trackMoving.bind(this));
+        }else{ //播放完毕,暂停按钮要换成播放按钮
+
         }
     }
     //停止移动

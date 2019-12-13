@@ -38,18 +38,18 @@
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
         <a-spin tip="数据加载中..."></a-spin>
       </div>
-      <cg-container scroll v-if="!showLoading && dataList.length > 0">
-        <div class="item" flex="dir:left main:justify" v-for="(item, index) in dataList" :key="index">
+      <cg-container scroll v-if="!showLoading && trackSegments.length > 0">
+        <div class="item" flex="dir:left main:justify" v-for="(item, index) in trackSegments" :key="index">
           <div flex="cross:center main:center">
-            <span>{{ item.index }}</span>
+            <span>{{ index }}</span>
           </div>
           <div>
-            <p><span class="dot green"></span>{{ new Date(item.startTime) | date_format() }}</p>
-            <p><span class="dot red"></span>{{ new Date(item.endTime) | date_format() }}</p>
+            <p><span class="dot green"></span>{{ item.coordinates[0].time }}</p>
+            <p><span class="dot red"></span>{{ item.coordinates[item.coordinates.length-1].time }}</p>
           </div>
           <div flex="cross:center main:center">
-            <a-icon v-show="!item.isStart" type="play-circle" theme="filled" @click="startPlay(item, index)" />
-            <a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="pausePlay(item, index)" />
+            <a-icon v-show="!item.isStart" type="play-circle" theme="filled" @click="trackPlayHandler(item, index)" />
+            <a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="trackPlayHandler(item, index)" />
           </div>
         </div>
         <div v-if="dataList.length > 20" class="pagination-panel">
@@ -69,9 +69,13 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
+import { mapActions,mapState } from 'vuex'
 import util from '@/utils/util';
 import moment from 'moment';
+import {stampConvertToTime} from '@/utils/util.tool';
+import { trackByLocationList,pointByCoord } from '@/utils/util.map.manage';
+import {trackStyle,trackPointStyle,alarmPointStyle} from '@/utils/util.map.style';
+import {TrackPlaying} from '@/utils/util.map.trackPlaying'
 export default {
     name: 'carTrail',
     props:{
@@ -91,11 +95,14 @@ export default {
             //各项查询条件
             query: {
                carId: '',
-               startDay: '',
-               endDay: '',
-               sortType: 'asc',
-               pageNo: 1,
-               pageSize: 20
+               userId:'e0f48f30a4e511e856f64dd5bc2aa7bb',
+                startTime: '',
+                endTime: '',
+               // startDay: '',
+               // endDay: '',
+               // sortType: 'asc',
+               // pageNo: 1,
+               // pageSize: 20
             },
             //查询的时间范围
             dayRange: [],
@@ -106,17 +113,29 @@ export default {
             //单页数据
             dataList:[],
             //总数
-            totalSize: 0
+            totalSize: 0,
+            trackSegments:[],
+            currentQueryTracks:[],
+            trackLayer:null,
+            eventFeatures:[],
+            eventLayer:null,
+            trackPlaying:null,
+            isPlayingTrack:null,
+            trackIndex:0
         }
     },
+    computed:{
+        ...mapState('map', ['mapManager']),
+    },
     mounted(){
+        this.map=this.mapManager.getMap();
         if(this.infoId){
             this.query.carId = this.infoId;
         }
         let day = moment(new Date()).format('YYYY-MM-DD');
         this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-        this.query.startDay = day;
-        this.query.endDay = day;
+        this.query.startTime = new Date(day).getTime();
+        this.query.endTime = new Date(day).getTime();
         this.getDataList();
     },
     watch:{
@@ -124,8 +143,8 @@ export default {
             this.query.carId = val;
             let day = moment(new Date()).format('YYYY-MM-DD');
             this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-            this.query.startDay = day;
-            this.query.endDay = day;
+            this.query.startTime = new Date(day).getTime();
+            this.query.endTime = new Date(day).getTime();
             this.getDataList();
         }
     },
@@ -137,35 +156,146 @@ export default {
             this.showLoading = true;
             this.getCarTrailDataList(this.query).then(res=>{
                 this.showLoading = false;
-                this.dataList = res.data.list.map(item=>{
+                this.dataList = res.map(item=>{
                     item.isStart = false;
                     item.hasDetail = false;
+                    item.time = stampConvertToTime(item.gpstime);
                     return item
                 });
-
-                this.totalSize = res.data.total;
+                if(res.length>0){
+                    this.trackDataHandler(res);
+                    const trackLineFeature=trackByLocationList(this.dataList);
+                    this.trackLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature,trackStyle(),3);
+                    this.eventLayer= this.mapManager.addVectorLayerByFeatures(this.eventFeatures,trackPointStyle(),3);
+                    this.mapManager.getMap().getView().fit(this.trackLayer.getSource().getExtent());
+                }else{
+                    this.$message.warning('未查询到轨迹数据！！！');
+                }
+                // this.totalSize = res.data.total;
             });
+        },
+        // 传过来的轨迹点位分段处理并保存
+        trackDataHandler (coords) {
+            this.trackSegments=[];
+            this.currentQueryTracks=[];
+            // 按间隔时间轨迹分段
+            let currentCoord = coords[0];
+            let nextCoord = null;
+            let lineCoordinates = [];
+            let lineCoords = [];
+            lineCoordinates.push(currentCoord); // 加载第一个点
+            lineCoords.push([parseFloat(currentCoord.gpsx),parseFloat(currentCoord.gpsy)]);
+            if(currentCoord.operate=="2" ||currentCoord.operate=="0" ||currentCoord.operate=="1"
+                || currentCoord.operate=="5"|| currentCoord.operate=="99" ) {//上报、签到、签退、核查、普通轨迹点
+                const feature =pointByCoord([parseFloat(currentCoord.gpsx),parseFloat(currentCoord.gpsy)]);
+                feature.setProperties(currentCoord);
+                this.eventFeatures.push(feature);
+            }
+            for (let i = 1; i < coords.length - 1; i++) {
+                nextCoord = coords[i];
+                if(nextCoord.operate=="2" ||nextCoord.operate=="0" ||nextCoord.operate=="1"|| nextCoord.operate=="5"||i % 1 == 0){//配置轨迹点抽稀
+                    const feature = pointByCoord([parseFloat(nextCoord.gpsx),parseFloat(nextCoord.gpsy)]);
+                    feature.setProperties(nextCoord);
+                    this.eventFeatures.push(feature);
+                }
+                if(nextCoord.operate=="99") {//只串联普通轨迹点
+                    if (nextCoord.gpstime - currentCoord.gpstime <= 60 * 1000 * 30) { // 小于间隔时间 30分钟
+                        lineCoordinates.push(nextCoord); // 加入当前线段
+                        lineCoords.push([parseFloat(nextCoord.gpsx),parseFloat(nextCoord.gpsy)])
+                    }
+                    else { // 大于间隔时间
+                        if (lineCoordinates.length > 3) {
+                            this.trackSegments.push({
+                                coordinates:lineCoordinates,
+                                isStart:false
+                            });
+                            this.currentQueryTracks.push(lineCoords);
+                        }else{ //如果轨迹点数小于3的则不计入轨迹段中
+
+                        }
+                        lineCoordinates = [];
+                        lineCoords = [];
+                        // 将下一个线段的第一点加入
+                        lineCoordinates.push(nextCoord); // 加入当前线段
+                        lineCoords.push([parseFloat(nextCoord.gpsx),parseFloat(nextCoord.gpsy)]);
+                    }
+                }
+                currentCoord = nextCoord;
+            }
+            // 处理最后一次
+            if (lineCoordinates.length > 0) {
+                this.trackSegments.push({
+                    coordinates:lineCoordinates,
+                    isStart:false
+                });
+                this.currentQueryTracks.push(lineCoords);
+            }
+            console.log('轨迹=====',this.trackSegments);
+        },
+        //轨迹播放处理
+        trackPlayHandler(item,index){
+            // this.isPlayingTrack=!this.isPlayingTrack;
+            if(this.trackIndex !== index){
+                this.trackIndex=index;
+                this.isPlayingTrack = null;
+                if(this.trackPlaying){
+                    this.trackPlaying.stopMoving();
+                    this.trackPlaying.clearLayer();
+                    this.trackPlaying=null;
+                }
+                this.trackSegments[index].isStart=true;
+            }
+            if(this.isPlayingTrack === null) {
+                this.trackSegments[index].isStart = true;
+                const routeCoords = this.currentQueryTracks[index];
+                if (!this.trackPlaying) {
+                    this.trackPlaying = new TrackPlaying(this.map, routeCoords, null,null, 'car');
+                } else {
+                    this.trackPlaying.data = routeCoords;
+                }
+                this.trackPlaying.clearLayer();
+                this.trackPlaying.speed = 5;
+                this.trackPlaying.dealCoordsData();
+                this.trackPlaying.drawLine();
+                this.trackPlaying.trackMoving();
+                this.map.render();
+                this.isPlayingTrack = true;
+            }else if(this.isPlayingTrack === false){ //继续播放
+                this.trackSegments[index].isStart= true;
+                this.trackPlaying.continueMoving();
+                this.isPlayingTrack = true;
+            }else if(this.isPlayingTrack === true){ // 暂停播放
+                this.trackSegments[index].isStart=false;
+                this.trackPlaying.pauseMoving();
+                this.isPlayingTrack = false;
+            }
         },
         //查询(默认显示当天，当前登入的用户)
         onSearch() {
-            this.query.startDay = moment(this.dayRange[0]._d).format("YYYY-MM-DD");
-            this.query.endDay = moment(this.dayRange[1]._d).format("YYYY-MM-DD");
-            this.query.pageNo = 1;
-            this.getDataList()
+            this.query.startTime = this.dayRange[0]._d.getTime();
+            this.query.endTime = this.dayRange[1]._d.getTime();
+            // this.query.pageNo = 1;
+            this.getDataList();
+            this.map.removeLayer(this.trackLayer);
+            this.map.removeLayer(this.eventLayer);
+            if(this.trackPlaying){
+                this.trackPlaying.stopMoving();
+                this.trackPlaying.clearLayer();
+            }
         },
-        //翻页
-        changePagination(pageNo, pageSize) {
-            console.log('changePagination', pageNo, pageSize);
-            this.query.pageNo = pageNo;
-            this.getDataList()
-        },
+        // //翻页
+        // changePagination(pageNo, pageSize) {
+        //     console.log('changePagination', pageNo, pageSize);
+        //     this.query.pageNo = pageNo;
+        //     this.getDataList()
+        // },
 
         //按照时间排序（正序、倒序）
         onSort(sortType){
             console.log(11111111111,sortType);
             this.activeName = sortType;
-            this.query.sortType = sortType;
-            this.query.pageNo = 1;
+            // this.query.sortType = sortType;
+            // this.query.pageNo = 1;
             this.getDataList();
         },
         //开始播放

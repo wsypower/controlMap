@@ -119,7 +119,7 @@ export default {
             eventLayer:null,
             trackPlaying:null,
             isPlayingTrack:null,
-            trackIndex:0,
+            trackIndex:0
         }
     },
     computed:{
@@ -160,7 +160,7 @@ export default {
                 this.dataList = res.map(item=>{
                     item.isStart = false;
                     item.hasDetail = false;
-                    item.time=stampConvertToTime(item.gpstime);
+                    item.time = stampConvertToTime(item.gpstime);
                     return item;
                 });
                 if(res.length>0){
@@ -289,7 +289,6 @@ export default {
         //     this.query.pageNo = pageNo;
         //     this.getDataList()
         // },
-
         //按照时间排序（正序、倒序）
         onSort(sortType){
             console.log(11111111111,sortType);
