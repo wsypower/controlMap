@@ -89,7 +89,8 @@ export default {
         //获得展示的数据与属性
         treeData:function(){
             let data = JSON.parse(JSON.stringify(this.sourceData));
-            this.peopleFeatures=[];
+            this.peopleFeatures = [];
+            this.allPeopleData = [];
             //添加展示属性
             this.changeTreeData(data);
             this.isLoadData =! this.isLoadData;

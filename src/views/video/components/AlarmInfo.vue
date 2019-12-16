@@ -2,7 +2,7 @@
   <div class="tip-content">
     <div class="tip-header" flex="dir:left cross:center main:justify">
       <span>告警详情</span>
-      <div class="close" flex="main:center cross:center" @click="closeDialog"></div>
+      <div class="close" flex="main:center cross:center" @click="closeDialog(false)"></div>
     </div>
     <div class="tip-body" flex="dir:left cross:center">
       <img :src="info.photoUrl" />
@@ -35,6 +35,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
+import util from '@/utils/util';
+const userId = util.cookies.get('userId');
 export default{
     name: 'alarmInfo',
     data(){
@@ -65,23 +67,25 @@ export default{
     methods:{
       ...mapActions('video/manage', ['alarmNormalHandle','alarmReportHandle']),
       //关闭弹窗
-      closeDialog(){
-        this.$emit('closeTip')
+      closeDialog(isRefresh){
+        this.$emit('closeTip', isRefresh)
       },
       //未违规操作
       noBackRulesHandle(){
         console.log('noBackRulesHandle',this.info, this.remark);
-        this.alarmNormalHandle({id:this.info.id, remark:this.remark}).then((res) => {
+        this.alarmNormalHandle({userId: userId, id:this.info.id, remark:this.remark}).then((res) => {
           console.log('把告警设置为未违规');
-          this.closeDialog();
+          this.remark = '';
+          this.closeDialog(true);
         });
       },
       //案件上报
       reportHandle(){
         console.log('reportHandle',this.info, this.remark);
-        this.alarmReportHandle({id:this.info.id, remark:this.remark}).then((res) => {
+        this.alarmReportHandle({userId: userId, id:this.info.id, remark:this.remark}).then((res) => {
           console.log('把告警上报上去');
-          this.closeDialog();
+          this.remark = '';
+          this.closeDialog(true);
         });
       }
     }

@@ -3,8 +3,8 @@
     <div class="search-panel">
       <div flex="fir:left cross:center">
         <label style="width: 70px;">选择人员：</label>
-        <a-select v-model="query.userId" showSearch placeholder="请选择" style="flex:1;width:246px;">
-          <a-select-option v-for="(people, index) in peopleDataList" :value="people.id" :key="index"
+        <a-select v-model="query.userDisplayId" showSearch placeholder="请选择" style="flex:1;width:246px;">
+          <a-select-option v-for="(people, index) in peopleDataList" :value="people.userDisplayId" :key="index"
             >{{ people.name }}（{{ people.dept }}）</a-select-option
           >
         </a-select>
@@ -95,8 +95,9 @@ export default {
         return {
             query: {
                 userId: '',
-                startDay: '',
-                endDay: '',
+                userDisplayId: '',
+                startTime: '',
+                endTime: '',
                 sortType: 'desc',
                 curPage: 1,
                 pageSize: 20
@@ -118,10 +119,13 @@ export default {
     },
     mounted(){
         this.query.userId = util.cookies.get('userId');
+        let temp = this.peopleDataList.find(item => item.id === this.query.userId );
+        this.query.userDisplayId = temp.userDisplayId;
+
         let day = moment(new Date()).format('YYYY-MM-DD');
         this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-        this.query.startDay = new Date(day).getTime();
-        this.query.endDay = new Date(day).getTime();
+        this.query.startTime = new Date(day).getTime();
+        this.query.endTime = new Date(day).getTime();
         this.getDataList();
     },
     methods:{
@@ -145,8 +149,8 @@ export default {
 
         //查询(默认显示当天，当前登入的用户)
         onSearch() {
-            this.query.startDay = this.dayRange[0]._d.getTime();
-            this.query.endDay = this.dayRange[1]._d.getTime();
+            this.query.startTime = this.dayRange[0]._d.getTime();
+            this.query.endTime = this.dayRange[1]._d.getTime();
             this.query.curPage = 1;
             this.getDataList()
         },

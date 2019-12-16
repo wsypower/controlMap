@@ -53,12 +53,13 @@
               <span>{{ item.name }}</span
               ><span>（{{ item.type }}）</span>
             </div>
+            <div>{{item.groupName}}</div>
             <div class="type">
               <span
                 v-for="(vType, index) in item.vTypeList"
-                :class="{ cstl: vType == '超时停留', cfw: vType == '超范围', cs: vType == '超速' }"
+                :class="{ cfw: vType == '1', cs: vType == '2' }"
                 :key="index"
-                >{{ vType }}
+                >{{ vType == '1'? '越界' : '超速' }}
               </span>
             </div>
             <div class="right-top-panel">违规{{ item.vLog.length }}次</div>
@@ -72,10 +73,10 @@
               <li v-for="(log, i) in item.vLog" :key="i">
                 <span>{{ log.day }}</span>
                 <span>{{ log.startTimeStr }}~{{ log.endTimeStr }}</span>
-                <span :class="{ cstl: log.vType == '超时停留', cfw: log.vType == '超范围', cs: log.vType == '超速' }">{{
-                  log.vType
+                <span :class="{ cfw: log.vType == '1', cs: log.vType == '2' }">{{
+                  log.vType == '1'? '越界' : '超速'
                 }}</span>
-                <span v-if="!log.isStart" @click="startPlay(log)">播放</span>
+                <span v-if="!log.isStart" @click="startPlay(log,item.carId)">播放</span>
                 <span v-else @click="pausePlay(log)">暂停</span>
                 <span><a-icon type="delete" @click="deleteVLog(log, i, index)"/></span>
               </li>
@@ -93,7 +94,7 @@
 import { mapActions } from 'vuex';
 import moment from 'moment';
 import util from '@/utils/util';
-const userId = util.cookies.get('userId');
+
 export default {
   name: 'carViolateRules',
   props:{},
@@ -105,10 +106,10 @@ export default {
       carTypeList: [],
       //查询条件--不分页
       query: {
-        userId: userId,
+        userId: '',
         groupId: '',
-        startDay: '',
-        endDay: '',
+        startTime: '',
+        endTime: '',
         //违规类型
         vType: '',
         //车辆类型
@@ -126,16 +127,18 @@ export default {
     }
   },
   mounted(){
+    const userId = util.cookies.get('userId');
+    this.query.userId = userId;
     this.getAllGroupDataList({userId: userId}).then(res=>{
       this.groupDataList = res;
     });
     this.getAllCarTypeDataList({userId: userId}).then(res=>{
-      this.groupDataList = res;
+      this.carTypeList = res;
     });
     let day = moment(new Date()).format('YYYY-MM-DD');
     this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
-    this.query.startDay = new Date(day).getTime();
-    this.query.endDay = new Date(day).getTime();
+    this.query.startTime = new Date(day).getTime();
+    this.query.endTime = new Date(day).getTime();
     this.getDataList();
   },
   methods:{
@@ -145,7 +148,7 @@ export default {
       console.log('this.query',this.query);
       this.showLoading = true;
       this.getCarViolateRulesDataList(this.query).then(res=>{
-        this.dataList = res.data.map(item=>{
+        this.dataList = res.map(item=>{
           item.expend = false;
           let typeArr = [];
           item.vLog.forEach(log=>{
@@ -167,8 +170,8 @@ export default {
     },
     //搜索查询
     onSearch() {
-      this.query.startDay = this.dayRange[0]._d.getTime();
-      this.query.endDay = this.dayRange[1]._d.getTime();
+      this.query.startTime = this.dayRange[0]._d.getTime();
+      this.query.endTime = this.dayRange[1]._d.getTime();
       this.getDataList();
     },
     //展开或者收起违规详情
@@ -185,14 +188,16 @@ export default {
       }
     },
     //开始播放
-    startPlay(log){
+    startPlay(log,carId){
+
       log.isStart = true;
       if(log.hasDetail){
         //已经有轨迹数据，直接在地图上播放
       }
       else{
         let temp = {
-          userId: log.userId,
+          userId: this.query.userId,
+          carId: carId,
           startTime: log.startTime,
           endTime: log.endTime
         }
@@ -210,7 +215,7 @@ export default {
     },
     //删除某条非违规记录
     deleteVLog(log,i,index){
-      this.deleteCarViolateRules({id: log.id}).then(res=>{
+      this.deleteCarViolateRules({userId:this.query.userId, id: log.id}).then(res=>{
         this.dataList[index].vLog.splice(i,1);
         //删除记录后，高度需要重新计算
         setTimeout(()=>{
@@ -315,7 +320,7 @@ export default {
       .right-bottom-panel {
         position: absolute;
         right: 12px;
-        top: 45px;
+        top: 64px;
         cursor: pointer;
         span {
           font-family: PingFang-SC-Medium;

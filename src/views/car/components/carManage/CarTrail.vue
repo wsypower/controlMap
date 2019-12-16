@@ -95,14 +95,10 @@ export default {
             //各项查询条件
             query: {
                carId: '',
-               userId:'e0f48f30a4e511e856f64dd5bc2aa7bb',
+               userId:'',
                 startTime: '',
                 endTime: '',
-               // startDay: '',
-               // endDay: '',
-               // sortType: 'asc',
-               // pageNo: 1,
-               // pageSize: 20
+               sortType: 'desc',
             },
             //查询的时间范围
             dayRange: [],
@@ -128,6 +124,8 @@ export default {
         ...mapState('map', ['mapManager']),
     },
     mounted(){
+        const userId = util.cookies.get('userId');
+        this.query.userId = userId;
         this.map=this.mapManager.getMap();
         if(this.infoId){
             this.query.carId = this.infoId;
@@ -153,6 +151,10 @@ export default {
         //获取人员轨迹数据
         getDataList(){
             console.log('this.query',this.query);
+            if(!this.query.carId){
+              this.$message.warning('没有选择车辆！！！');
+              return
+            }
             this.showLoading = true;
             this.getCarTrailDataList(this.query).then(res=>{
                 this.showLoading = false;
@@ -171,7 +173,6 @@ export default {
                 }else{
                     this.$message.warning('未查询到轨迹数据！！！');
                 }
-                // this.totalSize = res.data.total;
             });
         },
         // 传过来的轨迹点位分段处理并保存

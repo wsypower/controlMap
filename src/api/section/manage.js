@@ -25,8 +25,8 @@ export const getUserWorkInfoData = data => {
  * @author moxuejuan
  * @date 2019-09-10 14:53:20
  * @param {String} userId 请求参数 :用户唯一标识符默认参数）
- * @param {String} startDay 请求参数 :开始日期
- * @param {String} endDay 请求参数 :结束日期
+ * @param {String} startTime 请求参数 :开始日期
+ * @param {String} endTime 请求参数 :结束日期
  */
 export const getUserTrailDataList = data => {
   console.log('api:getUserTrailDataList', data)
@@ -59,8 +59,8 @@ export const getTrailDetailData = data => {
  * @author moxuejuan
  * @date 2019-09-11 14:53:20
  * @param {String} userId 请求参数 :用户唯一标识符默认参数）
- * @param {String} startDay 请求参数 :开始日期
- * @param {String} endDay 请求参数 :结束日期
+ * @param {String} startTime 请求参数 :开始日期
+ * @param {String} endTime 请求参数 :结束日期
  */
 export const getUserWorkTimeDataList = data => {
   console.log('api:getUserWorkTimeDataList', data)
@@ -92,8 +92,8 @@ export const getUserSignDetailData = data => {
  * @author moxuejuan
  * @date 2019-09-11 14:53:20
  * @param {String} peopleId 请求参数 :用户Id 为空时表示全部
- * @param {String} startDay 请求参数 :开始日期
- * @param {String} endDay 请求参数 :结束日期
+ * @param {String} startTime 请求参数 :开始日期
+ * @param {String} endTime 请求参数 :结束日期
  */
 export const getUserViolateRulesDataList = data => {
   console.log('api:getUserViolateRulesDataList', data)

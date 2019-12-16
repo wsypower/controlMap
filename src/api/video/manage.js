@@ -3,7 +3,7 @@
  * @Date: 2019-12-02 09:12:20
  */
 
-import request from '@/plugins/axios/axios'
+import request from '@/plugins/axios/axios2'
 
 /**
  * @description 获取所有告警类型数据(列表结构)
@@ -20,7 +20,7 @@ import request from '@/plugins/axios/axios'
 export function getAllAlarmTypeDataList(data) {
   console.log('api:getAllAlarmTypeDataList', data)
   return request({
-    url: '@test/getAllAlarmTypeDataList_t=' + new Date().getTime(),
+    url: 'video/getAllAlarmTypeDataList?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -32,8 +32,8 @@ export function getAllAlarmTypeDataList(data) {
  * @date 2019-12-03 14:53:20
  * @param
  *     {Number} alarmTypeId: 告警类型Id
- *     {String} startDay: 开始日期
- *     {String} endDay: 结束日期
+ *     {String} startTime: 开始日期
+ *     {String} endTime: 结束日期
  *     {Number} pageNo: 页码
  *     {Number} pageSize: 每页显示条数
  * @method：GET
@@ -51,7 +51,28 @@ export function getAllAlarmTypeDataList(data) {
 export function getAllAlarmDataList(data) {
   console.log('api:getAllAlarmDataList', data)
   return request({
-    url: '@test/getAllAlarmDataList_t=' + new Date().getTime(),
+    url: 'video/getAllAlarmDataList?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * @description 获取摄像头监控数据流数据
+ * @author moxuejuan
+ * @date 2019-12-11 14:53:20
+ * @param
+ *     {Number} mpId: 摄像头code
+ * @method：GET
+ * @response：{
+ *     {String} mediaURL：数据流URL
+ * }
+ */
+
+export function getCameraUrl(data) {
+  console.log('api:getCameraUrl', data)
+  return request({
+    url: 'video/getCameraUrl?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -67,7 +88,7 @@ export function getAllAlarmDataList(data) {
 export const alarmNormalHandle = data => {
   console.log('api:alarmNormalHandle', data)
   return request({
-    url: `@test/alarmNormalHandle`,
+    url: `video/alarmNormalHandle`,
     method: 'post',
     params: data
   })
@@ -83,7 +104,7 @@ export const alarmNormalHandle = data => {
 export const alarmReportHandle = data => {
   console.log('api:alarmReportHandle', data)
   return request({
-    url: `@test/alarmReportHandle`,
+    url: `video/alarmReportHandle`,
     method: 'post',
     params: data
   })
@@ -103,7 +124,7 @@ export const alarmReportHandle = data => {
 export function getAllCameraTreeData(data) {
   console.log('api:getAllCameraTreeData', data)
   return request({
-    url: '@test/getAllCameraTreeData?_t=' + new Date().getTime(),
+    url: 'video/getAllCameraTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
