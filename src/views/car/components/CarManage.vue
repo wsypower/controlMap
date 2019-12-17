@@ -14,7 +14,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
+import { mapActions,mapState } from 'vuex'
 import util from '@/utils/util';
 import CarPosition from './carManage/CarPosition'
 import CarTrail from './carManage/CarTrail'
@@ -33,7 +33,11 @@ export default {
       CarTrail,
       ViolateRules
     },
+    computed:{
+        ...mapState('map', ['mapManager'])
+    },
     mounted(){
+      this.map = this.mapManager.getMap();
       const userId = util.cookies.get('userId');
       this.getAllCarDataList({userId:userId}).then(res=>{
         res.forEach(item => {
@@ -45,8 +49,42 @@ export default {
     methods:{
         ...mapActions('car/manage', ['getAllCarDataList']),
         init(){},
-        changeTab(){
-
+        changeTab(val){
+            console.log("点击值====",val);
+            const layers=this.map.getLayers().array_;
+            //切换时清除地图上的一些操作
+            layers.forEach(l=>{
+                debugger;
+                if(l.get('featureType')){
+                    if (val == '1') { //人员定位
+                        this.map.getOverlayById('carPositionOverlay').setPosition(undefined);
+                        if (l.get('featureType') == 'CarPosition') {
+                            l.setVisible(true);
+                            this.map.getView().fit(l.getSource().getExtent());
+                        }else{
+                            l.setVisible(false);
+                        }
+                    } else if (val == '2') { //轨迹查询
+                        this.map.getOverlayById('carPositionOverlay').setPosition(undefined);
+                        if (l.get('featureType') == 'CarTrail') {
+                            l.setVisible(true);
+                            this.map.getView().fit(l.getSource().getExtent());
+                        }else{
+                            l.setVisible(false);
+                        }
+                    }else if (val == '3'){ //违规查询
+                        this.map.getOverlayById('carPositionOverlay').setPosition(undefined);
+                        if (l.get('featureType') == 'ViolateRules') {
+                            l.setVisible(true);
+                            this.map.getView().fit(l.getSource().getExtent());
+                        }else{
+                            l.setVisible(false);
+                        }
+                    }else if(val == '4'){
+                        this.map.getOverlayById('carPositionOverlay').setPosition(undefined);
+                    }
+                }
+            });
         },
         //车辆查看轨迹触发，使页面显示人员轨迹的tab以及地图显示轨迹
       getCarId(data){

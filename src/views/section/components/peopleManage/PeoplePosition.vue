@@ -100,8 +100,9 @@ export default {
     watch:{
       isLoadData:function() {
         if(this.peopleFeatures.length>0){
-          const peopleLayer = this.mapManager.addVectorLayerByFeatures(this.peopleFeatures,PeoplePointStyle(),3);
-          this.mapManager.getMap().getView().fit(peopleLayer.getSource().getExtent());
+          this.peopleLayer = this.mapManager.addVectorLayerByFeatures(this.peopleFeatures,PeoplePointStyle(),3);
+          this.peopleLayer.set('featureType','PeoplePosition');
+          this.mapManager.getMap().getView().fit(this.peopleLayer.getSource().getExtent());
         }
       }
     },
@@ -115,6 +116,7 @@ export default {
       this.map = this.mapManager.getMap()
       this.map.on('click', this.peopleMapClickHandler);
       this.peopleOverlay = this.mapManager.addOverlay({
+        id:'peoplePositionOverlay',
         offset:[0,-20],
         positioning: 'bottom-center',
         element: this.$refs.peopleInfo.$el

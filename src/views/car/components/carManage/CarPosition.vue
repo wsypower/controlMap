@@ -98,6 +98,7 @@ export default {
     isLoadData:function() {
       if(this.carFeatures.length>0){
         this.carLayer = this.mapManager.addVectorLayerByFeatures(this.carFeatures,carPointStyle(),3);
+        this.carLayer.set('featureType','CarPosition');
         this.mapManager.getMap().getView().fit(this.carLayer.getSource().getExtent());
       }
     }
@@ -112,6 +113,7 @@ export default {
       this.map = this.mapManager.getMap();
       this.map.on('click', this.peopleMapClickHandler);
       this.carOverlay = this.mapManager.addOverlay({
+        id:'carPositionOverlay',
         offset:[0,-20],
         positioning: 'bottom-center',
         element: this.$refs.carInfo.$el
@@ -210,7 +212,9 @@ export default {
           temp.x = needData.x;
           temp.y = needData.y;
           this.carInfoData = temp;
-          this.carOverlay.setPosition([parseFloat(this.carInfoData.x),parseFloat(this.carInfoData.y)])
+          const coordinate=[parseFloat(this.carInfoData.x),parseFloat(this.carInfoData.y)];
+          this.carOverlay.setPosition(coordinate);
+          this.mapManager.locateTo(coordinate);
         }
       },
       //地图上人员点击事件处理器
