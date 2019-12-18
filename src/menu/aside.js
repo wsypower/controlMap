@@ -12,40 +12,40 @@ export default [
     icon: 'menu-section',
     active: false,
     role: ['admin']
-  },
-  {
-    path: '/car',
-    title: '车辆管控',
-    icon: 'menu-car',
-    active: false,
-    role: ['admin']
-  },
-  {
-    path: '/records',
-    title: '案卷',
-    icon: 'menu-records',
-    active: false,
-    role: ['admin']
-  },
-  {
-    path: '/special',
-    title: '视频',
-    icon: 'menu-video',
-    active: false,
-    role: ['admin']
-  },
-  {
-    path: '/video',
-    title: '专题服务',
-    icon: 'menu-special',
-    active: false,
-    role: ['admin']
-  },
-  {
-    path: '/emergency',
-    title: '应急指挥',
-    icon: 'menu-emergency',
-    active: false,
-    role: ['admin', 'super_editor']
   }
+  // {
+  //   path: '/car',
+  //   title: '车辆管控',
+  //   icon: 'menu-car',
+  //   active: false,
+  //   role: ['admin']
+  // },
+  // {
+  //   path: '/records',
+  //   title: '案卷',
+  //   icon: 'menu-records',
+  //   active: false,
+  //   role: ['admin']
+  // },
+  // {
+  //   path: '/special',
+  //   title: '视频',
+  //   icon: 'menu-video',
+  //   active: false,
+  //   role: ['admin']
+  // },
+  // {
+  //   path: '/video',
+  //   title: '专题服务',
+  //   icon: 'menu-special',
+  //   active: false,
+  //   role: ['admin']
+  // },
+  // {
+  //   path: '/emergency',
+  //   title: '应急指挥',
+  //   icon: 'menu-emergency',
+  //   active: false,
+  //   role: ['admin', 'super_editor']
+  // }
 ]

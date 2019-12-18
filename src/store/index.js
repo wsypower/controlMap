@@ -16,6 +16,7 @@ import Vuex from 'vuex'
 //默认持久化所有state
 // import createPersistedState from 'vuex-persistedstate'
 import cgadmin from './modules/cgadmin'
+import section from './modules/section'
 Vue.use(Vuex)
 /* eslint-disable no-new */
 const store = new Vuex.Store({
@@ -32,7 +33,8 @@ const store = new Vuex.Store({
   //   createPersistedState()
   // ],
   modules: {
-    cgadmin
+    cgadmin,
+    section
   }
 })
 
