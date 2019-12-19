@@ -59,8 +59,9 @@ new Vue({
         // const role = this.$store.getters['cgadmin/user/role']
         // console.log(role)
         //设置侧边栏菜单
-          const role = 'admin';
-        const menu = menuAside.filter(v => v.role.includes(role))
+        const role = 'admin';
+        let activeModule = this.$store.getters['cgadmin/menu/activeModule'];
+        const menu = menuAside.filter(v => v.role.includes(role)&&v.module.includes(activeModule))
         this.$store.commit('cgadmin/menu/asideSet', menu)
       })
       .catch(err => {

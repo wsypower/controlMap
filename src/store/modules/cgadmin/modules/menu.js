@@ -4,10 +4,17 @@ import setting from '@/setting.js'
 export default {
   namespaced: true,
   state: {
+    // 指定模块选择
+    activeModule: 'jm',  //智慧街面jm、智慧市政sz、智慧环卫hw、智慧排水ps、智慧路灯ld
     // 侧栏菜单
     aside: [],
     // 侧边栏内容栏收缩
     asideCollapse: setting.menu.asideCollapse
+  },
+  getters: {
+    activeModule: state => {
+      return state.activeModule
+    }
   },
   actions: {
     /**
@@ -95,6 +102,7 @@ export default {
     asideSetItemActive({ commit, state }, item) {
       return new Promise(async resolve => {
         // store 赋值
+        console.log('22222222222');
         commit('asideSetItem', item)
         // 获取aside
         let aside = state.aside
@@ -106,6 +114,14 @@ export default {
     }
   },
   mutations: {
+    /**
+     * @description 设置目前激活的模块
+     * @param {Object} state vuex state
+     * @param {Boolean} collapse
+     */
+    activeModuleSetState(state, module) {
+      state.activeModule = module
+    },
     /**
      * @description 设置侧边栏收缩
      * @param {Object} state vuex state

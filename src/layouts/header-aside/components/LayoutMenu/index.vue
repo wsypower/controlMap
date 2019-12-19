@@ -39,6 +39,7 @@ export default {
      */
     menuItemClick(index, item) {
       //当前元素设置active设为true，其他设为false
+      console.log('111111',item);
       this.asideSetItemActive(item).then(isCollapse => {
         //TODO:(貌似search更快一点，实际再测试)判断点击页是否是当前页或当前页子页面
         const isPath = this.current.includes(item.path)
