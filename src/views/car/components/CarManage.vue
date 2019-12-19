@@ -50,14 +50,13 @@ export default {
         ...mapActions('car/manage', ['getAllCarDataList']),
         init(){},
         changeTab(val){
+            this.map.getOverlayById('carPositionOverlay').setPosition(undefined);
             console.log("点击值====",val);
             const layers=this.map.getLayers().array_;
             //切换时清除地图上的一些操作
             layers.forEach(l=>{
-                debugger;
                 if(l.get('featureType')){
                     if (val == '1') { //人员定位
-                        this.map.getOverlayById('carPositionOverlay').setPosition(undefined);
                         if (l.get('featureType') == 'CarPosition') {
                             l.setVisible(true);
                             this.map.getView().fit(l.getSource().getExtent());
@@ -65,23 +64,19 @@ export default {
                             l.setVisible(false);
                         }
                     } else if (val == '2') { //轨迹查询
-                        this.map.getOverlayById('carPositionOverlay').setPosition(undefined);
-                        if (l.get('featureType') == 'CarTrail') {
+                        if (l.get('featureType') == 'CarTrail' || l.get('featureType') == 'trackLine') {
                             l.setVisible(true);
                             this.map.getView().fit(l.getSource().getExtent());
                         }else{
                             l.setVisible(false);
                         }
                     }else if (val == '3'){ //违规查询
-                        this.map.getOverlayById('carPositionOverlay').setPosition(undefined);
-                        if (l.get('featureType') == 'ViolateRules') {
+                        if (l.get('featureType') == 'CarViolateRules') {
                             l.setVisible(true);
                             this.map.getView().fit(l.getSource().getExtent());
                         }else{
                             l.setVisible(false);
                         }
-                    }else if(val == '4'){
-                        this.map.getOverlayById('carPositionOverlay').setPosition(undefined);
                     }
                 }
             });
@@ -91,6 +86,7 @@ export default {
             console.log('carManage-carId:' + data);
             this.activeTab = '2';
             this.infoId = data;
+            this.changeTab('2');
         }
     }
 }

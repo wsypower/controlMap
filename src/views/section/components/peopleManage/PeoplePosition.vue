@@ -98,6 +98,7 @@ export default {
         }
     },
     watch:{
+      //加载完数据后渲染地图
       isLoadData:function() {
         if(this.peopleFeatures.length>0){
           this.peopleLayer = this.mapManager.addVectorLayerByFeatures(this.peopleFeatures,PeoplePointStyle(),3);
@@ -107,13 +108,13 @@ export default {
       }
     },
     mounted(){
-      const userId = util.cookies.get('userId')
+      const userId = util.cookies.get('userId');
       this.showLoading = true;
       this.getAllPeopleTreeData({userId:userId}).then(res=>{
         this.sourceData = res;
         this.showLoading = false;
       });
-      this.map = this.mapManager.getMap()
+      this.map = this.mapManager.getMap();
       this.map.on('click', this.peopleMapClickHandler);
       this.peopleOverlay = this.mapManager.addOverlay({
         id:'peoplePositionOverlay',
@@ -174,6 +175,7 @@ export default {
                 const feature=_this.mapManager.xyToFeature(item.x,item.y);
                 feature.set('icon',pointImg);
                 feature.set('props',item);
+                feature.set('type','peoplePosition');
                 _this.peopleFeatures.push(feature);
               }
             }
@@ -238,9 +240,9 @@ export default {
         //地图上人员点击事件处理器
         peopleMapClickHandler({ pixel, coordinate }){
           const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
-          if(feature){
-            this.peopleInfoData=feature.get('props');
-            this.peopleOverlay.setPosition(coordinate);
+          if(feature&& feature.get('type')=='peoplePosition'){
+                this.peopleInfoData=feature.get('props');
+                this.peopleOverlay.setPosition(coordinate);
           }
         },
         //人员轨迹触发

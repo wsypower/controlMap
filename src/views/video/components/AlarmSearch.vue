@@ -177,6 +177,7 @@ export default {
           if(d.x&&d.x.length>0&&d.y&&d.y.length>0){
             const feature = _this.mapManager.xyToFeature(d.x,d.y);
             feature.set('props',d);
+            feature.set('type','alarmSearch');
             return feature;
           }
         });
@@ -204,7 +205,9 @@ export default {
     clickDataItem(index){
       this.activeIndex = index;
       this.alarmInfoData = this.dataList[index];
-      this.alarmOverlay.setPosition([parseFloat(this.alarmInfoData.x),parseFloat(this.alarmInfoData.y)])
+      const coordinate=[parseFloat(this.alarmInfoData.x),parseFloat(this.alarmInfoData.y)];
+      this.alarmOverlay.setPosition(coordinate);
+      this.mapManager.locateTo(coordinate);
     },
 
     playVideo(mpId){
@@ -215,7 +218,7 @@ export default {
     //地图上告警点位图标点击事件处理器
     alarmMapClickHandler({ pixel, coordinate }){
         const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
-        if(feature){
+        if(feature && feature.get('type')=='alarmSearch'){
             this.alarmInfoData=feature.get('props');
             this.alarmOverlay.setPosition(coordinate);
         }

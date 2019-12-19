@@ -160,6 +160,7 @@ export default {
               const feature=_this.mapManager.xyToFeature(item.x,item.y);
               feature.set('icon',pointImg);
               feature.set('props',item);
+              feature.set('type','CarPosition');
               _this.carFeatures.push(feature);
             }
           }
@@ -220,7 +221,7 @@ export default {
       //地图上人员点击事件处理器
       peopleMapClickHandler({ pixel, coordinate }){
         const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
-        if(feature){
+        if(feature && feature.get('type')=='CarPosition'){
           this.carInfoData=feature.get('props');
           this.carOverlay.setPosition(coordinate);
         }

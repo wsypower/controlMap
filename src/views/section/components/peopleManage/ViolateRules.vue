@@ -156,6 +156,8 @@ export default {
         },
         //搜索查询
         onSearch() {
+            this.violateLayer && this.map.removeLayer(this.violateLayer);
+            this.violatePointLayer && this.map.removeLayer(this.violatePointLayer);
             this.query.startTime = this.dayRange[0]._d.getTime();
             this.query.endTime = this.dayRange[1]._d.getTime();
             this.getDataList();
@@ -188,21 +190,26 @@ export default {
             };
             this.getUserTrailDataList(temp).then(res=>{
                 //违规轨迹点位
-                const eventFeatures = res.map(r=>{
-                    if(r.gpsx&&r.gpsy){
-                        return pointByCoord([parseFloat(r.gpsx),parseFloat(r.gpsy)]);
-                    }
-                });
-                //轨迹数据在res，直接在地图上显示
-                const trackLineFeature = trackByLocationList(res);
-                //违规轨迹图层
-                this.violateLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature,violateStyle(log.vType),3);
-                this.violateLayer.set('featureType','ViolateRules');
-                //违规轨迹点位图层
-                this.violatePointLayer= this.mapManager.addVectorLayerByFeatures(eventFeatures,violatePointStyle(log.vType),3);
-                this.violatePointLayer.set('featureType','ViolateRules');
-                this.mapManager.getMap().getView().fit(this.violateLayer.getSource().getExtent());
-                // log.hasDetail = true;
+                if(res.length>0) {
+                    const eventFeatures = res.map(r => {
+                        if (r.gpsx && r.gpsy) {
+                            return pointByCoord([parseFloat(r.gpsx), parseFloat(r.gpsy)]);
+                        }
+                    });
+                    //轨迹数据在res，直接在地图上显示
+                    const trackLineFeature = trackByLocationList(res);
+                    //违规轨迹图层
+                    this.violateLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature, violateStyle(log.vType), 3);
+                    this.violateLayer.set('featureType', 'PeopleViolateRules');
+                    //违规轨迹点位图层
+                    this.violatePointLayer = this.mapManager.addVectorLayerByFeatures(eventFeatures, violatePointStyle(log.vType), 3);
+                    this.violatePointLayer.set('featureType', 'PeopleViolateRules');
+                    this.mapManager.getMap().getView().fit(this.violateLayer.getSource().getExtent());
+                    this.mapManager.getMap().getView().setZoom(12);
+                    // log.hasDetail = true;
+                }else{
+                    this.$message.warning('未查询到违规轨迹数据！！！');
+                }
             });
         },
         //暂停播放

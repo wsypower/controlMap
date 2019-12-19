@@ -42,10 +42,12 @@ export class TrackPlaying{
         this.lineLayer = new VectorLayer({
             zIndex:4
         });//定义线条图层
+        this.lineLayer.set('featureType','trackLine');
         this.trackLayer = new VectorLayer({//定义轨迹图层
             source: new VectorSource({}),
             zIndex:4
         });
+        this.trackLayer.set('featureType','trackLine');
         this.init();
     }
     init(){

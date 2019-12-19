@@ -55,12 +55,13 @@ export default {
         ...mapActions('section/common', ['getAllPeopleDataList']),
         init(){},
         changeTab(val){
+            this.map.getOverlayById('peoplePositionOverlay')&&this.map.getOverlayById('peoplePositionOverlay').setPosition(undefined);
+            this.map.getOverlayById('peopleSignInfoOverlay')&&this.map.getOverlayById('peopleSignInfoOverlay').setPosition(undefined);
             const layers=this.map.getLayers().array_;
             //切换时清除地图上的一些操作
             layers.forEach(l=>{
                 if(l.get('featureType')){
                     if (val == '1') { //人员定位
-                        this.map.getOverlayById('peoplePositionOverlay').setPosition(undefined);
                         if (l.get('featureType') == 'PeoplePosition') {
                             l.setVisible(true);
                             this.map.getView().fit(l.getSource().getExtent());
@@ -68,23 +69,26 @@ export default {
                             l.setVisible(false);
                         }
                     } else if (val == '2') { //轨迹查询
-                        this.map.getOverlayById('peoplePositionOverlay').setPosition(undefined);
-                        if (l.get('featureType') == 'PeopleTrail') {
+                        if (l.get('featureType') == 'PeopleTrail' || l.get('featureType') == 'trackLine') {
                             l.setVisible(true);
                             this.map.getView().fit(l.getSource().getExtent());
                         }else{
                             l.setVisible(false);
                         }
                     }else if (val == '3'){ //违规查询
-                        this.map.getOverlayById('peoplePositionOverlay').setPosition(undefined);
-                        if (l.get('featureType') == 'ViolateRules') {
+                        if (l.get('featureType') == 'PeopleViolateRules') {
                             l.setVisible(true);
                             this.map.getView().fit(l.getSource().getExtent());
                         }else{
                             l.setVisible(false);
                         }
                     }else if(val == '4'){
-                        this.map.getOverlayById('peoplePositionOverlay').setPosition(undefined);
+                        if (l.get('featureType') == 'peopleWorkTime') {
+                            l.setVisible(true);
+                            this.map.getView().fit(l.getSource().getExtent());
+                        }else{
+                            l.setVisible(false);
+                        }
                     }
                 }
             });
@@ -94,6 +98,7 @@ export default {
             console.log('peopleManage-userId:' + data);
             this.activeTab = '2';
             this.infoId = data;
+            this.changeTab('2');
         }
     }
 }
