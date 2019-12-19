@@ -1,5 +1,6 @@
 <template>
   <div class="manage">
+    <div class="manage-header">车辆管控</div>
     <a-tabs v-model="activeTab" @change="changeTab" class="content_tab">
       <a-tab-pane tab="车辆定位" key="1">
         <car-position @getCarId="getCarId"></car-position>
@@ -14,57 +15,68 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import util from '@/utils/util';
 import CarPosition from './carManage/CarPosition'
 import CarTrail from './carManage/CarTrail'
 import ViolateRules from './carManage/ViolateRules'
 export default {
-    name: 'carManage',
-    data(){
-        return {
-            activeTab: '1',
-            infoId: '',
-            carDataList: []
-        }
-    },
-    components:{
-      CarPosition,
-      CarTrail,
-      ViolateRules
-    },
-    mounted(){
-      const userId = util.cookies.get('userId');
-      this.getAllCarDataList({userId:userId}).then(res=>{
-        res.forEach(item => {
-          item.carDisplayId = item.id + '_' + item.name;
-          this.carDataList.push(item);
-        });
-      });
-    },
-    methods:{
-        ...mapActions('car/manage', ['getAllCarDataList']),
-        init(){},
-        changeTab(){
-
-        },
-        //车辆查看轨迹触发，使页面显示人员轨迹的tab以及地图显示轨迹
-      getCarId(data){
-            console.log('carManage-carId:' + data);
-            this.activeTab = '2';
-            this.infoId = data;
-        }
+  name: 'carManage',
+  components:{
+    CarPosition,
+    CarTrail,
+    ViolateRules
+  },
+  data(){
+    return {
+      activeTab: '1',
+      infoId: '',
+      carDataList: []
     }
+  },
+  computed:{
+    ...mapState('cgadmin/menu', ['activeModule'])
+  },
+  mounted(){
+    const userId = util.cookies.get('userId');
+    this.getAllCarDataList({userId:userId, moduleType: this.activeModule}).then(res=>{
+      res.forEach(item => {
+        item.carDisplayId = item.id + '_' + item.name;
+        this.carDataList.push(item);
+      });
+    });
+  },
+  methods:{
+    ...mapActions('car/manage', ['getAllCarDataList']),
+    init(){},
+    changeTab(){},
+    //车辆查看轨迹触发，使页面显示人员轨迹的tab以及地图显示轨迹
+    getCarId(data){
+      console.log('carManage-carId:' + data);
+      this.activeTab = '2';
+      this.infoId = data;
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
 .manage {
   width: 100%;
-  padding: 20px;
   height: 100%;
+  .manage-header {
+    height: 50px;
+    width: 100%;
+    padding-left: 20px;
+    line-height: 50px;
+    background-color: #f5f7f8;
+    color: #2b90f3;
+    font-size: 18px;
+    text-align: left;
+  }
 }
 .content_tab {
-  height: 100%;
+  height: calc(100% - 50px);
+  padding: 20px;
   /deep/.ant-tabs-nav-scroll {
     height: 44px;
   }

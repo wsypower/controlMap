@@ -25,7 +25,7 @@
               <span>{{ item.imei }}</span>
             </div>
             <div class="item_right">
-              <span>{{ item.alarmReason }}</span>
+              <span >{{ item.alarmState === '2'? item.alarmReason : '正常'}}</span>
               <cg-icon-svg name="pin" class="svg_icon"></cg-icon-svg>
             </div>
           </div>

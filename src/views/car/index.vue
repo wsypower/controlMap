@@ -1,6 +1,7 @@
 <template>
   <div class="page">
-    <content-tabs :tabData="tabData"></content-tabs>
+    <car-manage></car-manage>
+    <!--<content-tabs :tabData="tabData"></content-tabs>-->
   </div>
 </template>
 <script>
@@ -8,6 +9,7 @@ import StatisticalAnalysis from './components/StatisticalAnalysis.vue'
 import CarManage from './components/CarManage.vue'
 export default {
   name: 'car',
+  components: { CarManage },
   data() {
     return {
       //tab标签

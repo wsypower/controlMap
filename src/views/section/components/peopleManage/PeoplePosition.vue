@@ -1,7 +1,13 @@
 <template>
   <div class="people-manage" flex="dir:top">
     <div class="search-panel">
-      <a-input-search placeholder="输入关键词搜索" v-model="searchValue" @search="onSearch" @change="onChange" enterButton="搜 索"></a-input-search>
+      <a-input-search
+        placeholder="输入关键词搜索"
+        v-model="searchValue"
+        @search="onSearch"
+        @change="onChange"
+        enterButton="搜 索"
+      ></a-input-search>
     </div>
     <div class="yuan_dialog_body">
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
@@ -85,7 +91,8 @@ export default {
         }
     },
     computed:{
-        ...mapState('map', ['mapManager']),
+      ...mapState('map', ['mapManager']),
+      ...mapState('cgadmin/menu', ['activeModule']),
         //获得展示的数据与属性
         treeData:function(){
             let data = JSON.parse(JSON.stringify(this.sourceData));
@@ -108,7 +115,7 @@ export default {
     mounted(){
       const userId = util.cookies.get('userId')
       this.showLoading = true;
-      this.getAllPeopleTreeData({userId:userId}).then(res=>{
+      this.getAllPeopleTreeData({userId:userId, moduleType:this.activeModule}).then(res=>{
         this.sourceData = res;
         this.showLoading = false;
       });
@@ -121,7 +128,7 @@ export default {
       });
       let _this = this;
       _this.timer = setInterval(function() {
-        _this.getAllPeopleTreeData({userId:userId}).then(res=>{
+        _this.getAllPeopleTreeData({userId:userId, moduleType:this.activeModule}).then(res=>{
           _this.sourceData = res;
         });
       },600000)

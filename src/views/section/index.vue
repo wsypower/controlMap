@@ -1,6 +1,7 @@
 <template>
   <div class="page">
-    <content-tabs :tabData="tabData"></content-tabs>
+    <people-manage></people-manage>
+    <!--<content-tabs :tabData="tabData"></content-tabs>-->
   </div>
 </template>
 <script>
@@ -8,6 +9,7 @@ import StatisticalAnalysis from './components/StatisticalAnalysis.vue'
 import PeopleManage from './components/PeopleManage.vue'
 export default {
   name: 'people',
+  components: { PeopleManage },
   data() {
     return {
       //tab标签

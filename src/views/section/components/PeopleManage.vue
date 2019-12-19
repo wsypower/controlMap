@@ -1,5 +1,6 @@
 <template>
   <div class="manage">
+    <div class="manage-header">人员管控</div>
     <a-tabs v-model="activeTab" @change="changeTab" class="content_tab">
       <a-tab-pane tab="人员定位" key="1">
         <people-position @getUserId="getUserId"></people-position>
@@ -17,36 +18,40 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import PeoplePosition from './peopleManage/PeoplePosition'
 import PeopleTrail from './peopleManage/PeopleTrail'
 import ViolateRules from './peopleManage/ViolateRules'
 import PeopleWorkTime from './peopleManage/PeopleWorkTime'
 import util from '@/utils/util'
 export default {
-    name: 'peopleManage',
-    data(){
-        return {
-            activeTab: '1',
-            infoId: '',
-            peopleDataList: []
-        }
-    },
-    components:{
-        PeoplePosition,
-        PeopleTrail,
-        ViolateRules,
-        PeopleWorkTime
-    },
-    mounted(){
-      const userId = util.cookies.get('userId')
-      this.getAllPeopleDataList({userId: userId}).then(res=>{
-          res.forEach(item => {
-            item.userDisplayId = item.id + '_' + item.name;
-            this.peopleDataList.push(item);
-          });
+  name: 'peopleManage',
+  components:{
+    PeoplePosition,
+    PeopleTrail,
+    ViolateRules,
+    PeopleWorkTime
+  },
+  data(){
+    return {
+      activeTab: '1',
+      infoId: '',
+      peopleDataList: []
+    }
+  },
+  computed: {
+    ...mapState('cgadmin/menu', ['activeModule']),
+    ...mapState('cgadmin/page', ['current'])
+  },
+  mounted(){
+    const userId = util.cookies.get('userId')
+    this.getAllPeopleDataList({userId: userId, moduleType: this.activeModule}).then(res=>{
+      res.forEach(item => {
+        item.userDisplayId = item.id + '_' + item.name;
+        this.peopleDataList.push(item);
       });
-    },
+    });
+  },
     methods:{
         ...mapActions('section/common', ['getAllPeopleDataList']),
         init(){},
@@ -65,11 +70,21 @@ export default {
 <style lang="scss" scoped>
 .manage {
   width: 100%;
-  padding: 20px;
   height: 100%;
+  .manage-header {
+    height: 50px;
+    width: 100%;
+    padding-left: 20px;
+    line-height: 50px;
+    background-color: #f5f7f8;
+    color: #2b90f3;
+    font-size: 18px;
+    text-align: left;
+  }
 }
 .content_tab {
-  height: 100%;
+  height: calc(100% - 50px);
+  padding: 20px;
   /deep/.ant-tabs-nav-scroll {
     height: 44px;
   }
