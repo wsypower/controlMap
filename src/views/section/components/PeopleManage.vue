@@ -1,6 +1,5 @@
 <template>
   <div class="manage">
-    <div class="manage-header">人员管控</div>
     <a-tabs v-model="activeTab" @change="changeTab" class="content_tab">
       <a-tab-pane tab="人员定位" key="1">
         <people-position @getUserId="getUserId"></people-position>
@@ -18,51 +17,88 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapState, mapActions } from 'vuex'
+import { mapActions,mapState } from 'vuex'
 import PeoplePosition from './peopleManage/PeoplePosition'
 import PeopleTrail from './peopleManage/PeopleTrail'
 import ViolateRules from './peopleManage/ViolateRules'
 import PeopleWorkTime from './peopleManage/PeopleWorkTime'
 import util from '@/utils/util'
 export default {
-  name: 'peopleManage',
-  components:{
-    PeoplePosition,
-    PeopleTrail,
-    ViolateRules,
-    PeopleWorkTime
-  },
-  data(){
-    return {
-      activeTab: '1',
-      infoId: '',
-      peopleDataList: []
-    }
-  },
-  computed: {
-    ...mapState('cgadmin/menu', ['activeModule']),
-    ...mapState('cgadmin/page', ['current'])
-  },
-  mounted(){
-    const userId = util.cookies.get('userId')
-    this.getAllPeopleDataList({userId: userId, moduleType: this.activeModule}).then(res=>{
-      res.forEach(item => {
-        item.userDisplayId = item.id + '_' + item.name;
-        this.peopleDataList.push(item);
+    name: 'peopleManage',
+    data(){
+        return {
+            activeTab: '1',
+            infoId: '',
+            peopleDataList: []
+        }
+    },
+    components:{
+        PeoplePosition,
+        PeopleTrail,
+        ViolateRules,
+        PeopleWorkTime
+    },
+    computed:{
+        ...mapState('map', ['mapManager'])
+    },
+    mounted(){
+      this.map = this.mapManager.getMap();
+      const userId = util.cookies.get('userId');
+      this.getAllPeopleDataList({userId: userId}).then(res=>{
+          res.forEach(item => {
+            item.userDisplayId = item.id + '_' + item.name;
+            this.peopleDataList.push(item);
+          });
       });
-    });
-  },
+    },
     methods:{
         ...mapActions('section/common', ['getAllPeopleDataList']),
         init(){},
-        changeTab(){
-
+        changeTab(val){
+            this.map.getOverlayById('peoplePositionOverlay')&&this.map.getOverlayById('peoplePositionOverlay').setPosition(undefined);
+            this.map.getOverlayById('peopleSignInfoOverlay')&&this.map.getOverlayById('peopleSignInfoOverlay').setPosition(undefined);
+            const layers=this.map.getLayers().array_;
+            //切换时清除地图上的一些操作
+            layers.forEach(l=>{
+                if(l.get('featureType')){
+                    if (val == '1') { //人员定位
+                        if (l.get('featureType') == 'PeoplePosition') {
+                            l.setVisible(true);
+                            this.map.getView().fit(l.getSource().getExtent());
+                        }else{
+                            l.setVisible(false);
+                        }
+                    } else if (val == '2') { //轨迹查询
+                        if (l.get('featureType') == 'PeopleTrail' || l.get('featureType') == 'trackLine') {
+                            l.setVisible(true);
+                            this.map.getView().fit(l.getSource().getExtent());
+                        }else{
+                            l.setVisible(false);
+                        }
+                    }else if (val == '3'){ //违规查询
+                        if (l.get('featureType') == 'PeopleViolateRules') {
+                            l.setVisible(true);
+                            this.map.getView().fit(l.getSource().getExtent());
+                        }else{
+                            l.setVisible(false);
+                        }
+                    }else if(val == '4'){
+                        if (l.get('featureType') == 'peopleWorkTime') {
+                            l.setVisible(true);
+                            this.map.getView().fit(l.getSource().getExtent());
+                        }else{
+                            l.setVisible(false);
+                        }
+                    }
+                }
+            });
         },
         //人员查看轨迹触发，使页面显示人员轨迹的tab以及地图显示轨迹
         getUserId(data){
             console.log('peopleManage-userId:' + data);
             this.activeTab = '2';
             this.infoId = data;
+            this.changeTab('2');
         }
     }
 }
@@ -70,21 +106,11 @@ export default {
 <style lang="scss" scoped>
 .manage {
   width: 100%;
+  padding: 20px;
   height: 100%;
-  .manage-header {
-    height: 50px;
-    width: 100%;
-    padding-left: 20px;
-    line-height: 50px;
-    background-color: #f5f7f8;
-    color: #2b90f3;
-    font-size: 18px;
-    text-align: left;
-  }
 }
 .content_tab {
-  height: calc(100% - 50px);
-  padding: 20px;
+  height: 100%;
   /deep/.ant-tabs-nav-scroll {
     height: 44px;
   }

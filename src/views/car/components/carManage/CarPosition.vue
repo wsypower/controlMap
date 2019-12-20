@@ -98,8 +98,12 @@ export default {
   watch:{
     isLoadData:function() {
       if(this.carFeatures.length>0){
-        this.carLayer = this.mapManager.addVectorLayerByFeatures(this.carFeatures,carPointStyle(),3);
-        this.mapManager.getMap().getView().fit(this.carLayer.getSource().getExtent());
+        // this.carLayer = this.mapManager.addVectorLayerByFeatures(this.carFeatures,carPointStyle(),3);
+        //加载聚类车辆图层
+        this.carLayer = this.mapManager.addClusterLayerByFeatures(this.carFeatures);
+        this.carLayer.set('featureType','CarPosition');
+        const extent=this.carLayer.getSource().getSource().getExtent();
+        this.mapManager.getMap().getView().fit(extent);
       }
     }
   },
@@ -113,6 +117,7 @@ export default {
       this.map = this.mapManager.getMap();
       this.map.on('click', this.peopleMapClickHandler);
       this.carOverlay = this.mapManager.addOverlay({
+        id:'carPositionOverlay',
         offset:[0,-20],
         positioning: 'bottom-center',
         element: this.$refs.carInfo.$el
@@ -159,6 +164,7 @@ export default {
               const feature=_this.mapManager.xyToFeature(item.x,item.y);
               feature.set('icon',pointImg);
               feature.set('props',item);
+              feature.set('type','CarPosition');
               _this.carFeatures.push(feature);
             }
           }
@@ -211,15 +217,24 @@ export default {
           temp.x = needData.x;
           temp.y = needData.y;
           this.carInfoData = temp;
-          this.carOverlay.setPosition([parseFloat(this.carInfoData.x),parseFloat(this.carInfoData.y)])
+          if(this.carInfoData.x&&this.carInfoData.y){
+              const coordinate=[parseFloat(this.carInfoData.x),parseFloat(this.carInfoData.y)];
+              this.carOverlay.setPosition(coordinate);
+              this.mapManager.locateTo(coordinate);
+          }else{
+              this.carOverlay.setPosition(undefined);
+              this.$message.warning('当前车辆无点位信息！！！');
+          }
         }
       },
       //地图上人员点击事件处理器
       peopleMapClickHandler({ pixel, coordinate }){
-        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
-        if(feature){
-          this.carInfoData=feature.get('props');
-          this.carOverlay.setPosition(coordinate);
+        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+        const clickFeature=feature.get('features')[0];
+        const coordinates=clickFeature.getGeometry().getCoordinates();
+        if(clickFeature && clickFeature.get('type')=='CarPosition'){
+          this.carInfoData=clickFeature.get('props');
+          this.carOverlay.setPosition(coordinates);
         }
       },
       //人员轨迹触发

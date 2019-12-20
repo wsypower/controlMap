@@ -10,13 +10,15 @@ import GeoJSON from 'ol/format/GeoJSON'
 import Overlay from 'ol/Overlay'
 import Draw, {createRegularPolygon, createBox} from 'ol/interaction/Draw.js';
 import { Modify } from 'ol/interaction.js';
-import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';
+import {Fill, Stroke, Circle, Style,Icon,Text} from 'ol/style';
 import Feature from 'ol/Feature';
 import MultiPolygon from 'ol/geom/MultiPolygon';
 import { fromCircle } from 'ol/geom/Polygon';
 import Point from 'ol/geom/Point';
-import LineString from 'ol/geom/LineString'
-
+import LineString from 'ol/geom/LineString';
+import Cluster from 'ol/source/Cluster';
+import  AnimatedCluster from 'ol-ext/layer/AnimatedCluster';
+import  SelectCluster from 'ol-ext/interaction/SelectCluster';
 export class MapManager {
   constructor(map) {
     this.map = map
@@ -99,6 +101,102 @@ export class MapManager {
     source.addFeatures(features)
     this.map.addLayer(heatmapLayer)
     return heatmapLayer
+  }
+    /**
+     * @description: 通过features数组添加聚类图层
+     * @param {Array} features
+     */
+  addClusterLayerByFeatures(features){
+    const clusterSource = new Cluster({
+        distance: 40,
+        source: new VectorSource()
+    });
+    const clusterLayer = new AnimatedCluster({
+        name: 'Cluster',
+        source: clusterSource,
+        animationDuration: 700,
+        style: getClusterStyle
+    });
+    this.map.addLayer(clusterLayer);
+    // this.selectCluster = new SelectCluster({
+    //         pointRadius: 7,
+    //         animate: true,
+    //         featureStyle: function(feature) {
+    //             return [
+    //                 new Style({
+    //                     image: new Icon({
+    //                         src: require('@/assets/mapImage/male_online.png'),
+    //                         anchor: [0.5, 0.5],
+    //                         size: [30, 39],
+    //                         opacity: 1
+    //                     }),
+    //                     stroke: new Stroke({
+    //                         color: '#fff',
+    //                         width: 1
+    //                     })
+    //                 })
+    //             ];
+    //         },
+    //         style: getClusterStyle,
+    //         filter:function(feature,layer){
+    //         }
+    //     });
+    // this.map.addInteraction(this.selectCluster);
+    // this.selectCluster.getFeatures().on(['add'], function(e) {
+    //     var c = e.element.get('features');
+    //     if(!c){
+    //     }else{
+    //         if (c.length == 1) {
+    //         } else {
+    //         }
+    //     }
+    // });
+    function getClusterStyle(feature, resolution) {
+        let styleCache = {};
+        if (!feature.get('features')) {
+            return;
+        }
+        let size = feature.get('features').length;
+
+        let style = styleCache[size];
+        if (!style) {
+            if (size == 1) {
+                const styleFeature=feature.get('features')[0];
+                style = styleCache[size] = new Style({
+                    image:  new Icon({
+                        src: require('@/assets/mapImage/'+styleFeature.get('icon')+'.png'),
+                        anchor: [0.5, 0.5],
+                        size: [30, 39],
+                        opacity: 1
+                    }),
+                });
+            } else {
+                const color = size>25 ? '192, 0, 0' : size>8 ? '255, 128, 0' : '0, 128, 0';
+                const radius = Math.max(8, Math.min(size * 0.75, 20));
+                style = styleCache[size] = new Style({
+                    image: new Circle({
+                        radius: radius,
+                        stroke: new Stroke({
+                            color: 'rgba(' + color + ', 0.5)',
+                            width: 15
+                        }),
+                        fill: new Fill({
+                            color:'rgba(' + color + ', 1)'
+                        })
+                    }),
+                    text: new Text({
+                        text: size.toString(),
+                        fill: new Fill({
+                            color: '#fff'
+                        })
+                    })
+                });
+            }
+        }
+        return [style];
+    }
+    clusterSource.getSource().addFeatures(features);
+    return clusterLayer;
   }
   /**
    * @description: 添加弹框

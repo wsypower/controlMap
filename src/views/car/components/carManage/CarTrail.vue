@@ -52,15 +52,15 @@
             <a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="trackPlayHandler(item, index)" />
           </div>
         </div>
-        <div v-if="dataList.length > 20" class="pagination-panel">
-          <a-pagination
-            :total="totalSize"
-            :showTotal="total => `共 ${total} 条`"
-            :pageSize="20"
-            :defaultCurrent="1"
-            @change="changePagination"
-          />
-        </div>
+        <!--<div v-if="dataList.length > 20" class="pagination-panel">-->
+          <!--<a-pagination-->
+            <!--:total="totalSize"-->
+            <!--:showTotal="total => `共 ${total} 条`"-->
+            <!--:pageSize="20"-->
+            <!--:defaultCurrent="1"-->
+            <!--@change="changePagination"-->
+          <!--/>-->
+        <!--</div>-->
       </cg-container>
       <div v-if="!showLoading && dataList.length == 0" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
@@ -168,7 +168,9 @@ export default {
                     this.trackDataHandler(res);
                     const trackLineFeature=trackByLocationList(this.dataList);
                     this.trackLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature,trackStyle(),3);
+                    this.trackLayer.set('featureType','CarTrail');
                     this.eventLayer= this.mapManager.addVectorLayerByFeatures(this.eventFeatures,trackPointStyle(),3);
+                    this.eventLayer.set('featureType','CarTrail');
                     this.mapManager.getMap().getView().fit(this.trackLayer.getSource().getExtent());
                 }else{
                     this.$message.warning('未查询到轨迹数据！！！');
@@ -250,7 +252,7 @@ export default {
                 this.trackSegments[index].isStart = true;
                 const routeCoords = this.currentQueryTracks[index];
                 if (!this.trackPlaying) {
-                    this.trackPlaying = new TrackPlaying(this.map, routeCoords, null,null, 'car');
+                    this.trackPlaying = new TrackPlaying(this.map, routeCoords, null,null, 'car',this.stopPlayer,index);
                 } else {
                     this.trackPlaying.data = routeCoords;
                 }
@@ -270,6 +272,11 @@ export default {
                 this.trackPlaying.pauseMoving();
                 this.isPlayingTrack = false;
             }
+        },
+        //播放停止
+        stopPlayer(index){
+            this.trackSegments[index].isStart= false;
+            console.log('回调========')
         },
         //查询(默认显示当天，当前登入的用户)
         onSearch() {

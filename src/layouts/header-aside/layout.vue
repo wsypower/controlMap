@@ -12,12 +12,12 @@
           <!-- 主体 左侧边栏 -->
           <layout-menu />
           <!-- 主体 右侧上按钮栏 -->
-          <!-- <div class="container__aside--top">
-            <a-button class="container__aside__item" type="primary">1</a-button>
+           <div class="container__aside--top">
+            <a-button class="container__aside__item" type="primary" icon="menu-fold"></a-button>
             <a-button class="container__aside__item">2</a-button>
             <a-button class="container__aside__item">3</a-button>
             <a-button class="container__aside__item">4</a-button>
-          </div> -->
+          </div>
           <!-- 主体 右侧下按钮栏 -->
           <div class="container__aside--bottom" flex="dir:top cross:top">
             <a-button class="container__aside__item">1</a-button>
@@ -105,6 +105,7 @@ export default {
 .container__aside--bottom,
 .container__aside--top {
   .container__aside__item {
+    z-index:99;
     :nth-last-child() {
       margin-bottom: 0;
     }

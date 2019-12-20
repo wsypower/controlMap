@@ -33,7 +33,7 @@ export function trackStyle() {
     })
 }
 /**
- * @description:
+ * @description:轨迹点位样式
  * @author:sijianting
  * @createDate:2019/12/6 10:46
  */
@@ -53,6 +53,47 @@ export function trackPointStyle() {
                 })
             });
         }
+    }
+}
+const violateTypeColor={
+    '1':'#f07171',
+    '2':'orange',
+    '3':'red'
+};
+/**
+ * @description:违规轨迹样式
+ * @author:sijianting
+ * @createDate:2019/12/6 10:36
+ */
+export function violateStyle(type) {
+    return function(feature) {
+        return new Style({//红线
+            stroke: new Stroke({
+                color: violateTypeColor[type],
+                width: 5
+            })
+        })
+    }
+}
+/**
+ * @description:违规轨迹点位样式
+ * @author:sijianting
+ * @createDate:2019/7/22 14:47
+ */
+export function violatePointStyle(type) {
+    return function(feature) {
+        return new Style({//普通轨迹点样式
+            image: new Circle({
+                radius: 5,
+                fill: new Fill({
+                    color: '#fff',
+                }),
+                stroke: new Stroke({
+                    color: violateTypeColor[type],
+                    width: 3
+                })
+            })
+        });
     }
 }
 

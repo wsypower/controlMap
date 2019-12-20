@@ -76,8 +76,8 @@
                 <span :class="{ cfw: log.vType == '1', cs: log.vType == '2' }">{{
                   log.vType == '1'? '越界' : '超速'
                 }}</span>
-                <span v-if="!log.isStart" @click="startPlay(log,item.carId)">播放</span>
-                <span v-else @click="pausePlay(log)">暂停</span>
+                <span @click="startPlay(log,item.carId)">显示</span>
+                <!--<span v-else @click="pausePlay(log)">暂停</span>-->
                 <span><a-icon type="delete" @click="deleteVLog(log, i, index)"/></span>
               </li>
             </div>
@@ -91,9 +91,11 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex';
+import { mapActions,mapState } from 'vuex';
 import moment from 'moment';
 import util from '@/utils/util';
+import { trackByLocationList,pointByCoord } from '@/utils/util.map.manage';
+import {violateStyle,violatePointStyle} from '@/utils/util.map.style';
 
 export default {
   name: 'carViolateRules',
@@ -123,10 +125,16 @@ export default {
       showLoading: false,
       dataList:[],
       //违规次数
-      times: 0
+      times: 0,
+      violateLayer:null,
+      violatePointLayer:null
     }
   },
+  computed:{
+      ...mapState('map', ['mapManager'])
+  },
   mounted(){
+    this.map=this.mapManager.getMap();
     const userId = util.cookies.get('userId');
     this.query.userId = userId;
     this.getAllGroupDataList({userId: userId}).then(res=>{
@@ -170,6 +178,8 @@ export default {
     },
     //搜索查询
     onSearch() {
+      this.violateLayer && this.map.removeLayer(this.violateLayer);
+      this.violatePointLayer && this.map.removeLayer(this.violatePointLayer);
       this.query.startTime = this.dayRange[0]._d.getTime();
       this.query.endTime = this.dayRange[1]._d.getTime();
       this.getDataList();
@@ -189,24 +199,44 @@ export default {
     },
     //开始播放
     startPlay(log,carId){
-
+        console.log('类型=====',log.vType);
       log.isStart = true;
-      if(log.hasDetail){
-        //已经有轨迹数据，直接在地图上播放
+      this.violateLayer && this.map.removeLayer(this.violateLayer);
+      this.violatePointLayer && this.map.removeLayer(this.violatePointLayer);
+      // if(log.hasDetail){
+      //   //已经有轨迹数据，直接在地图上播放
+      // }
+      // else{
+      let temp = {
+        userId: this.query.userId,
+        carId: carId,
+        startTime: log.startTime,
+        endTime: log.endTime
       }
-      else{
-        let temp = {
-          userId: this.query.userId,
-          carId: carId,
-          startTime: log.startTime,
-          endTime: log.endTime
-        }
-        this.getTrailDetailData(temp).then(res=>{
-          console.log('TrailDetailData',res.data);
-          log.hasDetail = true;
-          //轨迹数据在res.data中，直接在地图上播放
-        });
-      }
+      this.getTrailDetailData(temp).then(res=>{
+        console.log('轨迹====',res);
+        // log.hasDetail = true;
+          //违规轨迹点位
+          if(res.length>0) {
+              const eventFeatures = res.map(r => {
+                  if (r.gpsx && r.gpsy) {
+                      return pointByCoord([parseFloat(r.gpsx), parseFloat(r.gpsy)]);
+                  }
+              });
+              //轨迹数据在res，直接在地图上显示
+              const trackLineFeature = trackByLocationList(res);
+              //违规轨迹图层
+              this.violateLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature, violateStyle(log.vType), 3);
+              this.violateLayer.set('featureType', 'CarViolateRules');
+              //违规轨迹点位图层
+              this.violatePointLayer = this.mapManager.addVectorLayerByFeatures(eventFeatures, violatePointStyle(log.vType), 3);
+              this.violatePointLayer.set('featureType', 'CarViolateRules');
+              this.mapManager.getMap().getView().fit(this.violatePointLayer.getSource().getExtent());
+          }else{
+              this.$message.warning('未查询到违规轨迹数据！！！');
+          }
+      });
+      // }
     },
     //暂停播放
     pausePlay(log){
@@ -296,12 +326,12 @@ export default {
             color: #1dcec8;
           }
           &.cs {
-            background-color: rgba(240, 113, 113, 0.2);
-            color: #f07171;
-          }
-          &.cfw {
             background-color: rgba(254, 135, 8, 0.2);
             color: #fe8708;
+          }
+          &.cfw {
+            background-color: rgba(240, 113, 113, 0.2);
+            color: #f07171;
           }
         }
       }
@@ -381,10 +411,10 @@ export default {
                 color: #1dcec8;
               }
               &.cs {
-                color: #f07171;
+                color: #fe8708;
               }
               &.cfw {
-                color: #fe8708;
+                color: #f07171;
               }
             }
             &:nth-child(4) {

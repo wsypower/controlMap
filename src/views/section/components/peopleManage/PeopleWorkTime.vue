@@ -66,20 +66,23 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
-    <people-sign-info
-      ref="peopleSignInfo"
-      style="position:fixed; top: 100px;right:100px;display:none"
-      :info="signInfoData"
-      @showPhoto="showPhoto"
-      @closeTip="closeTip"
-    ></people-sign-info>
+    <div hidden>
+      <people-sign-info
+              ref="peopleSignInfo"
+              :info="signInfoData"
+              @showPhoto="showPhoto"
+              @closeTip="closeTip"
+      ></people-sign-info>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex';
+import { mapActions,mapState } from 'vuex';
 import moment from 'moment';
 import util from '@/utils/util';
 import PeopleSignInfo from './PeopleSignInfo.vue';
+import { pointByCoord } from '@/utils/util.map.manage';
+import { PeoplePointStyle } from '@/utils/util.map.style'
 const weekArr = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 export default {
     name: 'peopleWorkTime',
@@ -111,22 +114,34 @@ export default {
             totalSize: 0,
             signInfoData: {},
             photoList: [],
-            toIndex: 0
+            toIndex: 0,
+            //签到点位图层
+            signLayer:null
         }
     },
     components:{
         PeopleSignInfo
     },
+    computed:{
+        ...mapState('map', ['mapManager']),
+    },
     mounted(){
         this.query.userId = util.cookies.get('userId');
         let temp = this.peopleDataList.find(item => item.id === this.query.userId );
         this.query.userDisplayId = temp.userDisplayId;
-
         let day = moment(new Date()).format('YYYY-MM-DD');
         this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
         this.query.startTime = new Date(day).getTime();
         this.query.endTime = new Date(day).getTime();
         this.getDataList();
+        this.map = this.mapManager.getMap();
+        this.map.on('click', this.signMapClickHandler);
+        this.signOverlay = this.mapManager.addOverlay({
+            id:'peopleSignInfoOverlay',
+            offset:[0,-20],
+            positioning: 'bottom-center',
+            element: this.$refs.peopleSignInfo.$el
+        });
     },
     methods:{
         ...mapActions('section/manage', ['getUserWorkTimeDataList','getUserSignDetailData']),
@@ -186,15 +201,35 @@ export default {
                     photoList: res.signIn.fileList,
                     signTime: res.signIn.time,
                     isSignIn: true
+                };
+                let signFeature=[];
+                if(res.signIn.positionX&&res.signIn.positionY){
+                    const signInFeature=pointByCoord([parseFloat(res.signIn.positionX),parseFloat((res.signIn.positionY))]);
+                    signInFeature.set('icon','people-zx');
+                    signInFeature.set('type','peopleWorkTime');
+                    signFeature.push(signInFeature);
                 }
+                if(res.signOut.positionX&&res.signOut.positionY){
+                    const signOutFeature=pointByCoord([parseFloat(res.signOut.positionX),parseFloat((res.signOut.positionY))]);
+                    signOutFeature.set('icon','people-lx');
+                    signOutFeature.set('type','peopleWorkTime');
+                    signFeature.push(signOutFeature);
+                }
+                this.signLayer=this.mapManager.addVectorLayerByFeatures(signFeature,PeoplePointStyle(),3);
+                this.signLayer.set('featureType','peopleWorkTime');
+                this.mapManager.getMap().getView().fit(this.signLayer.getSource().getExtent());
                 console.log('this.signInfoData',this.signInfoData);
-                this.$refs.peopleSignInfo.$el.style.display = 'block';
+                // this.$refs.peopleSignInfo.$el.style.display = 'block';
             });
-
-
+        },
+        signMapClickHandler({ pixel, coordinate }){
+            const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
+            if(feature&& feature.get('type')=='peopleWorkTime'){
+                this.signOverlay.setPosition(coordinate);
+            }
         },
         closeTip(){
-            console.log('close the info');
+            this.signOverlay.setPosition(undefined);
         },
       //无用，后续需要清除
         showPhoto(index){
