@@ -207,3 +207,87 @@ const getAllEmergencyPeople = (options) => {
     )
 }
 Mock.mock(/\/@test\/getAllEmergencyPeople/, 'get', getAllEmergencyPeople);
+
+const getEvaluationListData = (options) => {
+  console.log(options)
+  const queryParameters = getQueryParameters(options);
+  console.log(queryParameters);
+  let data = [{
+    id: 'qh783074647dj6hdkslikd78w64',
+    message: '应急评估应急评估应急评估应急评估应急评估应急评估应急评估应急评估应急评估应急评估应急评估应急。',
+    time: '2019-12-19 17:16',
+    isChecked: false,
+    isExpand: false,
+    fileList: [{
+      type: 'image',
+      name: '20191118075945806659.jpg',
+      imageUrl: 'http://61.153.37.213:8087/camera/2019/11/18/20191118075945806659.jpg',
+      videoSrc: ''
+    }, {
+      type: 'image',
+      name: '20191118113903272296.jpg',
+      imageUrl: 'http://61.153.37.213:8087/camera/2019/11/18/20191118113903272296.jpg',
+      videoSrc: ''
+    }, {
+      type: 'video',
+      name: '',
+      imageUrl: 'http://61.153.37.213:8087/camera/2019/11/18/20191118080357327335.jpg',
+      videoSrc: ''
+    }]
+  },{
+    id: 'aa783074647dsx234gikd78w64',
+    message: '应急评估应急评估应急评估应急评估应急评估应急评估应急评估应急评估应急评估应急评估应急评估应急。',
+    time: '2019-12-19 17:16',
+    isChecked: false,
+    isExpand: false,
+    fileList: [{
+      type: 'video',
+      name: '',
+      imageUrl: 'http://61.153.37.213:8087/camera/2019/11/18/20191118080357327335.jpg',
+      videoSrc: ''
+    }]
+  }]
+  return builder(
+    {
+      code: 0,
+      data: data,
+      total: 3
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/getEvaluationListData/, 'get', getEvaluationListData);
+
+const submitEventEvaluationMessage = (options) => {
+  console.log('submitEventEvaluationMessage options',options);
+  const body = getBody(options);
+  console.log('submitEventEvaluationMessage body',body);
+  return builder(
+    {
+      code: 0,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/submitEventEvaluationMessage/, 'post', submitEventEvaluationMessage);
+
+const deleteEvaluation = (options) => {
+  console.log('deleteEvaluation options',options);
+  const body = getBody(options);
+  console.log('deleteEvaluation body',body);
+  return builder(
+    {
+      code: 0,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/deleteEvaluation/, 'post', deleteEvaluation);

@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="header__status" flex="main:right">
-      <ul flex="cross:center">
+      <ul flex="cross:center main:justify">
         <li :class="{active:activeModule == 'jm'}" @click="toPage('jm')"><cg-icon-svg name="jiemian" class="svg_icon jiemian"></cg-icon-svg>智慧街面</li>
         <li :class="{active:activeModule == 'sz'}" @click="toPage('sz')"><cg-icon-svg name="shizheng" class="svg_icon shizheng"></cg-icon-svg>智慧市政</li>
         <li :class="{active:activeModule == 'hw'}" @click="toPage('hw')"><cg-icon-svg name="huanwei" class="svg_icon huanwei"></cg-icon-svg>智慧环卫</li>
@@ -105,23 +105,23 @@ export default {
     margin-left: 600px;
     background: url('~@img/layout-header-tab-bc.png') no-repeat;
     position: relative;
-    margin-top: 11px;
-    padding: 0px 70px;
-    background-size: 100%;
+    margin-top: 10px;
+    padding-left: 70px;
+    background-size: 100% 100%;
     ul{
-      width:100%;
+      width:750px;
       height:100%;
       list-style: none;
       li{
         width: 130px;
         height: 100%;
-        line-height: 48px;
+        line-height: 50px;
         text-align: center;
         color: #ffffff;
         font-size: 15px;
         margin-right: 20px;
         cursor: pointer;
-        &.active{
+        &.active,&:hover{
           background-image: linear-gradient(0deg,
                   #3fd3fd 0%,
                   rgba(63, 211, 253, 0) 100%);

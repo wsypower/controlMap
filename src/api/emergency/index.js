@@ -203,4 +203,72 @@ export function getPersonInfo(data){
     })
 }
 
+/**
+ * @description 提交事件评价信息
+ * @author moxuejuan
+ * @date 2019-12-20 11:12
+ * @param {String} Id 用户Id
+ * @param {String} eventId 事件ID
+ * @param {String} message 评价内容
+ * @param {String} time 评价时间
+ * @param {Array} fileList 上传文件
+ * @method：POST
+ * @response：{
+ * }
+ */
 
+export function submitEventEvaluationMessage(data){
+  return request({
+    url: '@test/submitEventEvaluationMessage',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * @description 获取事件评价信息列表
+ * @author moxuejuan
+ * @date 2019-12-20 11:16
+ * @param {String} Id 用户Id
+ * @param {String} eventId 事件ID
+ * @method：GET
+ * @response：{
+ *  {String} id: 评价ID
+ *  {String} message, 评价内容
+ *  {Number} time: 评价时间
+ *  {Array} fileList: [{
+ *    {String} type 类型：image、video
+ *    {String} name 文件名称
+ *    {String} imageUrl  图片文件路径、封面文件路径
+ *    {String} videoSrc  视频文件路径
+ *  }]
+ * }
+ */
+
+export function getEvaluationListData(data){
+  return request({
+    url: '@test/getEvaluationListData?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * @description 删除某些事件评价
+ * @author moxuejuan
+ * @date 2019-12-20 11:16
+ * @param {String} Id 用户Id
+ * @param {String} eventId 事件ID
+ * @param {Array} evaluationIdArr 事件数组ID
+ * @method：POST
+ * @response：{
+ * }
+ */
+
+export function deleteEvaluation(data){
+  return request({
+    url: '@test/deleteEvaluation',
+    method: 'post',
+    data
+  })
+}
