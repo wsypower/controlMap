@@ -172,15 +172,18 @@ export default {
       this.showLoading = true;
       this.getAllAlarmDataList(this.query).then(res=>{
         _this.showLoading = false;
-        _this.dataList = res.data;
-        _this.alarmFeatures = this.dataList.map((d)=>{
-          if(d.x&&d.x.length>0&&d.y&&d.y.length>0){
-            const feature = _this.mapManager.xyToFeature(d.x,d.y);
-            feature.set('props',d);
-            feature.set('type','alarmSearch');
-            return feature;
-          }
-        });
+        console.log('测试====',res);
+        _this.dataList = res.list;
+        if(_this.dataList&&_this.dataList.length>0) {
+            _this.alarmFeatures = this.dataList.map((d) => {
+                if (d.x && d.x.length > 0 && d.y && d.y.length > 0) {
+                    const feature = _this.mapManager.xyToFeature(d.x, d.y);
+                    feature.set('props', d);
+                    feature.set('type', 'alarmSearch');
+                    return feature;
+                }
+            });
+        }
         if(_this.alarmFeatures.length>0){
             _this.alarmLayer = _this.mapManager.addVectorLayerByFeatures(this.alarmFeatures,alarmPointStyle(),3);
             _this.alarmLayer.set('featureType','alarmSearch');
