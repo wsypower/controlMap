@@ -60,8 +60,8 @@
                 <span :class="{ yuejie: log.vType === '1', buzaigang: log.vType === '2' }">{{
                   log.vType=='1' ? '越界' : '不在岗'
                 }}</span>
-                <span v-if="!log.isStart" @click="startPlay(log)">播放</span>
-                <span v-else @click="pausePlay(log)">暂停</span>
+                <span @click="startPlay(log)">显示</span>
+                <!--<span v-else @click="pausePlay(log)">取消</span>-->
                 <span><a-icon type="delete" @click="deleteVLog(log, i, index)"/></span>
               </li>
             </div>
@@ -75,9 +75,11 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex';
+import { mapActions,mapState } from 'vuex';
 import moment from 'moment';
 import util from '@/utils/util';
+import { trackByLocationList,pointByCoord } from '@/utils/util.map.manage';
+import {violateStyle,violatePointStyle} from '@/utils/util.map.style';
 export default {
     name: 'peopleViolateRules',
     props:{
@@ -104,10 +106,16 @@ export default {
             dayRange: [],
             //查询数据的过渡效果
             showLoading: false,
-            dataList:[]
+            dataList:[],
+            violateLayer:null,
+            violatePointLayer:null
         }
     },
+    computed:{
+        ...mapState('map', ['mapManager'])
+    },
     mounted(){
+      this.map=this.mapManager.getMap();
       this.query.userId = util.cookies.get('userId');
       let temp = this.peopleDataList.find(item => item.id === this.query.userId );
       this.query.userDisplayId = temp.userDisplayId;
@@ -148,6 +156,8 @@ export default {
         },
         //搜索查询
         onSearch() {
+            this.violateLayer && this.map.removeLayer(this.violateLayer);
+            this.violatePointLayer && this.map.removeLayer(this.violatePointLayer);
             this.query.startTime = this.dayRange[0]._d.getTime();
             this.query.endTime = this.dayRange[1]._d.getTime();
             this.getDataList();
@@ -168,22 +178,39 @@ export default {
         //开始播放
         startPlay(log){
             log.isStart = true;
-            if(log.hasDetail){
-                //已经有轨迹数据，直接在地图上播放
-            }
-            else{
-                let temp = {
-                    userId: log.userId,
-                    startTime: log.startTime,
-                    endTime: log.endTime
+            this.violateLayer && this.map.removeLayer(this.violateLayer);
+            this.violatePointLayer && this.map.removeLayer(this.violatePointLayer);
+            // if(log.hasDetail){
+            //     //已经有轨迹数据，直接在地图上播放
+            // }
+            let temp = {
+                userId: log.userId,
+                startTime: log.startTime,
+                endTime: log.endTime
+            };
+            this.getUserTrailDataList(temp).then(res=>{
+                //违规轨迹点位
+                if(res.length>0) {
+                    const eventFeatures = res.map(r => {
+                        if (r.gpsx && r.gpsy) {
+                            return pointByCoord([parseFloat(r.gpsx), parseFloat(r.gpsy)]);
+                        }
+                    });
+                    //轨迹数据在res，直接在地图上显示
+                    const trackLineFeature = trackByLocationList(res);
+                    //违规轨迹图层
+                    this.violateLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature, violateStyle(log.vType), 3);
+                    this.violateLayer.set('featureType', 'PeopleViolateRules');
+                    //违规轨迹点位图层
+                    this.violatePointLayer = this.mapManager.addVectorLayerByFeatures(eventFeatures, violatePointStyle(log.vType), 3);
+                    this.violatePointLayer.set('featureType', 'PeopleViolateRules');
+                    this.mapManager.getMap().getView().fit(this.violateLayer.getSource().getExtent());
+                    this.mapManager.getMap().getView().setZoom(12);
+                    // log.hasDetail = true;
+                }else{
+                    this.$message.warning('未查询到违规轨迹数据！！！');
                 }
-                this.getUserTrailDataList(temp).then(res=>{
-                    console.log('TrailDetailData',res.data);
-                    log.hasDetail = true;
-                    //轨迹数据在res.data中，直接在地图上播放
-                });
-            }
-
+            });
         },
         //暂停播放
         pausePlay(log){

@@ -79,7 +79,8 @@ export default {
       videoFeatures: [],
       //地图相关
       videoLayer: null,
-      isLoadData: false
+      isLoadData: false,
+      clusterLayer:null
     }
   },
   computed:{
@@ -97,9 +98,10 @@ export default {
   watch:{
     isLoadData:function() {
       if(this.videoFeatures.length>0){
-        this.videoLayer = this.mapManager.addVectorLayerByFeatures(this.videoFeatures,videoPointStyle(),3);
+        this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
         this.videoLayer.set('featureType','videoDistribute');
-        this.mapManager.getMap().getView().fit(this.videoLayer.getSource().getExtent());
+        const extent=this.videoLayer.getSource().getSource().getExtent();
+        this.mapManager.getMap().getView().fit(extent);
       }
     }
   },
@@ -136,6 +138,7 @@ export default {
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
             feature.set('icon','carmera_online');
             feature.set('props',item);
+            feature.set('type','VideoDistribute');
             _this.videoFeatures.push(feature);
           }
         }
@@ -176,8 +179,14 @@ export default {
         this.playVideo(mpid);
       }
     },
-      videoMapClickHandler() {
-          this.playVideo(mpid);
+      videoMapClickHandler({ pixel, coordinate }) {
+          const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+          const clickFeature=feature.get('features')[0];
+          // const coordinates=clickFeature.getGeometry().getCoordinates();
+          if(clickFeature&& clickFeature.get('type')=='VideoDistribute'){
+              const videoInfoData=clickFeature.get('props');
+              this.playVideo(videoInfoData.mpid);
+          }
       },
     playVideo(mpid){
       if (this.playerMethod === 'browser') {
