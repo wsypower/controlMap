@@ -3,7 +3,7 @@
  * @Date: 2019-11-26 09:12:20
  */
 
-import request from '@/plugins/axios/axios2'
+import request from '@/plugins/axios/axios'
 
 /**
  * @description 获取所有车辆(列表结构)

@@ -92,7 +92,7 @@
             @getResult="getResourceResult"
           ></yu-an-resource>
           <yu-an-place :placeData.sync="placeData" :operateType="operateType" @getResult="getPlaceResult"></yu-an-place>
-          <event-evaluation :eventId="sourceData.id"></event-evaluation>
+          <event-evaluation v-if="sourceData.activeStage === '警报解除阶段'" :eventId="sourceData.id"></event-evaluation>
         </div>
       </cg-container>
     </div>

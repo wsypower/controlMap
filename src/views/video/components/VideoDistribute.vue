@@ -109,7 +109,7 @@ export default {
     this.map.on('click', this.videoMapClickHandler);
     this.getAllCameraTreeData({userId:userId}).then(res=>{
       console.log('getAllCameraTreeData',res);
-      this.sourceData = res.data[0].children;
+      this.sourceData = res;
       this.showLoading = false;
     });
   },

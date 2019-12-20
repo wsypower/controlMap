@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <div class="header__status" flex="main:right">
+    <div class="header__status" flex>
       <ul flex="cross:center main:justify">
         <li :class="{active:activeModule == 'jm'}" @click="toPage('jm')"><cg-icon-svg name="jiemian" class="svg_icon jiemian"></cg-icon-svg>智慧街面</li>
         <li :class="{active:activeModule == 'sz'}" @click="toPage('sz')"><cg-icon-svg name="shizheng" class="svg_icon shizheng"></cg-icon-svg>智慧市政</li>

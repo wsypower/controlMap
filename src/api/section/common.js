@@ -3,7 +3,7 @@
  * @Date: 2019-11-25 14:53:20
  */
 
-import request from '@/plugins/axios/axios2'
+import request from '@/plugins/axios/axios'
 
 /**
  * @description 获取所有人员(列表结构)

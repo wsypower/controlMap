@@ -3,7 +3,7 @@
  * @Date: 2019-09-06 14:53:20
  */
 
-import request from '@/plugins/axios/axios2'
+import request from '@/plugins/axios/axios'
 
 /**
  * @description 获取用户工作数据信息
