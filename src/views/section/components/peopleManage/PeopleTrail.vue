@@ -167,13 +167,13 @@ export default {
             console.log('this.query',this.query);
             this.showLoading = true;
             this.getUserTrailDataList(this.query).then(res=>{
-                this.showLoading = false;
-                this.dataList = res.map(item=>{
-                    item.isStart = false;
-                    item.hasDetail = false;
-                    item.time = stampConvertToTime(item.gpstime);
-                    return item;
-                });
+              this.showLoading = false;
+              this.dataList = res.map(item=>{
+                item.isStart = false;
+                item.hasDetail = false;
+                item.time = stampConvertToTime(item.gpstime);
+                return item;
+              });
                 if(res.length>0){
                     this.trackDataHandler(res);
                     const trackLineFeature = trackByLocationList(this.dataList);
@@ -293,6 +293,7 @@ export default {
         onSearch() {
             this.query.startTime = this.dayRange[0]._d.getTime();
             this.query.endTime = this.dayRange[1]._d.getTime();
+            this.query.userId = this.query.userDisplayId.split('_')[0];
             this.getDataList();
             this.map.removeLayer(this.trackLayer);
             this.map.removeLayer(this.eventLayer);

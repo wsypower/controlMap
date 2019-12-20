@@ -16,7 +16,7 @@ import request from '@/plugins/axios/axios'
 export function getPoint(type = '全部视频') {
   type = type == '全部视频' ? '视频' : type
   return request({
-    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix+'/ows',
+    url: GIS_CONFIG.baseURL + '/' + GIS_CONFIG.featurePrefix+'/ows',
     method: 'get',
     params: {
       service: 'WFS',
@@ -53,7 +53,7 @@ export function getEmergencyArea(type = '预案区域') {
  * */
 export function postFeature(data) {
   return request({
-    url: GIS_CONFIG.baseURL +GIS_CONFIG.featurePrefix +'/wfs',
+    url: GIS_CONFIG.baseURL + '/' + GIS_CONFIG.featurePrefix +'/wfs',
     method: 'post',
     headers: { 'Content-Type': 'text/xml ' },
     transformRequest: [
@@ -73,7 +73,7 @@ export function postFeature(data) {
  */
 export function getVideoListApi() {
   return request({
-    url: URL_CONFIG.baseURL + 'point/getCamList',
+    url: URL_CONFIG.baseURL + '/point/getCamList',
     method: 'post'
   });
 }
@@ -92,7 +92,7 @@ const apiMapping = {
  */
 export function getResourceListApi(type) {
   return request({
-    url: URL_CONFIG.baseURL + 'point/' + apiMapping[type],
+    url: URL_CONFIG.baseURL + '/point/' + apiMapping[type],
     method: 'post'
   });
 }
@@ -104,7 +104,7 @@ export function getResourceListApi(type) {
  */
 export function getEquipListApi(type) {
   return request({
-    url: URL_CONFIG.baseURL + 'iot/device/list?deviceType=' + type,
+    url: URL_CONFIG.baseURL + '/iot/device/list?deviceType=' + type,
     method: 'post'
   });
 }

@@ -40,7 +40,7 @@
     </div>
     <div class="table_header" flex="dir:left cross:center main:justify">
       <span>违规记录</span>
-      <span v-if="dataList.length > 0">车数：{{ dataList.length }} 次数：{{ times }}次</span>
+      <span v-if="dataList.length > 0">车数：{{ dataList.length }} &nbsp;&nbsp;次数：{{ times }}</span>
     </div>
     <div class="content_body">
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
@@ -50,8 +50,8 @@
         <div class="item" v-for="(item, index) in dataList" :key="index">
           <div class="base-info-panel">
             <div class="base">
-              <span>{{ item.name }}</span
-              ><span>（{{ item.type }}）</span>
+              <span>{{ item.name }}</span>
+              <span :title="item.type">（{{ item.type }}）</span>
             </div>
             <div>{{item.groupName}}</div>
             <div class="type">
@@ -302,9 +302,14 @@ export default {
             color: #333333;
           }
           &:last-child {
+            display: inline-block;
             font-family: PingFang-SC-Medium;
             font-size: 13px;
             color: #333333;
+            width: 140px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
           }
         }
       }
