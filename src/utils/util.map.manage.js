@@ -118,39 +118,6 @@ export class MapManager {
         style: getClusterStyle
     });
     this.map.addLayer(clusterLayer);
-    // this.selectCluster = new SelectCluster({
-    //         pointRadius: 7,
-    //         animate: true,
-    //         featureStyle: function(feature) {
-    //             return [
-    //                 new Style({
-    //                     image: new Icon({
-    //                         src: require('@/assets/mapImage/male_online.png'),
-    //                         anchor: [0.5, 0.5],
-    //                         size: [30, 39],
-    //                         opacity: 1
-    //                     }),
-    //                     stroke: new Stroke({
-    //                         color: '#fff',
-    //                         width: 1
-    //                     })
-    //                 })
-    //             ];
-    //         },
-    //         style: getClusterStyle,
-    //         filter:function(feature,layer){
-    //         }
-    //     });
-    // this.map.addInteraction(this.selectCluster);
-    // this.selectCluster.getFeatures().on(['add'], function(e) {
-    //     var c = e.element.get('features');
-    //     if(!c){
-    //     }else{
-    //         if (c.length == 1) {
-    //         } else {
-    //         }
-    //     }
-    // });
     function getClusterStyle(feature, resolution) {
         let styleCache = {};
         if (!feature.get('features')) {

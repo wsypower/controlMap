@@ -13,7 +13,11 @@
           <layout-menu />
           <!-- 主体 右侧上按钮栏 -->
            <div class="container__aside--top">
-            <a-button class="container__aside__item" type="primary" icon="menu-fold"></a-button>
+             <!---->
+            <div v-show="showSelect">
+              <LayersSwitch></LayersSwitch>
+            </div>
+            <a-button class="container__aside__item" @click="showLayerSwitch">1</a-button>
             <a-button class="container__aside__item">2</a-button>
             <a-button class="container__aside__item">3</a-button>
             <a-button class="container__aside__item">4</a-button>
@@ -43,8 +47,9 @@
 </template>
 
 <script>
-import { LayoutMenu, LayoutDrawer, LayoutHeader, Loading } from './components/index'
-import LayoutMap from '@/views/map/olMap.vue'
+import { LayoutMenu, LayoutDrawer, LayoutHeader, Loading } from './components/index';
+import LayoutMap from '@/views/map/olMap.vue';
+import LayersSwitch from '@/layouts/menu-right/LayersSwitch.vue'
 import { mapState } from 'vuex'
 export default {
   name: 'layoutHeaderAside',
@@ -53,10 +58,13 @@ export default {
     LayoutDrawer,
     LayoutMap,
     LayoutHeader,
-    Loading
+    Loading,
+    LayersSwitch
   },
   data() {
-    return {}
+    return {
+        showSelect : true
+    }
   },
   computed: {
     ...mapState('cgadmin', {
@@ -64,7 +72,11 @@ export default {
       keepAlive: state => state.page.keepAlive
     })
   },
-  methods: {}
+  methods: {
+      showLayerSwitch(){
+          this.showSelect=!this.showSelect;
+      }
+  }
 }
 </script>
 
