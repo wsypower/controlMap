@@ -111,6 +111,7 @@ export default {
       //各项查询条件
       query: {
         userId: userId,
+        moduleType: '',
         startTime: '',
         endTime: '',
         alarmTypeId: '',
@@ -146,6 +147,7 @@ export default {
   },
   computed:{
     ...mapState('map', ['mapManager']),
+    ...mapState('cgadmin/menu', ['activeModule'])
   },
   mounted(){
     this.getAllAlarmTypeDataList({userId: userId}).then(res=>{
@@ -172,6 +174,14 @@ export default {
       const _this=this;
       console.log('this.query',this.query);
       this.showLoading = true;
+      let acModule = '';
+      if(this.activeModule==='jm'){
+        acModule = ''
+      }
+      else{
+        acModule = this.activeModule;
+      }
+      this.query.moduleType = acModule;
       this.getAllAlarmDataList(this.query).then(res=>{
         _this.showLoading = false;
         _this.dataList = res.list;

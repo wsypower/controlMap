@@ -135,7 +135,7 @@ export default {
         else{
             userId = util.cookies.get('userId');
         }
-        let temp = this.peopleDataList.find(item => item.id === userId );
+        let temp = this.peopleDataList.find(item => item.userDisplayId === userId );
         this.query.userId = userId;
         this.query.userDisplayId = temp.userDisplayId;
 
