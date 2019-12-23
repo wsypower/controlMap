@@ -13,6 +13,9 @@ export default {
   getters: {
     role: state => {
       return state.info.name && state.info.name.role
+    },
+    modulePermission: state => {
+      return state.info.name && state.info.name.modules
     }
   },
   actions: {

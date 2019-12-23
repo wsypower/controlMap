@@ -44,6 +44,9 @@ export default {
     ...mapState('cgadmin/page', ['current']),
     ...mapState('map', ['mapManager'])
   },
+  mounted() {
+    this.refreshTime()
+  },
   methods: {
     ...mapActions('cgadmin/menu', ['asideCollapseSet', 'asideSetItemActive']),
     refreshTime() {
@@ -52,40 +55,43 @@ export default {
       }, 1000)
     },
     toPage(module){
+      const modulePermission = this.$store.getters['cgadmin/user/modulePermission']
       console.log('current',this.current);
-      if(module==='ld'){
-        window.open('https://www.baidu.com');
-      }
-      else{
-        this.asideCollapseSet(false);
-        this.activeModule = module;
-        this.$store.commit('cgadmin/menu/activeModuleSetState', module)
-        menuAside.forEach( item => {
-          item.active = false;
-        });
-        const menu = menuAside.filter(v => v.role.includes('admin')&&v.module.includes(module))
-        this.$store.commit('cgadmin/menu/asideSet', menu)
-        let i = 0;
-        let index = 0;
-        for(i;i<menu.length;i++){
-          if(menu[i].path === this.current){
-            if(i===menu.length-1){
-              index = 0;
+      if(modulePermission.indexOf(module)>=0){
+        if(module==='ld'){
+          window.open('https://www.baidu.com');
+        }
+        else{
+          this.asideCollapseSet(false);
+          this.activeModule = module;
+          this.$store.commit('cgadmin/menu/activeModuleSetState', module)
+          menuAside.forEach( item => {
+            item.active = false;
+          });
+          const menu = menuAside.filter(v => v.role.includes('admin')&&v.module.includes(module))
+          this.$store.commit('cgadmin/menu/asideSet', menu)
+          let i = 0;
+          let index = 0;
+          for(i;i<menu.length;i++){
+            if(menu[i].path === this.current){
+              if(i===menu.length-1){
+                index = 0;
+              }
+              else{
+                index = i + 1;
+              }
+              break;
             }
-            else{
-              index = i + 1;
-            }
-            break;
+          }
+          if(i!==menu.length){
+            this.$router.replace(menu[index].path)
           }
         }
-        if(i!==menu.length){
-          this.$router.replace(menu[index].path)
-        }
+      }
+      else{
+        this.$message.warning('你没有这个模块的使用权限！！！');
       }
     }
-  },
-  mounted() {
-    this.refreshTime()
   }
 }
 </script>
