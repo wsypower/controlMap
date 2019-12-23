@@ -1,8 +1,10 @@
 import {
   getAllPeopleTreeData,
   getUserWorkInfoData,
+  getAllUserInfoData,
   getUserTrailDataList,
   getTrailDetailData,
+  getUserWorkTimeTotalData,
   getUserWorkTimeDataList,
   getUserSignDetailData,
   getUserViolateRulesDataList,
@@ -16,6 +18,19 @@ export default {
       console.log('store', data)
       return new Promise((resolve, reject) => {
         getAllPeopleTreeData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getAllUserInfoData(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getAllUserInfoData(data)
           .then(res => {
             resolve(res)
           })
@@ -55,6 +70,19 @@ export default {
       console.log('store', data)
       return new Promise((resolve, reject) => {
         getTrailDetailData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getUserWorkTimeTotalData(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getUserWorkTimeTotalData(data)
           .then(res => {
             resolve(res)
           })

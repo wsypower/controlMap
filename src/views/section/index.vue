@@ -1,11 +1,8 @@
 <template>
   <div class="page">
       <div class="people-manage" flex :class="{trans: isDetail}">
-          <people-list @toDetail="toDetail"></people-list>
-          <people-detail></people-detail>
-          <div hidden>
-              <!--<people-info ref="peopleInfo" :info="peopleInfoData" @closeTip="closeTip" @getUserId="getUserId"></people-info>-->
-          </div>
+          <people-list @toDetail="toDetail" @getUserId="getUserId"></people-list>
+          <people-detail @toList="toList" :id="mId"></people-detail>
       </div>
   </div>
 </template>
@@ -21,13 +18,21 @@ export default {
   data() {
     return {
       isDetail: false,
+      mId: ''
     }
   },
   mounted() {},
   methods: {
+    getUserId(id){
+        this.mId = id;
+    },
     toDetail(data){
       console.log('toDetail',data);
       this.isDetail = true;
+    },
+    toList(data){
+      console.log('toList',data);
+      this.isDetail = false;
     }
   }
 }
@@ -44,6 +49,7 @@ export default {
     .people-manage{
         height: 100%;
         width: 200%;
+        transition: transform 0.5s;
     }
 }
 </style>

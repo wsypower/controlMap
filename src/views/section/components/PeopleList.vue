@@ -35,14 +35,20 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
+    <div hidden>
+      <people-info ref="peopleInfo" :info="peopleInfoData" @closeTip="closeTip" @getUserId="getUserId"></people-info>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
+import PeopleInfo from './PeopleInfo'
 import { mapActions } from 'vuex'
 import util from '@/utils/util'
 export default {
   name: 'peopleList',
-  components:{},
+  components:{
+    PeopleInfo
+  },
   data(){
     return {
       //查询输入
@@ -91,9 +97,14 @@ export default {
     onSearch(val){
 
     },
-    toDetail(info){
+    toDetail(info) {
+      this.$emit('toDetail', info);
+    },
+    getUserId(id){
 
-      this.$emit('toDetail',info);
+    },
+    closeTip(){
+
     }
   }
 }
