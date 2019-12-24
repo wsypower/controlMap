@@ -40,7 +40,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
+    ...mapState('cgadmin/menu', ['aside', 'asideCollapse', 'activeModule']),
     ...mapState('cgadmin/page', ['current']),
     ...mapState('map', ['mapManager'])
   },
@@ -57,6 +57,7 @@ export default {
     toPage(module){
       const modulePermission = this.$store.getters['cgadmin/user/modulePermission']
       console.log('current',this.current);
+      if(module === this.activeModule) return;
       if(modulePermission.indexOf(module)>=0){
         if(module==='ld'){
           window.open('https://www.baidu.com');

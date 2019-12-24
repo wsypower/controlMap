@@ -12,19 +12,19 @@
           <!-- 主体 左侧边栏 -->
           <layout-menu />
           <!-- 主体 右侧上按钮栏 -->
-           <div class="container__aside--top">
-            <a-button class="container__aside__item" type="primary" icon="menu-fold"></a-button>
-            <a-button class="container__aside__item">2</a-button>
-            <a-button class="container__aside__item">3</a-button>
-            <a-button class="container__aside__item">4</a-button>
-          </div>
+           <!--<div class="container__aside&#45;&#45;top">-->
+            <!--<a-button class="container__aside__item" type="primary" icon="menu-fold"></a-button>-->
+            <!--<a-button class="container__aside__item">2</a-button>-->
+            <!--<a-button class="container__aside__item">3</a-button>-->
+            <!--<a-button class="container__aside__item">4</a-button>-->
+          <!--</div>-->
           <!-- 主体 右侧下按钮栏 -->
-          <div class="container__aside--bottom" flex="dir:top cross:top">
-            <a-button class="container__aside__item">1</a-button>
-            <a-button class="container__aside__item">2</a-button>
-            <a-button class="container__aside__item">3</a-button>
-            <a-button class="container__aside__item">4</a-button>
-          </div>
+          <!--<div class="container__aside&#45;&#45;bottom" flex="dir:top cross:top">-->
+            <!--<a-button class="container__aside__item">1</a-button>-->
+            <!--<a-button class="container__aside__item">2</a-button>-->
+            <!--<a-button class="container__aside__item">3</a-button>-->
+            <!--<a-button class="container__aside__item">4</a-button>-->
+          <!--</div>-->
           <!-- 主体 -->
           <div class="container__main">
             <!-- 功能抽屉 -->
