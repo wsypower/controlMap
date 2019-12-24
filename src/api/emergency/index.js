@@ -219,7 +219,7 @@ export function getPersonInfo(data){
 
 export function submitEventEvaluationMessage(data){
   return request({
-    url: '@test/submitEventEvaluationMessage',
+    url: 'emergencyplan/submitEventEvaluationMessage',
     method: 'post',
     data
   })
@@ -247,7 +247,7 @@ export function submitEventEvaluationMessage(data){
 
 export function getEvaluationListData(data){
   return request({
-    url: '@test/getEvaluationListData?_t=' + new Date().getTime(),
+    url: 'emergencyplan/getEvaluationListData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -267,7 +267,7 @@ export function getEvaluationListData(data){
 
 export function deleteEvaluation(data){
   return request({
-    url: '@test/deleteEvaluation',
+    url: 'emergencyplan/deleteEvaluation',
     method: 'post',
     data
   })
