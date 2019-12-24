@@ -17,7 +17,7 @@
                              placeholder="请输入" style="width: 277px" />
                   </a-form-item>
                   <a-form-item
-                    label="类型"
+                    label="预案"
                     :label-col="{ span: 5 }"
                     :wrapper-col="{ span: 12 }"
                   >

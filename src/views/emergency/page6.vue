@@ -30,7 +30,7 @@
                     :total="totalSize"
                     :showTotal="total => `共 ${total} 条`"
                     :pageSize="10"
-                    :defaultCurrent="1"
+                    :current="query.pageNo"
                     @change="changePagination"
             />
           </div>

@@ -10,9 +10,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderOne')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('leaderOne')}"
                               :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
+                        <a-select-option v-for="(item,index) in totalPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
             </a-row>
@@ -24,9 +23,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderTwo')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('leaderTwo')}"
                               :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
+                        <a-select-option v-for="(item,index) in totalPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
             </a-row>
@@ -38,9 +36,8 @@
                                   style="width: 100%"
                                   @change="(val)=>{changeSelect(val,'leaderThree')}"
                                   placeholder="请选择"
-                                  @dropdownVisibleChange="()=>{getSelectOptions('leaderThree')}"
                                   :disabled="operateType==='look'">
-                            <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
+                            <a-select-option v-for="(item,index) in totalPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
             </a-row>
@@ -52,9 +49,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderFour')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('leaderFour')}"
                               :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
+                        <a-select-option v-for="(item,index) in totalPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
             </a-row>
@@ -66,9 +62,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'leaderFive')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('leaderFive')}"
                               :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
+                        <a-select-option v-for="(item,index) in totalPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
             </a-row>
@@ -82,9 +77,8 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'memberOne')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('memberOne')}"
                               :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
+                        <a-select-option v-for="(item,index) in totalPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
             </a-row>
@@ -96,152 +90,72 @@
                               style="width: 100%"
                               @change="(val)=>{changeSelect(val,'memberTwo')}"
                               placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('memberTwo')}"
                               :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
+                        <a-select-option v-for="(item,index) in totalPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
                     </a-select>
                 </div>
             </a-row>
-            <div class="member-top">
-                <span class="member-top-group">第一组</span>
+            <div class="group-member-panel" v-for="(groupItem,index) in groupMember" :key="index">
+                <div class="member-top" flex="dir:left cross:center main:justify">
+                    <span class="member-top-group">第{{numArr[index]}}组</span>
+                    <div>
+                        <a-icon v-if="index===groupMember.length-1" type="plus-circle" style="margin-right: 10px;" @click="addGroupItem"/>
+                        <a-popconfirm
+                                title="确定删除这个组吗？"
+                                @confirm="() => deleteGroupItem(index)"
+                        >
+                            <a-icon type="minus-circle" class="del_btn"/>
+                        </a-popconfirm>
+                    </div>
+                </div>
+                <a-row>
+                    <div class="col-panel" flex="dir:left">
+                        <label class="subtitle">组长：</label>
+                        <a-select mode="multiple"
+                                  v-model="groupItem.groupForOne"
+                                  style="width: 100%"
+                                  @change="(val)=>{changeSelect(val,index + '_groupForOne')}"
+                                  placeholder="请选择"
+                                  :disabled="operateType==='look'">
+                            <a-select-option v-for="(item,index) in totalPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
+                        </a-select>
+                    </div>
+                </a-row>
+                <a-row>
+                    <div class="col-panel" flex="dir:left">
+                        <label class="subtitle">副组长：</label>
+                        <a-select mode="multiple"
+                                  v-model="groupItem.groupForTwo"
+                                  style="width: 100%"
+                                  @change="(val)=>{changeSelect(val,index + '_groupForTwo')}"
+                                  placeholder="请选择"
+                                  :disabled="operateType==='look'">
+                            <a-select-option v-for="(item,index) in totalPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
+                        </a-select>
+                    </div>
+                </a-row>
+                <a-row>
+                    <div class="col-panel" flex="dir:left">
+                        <label class="subtitle">队员：</label>
+                        <a-select mode="multiple"
+                                  v-model="groupItem.groupForThree"
+                                  style="width: 100%"
+                                  @change="(val)=>{changeSelect(val,index + '_groupForThree')}"
+                                  placeholder="请选择"
+                                  :disabled="operateType==='look'">
+                            <a-select-option v-for="(item,index) in totalPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
+                        </a-select>
+                    </div>
+                </a-row>
             </div>
-            <a-row>
-                <div class="col-panel" flex="dir:left">
-                    <label class="subtitle">组长：</label>
-                    <a-select mode="multiple"
-                              v-model="peopleDisplayData.groupOneForOne"
-                              style="width: 100%"
-                              @change="(val)=>{changeSelect(val,'groupOneForOne')}"
-                              placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForOne')}"
-                              :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
-                    </a-select>
-                </div>
-            </a-row>
-            <a-row>
-                <div class="col-panel" flex="dir:left">
-                    <label class="subtitle">副组长：</label>
-                    <a-select mode="multiple"
-                              v-model="peopleDisplayData.groupOneForTwo"
-                              style="width: 100%"
-                              @change="(val)=>{changeSelect(val,'groupOneForTwo')}"
-                              placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForTwo')}"
-                              :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
-                    </a-select>
-                </div>
-            </a-row>
-            <a-row>
-                <div class="col-panel" flex="dir:left">
-                    <label class="subtitle">队员：</label>
-                    <a-select mode="multiple"
-                              v-model="peopleDisplayData.groupOneForThree"
-                              style="width: 100%"
-                              @change="(val)=>{changeSelect(val,'groupOneForThree')}"
-                              placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupOneForThree')}"
-                              :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
-                    </a-select>
-                </div>
-            </a-row>
-            <div class="member-top">
-                <span class="member-top-group">第二组</span>
-            </div>
-            <a-row>
-                <div class="col-panel" flex="dir:left">
-                    <label class="subtitle">组长：</label>
-                    <a-select mode="multiple"
-                              v-model="peopleDisplayData.groupTwoForOne"
-                              style="width: 100%"
-                              @change="(val)=>{changeSelect(val,'groupTwoForOne')}"
-                              placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForOne')}"
-                              :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
-                    </a-select>
-                </div>
-            </a-row>
-            <a-row>
-                <div class="col-panel" flex="dir:left">
-                    <label class="subtitle">副组长：</label>
-                    <a-select mode="multiple"
-                              v-model="peopleDisplayData.groupTwoForTwo"
-                              style="width: 100%"
-                              @change="(val)=>{changeSelect(val,'groupTwoForTwo')}"
-                              placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForTwo')}"
-                              :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
-                    </a-select>
-                </div>
-            </a-row>
-            <a-row>
-                <div class="col-panel" flex="dir:left">
-                    <label class="subtitle">队员：</label>
-                    <a-select mode="multiple"
-                              v-model="peopleDisplayData.groupTwoForThree"
-                              style="width: 100%"
-                              @change="(val)=>{changeSelect(val,'groupTwoForThree')}"
-                              placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupTwoForThree')}"
-                              :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
-                    </a-select>
-                </div>
-            </a-row>
-            <div class="member-top">
-                <span class="member-top-group">第三组</span>
-            </div>
-            <a-row>
-                <div class="col-panel" flex="dir:left">
-                    <label class="subtitle">组长：</label>
-                    <a-select mode="multiple"
-                              v-model="peopleDisplayData.groupThreeForOne"
-                              style="width: 100%"
-                              @change="(val)=>{changeSelect(val,'groupThreeForOne')}"
-                              placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForOne')}"
-                              :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
-                    </a-select>
-                </div>
-            </a-row>
-            <a-row>
-                <div class="col-panel" flex="dir:left">
-                    <label class="subtitle">副组长：</label>
-                    <a-select mode="multiple"
-                              v-model="peopleDisplayData.groupThreeForTwo"
-                              style="width: 100%"
-                              @change="(val)=>{changeSelect(val,'groupThreeForTwo')}"
-                              placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForTwo')}"
-                              :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
-                    </a-select>
-                </div>
-            </a-row>
-            <a-row>
-                <div class="col-panel" flex="dir:left">
-                    <label class="subtitle">队员：</label>
-                    <a-select mode="multiple"
-                              v-model="peopleDisplayData.groupThreeForThree"
-                              style="width: 100%"
-                              @change="(val)=>{changeSelect(val,'groupThreeForThree')}"
-                              placeholder="请选择"
-                              @dropdownVisibleChange="()=>{getSelectOptions('groupThreeForThree')}"
-                              :disabled="operateType==='look'">
-                        <a-select-option v-for="(item,index) in canSelectPeople" :key="item.id" :value="item.name+'_'+item.id">{{item.name}} {{item.tel}}</a-select-option>
-                    </a-select>
-                </div>
-            </a-row>
         </div>
     </div>
 </template>
 <script type="text/ecmascript-6">
     import { mapActions } from 'vuex'
+    const _ = require('lodash')
+    const numArr= ['一','二','三','四','五','六','七','八','九','十',
+      '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十'];
     export default {
         name: 'yuAnPeople',
         props:{
@@ -256,15 +170,7 @@
                         leaderFive: [],
                         memberOne: [],
                         memberTwo: [],
-                        groupOneForOne: [],
-                        groupOneForTwo: [],
-                        groupOneForThree: [],
-                        groupTwoForOne: [],
-                        groupTwoForTwo: [],
-                        groupTwoForThree: [],
-                        groupThreeForOne: [],
-                        groupThreeForTwo: [],
-                        groupThreeForThree: []
+                        groupMember: []
                     }
                 }
             },
@@ -276,6 +182,7 @@
         },
         data(){
             return {
+                numArr: numArr,
                 //为了能够模糊搜索而使用的数据
                 peopleDisplayData:{
                     leaderOne: [],
@@ -285,16 +192,16 @@
                     leaderFive: [],
                     memberOne: [],
                     memberTwo: [],
-                    groupOneForOne: [],
-                    groupOneForTwo: [],
-                    groupOneForThree: [],
-                    groupTwoForOne: [],
-                    groupTwoForTwo: [],
-                    groupTwoForThree: [],
-                    groupThreeForOne: [],
-                    groupThreeForTwo: [],
-                    groupThreeForThree: []
+                    groupMember: []
                 },
+                //组员信息
+                groupMember:[
+                  {
+                    groupForOne: [],
+                    groupForTwo: [],
+                    groupForThree: []
+                  }
+                ],
                 //所有人员
                 totalPeople: [],
                 //可被选择的人员
@@ -318,19 +225,54 @@
         watch:{
             peopleData:{
                 handler(newValue){
+                  console.log('peopleData newValue', newValue);
                     Object.keys(newValue).forEach(key=>{
+                      if(key!=='groupMember'){
                         newValue[key].forEach(id=>{
-                            let data = this.totalPeople.filter(item => item.id===id)
-                            console.log('data',data);
-                            this.peopleDisplayData[key].push(data[0].name + '_' + data[0].id);
+                          let data = this.totalPeople.filter(item => item.id===id)
+                          console.log('data',data);
+                          this.peopleDisplayData[key].push(data[0].name + '_' + data[0].id);
                         })
+                      }
+                      else{
+
+                        if(newValue[key]&&newValue[key].length>0){
+                          this.groupMember = [];
+                          newValue[key].forEach(item=>{
+                            let temp = {
+                              groupForOne: [],
+                              groupForTwo: [],
+                              groupForThree: []
+                            }
+                            item.groupForOne.map(id=>{
+                              let data = this.totalPeople.filter(item => item.id===id)
+                              temp.groupForOne.push(data[0].name + '_' + data[0].id);
+                            })
+                            item.groupForTwo.map(id=>{
+                              let data = this.totalPeople.filter(item => item.id===id)
+                              temp.groupForTwo.push(data[0].name + '_' + data[0].id);
+                            })
+                            item.groupForThree.map(id=>{
+                              let data = this.totalPeople.filter(item => item.id===id)
+                              temp.groupForThree.push(data[0].name + '_' + data[0].id);
+                            })
+                            this.groupMember.push(temp);
+                          })
+                        }
+                      }
                     });
                 },
                 deep: true
             },
+          groupMember:{
+            handler(newValue){
+              this.peopleDisplayData.groupMember = _.cloneDeep(newValue);//JSON.parse(JSON.stringify(newValue));
+            },
+            deep: true
+          },
             peopleDisplayData:{
                 handler(newValue,oldValue){
-                    // console.log('watch peopleDisplayData',newValue);
+                    console.log('watch peopleDisplayData',newValue);
                     let resultData = {
                         leaderOne: [],
                         leaderTwo: [],
@@ -339,26 +281,34 @@
                         leaderFive: [],
                         memberOne: [],
                         memberTwo: [],
-                        groupOneForOne: [],
-                        groupOneForTwo: [],
-                        groupOneForThree: [],
-                        groupTwoForOne: [],
-                        groupTwoForTwo: [],
-                        groupTwoForThree: [],
-                        groupThreeForOne: [],
-                        groupThreeForTwo: [],
-                        groupThreeForThree: []
+                        groupMember: []
                     };
                     Object.keys(newValue).forEach(key=>{
-                        newValue[key].forEach(nameId=>{
-                            resultData[key].push(nameId.split('_')[1]);
+                      if(key=='groupMember'){
+                        newValue[key].forEach(item => {
+                          let temp = {
+                            groupForOne: [],
+                            groupForTwo: [],
+                            groupForThree: []
+                          }
+                          Object.keys(item).forEach(k=>{
+                            item[k].forEach(nameId=>{
+                              temp[k].push(nameId.split('_')[1]);
+                            })
+                          });
+                          resultData.groupMember.push(temp);
                         })
-
+                      }
+                      else{
+                        newValue[key].forEach(nameId=>{
+                          resultData[key].push(nameId.split('_')[1]);
+                        })
+                      }
                     });
                     this.$emit('getResult', resultData);
                 },
                 deep: true
-            }
+            },
         },
         created(){
             this.getAllPeopleDataList().then((res)=>{
@@ -373,26 +323,29 @@
             ...mapActions('emergency/common', ['getAllPeopleDataList']),
             //下拉选择后触发
             changeSelect(val,type){
+              if(type.split('_').length>1){
+                let index = type.split('_')[0];
+                let typeTemp = type.split('_')[1];
+                this.groupMember[index][typeTemp] = val;
+              }
+              else{
                 this.peopleDisplayData[type] = val;
+              }
+
                 // console.log('allCheckedPeopleIdList',this.allCheckedPeopleIdList);
             },
-            //出现下拉区域前触发，获取可以选择的人员名单，达到不可重复的目的
-            getSelectOptions(type){
-                // console.log(type);
-                this.canSelectPeople = [];
-                let arr = [];
-                this.allCheckedPeopleIdList.forEach(nameId=>{
-                    if(!this.peopleDisplayData[type].includes(nameId)){
-                        arr.push(nameId);
-                    }
-                });
-                // console.log('arr',arr);
-                this.totalPeople.forEach(item=>{
-                    if(!arr.includes(item.name + '_' + item.id)){
-                        this.canSelectPeople.push(item);
-                    }
-                });
-            }
+
+          addGroupItem(){
+              let temp = {
+                groupForOne: [],
+                groupForTwo: [],
+                groupForThree: []
+              }
+              this.groupMember.push(temp);
+          },
+          deleteGroupItem(index){
+            this.groupMember.splice(index,1);
+          }
         }
     }
 </script>
@@ -436,8 +389,12 @@
         border-left: 2px solid #89e10c;
         .member-top{
             border-top: solid 1px #dddddd;
-            padding-left: 10px;
+            padding: 0px 10px;
             margin: 10px 0px;
+            i{
+                color: #2b8ff3;
+                cursor: pointer;
+            }
             .member-top-group{
                 display:inline-block;
                 width: 60px;

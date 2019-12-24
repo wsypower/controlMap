@@ -139,30 +139,34 @@
                         border-radius: 7px;
                         font-family: PingFang-SC-Medium;
                         font-size: 12px;
-                        color: #ffffff;
                         padding: 1px 6px;
                         &.yanzhong {
-                            background-color: #f07171;
+                            /*background-color: #f07171;*/
+                            color: #f07171;
                         }
                         &.yiban {
-                            background-color: #f99f12;
+                            /*background-color: #f99f12;*/
+                            color: #f99f12;
                         }
                     }
                     .status-panel {
                         border-radius: 7px;
                         font-family: PingFang-SC-Medium;
                         font-size: 12px;
-                        color: #ffffff;
+
                         padding: 1px 6px;
                         margin-left: 10px;
                         &.handle {
-                            background-color: #2b8ff3;
+                            /*background-color: #2b8ff3;*/
+                            color: #2b8ff3;
                         }
                         &.nostart {
-                            background-color: #999999;
+                            /*background-color: #999999;*/
+                            color: #999999;
                         }
                         &.complete {
-                            background-color: #50cf3f;
+                            /*background-color: #50cf3f;*/
+                            color: #50cf3f;
                         }
                     }
                 }
@@ -209,7 +213,7 @@
             .to-next{
                 position:absolute;
                 right:0px;
-                bottom:20px;
+                bottom:5px;
                 .stage_btn{
                     display:inline-block;
                     height: 28px;
