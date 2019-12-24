@@ -2,11 +2,11 @@
   <div class="header">
     <div class="header__status" flex>
       <ul flex="cross:center main:justify">
-        <li :class="{active:activeModule == 'jm'}" @click="toPage('jm')"><cg-icon-svg name="jiemian" class="svg_icon jiemian"></cg-icon-svg>智慧街面</li>
-        <li :class="{active:activeModule == 'sz'}" @click="toPage('sz')"><cg-icon-svg name="shizheng" class="svg_icon shizheng"></cg-icon-svg>智慧市政</li>
-        <li :class="{active:activeModule == 'hw'}" @click="toPage('hw')"><cg-icon-svg name="huanwei" class="svg_icon huanwei"></cg-icon-svg>智慧环卫</li>
-        <li :class="{active:activeModule == 'ps'}" @click="toPage('ps')"><cg-icon-svg name="paishui" class="svg_icon paishui"></cg-icon-svg>智慧排水</li>
-        <li :class="{active:activeModule == 'ld'}" @click="toPage('ld')"><cg-icon-svg name="ludeng" class="svg_icon ludeng"></cg-icon-svg>智慧路灯</li>
+        <li :class="{active:activeHeaderModule == 'jm'}" @click="toPage('jm')"><cg-icon-svg name="jiemian" class="svg_icon jiemian"></cg-icon-svg>智慧街面</li>
+        <li :class="{active:activeHeaderModule == 'sz'}" @click="toPage('sz')"><cg-icon-svg name="shizheng" class="svg_icon shizheng"></cg-icon-svg>智慧市政</li>
+        <li :class="{active:activeHeaderModule == 'hw'}" @click="toPage('hw')"><cg-icon-svg name="huanwei" class="svg_icon huanwei"></cg-icon-svg>智慧环卫</li>
+        <li :class="{active:activeHeaderModule == 'ps'}" @click="toPage('ps')"><cg-icon-svg name="paishui" class="svg_icon paishui"></cg-icon-svg>智慧排水</li>
+        <li :class="{active:activeHeaderModule == 'ld'}" @click="toPage('ld')"><cg-icon-svg name="ludeng" class="svg_icon ludeng"></cg-icon-svg>智慧路灯</li>
       </ul>
     </div>
     <div class="header__name" flex>
@@ -35,14 +35,16 @@ export default {
   name: 'LayoutHeader',
   data() {
     return {
-      localTime: new Date(),
-      activeModule: 'jm'
+      localTime: new Date()
     }
   },
   computed: {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse', 'activeModule']),
     ...mapState('cgadmin/page', ['current']),
-    ...mapState('map', ['mapManager'])
+    ...mapState('map', ['mapManager']),
+    activeHeaderModule: function(){
+      return this.activeModule
+    }
   },
   mounted() {
     this.refreshTime()
@@ -64,7 +66,7 @@ export default {
         }
         else{
           this.asideCollapseSet(false);
-          this.activeModule = module;
+          this.activeHeaderModule = module;
           this.$store.commit('cgadmin/menu/activeModuleSetState', module)
           menuAside.forEach( item => {
             item.active = false;
