@@ -61,7 +61,8 @@
     </div>
     <div class="part-content-panel list-panel" v-if="showList">
       <div class="part-content">
-        <cg-container scroll>
+        <!--<cg-container scroll>-->
+        <vuescroll :ops="ops">
           <div v-for="(ev, index) in evaluationDataList" :key="index" flex class="evaluation-item">
             <a-checkbox :checked="ev.isChecked" @change="(e) => {onItemChange(e,index);}"></a-checkbox>
             <div class="evaluation-item-right">
@@ -79,20 +80,17 @@
                     <img style="width:100%;" :src="file.imageUrl">
                   </div>
                   <div v-if="file.type==='video'">
-                    <div class="video-btn-panel" flex="cross:center main:center">
+                    <div class="video-btn-panel" flex="cross:center main:center" @click="playVideo(file.videoSrc)">
                       <a-icon type="play-circle"/>
                     </div>
-                    <!--<video width="100" height="70" controls="controls">-->
-                      <!--<source :src="file.videoSrc" type="video/ogg">-->
-                      <!--<source :src="file.videoSrc" type="video/mp4">-->
-                          <!--Your browser does not support the video tag.-->
-                    <!--</video>-->
+
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </cg-container>
+        </vuescroll>
+          <!--</cg-container>-->
       </div>
       <div class="list-panel-footer" flex="cross:center main:justify">
         <div flex="cross:center" style="margin-left: 20px;">
@@ -103,14 +101,18 @@
         <a-pagination v-model="query.pageNo" :pageSize.sync="query.pageSize" :total="totalSize" @change="changePageNoHandle"/>
       </div>
     </div>
+    <play-video-modal :visible.sync="modalVisible" :videoSrc="videoSrc"></play-video-modal>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
+import vuescroll from 'vuescroll';
 import dayjs from 'dayjs'
 export default {
   name: 'eventEvaluation',
-  components:{},
+  components:{
+    vuescroll
+  },
   props:{
     eventId:{
       type: String,
@@ -119,6 +121,16 @@ export default {
   },
   data(){
     return{
+      ops: {
+        vuescroll: {},
+        scrollPanel: {},
+        rail: {
+          background: '#cccccc'
+        },
+        bar: {
+          background: '#c1c1c1'
+        }
+      },
       showList: false,
       evaluationData: {
         eventId: '',
@@ -134,7 +146,9 @@ export default {
         pageNo: 1,
         pageSize: 20
       },
-      totalSize: 36
+      totalSize: 0,
+      modalVisible: false,
+      videoSrc: ''
     }
   },
   methods:{
@@ -210,7 +224,7 @@ export default {
       this.getEvaluationListData(this.query).then((res)=>{
         console.log('getEvaluationListData',res);
         this.evaluationDataList = res.list.map( item => {
-          item.isExpand = true;
+          item.isExpand = false;
           item.isChecked = false;
           return item
         });
@@ -227,6 +241,10 @@ export default {
     },
     expandHandle(ev){
       ev.isExpand = !ev.isExpand;
+    },
+    playVideo(videoSrc){
+      this.videoSrc = videoSrc;
+      this.modalVisible = true;
     },
     onItemChange(e, index){
       console.log('098765');
@@ -410,6 +428,11 @@ export default {
       position: relative;
       .evaluation-item{
         padding: 20px 20px 0px 20px;
+        &:last-child{
+          .evaluation-item-right{
+            border-bottom: 1px solid transparent;
+          }
+        }
         .evaluation-item-right{
           margin-left:10px;
           flex: 1;
