@@ -26,7 +26,7 @@ const frameIn = [
   {
     path: '/',
     name: 'layoutHeaderAside',
-    redirect: { path: '/section' },
+    redirect: { path: '/changePage' },
     component: layoutHeaderAside,
     meta: {
       title: '管控平台'
@@ -125,6 +125,15 @@ const frameIn = [
           role: ['admin', 'super_editor']
         },
         component: _import('function/redirect')
+      },
+      {
+        path: '/changePage',
+        name: 'changePage',
+        meta: {
+          title: '模块转化',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('changePage/index.vue')
       }
     ]
   }
