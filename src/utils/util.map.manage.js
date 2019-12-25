@@ -62,8 +62,8 @@ export class MapManager {
       style
     })
     const features = new GeoJSON().readFeatures(geojson)
-    source.addFeatures(features)
-    this.map.addLayer(vectorLayer)
+    source.addFeatures(features);
+    this.map.addLayer(vectorLayer);
     return vectorLayer
   }
   /**
@@ -98,8 +98,8 @@ export class MapManager {
       blur,
       radius
     })
-    source.addFeatures(features)
-    this.map.addLayer(heatmapLayer)
+    source.addFeatures(features);
+    this.map.addLayer(heatmapLayer);
     return heatmapLayer
   }
     /**

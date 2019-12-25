@@ -14,21 +14,23 @@
           <!-- 主体 右侧上按钮栏 -->
            <div class="container__aside--top">
              <!---->
-            <div v-show="showSelect">
-              <LayersSwitch></LayersSwitch>
+            <div v-if="showSelect">
+              <LayersSwitch @show="showSelect"></LayersSwitch>
             </div>
-            <a-button class="container__aside__item" @click="showLayerSwitch">1</a-button>
-            <a-button class="container__aside__item">2</a-button>
-            <a-button class="container__aside__item">3</a-button>
-            <a-button class="container__aside__item">4</a-button>
+            <a-button class="container__aside__item" @click="showLayerSwitch">
+              <img src="@/assets/mapImage/layer.png" alt="" class="icon">
+            </a-button>
+            <!--<a-button class="container__aside__item">2</a-button>-->
+            <!--<a-button class="container__aside__item">3</a-button>-->
+            <!--<a-button class="container__aside__item">4</a-button>-->
           </div>
           <!-- 主体 右侧下按钮栏 -->
-          <div class="container__aside--bottom" flex="dir:top cross:top">
-            <a-button class="container__aside__item">1</a-button>
-            <a-button class="container__aside__item">2</a-button>
-            <a-button class="container__aside__item">3</a-button>
-            <a-button class="container__aside__item">4</a-button>
-          </div>
+          <!--<div class="container__aside&#45;&#45;bottom" flex="dir:top cross:top">-->
+            <!--<a-button class="container__aside__item">1</a-button>-->
+            <!--<a-button class="container__aside__item">2</a-button>-->
+            <!--<a-button class="container__aside__item">3</a-button>-->
+            <!--<a-button class="container__aside__item">4</a-button>-->
+          <!--</div>-->
           <!-- 主体 -->
           <div class="container__main">
             <!-- 功能抽屉 -->
@@ -63,7 +65,7 @@ export default {
   },
   data() {
     return {
-        showSelect : true
+        showSelect : false
     }
   },
   computed: {
@@ -118,8 +120,13 @@ export default {
 .container__aside--top {
   .container__aside__item {
     z-index:99;
+    padding:0;
     :nth-last-child() {
       margin-bottom: 0;
+    }
+    .icon{
+      width: 20px;
+      height: 20px;
     }
   }
 }

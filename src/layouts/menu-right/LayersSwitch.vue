@@ -3,7 +3,7 @@
         <div class="ctrl-panel-b">
             <ul>
                 <li class="ctrl-panel-item" v-for="(layer,index) in allLayers" :key="index">
-                    <p class="ctrl-panel-item-checkbox df aic poi" @click="toggleService(layer)">
+                    <p class="ctrl-panel-item-checkbox" @click="toggleService(layer)">
                         <img :src="getSelectState(layer.name)">
                     </p>
                     <div class="ctrl-panel-item-middle">
@@ -22,7 +22,10 @@
     import { mapState } from 'vuex';
     import selectedImg from '@/assets/mapImage/selected.png';
     import unselectedImg from '@/assets/mapImage/unselected.png';
-    let  selectLayer=['全部图层','区县','街道','社区','监督网格','单元网格','人员','车辆','视频'];
+    import { getTypePoint } from '@/api/map/service';
+    import {gridStyle} from '@/utils/util.map.style';
+    let  selectLayer=['区县','街道','社区','监督网格','单元网格','人员','车辆','视频'];
+    let gridLayer=['区县','街道','社区','监督网格','单元网格'];
     export default {
         name: "LayersSwitch",
         props: {
@@ -34,22 +37,25 @@
             return {
                 allLayers:[
                     {
-                        name: '全部图层',
-                    }, {
                         name: '区县',
+                        color:'#800000',
                         // icon: require('@/assets/images/公厕.png'),
                         lyr: null
                     }, {
                         name: '街道',
+                        color:'#400000',
                         lyr: null
                     }, {
                         name: '社区',
+                        color:'#808080',
                         lyr: null
                     }, {
                         name: '监督网格',
+                        color:'#0000FF',
                         lyr:null
                     }, {
                         name: '单元网格',
+                        color:'#FF0000',
                         lyr: null
                     },{
                         name: '人员',
@@ -60,9 +66,12 @@
                     },{
                         name: '视频',
                         lyr: null
+                    }, {
+                        name: '案卷',
+                        lyr: null
                     },
                 ],
-                selectLayer:[...selectLayer]
+                selectLayer:['区县','街道','社区','监督网格','单元网格']
             }
         },
         computed: {
@@ -73,7 +82,23 @@
                 }
             }
         },
+        mounted(){
+            this.getAllLayers();
+        },
         methods:{
+            getAllLayers(){
+                const _this=this;
+                this.allLayers.forEach(layer => {
+                    if(gridLayer.includes(layer.name)){
+                        getTypePoint(layer.name).then(data=>{
+                            console.log('区县数据====',data);
+                            layer.lyr = _this.mapManager.addVectorLayerByFeatures(data,gridStyle(layer.color),33);
+                        });
+                    }else{
+
+                    }
+                });
+            },
             toggleService (layer) {
                 if (layer.name === '全部图层') {
                     if (this.selectLayer.includes(layer.name)) {
@@ -101,6 +126,13 @@
                     }
                 }
             }
+        },
+        destroyed(){
+            this.allLayers.forEach(layer=>{
+                if(layer.lyr) {
+                    this.mapManager.removeLayer(layer.lyr);
+                }
+            })
         }
     }
 </script>

@@ -257,3 +257,17 @@ export function emergencyEquipStyle(type) {
     return style
   }
 }
+
+/**
+ * @description:网格样式
+ * @author:sijianting
+ * @createDate:2019/12/24 10:36
+ */
+export function gridStyle(color) {
+    return new Style({//红线
+        stroke: new Stroke({
+            color: color,
+            width: 2
+        })
+    })
+}
