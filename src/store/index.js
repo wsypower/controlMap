@@ -17,6 +17,7 @@ import Vuex from 'vuex'
 // import createPersistedState from 'vuex-persistedstate'
 import cgadmin from './modules/cgadmin'
 import section from './modules/section'
+import map from './modules/map'
 Vue.use(Vuex)
 /* eslint-disable no-new */
 const store = new Vuex.Store({
@@ -34,7 +35,8 @@ const store = new Vuex.Store({
   // ],
   modules: {
     cgadmin,
-    section
+    section,
+    map
   }
 })
 
