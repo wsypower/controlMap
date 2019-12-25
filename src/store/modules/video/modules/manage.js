@@ -4,7 +4,8 @@ import {
   getCameraUrl,
   alarmNormalHandle,
   alarmReportHandle,
-  getAllCameraTreeData
+  getAllCameraTreeData,
+  getAllCameraDataList
 } from '@/api/video/manage.js'
 
 export default {
@@ -79,6 +80,19 @@ export default {
       console.log('store', data)
       return new Promise((resolve, reject) => {
         getAllCameraTreeData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getAllCameraDataList(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+          getAllCameraDataList(data)
           .then(res => {
             resolve(res)
           })

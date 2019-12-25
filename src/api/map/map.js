@@ -109,7 +109,7 @@ export function getEquipListApi(type) {
   });
 }
 /**
- * @description:
+ * @description:通过经纬度获取地址
  * @author:sijianting
  * @createDate:2019/8/23 10:14
  */

@@ -7,9 +7,9 @@
                         <img :src="getSelectState(layer.name)">
                     </p>
                     <div class="ctrl-panel-item-middle">
-                        <!--<p class="ctrl-panel-item-icon df aic">-->
-                            <!--<img :src="layer.icon">-->
-                        <!--</p>-->
+                        <p class="ctrl-panel-item-icon df aic">
+                            <img :src="layer.icon">
+                        </p>
                         <p>{{layer.name}}</p>
                     </div>
                 </li>
@@ -19,12 +19,14 @@
 </template>
 
 <script>
-    import { mapState } from 'vuex';
+    import { mapActions,mapState } from 'vuex';
     import selectedImg from '@/assets/mapImage/selected.png';
     import unselectedImg from '@/assets/mapImage/unselected.png';
     import { getTypePoint } from '@/api/map/service';
     import {gridStyle} from '@/utils/util.map.style';
-    let  selectLayer=['区县','街道','社区','监督网格','单元网格','人员','车辆','视频'];
+    import {listToFeatures} from '@/utils/util.map.manage';
+    import util from '@/utils/util'
+    let  selectLayer=['区县','街道','社区','监督网格','单元网格','人员','车辆','视频','案卷'];
     let gridLayer=['区县','街道','社区','监督网格','单元网格'];
     export default {
         name: "LayersSwitch",
@@ -39,35 +41,43 @@
                     {
                         name: '区县',
                         color:'#800000',
-                        // icon: require('@/assets/images/公厕.png'),
+                        icon: require('@/assets/mapImage/qx.png'),
                         lyr: null
                     }, {
                         name: '街道',
                         color:'#400000',
+                        icon: require('@/assets/mapImage/jd.png'),
                         lyr: null
                     }, {
                         name: '社区',
                         color:'#808080',
+                        icon: require('@/assets/mapImage/sq.png'),
                         lyr: null
                     }, {
                         name: '监督网格',
                         color:'#0000FF',
+                        icon: require('@/assets/mapImage/jdwg.png'),
                         lyr:null
                     }, {
                         name: '单元网格',
                         color:'#FF0000',
+                        icon: require('@/assets/mapImage/dywg.png'),
                         lyr: null
                     },{
                         name: '人员',
+                        icon: require('@/assets/mapImage/ry.png'),
                         lyr:null
                     }, {
                         name: '车辆',
+                        icon: require('@/assets/mapImage/cl.png'),
                         lyr: null
                     },{
                         name: '视频',
+                        icon: require('@/assets/mapImage/sp.png'),
                         lyr: null
                     }, {
                         name: '案卷',
+                        icon: require('@/assets/mapImage/aj.png'),
                         lyr: null
                     },
                 ],
@@ -86,8 +96,12 @@
             this.getAllLayers();
         },
         methods:{
+            ...mapActions('section/common', ['getAllPeopleDataList']),
+            ...mapActions('video/manage', ['getAllCameraDataList']),
+            ...mapActions('car/manage', ['getAllCarDataList']),
             getAllLayers(){
                 const _this=this;
+                const userId = util.cookies.get('userId');
                 this.allLayers.forEach(layer => {
                     if(gridLayer.includes(layer.name)){
                         getTypePoint(layer.name).then(data=>{
@@ -95,7 +109,29 @@
                             layer.lyr = _this.mapManager.addVectorLayerByFeatures(data,gridStyle(layer.color),33);
                         });
                     }else{
-
+                        //获取人员数据
+                        if(layer.name=='人员'){
+                            _this.getAllPeopleDataList({userId: userId}).then(res=>{
+                                const features=listToFeatures(res,'人员');
+                                console.log('所有人员数据=====',features);
+                                layer.lyr=_this.mapManager.addClusterLayerByFeatures(features);
+                                layer.lyr.setVisible(false);
+                            });
+                        }else if(layer.name=='车辆'){
+                            _this.getAllCarDataList({userId: userId}).then(res=>{
+                                const features=listToFeatures(res,'车辆');
+                                console.log('所有人员数据=====',features);
+                                layer.lyr=_this.mapManager.addClusterLayerByFeatures(features);
+                                layer.lyr.setVisible(false);
+                            });
+                        }else if(layer.name=='视频'){
+                            _this.getAllCameraDataList({userId: userId}).then(res=>{
+                                console.log('所有视频数据=====',res);
+                                const features=listToFeatures(res.data,'视频');
+                                layer.lyr=_this.mapManager.addClusterLayerByFeatures(features);
+                                layer.lyr.setVisible(false);
+                            });
+                        }
                     }
                 });
             },
@@ -141,14 +177,14 @@
 .ctrl-panel {
     position: absolute;
     right: 50px;
-    padding: 20px 5px;
+    padding: 10px;
     background-color: rgba(255, 255, 255, 1);
     border: solid 1px rgba(221, 221, 221, 1);
     z-index: 99;
     box-sizing: border-box;
     font-size:13px;
     .ctrl-panel-item {
-        display: flex;
+        display: -webkit-box;
         align-items: center;
         margin-bottom: 12px;
         height: 18px;
@@ -165,6 +201,11 @@
             display: flex;
             width: 100px;
             flex: none;
+            .ctrl-panel-item-icon {
+                margin-right: 5px;
+                display:flex;
+                align-items: center;
+            }
         }
     }
 }
