@@ -72,7 +72,7 @@ export default {
       //查询没有数据时展示
       showTree: true,
       //摄像头播放效果
-      playerMethod: 'browser', //browser：flash播放  tool：C端播放
+      playerMethod: 'tool', //browser：flash播放  tool：C端播放
       //视频流URL
       videoSrc: '',
       //地图相关
