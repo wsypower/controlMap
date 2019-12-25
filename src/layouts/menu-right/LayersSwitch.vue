@@ -1,14 +1,14 @@
 <template>
     <div class="ctrl-panel">
         <div class="ctrl-panel-b">
-            <ul>
+            <ul style="padding-left: 10px">
                 <li class="ctrl-panel-item" v-for="(layer,index) in allLayers" :key="index">
                     <p class="ctrl-panel-item-checkbox" @click="toggleService(layer)">
                         <img :src="getSelectState(layer.name)">
                     </p>
                     <div class="ctrl-panel-item-middle">
                         <p class="ctrl-panel-item-icon df aic">
-                            <img :src="layer.icon">
+                            <img :src="layer.icon" style="width: 15px;height: 15px">
                         </p>
                         <p>{{layer.name}}</p>
                     </div>
@@ -81,7 +81,7 @@
                         lyr: null
                     },
                 ],
-                selectLayer:['区县','街道','社区','监督网格','单元网格']
+                selectLayer:[]
             }
         },
         computed: {
@@ -107,6 +107,7 @@
                         getTypePoint(layer.name).then(data=>{
                             console.log('区县数据====',data);
                             layer.lyr = _this.mapManager.addVectorLayerByFeatures(data,gridStyle(layer.color),33);
+                            layer.lyr.setVisible(false);
                         });
                     }else{
                         //获取人员数据
@@ -192,14 +193,14 @@
             margin-bottom: 0;
         }
         .ctrl-panel-item-checkbox {
-            margin-right: 18px;
+            margin-right: 12px;
             display:flex;
             align-items: center;
             cursor:pointer;
         }
         .ctrl-panel-item-middle {
             display: flex;
-            width: 100px;
+            width: 90px;
             flex: none;
             .ctrl-panel-item-icon {
                 margin-right: 5px;
