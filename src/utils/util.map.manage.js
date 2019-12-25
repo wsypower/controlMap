@@ -62,8 +62,8 @@ export class MapManager {
       style
     })
     const features = new GeoJSON().readFeatures(geojson)
-    source.addFeatures(features)
-    this.map.addLayer(vectorLayer)
+    source.addFeatures(features);
+    this.map.addLayer(vectorLayer);
     return vectorLayer
   }
   /**
@@ -98,8 +98,8 @@ export class MapManager {
       blur,
       radius
     })
-    source.addFeatures(features)
-    this.map.addLayer(heatmapLayer)
+    source.addFeatures(features);
+    this.map.addLayer(heatmapLayer);
     return heatmapLayer
   }
     /**
@@ -118,39 +118,6 @@ export class MapManager {
         style: getClusterStyle
     });
     this.map.addLayer(clusterLayer);
-    // this.selectCluster = new SelectCluster({
-    //         pointRadius: 7,
-    //         animate: true,
-    //         featureStyle: function(feature) {
-    //             return [
-    //                 new Style({
-    //                     image: new Icon({
-    //                         src: require('@/assets/mapImage/male_online.png'),
-    //                         anchor: [0.5, 0.5],
-    //                         size: [30, 39],
-    //                         opacity: 1
-    //                     }),
-    //                     stroke: new Stroke({
-    //                         color: '#fff',
-    //                         width: 1
-    //                     })
-    //                 })
-    //             ];
-    //         },
-    //         style: getClusterStyle,
-    //         filter:function(feature,layer){
-    //         }
-    //     });
-    // this.map.addInteraction(this.selectCluster);
-    // this.selectCluster.getFeatures().on(['add'], function(e) {
-    //     var c = e.element.get('features');
-    //     if(!c){
-    //     }else{
-    //         if (c.length == 1) {
-    //         } else {
-    //         }
-    //     }
-    // });
     function getClusterStyle(feature, resolution) {
         let styleCache = {};
         if (!feature.get('features')) {
@@ -360,6 +327,7 @@ export function trackByLocationList(list) {
     }
     return features
 }
+
 /**
  * 根据点列生成点位轨迹feature
  * @param  {[type]} coords [description]
@@ -376,3 +344,82 @@ export function trackFeatureByCoords (coords) {
 export function pointByCoord (coord) {
     return new Feature(new Point(coord))
 }
+/**
+ * 根据list生成点位feature
+ * @param  {[type]} list [description]
+ * @return {[type]}        [description]
+ */
+export function listToFeatures (list,type) {
+    let features;
+    switch (type){
+        case '人员':
+            features = list.map(item=>{
+                let pointImg;
+                if(item.sex === '1'){
+                    if(item.online){
+                        pointImg='female_online';
+                    }
+                    else{
+                        pointImg='female_offline';
+                    }
+                }
+                else{
+                    if(item.online){
+                        pointImg='male_online';
+                    }
+                    else{
+                        pointImg='male_offline';
+                    }
+                }
+                // 通过经纬度生成点位加到地图上
+                if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                    const feature=new Feature({
+                        geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+                    });
+                    feature.set('icon',pointImg);
+                    feature.set('props',item);
+                    // feature.set('type','peoplePosition');
+                    return feature;
+                }
+            });
+            break;
+        case '车辆':
+            features = list.map(item=>{
+                let pointImg;
+                if(item.online){
+                    pointImg='car-online';
+                }
+                else{
+                    pointImg='car-offline';
+                }
+                // 通过经纬度生成点位加到地图上
+                if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                    const feature=new Feature({
+                        geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+                    });
+                    feature.set('icon',pointImg);
+                    feature.set('props',item);
+                    // feature.set('type','CarPosition');
+                    return feature;
+                }
+            });
+            break;
+        case '视频':
+            features = list.map(item=>{
+                // 通过经纬度生成点位加到地图上
+                if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                    const feature=new Feature({
+                        geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+                    });
+                    feature.set('icon','carmera_online');
+                    feature.set('props',item);
+                    // feature.set('type','CarPosition');
+                    return feature;
+                }
+            });
+            break;
+
+    }
+    return features.filter(Boolean);
+}
+

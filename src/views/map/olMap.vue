@@ -26,25 +26,13 @@ export default {
     //监听从而实现动画效果
     current: function(current){
       if(current){
-        this.pageLayers.map(layer=>{
-          this.map.removeLayer(layer)
-        });
-        this.setPageLayers([]);
-        this.map.un('click',this.clickHandler);
-        console.log(this.yuanOverlay);
-        this.map.removeOverlay(this.yuanOverlay);
-        //管控的地图清除
-        this.map.removeOverlay(this.map.getOverlayById('carPositionOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));
-        const layers=this.map.getLayers().array_;
-        layers.forEach(l=>{
-              if(l.get('featureType')){
-                  this.map.removeLayer(l);
-              }
-          });
+          this.layerClear();
       }
+    },
+    activeModule:function (activeModule) {
+        if(activeModule){
+            this.layerClear();
+        }
     }
   },
   mounted() {
@@ -182,6 +170,27 @@ export default {
         maxResolution: 0.0000858306884765625
       })
       return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
+    },
+      //切换时清除地图上的内容
+    layerClear(){
+        this.pageLayers.map(layer=>{
+            this.map.removeLayer(layer)
+        });
+        this.setPageLayers([]);
+        this.map.un('click',this.clickHandler);
+        console.log(this.yuanOverlay);
+        this.map.removeOverlay(this.yuanOverlay);
+        //管控的地图清除
+        this.map.removeOverlay(this.map.getOverlayById('carPositionOverlay'));
+        this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
+        this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
+        this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));
+        const layers=this.map.getLayers().array_;
+        layers.forEach(l=>{
+            if(l.get('featureType')){
+                this.map.removeLayer(l);
+            }
+        });
     }
   },
   computed:{

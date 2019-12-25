@@ -129,3 +129,23 @@ export function getAllCameraTreeData(data) {
     params: data
   })
 }
+
+/**
+ * @description 获取所有摄像头(非树形结构)
+ * @author sijianting
+ * @date 2019-12-25 16:11
+ * @param 无
+ * @method：GET
+ * @response：{
+ *     树形结构数据
+ * }
+ */
+
+export function getAllCameraDataList(data) {
+    console.log('api:getAllCameraData', data)
+    return request({
+        url: 'video/getAllCameraData?_t=' + new Date().getTime(),
+        method: 'get',
+        params: data
+    })
+}

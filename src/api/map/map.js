@@ -9,12 +9,12 @@ import request from '@/plugins/axios/axios'
 // let gisApi = 'http://61.153.37.212:6350/geoserver/';
 // let baseApi = 'http://61.153.37.214:81/api/';
 /**
- * @description: 获取基础点位调用的接口
+ * @description: 获取基础gis调用的接口
  * @author:sijianting
  * @param {String}type
  */
 export function getPoint(type = '全部视频') {
-  type = type == '全部视频' ? '视频' : type
+  type = type == '全部视频' ? '视频' : type;
   return request({
     url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix+'/ows',
     method: 'get',
@@ -109,7 +109,7 @@ export function getEquipListApi(type) {
   });
 }
 /**
- * @description:
+ * @description:通过经纬度获取地址
  * @author:sijianting
  * @createDate:2019/8/23 10:14
  */
