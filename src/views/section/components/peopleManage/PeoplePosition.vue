@@ -58,220 +58,290 @@ import PeopleInfo from './PeopleInfo.vue';
 import {PeoplePointStyle} from '@/utils/util.map.style'
 import util from '@/utils/util'
 export default {
-    name: '',
-    components:{
-        PeopleInfo
-    },
-    data(){
-        return {
-          //展开的节点key
-          expandedKeys: [],
-          //是否自动展开父节点
-          autoExpandParent: true,
-          //查询输入
-          searchValue: '',
-          //获取数据时的动效
-          showLoading: false,
-          //获取人员的原始数据
-          sourceData: [],
-          //收入所有人员的名称与ID，给查询使用
-          allPeopleData: [],
-          //获取某个人员的详细数据，用于弹窗显示
-          peopleInfoData: {},
-          //当查询时没哟数据时，需要展示无数据图片
-          showTree: true,
-          //人员数据需要定时刷新
-          timer: null,
-          //地图相关
-          peopleFeatures: [],
-          //地图相关
-          peopleLayer: null,
-          //触发地图刷新
-          isLoadData: false
-        }
-    },
-    computed:{
-      ...mapState('map', ['mapManager']),
-      ...mapState('cgadmin/menu', ['activeModule']),
-        //获得展示的数据与属性
-        treeData:function(){
-            let data = JSON.parse(JSON.stringify(this.sourceData));
-            this.peopleFeatures = [];
-            this.allPeopleData = [];
-            //添加展示属性
-            this.changeTreeData(data);
-            this.isLoadData =! this.isLoadData;
-            return data;
-        }
-    },
-    watch:{
-      //加载完数据后渲染地图
-      isLoadData:function() {
-        if(this.peopleFeatures.length>0){
-          // this.peopleLayer = this.mapManager.addVectorLayerByFeatures(this.peopleFeatures,PeoplePointStyle(),3);
-          // this.peopleLayer.set('featureType','PeoplePosition');
-          // this.mapManager.getMap().getView().fit(this.peopleLayer.getSource().getExtent());
-          this.peopleLayer= this.mapManager.addClusterLayerByFeatures(this.peopleFeatures);
-          this.peopleLayer.set('featureType','PeoplePosition');
-          const extent=this.peopleLayer.getSource().getSource().getExtent();
-          this.mapManager.getMap().getView().fit(extent);
-        }
+  name: 'peoplePosition',
+  components:{
+    PeopleInfo
+  },
+  data(){
+    return {
+      //人员树形结构展示的数据与属性
+      treeData:{},
+      //展开的节点key
+      expandedKeys: [],
+      //是否自动展开父节点
+      autoExpandParent: true,
+      //查询输入
+      searchValue: '',
+      //获取数据时的动效
+      showLoading: false,
+      //获取人员的原始数据
+      sourceData: [],
+      //处理后的原始数据
+      peopleDataList: [],
+      //处理后的新数据
+      peopleNewDataList: [],
+      //收入所有人员的名称与ID，给查询使用
+      allPeopleData: [],
+      //获取某个人员的详细数据，用于弹窗显示
+      peopleInfoData: {},
+      //当查询时没哟数据时，需要展示无数据图片
+      showTree: true,
+      //人员数据需要定时刷新
+      timer: null,
+      //地图相关
+      peopleFeatures: [],
+      //地图相关
+      peopleLayer: null,
+      //触发地图刷新
+      isLoadData: false
+    }
+  },
+  computed:{
+    ...mapState('map', ['mapManager']),
+    ...mapState('cgadmin/menu', ['activeModule']),
+    //获得展示的数据与属性
+    // treeData:function(){
+    //   let data = JSON.parse(JSON.stringify(this.sourceData));
+    //   this.peopleFeatures = [];
+    //   this.allPeopleData = [];
+    //   //添加展示属性
+    //   this.changeTreeData(data);
+    //   this.isLoadData =! this.isLoadData;
+    //   return data;
+    // }
+  },
+  watch:{
+    //加载完数据后渲染地图
+    isLoadData:function() {
+      if(this.peopleFeatures.length>0){
+        // this.peopleLayer = this.mapManager.addVectorLayerByFeatures(this.peopleFeatures,PeoplePointStyle(),3);
+        // this.peopleLayer.set('featureType','PeoplePosition');
+        // this.mapManager.getMap().getView().fit(this.peopleLayer.getSource().getExtent());
+        this.peopleLayer= this.mapManager.addClusterLayerByFeatures(this.peopleFeatures);
+        this.peopleLayer.set('featureType','PeoplePosition');
+        const extent=this.peopleLayer.getSource().getSource().getExtent();
+        this.mapManager.getMap().getView().fit(extent);
       }
-    },
-    mounted(){
-      const userId = util.cookies.get('userId');
-      this.showLoading = true;
-      this.getAllPeopleTreeData({userId:userId, moduleType:this.activeModule}).then(res=>{
-        this.sourceData = res;
-        this.showLoading = false;
+    }
+  },
+  mounted(){
+    const userId = util.cookies.get('userId');
+    this.showLoading = true;
+    this.getAllPeopleTreeData({userId:userId, moduleType:this.activeModule}).then(res=>{
+      this.sourceData = res;
+      let data = JSON.parse(JSON.stringify(this.sourceData));
+      this.peopleFeatures = [];
+      this.allPeopleData = [];
+      //添加展示属性
+      this.changeTreeData(data);
+      this.isLoadData =! this.isLoadData;
+      this.treeData = data;
+      this.showLoading = false;
+    });
+    this.map = this.mapManager.getMap();
+    this.map.on('click', this.peopleMapClickHandler);
+    this.peopleOverlay = this.mapManager.addOverlay({
+      id:'peoplePositionOverlay',
+      offset:[0,-20],
+      positioning: 'bottom-center',
+      element: this.$refs.peopleInfo.$el
+    });
+    let _this = this;
+    _this.timer = setInterval(function() {
+      _this.getAllPeopleTreeData({userId:userId, moduleType:_this.activeModule}).then(res=>{
+        _this.peopleNewDataList = [];
+        _this.changeOldData(res);
+        let idArr = _this.compareDataToIdArr();
+        _this.peopleDataList = [];
+        _this.changeTreeDataMore(_this.treeData, idArr);
       });
-      this.map = this.mapManager.getMap();
-      this.map.on('click', this.peopleMapClickHandler);
-      this.peopleOverlay = this.mapManager.addOverlay({
-        id:'peoplePositionOverlay',
-        offset:[0,-20],
-        positioning: 'bottom-center',
-        element: this.$refs.peopleInfo.$el
-      });
-      let _this = this;
-      _this.timer = setInterval(function() {
-        _this.getAllPeopleTreeData({userId:userId, moduleType:this.activeModule}).then(res=>{
-          _this.sourceData = res;
-        });
-      },600000)
-    },
+    },600000)
+  },
   beforeDestroy(){
     clearInterval(this.timer)
   },
-    methods:{
-        ...mapActions('section/common', ['getAllPeopleTreeData']),
-        //给后端的数据增加一些前端展示与判断需要的属性
-        changeTreeData(arr,deptName){
-          const _this = this;
-          arr.forEach(item=>{
-            item.title = item.name;
-            item.scopedSlots = { title: 'title' };
-            let pointImg;
-            if(item.isLeaf){
-              item.key = item.id;
-              item.dept = deptName;
-              if(item.sex === '1'){
-                if(item.online){
-                  item.slots = {icon: 'female'};
-                  pointImg='female_online';
-                }
-                else{
-                  item.slots = {icon: 'female-outline'}
-                  pointImg='female_offline';
-                }
+  methods:{
+    ...mapActions('section/common', ['getAllPeopleTreeData']),
+    //给后端的数据增加一些前端展示与判断需要的属性
+    changeTreeData(arr,deptName){
+      const _this = this;
+      arr.forEach(item=>{
+        item.title = item.name;
+        item.scopedSlots = { title: 'title' };
+        let pointImg;
+        if(item.isLeaf){
+          item.key = item.id;
+          item.dept = deptName;
+          if(item.sex === '1'){
+            if(item.online){
+              item.slots = {icon: 'female'};
+              pointImg='female_online';
+            }
+            else{
+              item.slots = {icon: 'female-outline'}
+              pointImg='female_offline';
+            }
+          }
+          else{
+            if(item.online){
+              item.slots = {icon: 'male'}
+              pointImg='male_online';
+            }
+            else{
+              item.slots = {icon: 'male-outline'}
+              pointImg='male_offline';
+            }
+          }
+          item.class = 'itemClass';
+          let temp = {
+            title: item.name,
+            key: item.id
+          }
+          this.allPeopleData.push(temp);
+          this.peopleDataList.push(item);
+          // 通过经纬度生成点位加到地图上
+          if(item.x && item.x.length>0 && item.y && item.y.length>0){
+            const feature=_this.mapManager.xyToFeature(item.x,item.y);
+            feature.set('icon',pointImg);
+            feature.set('props',item);
+            feature.set('type','peoplePosition');
+            _this.peopleFeatures.push(feature);
+          }
+        }
+        else{
+          item.key = 'dept_' + item.id;
+          item.slots = {icon: 'dept'};
+          this.changeTreeData(item.children, item.name);
+        }
+      })
+    },
+    changeOldData(data){
+      const _this = this;
+      data.forEach(item=>{
+        if(item.isLeaf){
+          _this.peopleNewDataList.push(item);
+        }
+        else{
+          _this.changeOldData(item.children);
+        }
+      })
+    },
+    compareDataToIdArr(){
+      let idArr = [];
+      this.peopleDataList.forEach( item => {
+        let oneItem = this.peopleNewDataList.find( it => it.id === item.id && it.online !== item.online);
+        if(oneItem){
+          idArr.push(oneItem.id);
+        }
+      });
+      // idArr.push('1ff6c550882e11e942d93f310682dce3');
+      // idArr.push('19c6a8e0eb3311e96e004b1aec0b83d6');
+      return idArr
+    },
+    changeTreeDataMore(arr, idArr){
+      const _this = this;
+      arr.forEach(item=>{
+        if(item.isLeaf){
+          if(idArr.indexOf(item.id) >= 0){
+            item.online = !item.online;
+            if(item.sex === 'female'){
+              if(item.online){
+                item.slots = {icon: 'female'};
               }
               else{
-                if(item.online){
-                  item.slots = {icon: 'male'}
-                  pointImg='male_online';
-                }
-                else{
-                  item.slots = {icon: 'male-outline'}
-                  pointImg='male_offline';
-                }
-              }
-              item.class = 'itemClass';
-              let temp = {
-                title: item.name,
-                key: item.id
-              }
-              this.allPeopleData.push(temp);
-              // 通过经纬度生成点位加到地图上
-              if(item.x && item.x.length>0 && item.y && item.y.length>0){
-                const feature=_this.mapManager.xyToFeature(item.x,item.y);
-                feature.set('icon',pointImg);
-                feature.set('props',item);
-                feature.set('type','peoplePosition');
-                _this.peopleFeatures.push(feature);
+                item.slots = {icon: 'female-outline'}
               }
             }
             else{
-              item.key = 'dept_' + item.id;
-              item.slots = {icon: 'dept'};
-              this.changeTreeData(item.children, item.name);
+              if(item.online){
+                item.slots = {icon: 'male'}
+              }
+              else{
+                item.slots = {icon: 'male-outline'}
+              }
             }
-          })
-        },
-      onChange(){
-        this.onSearch(this.searchValue);
-        //this.searchValue
-      },
-      //查询后直接筛选数据，不走后端接口调用
-      onSearch(val){
-        // this.showLoading = true;
-        // this.getAllPeopleTreeData({searchContent: val}).then(res=>{
-        //   this.sourceData = res.data;
-        //   this.showLoading = false;
-        // });
-        this.expandedKeys = [];
-        this.searchValue = val;
-        this.allPeopleData.forEach(item => {
-          if(item.title.indexOf(val)>=0){
-            this.expandedKeys.push(item.key);
           }
-        });
-        this.autoExpandParent = true;
-        if(this.expandedKeys.length === 0){
-          this.showTree = false;
+          _this.peopleDataList.push(item);
         }
         else{
-          this.showTree = true;
+          _this.changeTreeDataMore(item.children, idArr);
         }
-      },
-      //展开时触发
-      onExpand(expandedKeys) {
-        this.expandedKeys = expandedKeys;
-        this.autoExpandParent = false;
-      },
-        //点击树中某个节点（某个人员）时触发
-        onSelect(selectedKeys, e){
-          console.log(selectedKeys, e);
-          if(selectedKeys[0].indexOf('dept_')<0){
-            let needData = e.selectedNodes[0].data.props;
-            let temp = {};
-            temp.id = needData.id;
-            temp.name = needData.name;
-            temp.sex = needData.sex;
-            temp.online = needData.online;
-            temp.phone = needData.phone;
-            temp.dept = needData.dept;
-            temp.x = needData.x;
-            temp.y = needData.y;
-            this.peopleInfoData = temp;
-            if(this.peopleInfoData.x&&this.peopleInfoData.y){
-                const coordinate=[parseFloat(this.peopleInfoData.x),parseFloat(this.peopleInfoData.y)];
-                this.peopleOverlay.setPosition(coordinate);
-                this.mapManager.locateTo(coordinate);
-            }else{
-                this.peopleOverlay.setPosition(undefined);
-                this.$message.warning('当前人员无点位信息！！！');
-            }
-          }
-        },
-        //地图上人员点击事件处理器
-        peopleMapClickHandler({ pixel, coordinate }){
-          const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-          const clickFeature=feature.get('features')[0];
-          const coordinates=clickFeature.getGeometry().getCoordinates();
-          if(clickFeature&& clickFeature.get('type')=='peoplePosition'){
-                this.peopleInfoData=clickFeature.get('props');
-                this.peopleOverlay.setPosition(coordinates);
-          }
-        },
-        //人员轨迹触发
-        getUserId(data){
-            this.$emit('getUserId',data);
-        },
-        //关闭地图上的弹窗
-        closeTip(){
+      })
+    },
+    onChange(){
+      this.onSearch(this.searchValue);
+    },
+    //查询后直接筛选数据，不走后端接口调用
+    onSearch(val){
+      // this.showLoading = true;
+      // this.getAllPeopleTreeData({searchContent: val}).then(res=>{
+      //   this.sourceData = res.data;
+      //   this.showLoading = false;
+      // });
+      this.expandedKeys = [];
+      this.searchValue = val;
+      this.allPeopleData.forEach(item => {
+        if(item.title.indexOf(val)>=0){
+          this.expandedKeys.push(item.key);
+        }
+      });
+      this.autoExpandParent = true;
+      if(this.expandedKeys.length === 0){
+        this.showTree = false;
+      }
+      else{
+        this.showTree = true;
+      }
+    },
+    //展开时触发
+    onExpand(expandedKeys) {
+      this.expandedKeys = expandedKeys;
+      this.autoExpandParent = false;
+    },
+    //点击树中某个节点（某个人员）时触发
+    onSelect(selectedKeys, e){
+      console.log(selectedKeys, e);
+      if(selectedKeys[0].indexOf('dept_')<0){
+        let needData = e.selectedNodes[0].data.props;
+        let temp = {};
+        temp.id = needData.id;
+        temp.name = needData.name;
+        temp.sex = needData.sex;
+        temp.online = needData.online;
+        temp.phone = needData.phone;
+        temp.dept = needData.dept;
+        temp.x = needData.x;
+        temp.y = needData.y;
+        this.peopleInfoData = temp;
+        if(this.peopleInfoData.x&&this.peopleInfoData.y){
+          const coordinate=[parseFloat(this.peopleInfoData.x),parseFloat(this.peopleInfoData.y)];
+          this.peopleOverlay.setPosition(coordinate);
+          this.mapManager.locateTo(coordinate);
+        }else{
           this.peopleOverlay.setPosition(undefined);
+          this.$message.warning('当前人员无点位信息！！！');
         }
+      }
+    },
+    //地图上人员点击事件处理器
+    peopleMapClickHandler({ pixel, coordinate }){
+      const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+      const clickFeature=feature.get('features')[0];
+      const coordinates=clickFeature.getGeometry().getCoordinates();
+      if(clickFeature&& clickFeature.get('type')=='peoplePosition'){
+        this.peopleInfoData=clickFeature.get('props');
+        this.peopleOverlay.setPosition(coordinates);
+      }
+    },
+    //人员轨迹触发
+    getUserId(data){
+      this.$emit('getUserId',data);
+    },
+    //关闭地图上的弹窗
+    closeTip(){
+      this.peopleOverlay.setPosition(undefined);
     }
+  }
 }
 </script>
 <style lang="scss" scoped>
