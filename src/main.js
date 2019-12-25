@@ -38,6 +38,8 @@ import 'swiper/dist/css/swiper.css'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 Vue.use(VueAwesomeSwiper)
 
+import viewer from '@/components/cg-viewer/index'
+Vue.use(viewer)
 
 //mock => 生产环境(上线前请注释！！！)
 import '@/mock'
