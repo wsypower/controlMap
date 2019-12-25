@@ -75,17 +75,14 @@
                         name: '视频',
                         icon: require('@/assets/mapImage/sp.png'),
                         lyr: null
-                    }, {
-                        name: '案卷',
-                        icon: require('@/assets/mapImage/aj.png'),
-                        lyr: null
-                    },
+                    }
                 ],
                 selectLayer:[]
             }
         },
         computed: {
             ...mapState('map', ['mapManager']),
+            ...mapState('cgadmin/menu', ['activeModule']),
             getSelectState: function (layer) {
                 return function (layer) {
                     return this.selectLayer.includes(layer) ? selectedImg : unselectedImg
@@ -94,43 +91,51 @@
         },
         mounted(){
             this.getAllLayers();
+            if(this.activeModule=='jm'){
+                this.allLayers.splice(5,2);
+            }else if(this.activeModule=='ps'){
+                this.allLayers.splice(6,1);
+            }
         },
         methods:{
             ...mapActions('section/common', ['getAllPeopleDataList']),
             ...mapActions('video/manage', ['getAllCameraDataList']),
             ...mapActions('car/manage', ['getAllCarDataList']),
             getAllLayers(){
+                console.log('activeModule====',this.activeModule);
                 const _this=this;
                 const userId = util.cookies.get('userId');
                 this.allLayers.forEach(layer => {
                     if(gridLayer.includes(layer.name)){
                         getTypePoint(layer.name).then(data=>{
-                            console.log('区县数据====',data);
                             layer.lyr = _this.mapManager.addVectorLayerByFeatures(data,gridStyle(layer.color),33);
                             layer.lyr.setVisible(false);
                         });
                     }else{
                         //获取人员数据
                         if(layer.name=='人员'){
-                            _this.getAllPeopleDataList({userId: userId}).then(res=>{
-                                const features=listToFeatures(res,'人员');
-                                console.log('所有人员数据=====',features);
-                                layer.lyr=_this.mapManager.addClusterLayerByFeatures(features);
-                                layer.lyr.setVisible(false);
+                            _this.getAllPeopleDataList({userId: userId,moduleType: _this.activeModule}).then(res=>{
+                                if(res&& res.length>0) {
+                                    const features = listToFeatures(res, '人员');
+                                    layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
+                                    layer.lyr.setVisible(false);
+                                }
                             });
                         }else if(layer.name=='车辆'){
-                            _this.getAllCarDataList({userId: userId}).then(res=>{
-                                const features=listToFeatures(res,'车辆');
-                                console.log('所有人员数据=====',features);
-                                layer.lyr=_this.mapManager.addClusterLayerByFeatures(features);
-                                layer.lyr.setVisible(false);
+                            _this.getAllCarDataList({userId: userId,moduleType: _this.activeModule}).then(res=>{
+                                if(res&& res.length>0){
+                                    const features=listToFeatures(res,'车辆');
+                                    layer.lyr=_this.mapManager.addClusterLayerByFeatures(features);
+                                    layer.lyr.setVisible(false);
+                                }
                             });
                         }else if(layer.name=='视频'){
-                            _this.getAllCameraDataList({userId: userId}).then(res=>{
-                                console.log('所有视频数据=====',res);
-                                const features=listToFeatures(res.data,'视频');
-                                layer.lyr=_this.mapManager.addClusterLayerByFeatures(features);
-                                layer.lyr.setVisible(false);
+                            _this.getAllCameraDataList({userId: userId,moduleType: _this.activeModule}).then(res=>{
+                                if(res.result&&res.result.length>0){
+                                    const features=listToFeatures(res.result,'视频');
+                                    layer.lyr=_this.mapManager.addClusterLayerByFeatures(features);
+                                    layer.lyr.setVisible(false);
+                                }
                             });
                         }
                     }

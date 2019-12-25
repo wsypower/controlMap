@@ -68,11 +68,21 @@ export default {
         showSelect : false
     }
   },
+  watch:{
+      activeModule:function (activeModule) {
+          console.log('activeModule===',activeModule);
+          if(activeModule){
+              this.showSelect=false;
+          }
+      }
+  },
   computed: {
+    ...mapState('cgadmin/menu', ['activeModule']),
     ...mapState('cgadmin', {
       //缓存页面 ====> keep-alive
       keepAlive: state => state.page.keepAlive
     })
+
   },
   methods: {
       showLayerSwitch(){
