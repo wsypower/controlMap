@@ -1,119 +1,76 @@
-/* 此代码自动生成，手动修改将被覆盖 
- * date 2019-12-25 9:30:36 
-*/
+/*
+ * @Author: wei.yafei
+ * @Date: 2019-06-14 16:56:20
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-07-19 17:57:46
+ */
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+//进度条
+import NProgress from 'nprogress'
+import 'nprogress/nprogress'
 
+import store from '@/store/index'
+import util from '@/utils/util.js'
+//路由数据
+import routes from './router'
 
-import Vue from 'vue' 
-import Router from 'vue-router' 
-Vue.use(Router) 
+Vue.use(VueRouter)
 
+/*=============================================
+=           导出路由 在 main.js 里使用           =
+=============================================*/
 
-const carPage2 = () => import('@/views/car/page2')
+const router = new VueRouter({
+    routes,
+    //切换页面滚动到头部
+    scrollBehavior: () => ({ y: 0 })
+})
 
-const emergencyPage6 = () => import('@/views/emergency/page6')
+/*=============================================
+=                 全局路由守卫                  =
+=============================================*/
 
-const error401 = () => import('@/views/error/401')
+// router.beforeEach((to, from, next) => {
+//   // 进度条
+//   NProgress.start()
+//   // 验证当前路由所有的匹配中是否需要有登录验证的
+//   if (to.matched.some(r => r.meta.auth)) {
+//     const userId = util.cookies.get('userId')
+//     if (userId && userId !== 'undefined') {
+//       next()
+//     } else {
+//       // 没有登录的时候跳转到登录界面
+//       // 携带上登陆成功之后需要跳转的页面完整路径
+//       util.cookies.remove('userId')
+//       next({
+//         name: '401'
+//       })
+//       NProgress.done()
+//     }
+//   } else {
+//     // 不需要身份校验 直接通过
+//     next()
+//   }
+// })
+router.beforeEach((to, from, next) => {
+    console.log('走新页面')
+    // 进度条
+    NProgress.start()
+    next()
+})
 
-const loadingLoading = () => import('@/views/loading/loading')
+router.afterEach(to => {
+    // 进度条
+    NProgress.done()
+    // 打开新的页面
+    store.dispatch('cgadmin/page/open', to)
+    // 更改标题
+    util.title(to.meta.title)
+})
 
-const mapOlMap = () => import('@/views/map/olMap')
+/*=============================================
+=               路由拦截 * 权限验证              =
+=============================================*/
 
-const recordsPage3 = () => import('@/views/records/page3')
-
-const sectionIndex = () => import('@/views/section/index')
-
-const specialPage4 = () => import('@/views/special/page4')
-
-const videoPage5 = () => import('@/views/video/page5')
-
-const sectionComponentsPeopleBaseInfo = () => import('@/views/section/components/PeopleBaseInfo')
-
-const sectionComponentsPeopleDetail = () => import('@/views/section/components/PeopleDetail')
-
-const sectionComponentsPeopleInfo = () => import('@/views/section/components/PeopleInfo')
-
-const sectionComponentsPeopleList = () => import('@/views/section/components/PeopleList')
-
-const sectionComponentsPeopleSignInfo = () => import('@/views/section/components/PeopleSignInfo')
-
-const sectionComponentsWorkTimeInfo = () => import('@/views/section/components/WorkTimeInfo')
-
-const router = [
-    {
-        name: "/error/401",
-        path: "/error/401",
-        component: error401
-    },
-    {
-        name: "/loading/loading",
-        path: "/loading/loading",
-        component: loadingLoading
-    },
-    {
-        name: "/map/olMap",
-        path: "/map/olMap",
-        component: mapOlMap
-    },
-    {
-        name: "/car/page2",
-        path: "/car/page2",
-        component: carPage2
-    },
-    {
-        name: "/records/page3",
-        path: "/records/page3",
-        component: recordsPage3
-    },
-    {
-        name: "/special/page4",
-        path: "/special/page4",
-        component: specialPage4
-    },
-    {
-        name: "/video/page5",
-        path: "/video/page5",
-        component: videoPage5
-    },
-    {
-        name: "/emergency/page6",
-        path: "/emergency/page6",
-        component: emergencyPage6
-    },
-    {
-        name: "/section/components/PeopleBaseInfo",
-        path: "/section/components/PeopleBaseInfo",
-        component: sectionComponentsPeopleBaseInfo
-    },
-    {
-        name: "/section/components/PeopleDetail",
-        path: "/section/components/PeopleDetail",
-        component: sectionComponentsPeopleDetail
-    },
-    {
-        name: "/section/components/PeopleInfo",
-        path: "/section/components/PeopleInfo",
-        component: sectionComponentsPeopleInfo
-    },
-    {
-        name: "/section/components/PeopleList",
-        path: "/section/components/PeopleList",
-        component: sectionComponentsPeopleList
-    },
-    {
-        name: "/section/components/PeopleSignInfo",
-        path: "/section/components/PeopleSignInfo",
-        component: sectionComponentsPeopleSignInfo
-    },
-    {
-        name: "/section/index",
-        path: "/section/index",
-        component: sectionIndex
-    },
-    {
-        name: "/section/components/WorkTimeInfo",
-        path: "/section/components/WorkTimeInfo",
-        component: sectionComponentsWorkTimeInfo
-    }
-]
-
-export default new Router({ routes: router })
+export default router
