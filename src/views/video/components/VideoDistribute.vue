@@ -72,7 +72,7 @@ export default {
       //查询没有数据时展示
       showTree: true,
       //摄像头播放效果
-      playerMethod: 'browser', //browser：flash播放  tool：C端播放
+      playerMethod: 'tool', //browser：flash播放  tool：C端播放
       //视频流URL
       videoSrc: '',
       //地图相关
@@ -85,6 +85,7 @@ export default {
   },
   computed:{
     ...mapState('map', ['mapManager']),
+    ...mapState('cgadmin/menu', ['activeModule']),
     //获得展示的数据与属性
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
@@ -109,7 +110,14 @@ export default {
     this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
-    this.getAllCameraTreeData({userId:userId}).then(res=>{
+    let acModule = '';
+    if(this.activeModule === 'jm'){
+      acModule = '';
+    }
+    else{
+      acModule = this.activeModule ;
+    }
+    this.getAllCameraTreeData({userId:userId, moduleType: acModule}).then(res=>{
       console.log('getAllCameraTreeData',res);
       this.sourceData = res;
       this.showLoading = false;

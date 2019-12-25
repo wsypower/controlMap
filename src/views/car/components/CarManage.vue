@@ -34,12 +34,13 @@ export default {
       ViolateRules
     },
     computed:{
-        ...mapState('map', ['mapManager'])
+        ...mapState('map', ['mapManager']),
+      ...mapState('cgadmin/menu', ['activeModule'])
     },
     mounted(){
       this.map = this.mapManager.getMap();
       const userId = util.cookies.get('userId');
-      this.getAllCarDataList({userId:userId}).then(res=>{
+      this.getAllCarDataList({userId:userId, moduleType: this.activeModule}).then(res=>{
         res.forEach(item => {
           item.carDisplayId = item.id + '_' + item.name;
           this.carDataList.push(item);

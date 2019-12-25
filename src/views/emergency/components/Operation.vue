@@ -102,18 +102,18 @@ export default {
                     icon:'camera',
                     checked: false
                 },
-                {
-                    key:'zfPeople',
-                    name:'最优执法队员',
-                    icon:'zf-people',
-                    checked: false
-                },
-                {
-                    key:'zfCar',
-                    name:'最优执法车辆',
-                    icon:'zf-car',
-                    checked: false
-                },
+                // {
+                //     key:'zfPeople',
+                //     name:'最优执法队员',
+                //     icon:'zf-people',
+                //     checked: false
+                // },
+                // {
+                //     key:'zfCar',
+                //     name:'最优执法车辆',
+                //     icon:'zf-car',
+                //     checked: false
+                // },
                 {
                     key:'manager',
                     name:'管理人员',
@@ -375,8 +375,10 @@ export default {
                   if (this.emergencyResourceLayer) {
                     this.emergencyResourceLayer.getSource().clear();
                   }
-                  this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
-                  this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getExtent());
+                  if(features.length>0) {
+                    this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
+                    this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getExtent());
+                  }
                 })
               }
               else {

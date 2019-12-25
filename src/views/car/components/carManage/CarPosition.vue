@@ -56,6 +56,8 @@ export default {
     },
     data(){
         return {
+          //车辆树形结构展示的数据与属性
+          treeData:{},
           //展开的节点keys
           expandedKeys: [],
           //是否自动展开父节点
@@ -66,6 +68,10 @@ export default {
           showLoading: false,
           //后端返回数据
           sourceData: [],
+          //处理后的原始数据
+          carDataList: [],
+          //处理后的新数据
+          carNewDataList: [],
           //收入所有车辆name与id，给自动查询使用
           allCarData: [],
           //车辆数据的展示
@@ -85,15 +91,15 @@ export default {
     computed:{
       ...mapState('map', ['mapManager']),
       ...mapState('cgadmin/menu', ['activeModule']),
-        //获得展示的数据与属性
-       treeData:function(){
-           let data = JSON.parse(JSON.stringify(this.sourceData));
-           this.carFeatures=[];
-           this.allCarData = [];
-           this.changeTreeData(data,'');
-           this.isLoadData=!this.isLoadData;
-           return data
-       }
+       //  //获得展示的数据与属性
+       // treeData:function(){
+       //     let data = JSON.parse(JSON.stringify(this.sourceData));
+       //     this.carFeatures=[];
+       //     this.allCarData = [];
+       //     this.changeTreeData(data,'');
+       //     this.isLoadData=!this.isLoadData;
+       //     return data
+       // }
     },
   watch:{
     isLoadData:function() {
@@ -112,6 +118,12 @@ export default {
       this.showLoading = true;
       this.getAllCarTreeData({userId:userId,moduleType: this.activeModule}).then(res=>{
         this.sourceData = res;
+        let data = JSON.parse(JSON.stringify(this.sourceData));
+        this.carFeatures=[];
+        this.allCarData = [];
+        this.changeTreeData(data,'');
+        this.isLoadData=!this.isLoadData;
+        this.treeData = data;
         this.showLoading = false;
       });
       this.map = this.mapManager.getMap();
@@ -125,9 +137,14 @@ export default {
       let _this = this;
       this.timer = setInterval(function() {
         _this.getAllCarTreeData({userId:userId, moduleType: this.activeModule}).then(res=>{
-          _this.sourceData = res;
+          // _this.sourceData = res;
+          _this.peopleNewDataList = [];
+          _this.changeOldData(res);
+          let idArr = _this.compareDataToIdArr();
+          _this.peopleDataList = [];
+          _this.changeTreeDataMore(_this.treeData, idArr);
         });
-      },600000)
+      },60000)
     },
     beforeDestroy(){
       clearInterval(this.timer)
@@ -159,6 +176,7 @@ export default {
               key: item.id
             }
             this.allCarData.push(temp);
+            this.carDataList.push(item);
             // 通过经纬度生成点位加到地图上
             if(item.x && item.x.length>0 && item.y && item.y.length>0){
               const feature=_this.mapManager.xyToFeature(item.x,item.y);
@@ -172,6 +190,49 @@ export default {
             item.key = 'dept_' + item.id;
             item.slots = {icon: 'dept'}
             this.changeTreeData(item.children, item.name)
+          }
+        })
+      },
+      changeOldData(data){
+        const _this = this;
+        data.forEach(item=>{
+          if(item.isLeaf){
+            _this.carNewDataList.push(item);
+          }
+          else{
+            _this.changeOldData(item.children);
+          }
+        })
+      },
+      compareDataToIdArr(){
+        let idArr = [];
+        this.carDataList.forEach( item => {
+          let oneItem = this.carNewDataList.find( it => it.id === item.id && it.online !== item.online);
+          if(oneItem){
+            idArr.push(oneItem.id);
+          }
+        });
+        idArr.push('5fc11e90df6a11e98dc5e0ded2a8760d');
+        idArr.push('5fc1e1e0df6a11e98dc5e0ded2a8760d');
+        return idArr
+      },
+      changeTreeDataMore(arr, idArr){
+        const _this = this;
+        arr.forEach(item=>{
+          if(item.isLeaf){
+            if(idArr.indexOf(item.id) >= 0){
+              item.online = !item.online;
+              if(item.online){
+                item.slots = {icon: 'car'};
+              }
+              else{
+                item.slots = {icon: 'car-outline'}
+              }
+            }
+            _this.carDataList.push(item);
+          }
+          else{
+            _this.changeTreeDataMore(item.children, idArr);
           }
         })
       },

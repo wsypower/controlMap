@@ -39,12 +39,13 @@ export default {
         PeopleWorkTime
     },
     computed:{
-        ...mapState('map', ['mapManager'])
+        ...mapState('map', ['mapManager']),
+      ...mapState('cgadmin/menu', ['activeModule'])
     },
     mounted(){
       this.map = this.mapManager.getMap();
       const userId = util.cookies.get('userId');
-      this.getAllPeopleDataList({userId: userId}).then(res=>{
+      this.getAllPeopleDataList({userId: userId,moduleType: this.activeModule}).then(res=>{
           res.forEach(item => {
             item.userDisplayId = item.id + '_' + item.name;
             this.peopleDataList.push(item);

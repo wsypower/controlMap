@@ -8,7 +8,7 @@
     <div class="tip-body">
 <!--      <img :src="info.photoUrl"/>-->
       <div class="tip-body-content">
-        <swiper :options="swiperOption" ref="mySwiper">
+        <swiper :options="swiperOption" ref="mySwiper" v-viewer>
           <swiper-slide v-for="(item, index) in info.photoList" :key="index">
             <img :src="item.url" :alt="item.name"/>
           </swiper-slide>

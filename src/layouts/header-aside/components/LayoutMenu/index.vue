@@ -80,7 +80,7 @@ export default {
   background-image: $color-menu;
   position: relative;
   top: 60px;
-  z-index: 9;
+  z-index: 1000;
   &__items {
     position: absolute;
     height: 100%;

@@ -54,6 +54,7 @@
         </div>
         <div class="pagination-panel" v-if="totalSize > 20">
           <a-pagination
+            size="small"
             :total="totalSize"
             :showTotal="total => `共 ${total} 条`"
             :pageSize="20"

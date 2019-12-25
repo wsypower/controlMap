@@ -2,10 +2,10 @@
   <div class="tip-content">
     <div class="tip-header" flex="dir:left">
       <div class="info-body-left" flex="main:center cross:center">
-        <img v-if="!info.online && info.sex == '0'" src="~@img/avatar-male-outline.png" />
-        <img v-if="!info.online && info.sex == '1'" src="~@img/avatar-female-outline.png" />
-        <img v-if="info.online && info.sex == '0'" src="~@img/avatar-male.png" />
-        <img v-if="info.online && info.sex == '1'" src="~@img/avatar-female.png" />
+        <img v-if="!info.online && info.sex == 'male'" src="~@img/avatar-male-outline.png" />
+        <img v-if="!info.online && info.sex == 'female'" src="~@img/avatar-female-outline.png" />
+        <img v-if="info.online && info.sex == 'male'" src="~@img/avatar-male.png" />
+        <img v-if="info.online && info.sex == 'female'" src="~@img/avatar-female.png" />
       </div>
       <div class="info-body-right">
         <div flex="dir:left cross:center">
@@ -142,7 +142,8 @@ export default{
     },
     //查看轨迹，触发父组件的方法
     lookPeopleTrail(){
-      this.$emit('getUserId',this.info.id);
+      let id = this.info.id + '_' + this.info.name;
+      this.$emit('getUserId',id);
     },
     //触发父组件方法，关闭当前弹窗
     closeDialog(){

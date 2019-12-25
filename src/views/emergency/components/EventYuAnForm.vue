@@ -29,7 +29,7 @@
                     <span class="sub-title">名称：</span><span class="sub-content">{{ eventInfo.name }}</span>
                   </div>
                   <div flex="dir:left">
-                    <span class="sub-title">类型：</span><span class="sub-content">{{ eventInfo.typeName }}</span>
+                    <span class="sub-title">预案：</span><span class="sub-content">{{ eventInfo.typeName }}</span>
                   </div>
                   <div flex="dir:left">
                     <span class="sub-title">等级：</span><span class="sub-content">{{ eventInfo.levelName }}</span>
@@ -92,7 +92,10 @@
             @getResult="getResourceResult"
           ></yu-an-resource>
           <yu-an-place :placeData.sync="placeData" :operateType="operateType" @getResult="getPlaceResult"></yu-an-place>
-          <event-evaluation v-if="sourceData.activeStage === '警报解除阶段'" :eventId="sourceData.id"></event-evaluation>
+          <event-evaluation
+            v-if="sourceData.activeStage === '警报解除阶段'"
+            :eventId="sourceData.id"
+          ></event-evaluation>
         </div>
       </cg-container>
     </div>
@@ -112,6 +115,7 @@ import YuAnResource from './YuAnResource'
 import YuAnPlace from './YuAnPlace'
 import EventEvaluation from './EventEvaluation'
 import AreaMapDialog from './AreaMapDialog'
+const _ = require('lodash')
 export default {
     name: 'eventYuAnForm',
     components:{
@@ -145,93 +149,85 @@ export default {
                 '2':'圆形',
                 '3':'多边形',
                 '4':'任意面'
-            },
-            eventInfo:{
-                name: '',
-                typeName: '',
-                levelName: '',
-                startDay: 0,
-                endDay: 0,
-                position: '',
-                description: '',
-                areaId: '',
-                imageStr: '[]',
-                fileStr: '[]'
-            },
-            areaMapDialogVisible: false,
-            mapId: null,
-            eventYuAnForm: {
-                id: '',
-                stageName: '',
-                stageData: '',
-                peopleData:'',
-                resourceData: '',
-                placeData: ''
-            },
-            stageData: [{
-                id: '',
-                stageName: '',
-                description: '',
-                person: '',
-                tel: ''
-            }],
-            peopleData:{
-                leaderOne: [],
-                leaderTwo: [],
-                leaderThree: [],
-                leaderFour: [],
-                leaderFive: [],
-                memberOne: [],
-                memberTwo: [],
-                groupOneForOne: [],
-                groupOneForTwo: [],
-                groupOneForThree: [],
-                groupTwoForOne: [],
-                groupTwoForTwo: [],
-                groupTwoForThree: [],
-                groupThreeForOne: [],
-                groupThreeForTwo: [],
-                groupThreeForThree: []
-            },
-            peopleResultData:{},
-            resourceData: [],
-            resourceResultData: [],
-            placeData: [],
-            placeResultData: [],
+                },
+                eventInfo:{
+                    name: '',
+                    typeName: '',
+                    levelName: '',
+                    startDay: 0,
+                    endDay: 0,
+                    position: '',
+                    description: '',
+                    areaId: '',
+                    imageStr: '[]',
+                    fileStr: '[]'
+                },
+                areaMapDialogVisible: false,
+                mapId: null,
+                eventYuAnForm: {
+                    id: '',
+                    stageName: '',
+                    stageData: '',
+                    peopleData:'',
+                    resourceData: '',
+                    placeData: ''
+                },
+                stageData: [{
+                    id: '',
+                    stageName: '',
+                    description: '',
+                    person: '',
+                    tel: ''
+                }],
+                peopleData:{
+                    leaderOne: [],
+                    leaderTwo: [],
+                    leaderThree: [],
+                    leaderFour: [],
+                    leaderFive: [],
+                    memberOne: [],
+                    memberTwo: [],
+                    groupMember: []
+                },
+                peopleResultData:{},
+                resourceData: [],
+                resourceResultData: [],
+                placeData: [],
+                placeResultData: [],
 
-        }
-    },
-    mounted(){
-        this.init();
-    },
-    methods:{
-        ...mapActions('emergency/emergency', ['getEventYuAnInfoById','startYuAn']),
-        init(){
-          this.showStage = this.sourceData.activeStage;
-          if(this.sourceData.activeStage==='警报解除阶段'){
-            //所有都只有查看的动作
-            this.operateType = 'look';
-          }
+            }
+        },
+        mounted(){
+            this.init();
+        },
+        methods:{
+            ...mapActions('emergency/emergency', ['getEventYuAnInfoById','startYuAn']),
+            init(){
+              this.showStage = this.sourceData.activeStage;
+              if(this.sourceData.activeStage==='警报解除阶段'){
+                //所有都只有查看的动作
+                this.operateType = 'look';
+              }
 
-            this.getEventYuAnInfoById({id: this.sourceData.id}).then((res)=>{
-                this.eventInfo = res.eventData;
-                this.stageData = res.emPlanData.stageData;
-                this.peopleData = res.emPlanData.peopleData;
-                this.resourceData = res.emPlanData.resourceData;
-                this.placeData = res.emPlanData.placeData;
-            });
-        },
-        sendMessage(stageName){
-              this.showStage = stageName;
-        },
-        lookAreaMap(){
-            this.areaMapDialogVisible = true;
-            this.mapId = this.eventInfo.mapId;
-        },
-        //应急人员数据更新
-        getPeopleResult(data){
-            this.peopleResultData = JSON.parse(JSON.stringify(data));
-            // console.log('peopleResultData',this.peopleResultData);
+                this.getEventYuAnInfoById({id: this.sourceData.id}).then((res)=>{
+                    this.eventInfo = res.eventData;
+                    this.stageData = res.emPlanData.stageData;
+                    this.peopleData = res.emPlanData.peopleData;
+                    this.resourceData = res.emPlanData.resourceData;
+                    this.placeData = res.emPlanData.placeData;
+                });
+            },
+            sendMessage(stageName){
+                  this.showStage = stageName;
+            },
+            lookAreaMap(){
+                this.areaMapDialogVisible = true;
+                this.mapId = this.eventInfo.mapId;
+            },
+            //应急人员数据更新
+            getPeopleResult(data){
+                this.peopleResultData = _.cloneDeep(data);
+                // console.log('peopleResultData',this.peopleResultData);
         },
         //应急资源数据更新
         getResourceResult(data){

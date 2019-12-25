@@ -38,6 +38,8 @@ import 'swiper/dist/css/swiper.css'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 Vue.use(VueAwesomeSwiper)
 
+import viewer from '@/components/cg-viewer/index'
+Vue.use(viewer)
 
 //mock => 生产环境(上线前请注释！！！)
 import '@/mock'
@@ -60,7 +62,11 @@ new Vue({
         // console.log(role)
         //设置侧边栏菜单
         const role = 'admin';
-        let activeModule = this.$store.getters['cgadmin/menu/activeModule'];
+        const modulePermission = this.$store.getters['cgadmin/user/modulePermission']
+        //let activeModule = this.$store.getters['cgadmin/menu/activeModule'];
+        let activeModule = modulePermission[0];
+        console.log('modulePermission',modulePermission);
+        this.$store.commit('cgadmin/menu/activeModuleSetState', activeModule);
         const menu = menuAside.filter(v => v.role.includes(role)&&v.module.includes(activeModule))
         this.$store.commit('cgadmin/menu/asideSet', menu)
       })

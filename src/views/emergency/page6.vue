@@ -30,7 +30,7 @@
                     :total="totalSize"
                     :showTotal="total => `共 ${total} 条`"
                     :pageSize="10"
-                    :defaultCurrent="1"
+                    :current="query.pageNo"
                     @change="changePagination"
             />
           </div>
@@ -467,7 +467,7 @@ export default {
       console.log('editYuan item', item)
       this.dialogComponentId = EventForm
       this.dWidth = 810
-      this.dHeight = 470
+      this.dHeight = 490
       this.dialogTitle = '修改事件'
       this.bodyPadding = [0, 10, 10, 10]
       this.sourceData = item;

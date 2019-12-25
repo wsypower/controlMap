@@ -17,7 +17,7 @@
                              placeholder="请输入" style="width: 277px" />
                   </a-form-item>
                   <a-form-item
-                    label="类型"
+                    label="预案"
                     :label-col="{ span: 5 }"
                     :wrapper-col="{ span: 12 }"
                   >
@@ -367,7 +367,7 @@ export default {
                 this.fileLoading = true;
                 return
             }
-            console.log('uploadImage handleChange',res.file.response);
+            console.log('uploadFile handleChange',res.file.response);
             if (res.file.status === 'done') {
                 this.fileLoading = false;
                 let data  = res.file.response.basefile;
@@ -562,7 +562,7 @@ export default {
   .yuan-form {
     width: 100%;
     height: calc(100% - 60px);
-    padding: 20px;
+    padding: 20px 20px 20px 20px;
     border-bottom: 1px solid #dddddd;
     /deep/.ant-upload.ant-upload-select-picture-card {
       width: 100%;
