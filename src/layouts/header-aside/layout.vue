@@ -17,7 +17,7 @@
             <div v-if="showSelect">
               <LayersSwitch @show="showSelect"></LayersSwitch>
             </div>
-            <a-button class="container__aside__item" @click="showLayerSwitch">
+            <a-button class="container__aside__item" @click="showLayerSwitch" v-show="showRightBtn">
               <img src="@/assets/mapImage/layer.png" alt="" class="icon">
             </a-button>
             <!--<a-button class="container__aside__item">2</a-button>-->
@@ -65,7 +65,8 @@ export default {
   },
   data() {
     return {
-        showSelect : false
+      showSelect : false,
+      showRightBtn: true
     }
   },
   watch:{
@@ -74,10 +75,17 @@ export default {
           if(activeModule){
               this.showSelect=false;
           }
+      },
+    current: function(current){
+        console.log('current: ' + current);
+      if(current === '/emergency'){
+        this.showRightBtn = false;
       }
+    }
   },
   computed: {
     ...mapState('cgadmin/menu', ['activeModule']),
+    ...mapState('cgadmin/page', ['current']),
     ...mapState('cgadmin', {
       //缓存页面 ====> keep-alive
       keepAlive: state => state.page.keepAlive
@@ -129,7 +137,7 @@ export default {
 .container__aside--bottom,
 .container__aside--top {
   .container__aside__item {
-    z-index:99;
+    z-index:1;
     padding:0;
     :nth-last-child() {
       margin-bottom: 0;

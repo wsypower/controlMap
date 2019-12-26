@@ -31,6 +31,14 @@
 import dayjs from 'dayjs'
 import menuAside from '@/menu/aside.js'
 import { mapState, mapActions } from 'vuex'
+import util from '@/utils/util';
+const MODULE = {
+  'jm':'智慧街面',
+  'sz':'智慧市政',
+  'hw':'智慧环卫',
+  'ps':'智慧排水',
+  'ld':'智慧路灯'
+}
 export default {
   name: 'LayoutHeader',
   data() {
@@ -66,29 +74,17 @@ export default {
         }
         else{
           this.asideCollapseSet(false);
-          this.activeHeaderModule = module;
           this.$store.commit('cgadmin/menu/activeModuleSetState', module)
           menuAside.forEach( item => {
             item.active = false;
           });
           const menu = menuAside.filter(v => v.role.includes('admin')&&v.module.includes(module))
           this.$store.commit('cgadmin/menu/asideSet', menu)
-          let i = 0;
-          let index = 0;
-          for(i;i<menu.length;i++){
-            if(menu[i].path === this.current){
-              if(i===menu.length-1){
-                index = 0;
-              }
-              else{
-                index = i + 1;
-              }
-              break;
-            }
-          }
-          if(i!==menu.length){
-            this.$router.replace(menu[index].path)
-          }
+          // console.log(this.$router,this.$route);
+          // this.$route.meta.title = MODULE[this.activeModule];
+          this.$router.replace('/changePage')
+          // 更改标题
+          util.title(MODULE[this.activeModule])
         }
       }
       else{

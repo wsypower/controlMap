@@ -15,6 +15,7 @@ import store from './store/index'
 // 菜单和路由设置
 import router from '@/router/index'
 import menuAside from '@/menu/aside.js'
+import util from '@/utils/util';
 // import { frameInRoutes } from '@/router/router'
 Vue.config.productionTip = false
 // 设置文件
@@ -69,6 +70,15 @@ new Vue({
         this.$store.commit('cgadmin/menu/activeModuleSetState', activeModule);
         const menu = menuAside.filter(v => v.role.includes(role)&&v.module.includes(activeModule))
         this.$store.commit('cgadmin/menu/asideSet', menu)
+        const MODULE = {
+          'jm':'智慧街面',
+          'sz':'智慧市政',
+          'hw':'智慧环卫',
+          'ps':'智慧排水',
+          'ld':'智慧路灯'
+        }
+        // 更改标题
+        util.title(MODULE[activeModule])
       })
       .catch(err => {
         console.log(err)

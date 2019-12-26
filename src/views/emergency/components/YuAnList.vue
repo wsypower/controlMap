@@ -133,8 +133,8 @@
 <style lang="scss" scoped>
     .yuan-list{
         position:fixed;
-        right: 20px;
-        top:80px;
+        right: 10px;
+        top: 70px;
         width: 360px;
         max-height: 600px;
         .header{
