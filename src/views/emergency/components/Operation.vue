@@ -433,6 +433,7 @@ export default {
   left: 437px;
   top: 70px;
   width: 440px;
+
   .op-btn {
     height: 36px;
     border-radius: 0px;
@@ -525,7 +526,13 @@ export default {
     color: #2b8ff3;
   }
 }
-    .checkbox_d{
-        margin-right: 6px;
-    }
+.checkbox_d{
+    margin-right: 6px;
+}
+</style>
+<style lang="scss">
+.ant-dropdown ul{
+    max-height: 400px;
+    overflow-y: auto;
+}
 </style>

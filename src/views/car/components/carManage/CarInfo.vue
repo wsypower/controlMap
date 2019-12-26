@@ -15,7 +15,7 @@
         <span class="title">车辆类型：</span><span>{{ info.carType }}</span>
       </div>
       <div>
-        <span class="title">车速：</span><span v-if="info.speed" :class="{red: info.isOverSpeed}">{{ info.speed }}km/h</span>
+        <span class="title">车速：</span><span v-if="info.speed>=0" :class="{red: info.isOverSpeed}">{{ info.speed }}km/h</span>
       </div>
       <div>
         <span class="title">驾驶员姓名：</span><span>{{ info.driver }}</span>
