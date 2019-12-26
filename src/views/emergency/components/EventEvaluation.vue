@@ -60,7 +60,7 @@
       </div>
     </div>
     <div class="part-content-panel list-panel" v-if="showList">
-      <div class="part-content">
+      <div class="part-content" @mouseenter="mouseEnterFn" @mouseleave="mouseLeaveFn">
         <!--<cg-container scroll>-->
         <vuescroll :ops="ops">
           <div v-for="(ev, index) in evaluationDataList" :key="index" flex class="evaluation-item">
@@ -123,7 +123,9 @@ export default {
     return{
       ops: {
         vuescroll: {},
-        scrollPanel: {},
+        scrollPanel: {
+          scrollingY:true
+        },
         rail: {
           background: '#cccccc'
         },
@@ -217,6 +219,16 @@ export default {
         this.toList();
       });
 
+    },
+    //鼠标进入容器触发事件
+    mouseEnterFn(){
+      console.log('mouseEnterFn');
+      this.$emit('stopParentScroll');
+    },
+    //鼠标离开容器触发事件
+    mouseLeaveFn(){
+      console.log('mouseLeaveFn');
+      this.$emit('stopParentScroll');
     },
     //获取评价列表
     getEvaluationListDataFn(){
