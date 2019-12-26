@@ -60,9 +60,9 @@
       </div>
     </div>
     <div class="part-content-panel list-panel" v-if="showList">
-      <div class="part-content" @mouseenter="mouseEnterFn" @mouseleave="mouseLeaveFn">
+      <div class="part-content" @mouseenter="mouseEnterFn" @mouseleave="mouseLeaveFn" v-if="totalSize>0">
         <!--<cg-container scroll>-->
-        <vuescroll :ops="ops">
+        <vuescroll :ops="ops" >
           <div v-for="(ev, index) in evaluationDataList" :key="index" flex class="evaluation-item">
             <a-checkbox :checked="ev.isChecked" @change="(e) => {onItemChange(e,index);}"></a-checkbox>
             <div class="evaluation-item-right">
@@ -91,6 +91,11 @@
           </div>
         </vuescroll>
           <!--</cg-container>-->
+      </div>
+      <div class="part-content" v-else>
+        <div flex="main:center cross:center" style="height: 100%">
+          <img src="~@img/zanwudata.png" />
+        </div>
       </div>
       <div class="list-panel-footer" flex="cross:center main:justify">
         <div flex="cross:center" style="margin-left: 20px;">
