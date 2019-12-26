@@ -372,15 +372,7 @@ export function listToFeatures (list,type) {
                     }
                 }
                 // 通过经纬度生成点位加到地图上
-                if(item.x && item.x.length>0 && item.y && item.y.length>0){
-                    const feature=new Feature({
-                        geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
-                    });
-                    feature.set('icon',pointImg);
-                    feature.set('props',item);
-                    // feature.set('type','peoplePosition');
-                    return feature;
-                }
+                return pointToFeature(item,pointImg);
             });
             break;
         case '车辆':
@@ -393,33 +385,62 @@ export function listToFeatures (list,type) {
                     pointImg='car-offline';
                 }
                 // 通过经纬度生成点位加到地图上
-                if(item.x && item.x.length>0 && item.y && item.y.length>0){
-                    const feature=new Feature({
-                        geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
-                    });
-                    feature.set('icon',pointImg);
-                    feature.set('props',item);
-                    // feature.set('type','CarPosition');
-                    return feature;
-                }
+                return pointToFeature(item,pointImg);
             });
             break;
         case '视频':
             features = list.map(item=>{
                 // 通过经纬度生成点位加到地图上
-                if(item.x && item.x.length>0 && item.y && item.y.length>0){
-                    const feature=new Feature({
-                        geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
-                    });
-                    feature.set('icon','carmera_online');
-                    feature.set('props',item);
-                    // feature.set('type','CarPosition');
-                    return feature;
-                }
+                return pointToFeature(item,'carmera_online');
             });
             break;
-
+        case '井盖':
+            features=list.map(item=>{
+                // 通过经纬度生成点位加到地图上
+                let pointImg;
+                if(item.info.alarmState=='1'){
+                    pointImg='物联设备-3-normal';
+                }else{
+                    pointImg='物联设备-3-alarm';
+                }
+                return pointToFeature(item,pointImg);
+            });
+            break;
+        case '垃圾桶':
+            features=list.map(item=>{
+                // 通过经纬度生成点位加到地图上
+                let pointImg;
+                if(item.info.alarmState=='1'){
+                    pointImg='物联设备-7-normal';
+                }else{
+                    pointImg='物联设备-7-alarm';
+                }
+                return pointToFeature(item,pointImg);
+            });
+            break;
+        case '水位计':
+            features=list.map(item=>{
+                // 通过经纬度生成点位加到地图上
+                let pointImg;
+                if(item.info.alarmState=='1'){
+                    pointImg='物联设备-8-normal';
+                }else{
+                    pointImg='物联设备-8-alarm';
+                }
+                return pointToFeature(item,pointImg);
+            });
+            break;
     }
     return features.filter(Boolean);
+}
+export function pointToFeature(item,icon) {
+    if(item.x && item.x.length>0 && item.y && item.y.length>0){
+        const feature=new Feature({
+            geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+        });
+        feature.set('icon',icon);
+        feature.set('props',item);
+        return feature;
+    }
 }
 

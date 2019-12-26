@@ -109,6 +109,8 @@ export async function getTypeEquip(type) {
       return {
         id: r.id,
         position: r.position,
+        x:r.longitudeGps84Y,
+        y:r.latitudeGps84X,
         info:r
       }
     }

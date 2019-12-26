@@ -2,7 +2,18 @@
     <div class="ctrl-panel">
         <div class="ctrl-panel-b">
             <ul style="padding-left: 10px">
-                <li class="ctrl-panel-item" v-for="(layer,index) in allLayers" :key="index">
+                <li class="ctrl-panel-item" v-for="(layer,index) in areaLayer" :key="index">
+                    <p class="ctrl-panel-item-checkbox" @click="toggleService(layer)">
+                        <img :src="getSelectState(layer.name)">
+                    </p>
+                    <div class="ctrl-panel-item-middle">
+                        <p class="ctrl-panel-item-icon df aic">
+                            <img :src="layer.icon" style="width: 15px;height: 15px">
+                        </p>
+                        <p>{{layer.name}}</p>
+                    </div>
+                </li>
+                <li class="ctrl-panel-item" v-for="(layer,index) in moduleLayers" :key="index">
                     <p class="ctrl-panel-item-checkbox" @click="toggleService(layer)">
                         <img :src="getSelectState(layer.name)">
                     </p>
@@ -25,9 +36,10 @@
     import { getTypePoint } from '@/api/map/service';
     import {gridStyle} from '@/utils/util.map.style';
     import {listToFeatures} from '@/utils/util.map.manage';
+    import { getTypeEquip } from '@/api/map/service';
+    import { emergencyEquipStyle } from '@/utils/util.map.style';
     import util from '@/utils/util'
     let  selectLayer=['区县','街道','社区','监督网格','单元网格','人员','车辆','视频','案卷'];
-    let gridLayer=['区县','街道','社区','监督网格','单元网格'];
     export default {
         name: "LayersSwitch",
         props: {
@@ -37,7 +49,7 @@
         },
         data(){
             return {
-                allLayers:[
+                areaLayer:[
                     {
                         name: '区县',
                         color:'#800000',
@@ -63,7 +75,10 @@
                         color:'#FF0000',
                         icon: require('@/assets/mapImage/dywg.png'),
                         lyr: null
-                    },{
+                    }
+                ],
+                moduleLayers:[
+                    {
                         name: '人员',
                         icon: require('@/assets/mapImage/ry.png'),
                         lyr:null
@@ -75,7 +90,19 @@
                         name: '视频',
                         icon: require('@/assets/mapImage/sp.png'),
                         lyr: null
-                    }
+                    },{
+                        name: '井盖',
+                        icon: require('@/assets/mapImage/jg.png'),
+                        lyr: null
+                    },{
+                        name: '垃圾桶',
+                        icon: require('@/assets/mapImage/ljt.png'),
+                        lyr: null
+                    },{
+                        name: '水位计',
+                        icon: require('@/assets/mapImage/swj.png'),
+                        lyr: null
+                    },
                 ],
                 selectLayer:[]
             }
@@ -90,12 +117,19 @@
             }
         },
         mounted(){
-            this.getAllLayers();
             if(this.activeModule=='jm'){
-                this.allLayers.splice(5,2);
+                this.moduleLayers.splice(0,2);
+                this.moduleLayers.splice(1,3);
             }else if(this.activeModule=='ps'){
-                this.allLayers.splice(6,1);
+                this.moduleLayers.splice(1,1);
+                this.moduleLayers.splice(2,2);
+            }else if(this.activeModule=='sz'){
+                this.moduleLayers.splice(4,2);
+            }else if(this.activeModule=='hw'){
+                this.moduleLayers.splice(3,1);
+                this.moduleLayers.splice(4,1);
             }
+            this.getAllLayers();
         },
         methods:{
             ...mapActions('section/common', ['getAllPeopleDataList']),
@@ -105,41 +139,52 @@
                 console.log('activeModule====',this.activeModule);
                 const _this=this;
                 const userId = util.cookies.get('userId');
-                this.allLayers.forEach(layer => {
-                    if(gridLayer.includes(layer.name)){
-                        getTypePoint(layer.name).then(data=>{
-                            layer.lyr = _this.mapManager.addVectorLayerByFeatures(data,gridStyle(layer.color),33);
-                            layer.lyr.setVisible(false);
+                this.areaLayer.forEach(layer=>{
+                    getTypePoint(layer.name).then(data=>{
+                        layer.lyr = _this.mapManager.addVectorLayerByFeatures(data,gridStyle(layer.color),33);
+                        layer.lyr.setVisible(false);
+                    });
+                })
+                this.moduleLayers.forEach(layer => {
+                    //获取人员数据
+                    if(layer.name=='人员'){
+                        _this.getAllPeopleDataList({userId: userId,moduleType: _this.activeModule}).then(res=>{
+                            if(res&& res.length>0) {
+                                _this.datToLayer(layer,res,layer.name);
+                            }
                         });
-                    }else{
-                        //获取人员数据
-                        if(layer.name=='人员'){
-                            _this.getAllPeopleDataList({userId: userId,moduleType: _this.activeModule}).then(res=>{
-                                if(res&& res.length>0) {
-                                    const features = listToFeatures(res, '人员');
-                                    layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
-                                    layer.lyr.setVisible(false);
-                                }
-                            });
-                        }else if(layer.name=='车辆'){
-                            _this.getAllCarDataList({userId: userId,moduleType: _this.activeModule}).then(res=>{
-                                if(res&& res.length>0){
-                                    const features=listToFeatures(res,'车辆');
-                                    layer.lyr=_this.mapManager.addClusterLayerByFeatures(features);
-                                    layer.lyr.setVisible(false);
-                                }
-                            });
-                        }else if(layer.name=='视频'){
-                            _this.getAllCameraDataList({userId: userId,moduleType: _this.activeModule}).then(res=>{
-                                if(res.result&&res.result.length>0){
-                                    const features=listToFeatures(res.result,'视频');
-                                    layer.lyr=_this.mapManager.addClusterLayerByFeatures(features);
-                                    layer.lyr.setVisible(false);
-                                }
-                            });
-                        }
+                    }else if(layer.name=='车辆'){
+                        _this.getAllCarDataList({userId: userId,moduleType: _this.activeModule}).then(res=>{
+                            if(res&& res.length>0){
+                                _this.datToLayer(layer,res,layer.name);
+                            }
+                        });
+                    }else if(layer.name=='视频'){
+                        _this.getAllCameraDataList({userId: userId,moduleType: _this.activeModule}).then(res=>{
+                            if(res&&res.length>0){
+                                _this.datToLayer(layer,res,layer.name);
+                            }
+                        });
+                    }else if(layer.name=='井盖'){
+                        getTypeEquip('3').then(res => {
+                            _this.datToLayer(layer,res,layer.name);
+                        })
+                    }else if(layer.name=='垃圾桶'){
+                        getTypeEquip('7').then(res => {
+                            _this.datToLayer(layer,res,layer.name);
+                        })
+                    }else if(layer.name=='水位计'){
+                        getTypeEquip('8').then(res => {
+                            _this.datToLayer(layer,res,layer.name);
+                        })
                     }
                 });
+            },
+            //数据生成对应图层
+            datToLayer(layer,data,type){
+                const features=listToFeatures(data,type);
+                layer.lyr=this.mapManager.addClusterLayerByFeatures(features);
+                layer.lyr.setVisible(false);
             },
             toggleService (layer) {
                 if (layer.name === '全部图层') {
@@ -170,7 +215,12 @@
             }
         },
         destroyed(){
-            this.allLayers.forEach(layer=>{
+            this.areaLayer.forEach(layer=>{
+                if(layer.lyr) {
+                    this.mapManager.removeLayer(layer.lyr);
+                }
+            });
+            this.moduleLayers.forEach(layer=>{
                 if(layer.lyr) {
                     this.mapManager.removeLayer(layer.lyr);
                 }
