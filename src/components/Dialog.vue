@@ -114,6 +114,7 @@ export default{
         },
         //隐藏dialog
         hideDialog(){
+          console.log('hideDialog');
             this.isActive = true;
             setTimeout(()=>{
               this.showModal = false;

@@ -34,7 +34,7 @@ export function getPoint(type = '全部视频') {
  */
 export function getEmergencyArea(type = '预案区域') {
   return request({
-    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix+'/ows',
+    url: GIS_CONFIG.baseURL + '/' + GIS_CONFIG.featurePrefix+'/ows',
     method: 'get',
     params: {
       service: 'WFS',
