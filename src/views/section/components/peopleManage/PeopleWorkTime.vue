@@ -192,6 +192,9 @@ export default {
                 userId: this.query.userId,
                 id: item.id
             };
+            if(this.signLayer){
+                this.signLayer.getSource().clear();
+            }
             this.getUserSignDetailData(params).then(res=>{
                 console.log('signDetail',res);
                 item.hasDetail = true;
@@ -216,11 +219,14 @@ export default {
                     signOutFeature.set('type','peopleWorkTime');
                     signFeature.push(signOutFeature);
                 }
-                this.signLayer=this.mapManager.addVectorLayerByFeatures(signFeature,PeoplePointStyle(),3);
-                this.signLayer.set('featureType','peopleWorkTime');
+                if(this.signLayer){
+                    this.signLayer.getSource().addFeatures(signFeature);
+                }
+                else{
+                    this.signLayer=this.mapManager.addVectorLayerByFeatures(signFeature,PeoplePointStyle(),3);
+                    this.signLayer.set('featureType','peopleWorkTime');
+                }
                 this.mapManager.getMap().getView().fit(this.signLayer.getSource().getExtent());
-                console.log('this.signInfoData',this.signInfoData);
-                // this.$refs.peopleSignInfo.$el.style.display = 'block';
             });
         },
         signMapClickHandler({ pixel, coordinate }){
