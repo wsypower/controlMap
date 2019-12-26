@@ -101,11 +101,13 @@ export default {
       //加载完数据后渲染地图
       isLoadData:function() {
         if(this.peopleFeatures.length>0){
-          // this.peopleLayer = this.mapManager.addVectorLayerByFeatures(this.peopleFeatures,PeoplePointStyle(),3);
-          // this.peopleLayer.set('featureType','PeoplePosition');
-          // this.mapManager.getMap().getView().fit(this.peopleLayer.getSource().getExtent());
-          this.peopleLayer= this.mapManager.addClusterLayerByFeatures(this.peopleFeatures);
-          this.peopleLayer.set('featureType','PeoplePosition');
+          if(this.peopleLayer){
+              this.peopleLayer.getSource().clear();
+              this.peopleLayer.getSource().addFeatures(this.carFeatures);
+          }else{
+              this.peopleLayer= this.mapManager.addClusterLayerByFeatures(this.peopleFeatures);
+              this.peopleLayer.set('featureType','PeoplePosition');
+          }
           const extent=this.peopleLayer.getSource().getSource().getExtent();
           this.mapManager.getMap().getView().fit(extent);
         }

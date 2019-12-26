@@ -99,8 +99,13 @@ export default {
       if(this.carFeatures.length>0){
         // this.carLayer = this.mapManager.addVectorLayerByFeatures(this.carFeatures,carPointStyle(),3);
         //加载聚类车辆图层
-        this.carLayer = this.mapManager.addClusterLayerByFeatures(this.carFeatures);
-        this.carLayer.set('featureType','CarPosition');
+        if(this.carLayer){
+            this.carLayer.getSource().clear();
+            this.carLayer.getSource().addFeatures(this.carFeatures);
+        }else{
+            this.carLayer = this.mapManager.addClusterLayerByFeatures(this.carFeatures);
+            this.carLayer.set('featureType','CarPosition');
+        }
         const extent=this.carLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }

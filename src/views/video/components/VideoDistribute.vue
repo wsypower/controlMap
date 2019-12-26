@@ -98,8 +98,13 @@ export default {
   watch:{
     isLoadData:function() {
       if(this.videoFeatures.length>0){
-        this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
-        this.videoLayer.set('featureType','videoDistribute');
+        if(this.videoLayer){
+            this.videoLayer.getSource().clear();
+            this.videoLayer.getSource().addFeatures(this.carFeatures);
+        }else{
+            this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
+            this.videoLayer.set('featureType','videoDistribute');
+        }
         const extent=this.videoLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
