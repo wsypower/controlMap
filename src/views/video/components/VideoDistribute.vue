@@ -189,11 +189,13 @@ export default {
     },
       videoMapClickHandler({ pixel, coordinate }) {
           const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-          const clickFeature=feature.get('features')[0];
-          // const coordinates=clickFeature.getGeometry().getCoordinates();
-          if(clickFeature&& clickFeature.get('type')=='VideoDistribute'){
-              const videoInfoData=clickFeature.get('props');
-              this.playVideo(videoInfoData.mpid);
+          if(feature.get('features')){
+              const clickFeature=feature.get('features')[0];
+              // const coordinates=clickFeature.getGeometry().getCoordinates();
+              if(clickFeature&& clickFeature.get('type')=='VideoDistribute'){
+                  const videoInfoData=clickFeature.get('props');
+                  this.playVideo(videoInfoData.mpid);
+              }
           }
       },
     playVideo(mpid){
