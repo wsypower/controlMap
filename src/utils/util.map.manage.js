@@ -230,7 +230,7 @@ export class MapManager {
           color: '#064ac2',
           width: 2
         }),
-        image: new CircleStyle({
+        image: new Circle({
           radius: 7,
           fill: new Fill({
             color: '#064ac2'
