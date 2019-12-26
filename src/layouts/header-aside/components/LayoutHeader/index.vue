@@ -82,7 +82,7 @@ export default {
           this.$store.commit('cgadmin/menu/asideSet', menu)
           // console.log(this.$router,this.$route);
           // this.$route.meta.title = MODULE[this.activeModule];
-          this.$router.replace('/changePage')
+          this.$router.replace('/changePage');
           // 更改标题
           util.title(MODULE[this.activeModule])
         }
