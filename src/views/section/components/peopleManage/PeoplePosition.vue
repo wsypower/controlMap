@@ -249,11 +249,13 @@ export default {
         //地图上人员点击事件处理器
         peopleMapClickHandler({ pixel, coordinate }){
           const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-          const clickFeature=feature.get('features')[0];
-          const coordinates=clickFeature.getGeometry().getCoordinates();
-          if(clickFeature&& clickFeature.get('type')=='peoplePosition'){
-                this.peopleInfoData=clickFeature.get('props');
-                this.peopleOverlay.setPosition(coordinates);
+          if(feature.get('features')){
+              const clickFeature=feature.get('features')[0];
+              const coordinates=clickFeature.getGeometry().getCoordinates();
+              if(clickFeature&& clickFeature.get('type')=='peoplePosition'){
+                  this.peopleInfoData=clickFeature.get('props');
+                  this.peopleOverlay.setPosition(coordinates);
+              }
           }
         },
         //人员轨迹触发
