@@ -9,20 +9,21 @@
     </div>
     <div class="tip-body">
       <div>
-        <span class="title">编码：</span><span>{{ info.code }}</span>
+        <span class="title">车牌号：</span><span>{{ info.code }}</span>
       </div>
       <div>
-        <span class="title">标识：</span><span>{{ info.flag }}</span>
+        <span class="title">车辆类型：</span><span>{{ info.carType }}</span>
       </div>
       <div>
-        <span class="title">电话：</span><span>{{ info.phone }}</span>
+        <span class="title">车速：</span><span v-if="info.speed" :class="{red: info.isOverSpeed}">{{ info.speed }}km/h</span>
       </div>
       <div>
-        <span class="title">组别：</span><span>{{ info.dept }}</span>
+        <span class="title">驾驶员姓名：</span><span>{{ info.driver }}</span>
       </div>
       <div>
-        <span class="title">GPS上报：</span><span>{{ new Date(info.gpsTime) | date_format() }}</span>
+        <span class="title">驾驶员电话：</span><span>{{ info.phone }}</span>
       </div>
+
     </div>
     <div class="info-body-operation" @click="lookCarTrail">
       查看轨迹
@@ -151,6 +152,9 @@ export default{
     color: #333333;
     > div {
       line-height: 24px;
+      .red{
+        color: #e03131;
+      }
     }
     .title {
       color: #888888;

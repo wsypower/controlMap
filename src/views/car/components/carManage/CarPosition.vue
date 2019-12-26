@@ -122,7 +122,7 @@ export default {
         this.carFeatures=[];
         this.allCarData = [];
         this.changeTreeData(data,'');
-        this.isLoadData=!this.isLoadData;
+        this.isLoadData = !this.isLoadData;
         this.treeData = data;
         this.showLoading = false;
       });
@@ -141,6 +141,7 @@ export default {
           _this.peopleNewDataList = [];
           _this.changeOldData(res);
           let idArr = _this.compareDataToIdArr();
+          this.isLoadData = !this.isLoadData;
           _this.peopleDataList = [];
           _this.changeTreeDataMore(_this.treeData, idArr);
         });
@@ -212,8 +213,6 @@ export default {
             idArr.push(oneItem.id);
           }
         });
-        idArr.push('5fc11e90df6a11e98dc5e0ded2a8760d');
-        idArr.push('5fc1e1e0df6a11e98dc5e0ded2a8760d');
         return idArr
       },
       changeTreeDataMore(arr, idArr){
@@ -272,7 +271,11 @@ export default {
           temp.name = needData.carNumber;
           temp.code = needData.carNumber;
           temp.flag = needData.carNumber;
+          temp.carType = needData.carType;
+          temp.driver = needData.driver;
           temp.phone = needData.phone;
+          temp.speed = needData.speed;
+          temp.isOverSpeed = needData.isOverSpeed;
           temp.dept = needData.dept;
           temp.gpsTime = needData.gpsTime;
           temp.x = needData.x;
