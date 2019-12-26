@@ -18,7 +18,8 @@
       >
     </div>
     <div class="yuan-form-panel-body">
-      <cg-container scroll>
+      <!--<cg-container scroll>-->
+      <happy-scroll color="rgba(0,0,0,0.2)" size="5"  resize>
         <div class="yuan-form">
           <div class="part">
             <div class="title">预案信息</div>
@@ -97,7 +98,8 @@
             :eventId="sourceData.id"
           ></event-evaluation>
         </div>
-      </cg-container>
+      <!--</cg-container>-->
+      </happy-scroll>
     </div>
     <div class="operate-panel" flex="main:center cross:center" v-if="sourceData.activeStage !== '警报解除阶段'">
       <a-button type="primary" @click="startYuAnEvent">{{
@@ -266,6 +268,9 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #ffffff;
+  /deep/.happy-scroll-content{
+    width: 100%;
+  }
   .liucheng-panel {
     height: 60px;
     width: 100%;

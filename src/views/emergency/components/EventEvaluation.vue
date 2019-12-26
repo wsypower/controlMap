@@ -77,7 +77,7 @@
               <div class="file-show-panel" v-if="ev.fileList.length>0" flex :class="{height90: ev.isExpand}">
                 <div v-for="(file, index) in ev.fileList" :key="index" class="file-item" flex="cross:center">
                   <div v-if="file.type==='image'" >
-                    <img style="width:100%;" :src="file.imageUrl">
+                    <img style="width:100%;cursor:pointer;" :src="file.imageUrl" @click="clickEvaluationImage(file.imageUrl)">
                   </div>
                   <div v-if="file.type==='video'">
                     <div class="video-btn-panel" flex="cross:center main:center" @click="playVideo(file.videoSrc)">
@@ -312,6 +312,9 @@ export default {
     changePageNoHandle(pageNo,pageSize){
       this.query.pageNo = pageNo;
       this.getEvaluationListDataFn();
+    },
+    clickEvaluationImage(imageUrl){
+      window.open(imageUrl);
     }
   }
 }

@@ -8,6 +8,7 @@
           :key="index"
           :class="item.active ? 'menu__item--active':''"
           :icon="item.icon"
+          :title="item.title"
           @handlerClick="menuItemClick(index,item)"
         ></menu-item>
       </cg-container>

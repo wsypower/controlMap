@@ -108,7 +108,7 @@ export default {
 .manage {
   width: 100%;
   padding: 20px;
-  height: 100%;
+  height: calc(100% - 50px);
 }
 .content_tab {
   height: 100%;

@@ -1,5 +1,5 @@
 <template>
-  <div class="menu__item" flex="main:center cross:center" @click="$emit('handlerClick')">
+  <div class="menu__item" flex="main:center cross:center" @click="$emit('handlerClick')" :title="title">
     <cg-icon-svg :name="icon" class="menu__item__icon"></cg-icon-svg>
   </div>
 </template>
@@ -11,6 +11,10 @@ export default {
     icon: {
       type: String,
       required: true
+    },
+    title: {
+      type: String,
+      required: false
     }
   }
 }

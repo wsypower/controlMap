@@ -1,6 +1,10 @@
 <template>
   <div class="page">
-    <content-tabs :tabData="tabData" @changeTab="changeTab"></content-tabs>
+    <div class="page-header">
+      视频管控
+    </div>
+    <video-distribute></video-distribute>
+    <!--<content-tabs :tabData="tabData" @changeTab="changeTab"></content-tabs>-->
   </div>
 </template>
 
@@ -11,6 +15,9 @@ import AlarmStatistics from './components/AlarmStatistics.vue'
 import VideoDistribute from './components/VideoDistribute.vue'
 export default {
   name: 'alarmVideo',
+  components:{
+    VideoDistribute
+  },
   data() {
     return {
       //tab标签
@@ -77,5 +84,15 @@ export default {
 .page {
   width: 100%;
   height: 100%;
+  .page-header{
+    height: 50px;
+    width: 100%;
+    padding-left: 20px;
+    line-height: 50px;
+    background-color: #f5f7f8;
+    color: #2b90f3;
+    font-size: 18px;
+    text-align: left;
+  }
 }
 </style>
