@@ -232,7 +232,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .video-manage {
-  height: 100%;
+  height: calc(100% - 50px);
   width: 100%;
   padding: 20px;
   .search-panel {

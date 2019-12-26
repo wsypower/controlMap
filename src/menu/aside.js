@@ -24,7 +24,7 @@ export default [
   },
   {
     path: '/records',
-    title: '案卷',
+    title: '案卷管控',
     icon: 'menu-records',
     active: false,
     role: ['admin'],
@@ -32,7 +32,7 @@ export default [
   },
   {
     path: '/video',
-    title: '视频',
+    title: '视频管控',
     icon: 'menu-video',
     active: false,
     role: ['admin'],

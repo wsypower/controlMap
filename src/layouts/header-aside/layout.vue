@@ -17,7 +17,7 @@
             <div v-if="showSelect">
               <LayersSwitch @show="showSelect"></LayersSwitch>
             </div>
-            <a-button class="container__aside__item" @click="showLayerSwitch" v-show="showRightBtn">
+            <a-button class="container__aside__item" @click="showLayerSwitch">
               <img src="@/assets/mapImage/layer.png" alt="" class="icon">
             </a-button>
             <!--<a-button class="container__aside__item">2</a-button>-->

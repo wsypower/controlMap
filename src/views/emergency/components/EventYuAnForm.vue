@@ -18,7 +18,9 @@
       >
     </div>
     <div class="yuan-form-panel-body">
-      <cg-container scroll>
+      <!--<cg-container scroll>-->
+      <vuescroll :ops="ops">
+      <!--<happy-scroll color="rgba(0,0,0,0.2)" size="5"  resize>-->
         <div class="yuan-form">
           <div class="part">
             <div class="title">预案信息</div>
@@ -97,7 +99,9 @@
             :eventId="sourceData.id"
           ></event-evaluation>
         </div>
-      </cg-container>
+      <!--</cg-container>-->
+      <!--</happy-scroll>-->
+      </vuescroll>
     </div>
     <div class="operate-panel" flex="main:center cross:center" v-if="sourceData.activeStage !== '警报解除阶段'">
       <a-button type="primary" @click="startYuAnEvent">{{
@@ -109,6 +113,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
+import vuescroll from 'vuescroll';
 import YuAnStage from './YuAnStage'
 import YuAnPeople from './YuAnPeople'
 import YuAnResource from './YuAnResource'
@@ -119,12 +124,13 @@ const _ = require('lodash')
 export default {
     name: 'eventYuAnForm',
     components:{
-        YuAnStage,
-        YuAnPeople,
-        YuAnResource,
-        YuAnPlace,
-        EventEvaluation,
-        AreaMapDialog
+      vuescroll,
+      YuAnStage,
+      YuAnPeople,
+      YuAnResource,
+      YuAnPlace,
+      EventEvaluation,
+      AreaMapDialog
     },
     props:{
         //原始数据
@@ -143,9 +149,19 @@ export default {
     },
     data(){
         return {
-            showStage: '',
-            operateType: 'set',
-            areaList:{
+          ops: {
+            vuescroll: {},
+            scrollPanel: {},
+            rail: {
+              background: '#cccccc'
+            },
+            bar: {
+              background: '#c1c1c1'
+            }
+          },
+          showStage: '',
+          operateType: 'set',
+          areaList:{
                 '2':'圆形',
                 '3':'多边形',
                 '4':'任意面'
@@ -266,6 +282,9 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #ffffff;
+  /deep/.happy-scroll-content{
+    width: 100%;
+  }
   .liucheng-panel {
     height: 60px;
     width: 100%;
