@@ -164,7 +164,11 @@ export default {
             item.dept = deptName;
             if(item.online){
               item.slots = {icon: 'car'};
-              pointImg='car-online';
+                if(item.isOverSpeed){
+                    pointImg='car-overspeed';
+                }else{
+                    pointImg='car-online';
+                }
             }
             else{
               item.slots = {icon: 'car-outline'};
