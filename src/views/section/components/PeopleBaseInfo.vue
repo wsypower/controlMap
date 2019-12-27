@@ -76,13 +76,13 @@
     </div>
 </template>
 <script type="text/ecmascript-6">
-  import { mapActions } from 'vuex'
+  import { mapActions,mapState } from 'vuex'
   import moment from 'moment';
   import util from '@/utils/util';
-  // import {stampConvertToTime} from '@/utils/util.tool';
-  // import { trackByLocationList,pointByCoord } from '@/utils/util.map.manage';
-  // import {trackStyle,trackPointStyle,alarmPointStyle} from '@/utils/util.map.style';
-  // import {TrackPlaying} from '@/utils/util.map.trackPlaying'
+  import {stampConvertToTime} from '@/utils/util.tool';
+  import { trackByLocationList,pointByCoord } from '@/utils/util.map.manage';
+  import {trackStyle,trackPointStyle,alarmPointStyle} from '@/utils/util.map.style';
+  import {TrackPlaying} from '@/utils/util.map.trackPlaying'
   export default {
     name: 'peopleBaseInfo',
     components:{},
@@ -130,6 +130,7 @@
       }
     },
     computed:{
+        ...mapState('map', ['mapManager']),
     },
     watch:{
       userId:function(val){
@@ -139,16 +140,14 @@
     mounted(){
       this.getUserInfoMessageData();
       this.map=this.mapManager.getMap();
-
       let day = moment(new Date()).format('YYYY-MM-DD');
       this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
       this.query.startTime = new Date(day).getTime();
       this.query.endTime = new Date(day).getTime();
-      this.getDataList();
+      // this.getDataList();
     },
     methods: {
       ...mapActions('section/manage', ['getAllUserInfoData','getUserTrailDataList']),
-
       //获取人员的详细信息
       getUserInfoMessageData(){
           this.getAllUserInfoData({userId: this.userId}).then(res => {
@@ -162,19 +161,19 @@
         this.showLoading = true;
         this.getUserTrailDataList(this.query).then(res=>{
           this.showLoading = false;
-          this.dataList = res.map(item=>{
+          this.dataList = res.result.map(item=>{
             item.isStart = false;
             item.hasDetail = false;
             item.time = stampConvertToTime(item.gpstime);
             return item;
           });
-          if(res.length>0){
-            this.trackDataHandler(res);
+          if(res.result.length>0){
+            this.trackDataHandler(res.result);
             const trackLineFeature = trackByLocationList(this.dataList);
             this.trackLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature,trackStyle(),3);
-            this.trackLayer.set('featureType','PeopleTrail');
+            this.trackLayer.set('layerType','PeopleTrail');
             this.eventLayer= this.mapManager.addVectorLayerByFeatures(this.eventFeatures,trackPointStyle(),3);
-            this.eventLayer.set('featureType','PeopleTrail');
+            this.eventLayer.set('layerType','PeopleTrail');
             this.mapManager.getMap().getView().fit(this.trackLayer.getSource().getExtent());
           }else{
             this.$message.warning('未查询到轨迹数据！！！');
@@ -287,7 +286,8 @@
       onSearch() {
         this.query.startTime = this.dayRange[0]._d.getTime();
         this.query.endTime = this.dayRange[1]._d.getTime();
-        this.query.userId = this.query.userDisplayId.split('_')[0];
+        // this.query.userId = this.query.userDisplayId.split('_')[0];
+        this.query.userId = '7bf0dd70c30011e909aee9bbd1fd8aa8';
         this.getDataList();
         this.map.removeLayer(this.trackLayer);
         this.map.removeLayer(this.eventLayer);

@@ -42,8 +42,9 @@
 </template>
 <script type="text/ecmascript-6">
 import PeopleInfo from './PeopleInfo'
-import { mapActions } from 'vuex'
+import { mapActions,mapState } from 'vuex'
 import util from '@/utils/util'
+
 export default {
   name: 'peopleList',
   components:{
@@ -64,19 +65,17 @@ export default {
       showTree: true,
       //人员数据需要定时刷新
       timer: null,
+      peopleLayer:null
     }
   },
   computed:{
+      ...mapState('map', ['mapManager']),
   },
   watch:{},
   mounted(){
-    const userId = util.cookies.get('userId')
-    this.showLoading = true;
-    this.getAllPeopleTreeData({userId:userId}).then(res=>{
-      this.peopleList = res.data;
-      this.showLoading = false;
-    });
+    this.map=this.mapManager.getMap();
     let _this = this;
+    this.getPeopleList();
     _this.timer = setInterval(function() {
       _this.getAllPeopleTreeData({userId:userId}).then(res=>{
         _this.peopleList = res;
@@ -88,7 +87,48 @@ export default {
   },
   methods:{
     ...mapActions('section/manage', ['getAllPeopleTreeData']),
-
+    getPeopleList(){
+        const userId = util.cookies.get('userId');
+        this.showLoading = true;
+        this.getAllPeopleTreeData({userId:userId}).then(res=>{
+            this.peopleList = res.data;
+            this.showLoading = false;
+            if(this.peopleList.length>0){
+                const features=this.peopleList.map(item=>{
+                    if(item.x&&item.y){
+                        const feature=this.mapManager.xyToFeature(item.x,item.y);
+                        // const feature=new Feature({
+                        //     geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+                        // });
+                        let pointImg;
+                        if(item.sex === '1'){
+                            if(item.online){
+                                pointImg='female_online';
+                            }
+                            else{
+                                pointImg='female_offline';
+                            }
+                        }
+                        else{
+                            if(item.online){
+                                pointImg='male_online';
+                            }
+                            else{
+                                pointImg='male_offline';
+                            }
+                        }
+                        feature.set('icon',pointImg);
+                        feature.set('props',item);
+                        return feature;
+                    }
+                })
+                this.peopleLayer= this.mapManager.addClusterLayerByFeatures(features);
+                this.peopleLayer.set('layerType','peopleList');
+                const extent=this.peopleLayer.getSource().getSource().getExtent();
+                this.mapManager.getMap().getView().fit(extent);
+            }
+        });
+    },
     onChange(){
       this.onSearch(this.searchValue);
       //this.searchValue
@@ -98,6 +138,18 @@ export default {
 
     },
     toDetail(info) {
+      const layers=this.map.getLayers().array_;
+      //切换时清除地图上的一些操作
+      layers.forEach(l=>{
+          if(l.get('layerType')){
+              if (l.get('layerType') == 'peopleList') {
+                  l.setVisible(false);
+              }else if(l.get('layerType') == 'PeopleTrail'){
+                  l.setVisible(true);
+                  this.map.getView().fit(l.getSource().getExtent());
+              }
+          }
+      });
       this.$emit('toDetail', info);
     },
     getUserId(id){

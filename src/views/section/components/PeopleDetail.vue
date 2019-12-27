@@ -16,7 +16,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
+import { mapActions,mapState } from 'vuex'
 import PeopleBaseInfo from './PeopleBaseInfo'
 import WorkTimeInfo from './WorkTimeInfo'
 import util from '@/utils/util'
@@ -38,6 +38,7 @@ export default {
     }
   },
   computed:{
+    ...mapState('map', ['mapManager']),
     userId: function(){
       if(this.mId){
         return this.mId.split('_')[0];
@@ -48,16 +49,50 @@ export default {
     }
   },
   watch:{},
-  mounted(){},
-
+  mounted(){
+      this.map=this.mapManager.getMap();
+  },
   methods:{
     ...mapActions('section/manage', ['getAllPeopleTreeData']),
     backFun(){
       this.activeTab = '1';
+        const layers=this.map.getLayers().array_;
+        //切换时清除地图上的一些操作
+        layers.forEach(l=>{
+            if(l.get('layerType')) {
+                if (l.get('layerType') == 'peopleList') {
+                    l.setVisible(true);
+                    this.map.getView().fit(l.getSource().getExtent());
+                } else {
+                    l.setVisible(false);
+                }
+            }
+        });
       this.$emit('toList');
     },
-    changeTab(){
-
+    changeTab(val){
+        debugger;
+        const layers=this.map.getLayers().array_;
+        //切换时清除地图上的一些操作
+        layers.forEach(l=>{
+            if(l.get('layerType')){
+                if(val=='1'){
+                    if (l.get('layerType') == 'PeopleTrail') {
+                        l.setVisible(true);
+                        this.map.getView().fit(l.getSource().getExtent());
+                    }else if(l.get('layerType') == 'peopleWorkTime'){
+                        l.setVisible(false);
+                    }
+                }else{
+                    if (l.get('layerType') == 'peopleWorkTime') {
+                        l.setVisible(true);
+                        this.map.getView().fit(l.getSource().getExtent());
+                    }else if(l.get('layerType') == 'PeopleTrail'){
+                        l.setVisible(false);
+                    }
+                }
+            }
+        });
     }
   }
 }

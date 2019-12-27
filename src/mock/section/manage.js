@@ -490,7 +490,7 @@ const getUserSignDetailData = options => {
   let data = {
     signIn: {
       time: 1564961494783,
-      positionX: '120',
+      positionX: '120.3333',
       positionY: '33',
       fileList: [
         {

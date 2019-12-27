@@ -29,6 +29,7 @@ export default {
     toDetail(data){
       console.log('toDetail',data);
       this.isDetail = true;
+        this.$emit('toDetail', data);
     },
     toList(data){
       console.log('toList',data);

@@ -107,8 +107,8 @@
   import moment from 'moment';
   import util from '@/utils/util';
   import PeopleSignInfo from './PeopleSignInfo.vue';
-  // import { pointByCoord } from '@/utils/util.map.manage';
-  // import { PeoplePointStyle } from '@/utils/util.map.style'
+  import { pointByCoord } from '@/utils/util.map.manage';
+  import { PeoplePointStyle } from '@/utils/util.map.style'
   const weekArr = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
   export default {
     name: 'workTimeInfo',
@@ -159,6 +159,7 @@
       }
     },
     computed:{
+        ...mapState('map', ['mapManager']),
     },
     watch:{
       userId:function(val){
@@ -182,7 +183,7 @@
       });
     },
     methods:{
-      ...mapActions('section/manage', ['getUserWorkTimeTotalData','getUserWorkTimeDataList']),
+      ...mapActions('section/manage', ['getUserWorkTimeTotalData','getUserWorkTimeDataList','getUserSignDetailData']),
       getUserWorkTimeDataMessage(){
         this.getUserWorkTimeTotalData({userId: this.query.userId}).then( res => {
           this.todayData  = res.data.todayData;
@@ -237,6 +238,7 @@
         };
         this.getUserSignDetailData(params).then(res=>{
           console.log('signDetail',res);
+          res=res.data;
           item.hasDetail = true;
           //如果点击签到  则显示签到的信息   如果是签退，则signInfoData存放签退的信息，isSignIn设置为false
           this.signInfoData = {
@@ -249,18 +251,18 @@
           let signFeature=[];
           if(res.signIn.positionX&&res.signIn.positionY){
             const signInFeature=pointByCoord([parseFloat(res.signIn.positionX),parseFloat((res.signIn.positionY))]);
-            signInFeature.set('icon','people-zx');
+            signInFeature.set('icon','male_online');
             signInFeature.set('type','peopleWorkTime');
             signFeature.push(signInFeature);
           }
           if(res.signOut.positionX&&res.signOut.positionY){
             const signOutFeature=pointByCoord([parseFloat(res.signOut.positionX),parseFloat((res.signOut.positionY))]);
-            signOutFeature.set('icon','people-lx');
+            signOutFeature.set('icon','male_offline');
             signOutFeature.set('type','peopleWorkTime');
             signFeature.push(signOutFeature);
           }
           this.signLayer=this.mapManager.addVectorLayerByFeatures(signFeature,PeoplePointStyle(),3);
-          this.signLayer.set('featureType','peopleWorkTime');
+          this.signLayer.set('layerType','peopleWorkTime');
           this.mapManager.getMap().getView().fit(this.signLayer.getSource().getExtent());
           console.log('this.signInfoData',this.signInfoData);
           // this.$refs.peopleSignInfo.$el.style.display = 'block';

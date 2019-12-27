@@ -76,7 +76,7 @@ export function getAllUserInfoData(data) {
 export const getUserTrailDataList = data => {
   console.log('api:getUserTrailDataList', data)
   return request({
-    url: `@test/getTrailList?_t=` + new Date().getTime(),
+    url: `@test/getUserTrailDataList?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
