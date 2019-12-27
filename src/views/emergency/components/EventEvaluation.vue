@@ -38,21 +38,27 @@
         </div>
         <a-textarea placeholder="对本此预案可以写下你的意见..." :autosize="{ minRows: 4, maxRows: 4 }" v-model="evaluationData.message"/>
         <div class="file-show-panel" v-if="fileList.length > 0">
-          <happy-scroll color="rgba(0,0,0,0.2)" size="5" resize>
+          <!--<happy-scroll color="rgba(0,0,0,0.2)" size="5" resize>-->
+          <vuescroll :ops="addScrollOps">
             <div flex="cross:center" style="height:140px;">
               <div class="file-item" v-for="(file, index) in fileList" :key="index">
                 <img v-if="file.type==='image'" :src="file.imageDisplayUrl">
-                <video  v-else width="200" height="140" controls="controls">
-                  <source :src="file.videoDisplaySrc" type="video/ogg">
-                  <source :src="file.videoDisplaySrc" type="video/mp4">
-                  Your browser does not support the video tag.
-                </video>
+                <div v-else flex="cross:center main:center" style="height:100%;">
+                  <video v-if="file.videoType==='mp4'||file.videoType==='ogg'" width="200" height="140" controls="controls">
+                    <source :src="file.videoDisplaySrc" type="video/ogg">
+                    <source :src="file.videoDisplaySrc" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>
+                  <span>不支持在线播放，请<a :href="file.videoDisplaySrc" target="_blank">下载</a></span>
+                </div>
+
                 <div class="delete-btn" @click="deleteFileItem(index)">
                   <a-icon type="close" />
                 </div>
               </div>
             </div>
-          </happy-scroll>
+          </vuescroll>
+          <!--</happy-scroll>-->
         </div>
       </div>
       <div class="part-content-footer" flex="cross:center main:center">
@@ -79,11 +85,13 @@
                   <div v-if="file.type==='image'" >
                     <img style="width:100%;cursor:pointer;" :src="file.imageUrl" @click="clickEvaluationImage(file.imageUrl)">
                   </div>
-                  <div v-if="file.type==='video'">
-                    <div class="video-btn-panel" flex="cross:center main:center" @click="playVideo(file.videoSrc)">
+                  <div v-if="file.type==='video'" style="height:100%;width: 100%;">
+                    <div v-if="file.videoType==='ogg'||file.videoType==='mp4'" class="video-btn-panel" flex="cross:center main:center" @click="playVideo(file.videoSrc)">
                       <a-icon type="play-circle"/>
                     </div>
-
+                    <div v-else flex="cross:center main:center" style="height:100%">
+                      <span style="width:85px">不支持在线播放，请<a :href="file.videoSrc" target="_blank">下载</a></span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -126,6 +134,17 @@ export default {
   },
   data(){
     return{
+      addScrollOps: {
+        vuescroll: {},
+        scrollPanel: {},
+        rail: {
+          background: '#cccccc'
+        },
+        bar: {
+          background: '#c1c1c1',
+          onlyShowBarOnScroll: false
+        }
+      },
       ops: {
         vuescroll: {},
         scrollPanel: {
@@ -200,6 +219,7 @@ export default {
           type: 'video',
           name: data.oldName,
           imageUrl: '',
+          videoType: data.oldName.split('.')[1].toLowerCase(),
           videoDisplaySrc: data.newPath,
           videoSrc: data.originPath
         }
@@ -241,6 +261,13 @@ export default {
       this.getEvaluationListData(this.query).then((res)=>{
         console.log('getEvaluationListData',res);
         this.evaluationDataList = res.list.map( item => {
+          item.fileList.map( file => {
+            if(file.type === 'video'){
+              let length = file.videoSrc.split('.').length;
+              file.videoType = file.videoSrc.split('.')[length-1].toLowerCase();
+              return file
+            }
+          });
           item.isExpand = false;
           item.isChecked = false;
           return item
@@ -405,7 +432,7 @@ export default {
     .add-panel .file-show-panel {
       padding: 20px;
       height: 180px;
-      width: 100%;
+      width: 1136px;
       .file-item{
         width: 200px;
         height: 140px;

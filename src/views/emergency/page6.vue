@@ -345,12 +345,12 @@ export default {
           this.iconName = 'menu-special';
           this.modalTitle = this.infoData.name;
           let startTime = ''
-          if(this.infoData.startDay){
-            startTime = stampConvertToTime(this.infoData.startDay) + '-';
+          if(this.infoData.startDay && this.infoData.startDay.length > 0){
+            startTime = stampConvertToTime(parseInt(this.infoData.startDay)) + '~';
           }
           let endTime = '';
-          if(this.infoData.endDay){
-            endTime = stampConvertToTime(this.infoData.endDay);
+          if(this.infoData.endDay && this.infoData.endDay.length > 0){
+            endTime = stampConvertToTime(parseInt(this.infoData.endDay));
           }
 
           this.subTitle = startTime + endTime;

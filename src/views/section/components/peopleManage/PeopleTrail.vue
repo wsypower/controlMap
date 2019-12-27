@@ -130,12 +130,12 @@ export default {
         this.map=this.mapManager.getMap();
         let userId = '';
         if(this.infoId){
-            userId = this.infoId;
+            userId = this.infoId.split('_')[0];
         }
         else{
             userId = util.cookies.get('userId');
         }
-        let temp = this.peopleDataList.find(item => item.userDisplayId === userId );
+        let temp = this.peopleDataList.find(item => item.id === userId );
         this.query.userId = userId;
         this.query.userDisplayId = temp.userDisplayId;
 
