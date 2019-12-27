@@ -138,7 +138,7 @@ export default {
           item.class = 'itemClass';
           let temp = {
             title: item.mpname,
-            key: item.mpid
+                key: item.mpid
           }
           this.allCameraData.push(temp);
           // 通过经纬度生成点位加到地图上

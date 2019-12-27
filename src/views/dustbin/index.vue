@@ -63,7 +63,7 @@
 <script>
 import { mapActions, mapState, mapMutations } from 'vuex'
 import DustbinInfo from './components/DustbinInfo'
-import { getTypeEquip } from '@/api/map/service'
+// import { getTypeEquip } from '@/api/map/service'
 import { emergencyEquipStyle } from '@/utils/util.map.style'
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
@@ -115,7 +115,7 @@ export default {
   mounted() {
     this.$nextTick().then(() => {
       this.getDataList();
-      this.getEquipPoints();
+      // this.getEquipPoints();
       this.map = this.mapManager.getMap()
       this.map.on('click', this.dustbinClickHandler);
       this.setClickHandler(this.dustbinClickHandler);
@@ -144,26 +144,38 @@ export default {
         this.dataArr = res.list
         this.totalSize = res.total
         this.showLoading = false
-      })
-    },
-    //获取垃圾桶设备点位
-    getEquipPoints() {
-      getTypeEquip('7').then(res => {
-        console.log('===物联信息-7', res)
-        const features = res.map(p => {
-          const point = new Feature({
-            geometry: new Point(p.position)
-          });
-          point.set('id', p.id);
-          point.set('info',p.info);
-          point.set('state',p.info.alarmState);
-          return point;
+        const features = this.dataArr.map(p => {
+            const point = new Feature({
+                geometry: new Point([parseFloat(p.longitudeGps84Y),parseFloat(p.latitudeGps84X)])
+            });
+            point.set('id', p.id);
+            point.set('info',p);
+            point.set('state',p.alarmState);
+            return point;
         });
         this.dustbinLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('7'), 3);
         this.map.getView().fit(this.dustbinLayer.getSource().getExtent());
         this.pushPageLayers(this.dustbinLayer);
       })
     },
+    //获取垃圾桶设备点位
+    // getEquipPoints() {
+    //   // getTypeEquip('7').then(res => {
+    //     console.log('===物联信息-7', res)
+    //     const features = res.map(p => {
+    //       const point = new Feature({
+    //         geometry: new Point(p.position)
+    //       });
+    //       point.set('id', p.id);
+    //       point.set('info',p.info);
+    //       point.set('state',p.info.alarmState);
+    //       return point;
+    //     });
+    //     this.dustbinLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('7'), 3);
+    //     this.map.getView().fit(this.dustbinLayer.getSource().getExtent());
+    //     this.pushPageLayers(this.dustbinLayer);
+    //   // })
+    // },
     //搜索关键字查询
     onSearch(val) {
       this.query.searchContent = val
