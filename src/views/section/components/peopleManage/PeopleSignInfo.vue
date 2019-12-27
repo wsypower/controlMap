@@ -9,7 +9,7 @@
 <!--      <img :src="info.photoUrl"/>-->
       <div class="tip-body-content">
         <swiper :options="swiperOption" ref="mySwiper" v-viewer>
-          <swiper-slide v-for="(item, index) in info.photoList" :key="index">
+          <swiper-slide v-for="(item, index) in info.photoList" :key="index" data-index="index">
             <img :src="item.url" :alt="item.name"/>
           </swiper-slide>
         </swiper>
@@ -22,19 +22,7 @@
 </template>
 <script type="text/ecmascript-6">
 export default{
-    name: 'peopleSignInfo',
-    data(){
-        return {
-          swiperOption: {
-            loop: false,
-            slidesPerView: 1,
-            navigation: {
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev'
-            }
-          }
-        };
-    },
+  name: 'peopleSignInfo',
   props:{
     info:{
       default(){
@@ -54,15 +42,24 @@ export default{
       }
     }
   },
-    mounted(){},
-    methods:{
-        // showPhoto(){
-        //     this.$emit('showPhoto',0)
-        // },
-        closeDialog(){
-            this.$emit('closeTip')
+  data(){
+    return {
+      swiperOption: {
+        loop: false,
+        slidesPerView: 1,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
         }
+      }
+    };
+  },
+  mounted(){},
+  methods:{
+    closeDialog(){
+      this.$emit('closeTip')
     }
+  }
 }
 </script>
 <style lang="scss" scoped>

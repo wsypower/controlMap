@@ -335,7 +335,7 @@ export default {
   }
   .yuan-form-panel-body {
     width: 100%;
-    height: 100%;
+    height: calc(100% - 120px);
     position: relative;
     .yuan-form {
       padding: 0px 20px;

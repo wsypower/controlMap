@@ -156,7 +156,7 @@
         background-color: #ffffff;
         .yuan-form-panel-body{
             width: 100%;
-            height: 100%;
+            height: calc(100% - 60px);
             position: relative;
             .yuan-form {
                 padding: 20px 20px 0px 20px;
