@@ -19,7 +19,7 @@
                         </a-select>
                     </div>
                 </a-col>
-                <a-col :span="6">
+                <a-col :span="9">
                     <div class="col-panel" flex="dir:left">
                         <label class="subtitle" style="padding-top:5px;">责任事项：</label>
                         <a-textarea v-model="item.description"
@@ -27,13 +27,13 @@
                                     :autosize="{minRows: 2, maxRows: 2}"/>
                     </div>
                 </a-col>
-                <a-col :span="6">
+                <a-col :span="4">
                     <div class="col-panel" flex="dir:left cross:center">
                         <label class="subtitle">责任人：</label>
                         <a-input v-model="item.person" placeholder="请输入"/>
                     </div>
                 </a-col>
-                <a-col :span="6">
+                <a-col :span="5">
                     <div class="col-panel" flex="dir:left cross:center">
                         <label class="subtitle">电话号码：</label>
                         <a-input v-model="item.tel" placeholder="请输入"/>
@@ -142,7 +142,10 @@
                 }
                 .subtitle {
                     text-align: right;
-                    width: 100px;
+                    width: 80px;
+                }
+                .ant-input{
+                    flex: 1;
                 }
             }
             .ant-row{
