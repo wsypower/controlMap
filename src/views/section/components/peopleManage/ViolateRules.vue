@@ -95,6 +95,7 @@ export default {
             //查询条件--不分页
             query: {
                 userId: '',
+                moduleType:'',
                 peopleId: '',
                 userDisplayId: '',
                 startTime: '',
@@ -112,7 +113,8 @@ export default {
         }
     },
     computed:{
-        ...mapState('map', ['mapManager'])
+      ...mapState('map', ['mapManager']),
+      ...mapState('cgadmin/menu', ['activeModule'])
     },
     mounted(){
       this.map=this.mapManager.getMap();
@@ -124,6 +126,7 @@ export default {
       this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
       this.query.startTime = new Date(day).getTime();
       this.query.endTime =  new Date(day).getTime();
+      this.query.moduleType = this.activeModule;
       this.getDataList();
     },
     methods:{
