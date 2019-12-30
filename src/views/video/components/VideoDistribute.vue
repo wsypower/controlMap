@@ -49,6 +49,7 @@ import { mapState,mapActions } from 'vuex'
 import util from '@/utils/util';
 import MyVideoPlayer from "./MyVideoPlayer.vue";
 import {videoPointStyle} from '@/utils/util.map.style'
+import { pointToFeature  } from "@/utils/util.map.manage";
 import axios from 'axios'
 const userId = util.cookies.get('userId');
 export default {
@@ -80,7 +81,8 @@ export default {
       //地图相关
       videoLayer: null,
       isLoadData: false,
-      clusterLayer:null
+      clusterLayer:null,
+      selectLayer:null
     }
   },
   computed:{
@@ -138,7 +140,7 @@ export default {
           item.class = 'itemClass';
           let temp = {
             title: item.mpname,
-                key: item.mpid
+            key: item.mpid
           }
           this.allCameraData.push(temp);
           // 通过经纬度生成点位加到地图上
@@ -180,10 +182,21 @@ export default {
     },
     //点击树中某个节点（某个人员）时触发
     onSelect(selectedKeys, e){
-      console.log(selectedKeys, e);
       if(selectedKeys[0].indexOf('dept_')<0){
         let needData = e.selectedNodes[0].data.props;
         let mpid = needData.mpid;
+        this.selectLayer&&this.selectLayer.getSource().clear();
+        if(!needData.x||!needData.y){
+            this.$message.warning('当前视频无点位信息！！！');
+        }else{
+            this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
+            const feature = pointToFeature(needData,'big_video');
+            if(this.selectLayer) {
+                this.selectLayer.getSource().addFeatures([feature]);
+            }else{
+                this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),4);
+            }
+        }
         this.playVideo(mpid);
       }
     },
