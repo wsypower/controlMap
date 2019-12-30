@@ -6,15 +6,22 @@
       <div class="close" flex="main:center cross:center" @click="closeDialog"></div>
     </div>
     <div class="tip-body">
-<!--      <img :src="info.photoUrl"/>-->
       <div class="tip-body-content">
-        <swiper :options="swiperOption" ref="mySwiper" v-viewer>
-          <swiper-slide v-for="(item, index) in info.photoList" :key="index">
-            <img :src="item.url" :alt="item.name"/>
-          </swiper-slide>
-        </swiper>
-        <div class="swiper-button-prev" slot="button-prev"><a-icon type="left" /></div>
-        <div class="swiper-button-next" slot="button-next"><a-icon type="right" /></div>
+          <a-carousel arrows :dots="false" :autoplay="false" :infinite="false" v-viewer>
+              <div slot="prevArrow"
+                   slot-scope="props"
+                   class="custom-slick-arrow"
+                   style="left: 10px;zIndex: 1"
+              >
+                  <a-icon type="left" />
+              </div>
+              <div slot="nextArrow" slot-scope="props" class="custom-slick-arrow" style="right: 10px">
+                  <a-icon type="right" />
+              </div>
+              <div v-for="(item, index) in info.photoList" :key="index" data-index="index" style="height: 180px;text-align: center;cursor: zoom-in;">
+                  <img style="height: 100%;display:inline-block;" :src="item.url" :alt="item.name"/>
+              </div>
+          </a-carousel>
       </div>
     </div>
     <div class="tooltip__arrow"></div>
@@ -22,19 +29,7 @@
 </template>
 <script type="text/ecmascript-6">
 export default{
-    name: 'peopleSignInfo',
-    data(){
-        return {
-          swiperOption: {
-            loop: false,
-            slidesPerView: 1,
-            navigation: {
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev'
-            }
-          }
-        };
-    },
+  name: 'peopleSignInfo',
   props:{
     info:{
       default(){
@@ -54,15 +49,26 @@ export default{
       }
     }
   },
-    mounted(){},
-    methods:{
-        // showPhoto(){
-        //     this.$emit('showPhoto',0)
-        // },
-        closeDialog(){
-            this.$emit('closeTip')
+  data(){
+    return {
+      swiperOption: {
+        loop: false,
+        slidesPerView: 1,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
         }
+      }
+    };
+  },
+  mounted(){
+    console.log('peopleSignInfo mounted');
+  },
+  methods:{
+    closeDialog(){
+      this.$emit('closeTip')
     }
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -115,42 +121,23 @@ export default{
       position: relative;
       width: 100%;
       height: 100%;
-    }
-    /deep/.swiper-container {
-      height: 100%;
-      margin: 0px 15px;
-      .swiper-slide {
-        text-align: center;
-        line-height: 34px;
-        img {
-          //width: 100%;
-          height: 100%;
-          cursor: zoom-in;
+        /deep/.custom-slick-arrow{
+            width: 20px;
+            height: 34px;
+            background-color: #eeeeee;
+            i{
+                font-size: 20px;
+                color: #fff;
+                margin-top: 7px;
+            }
+            &:hover{
+                background-color: #cccccc;
+            }
+            &.slick-disabled{
+                background-color: #eeeeee !important;
+                cursor: not-allowed;
+            }
         }
-      }
-    }
-    .swiper-button-prev,
-    .swiper-button-next {
-      position: absolute;
-      top: 42%;
-      width: 20px;
-      height: 34px;
-      margin-top: 0px;
-      z-index: 10;
-      cursor: pointer;
-      background-image: unset !important;
-      background-color: #eeeeee;
-      outline: unset;
-      i {
-        margin-top: 10px;
-        margin-left: 4px;
-      }
-    }
-    .swiper-button-prev {
-      left: 0px;
-    }
-    .swiper-button-next {
-      right: 0px;
     }
   }
 

@@ -150,6 +150,7 @@ export default {
         getDataList(){
             console.log('this.query',this.query);
             this.showLoading = true;
+            this.query.userId = this.query.userDisplayId.split('_')[0];
             this.getUserWorkTimeDataList(this.query).then(res=>{
                 this.showLoading = false;
                 this.dataList = res.queryList.map(item=>{

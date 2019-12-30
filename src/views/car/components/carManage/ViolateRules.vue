@@ -248,15 +248,23 @@ export default {
     },
     //删除某条非违规记录
     deleteVLog(log,i,index){
-      this.deleteCarViolateRules({userId:this.query.userId, id: log.id}).then(res=>{
-        this.dataList[index].vLog.splice(i,1);
-        //删除记录后，高度需要重新计算
-        setTimeout(()=>{
-          let height = this.$refs.animateContent[index].offsetHeight;
-          if(this.dataList[index].expend){
-            this.$refs.animatePanel[index].style.height = height + 'px';
-          }
-        },200)
+      let _this = this;
+      this.$confirm({
+        title: '确定要删除这条记录吗？',
+        content: '',
+        onOk() {
+          _this.deleteCarViolateRules({userId:this.query.userId,id: log.id}).then(res=>{
+            _this.dataList[index].vLog.splice(i,1);
+            //删除记录后，高度需要重新计算
+            setTimeout(()=>{
+              let height = _this.$refs.animateContent[index].offsetHeight;
+              if(_this.dataList[index].expend){
+                _this.$refs.animatePanel[index].style.height = height + 'px';
+              }
+            },200)
+          });
+        },
+        onCancel() {},
       });
     }
   }

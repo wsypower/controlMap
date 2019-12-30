@@ -140,7 +140,7 @@ export default {
   }
   &__time {
     height: 100%;
-    font-size: 18px;
+    font-size: 16px;
     color: #ffffff;
     font-weight: 600;
     span {

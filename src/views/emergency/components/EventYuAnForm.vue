@@ -97,6 +97,7 @@
           <event-evaluation
             v-if="sourceData.activeStage === '警报解除阶段'"
             :eventId="sourceData.id"
+            @stopParentScroll="stopParentScroll"
           ></event-evaluation>
         </div>
       <!--</cg-container>-->
@@ -151,7 +152,9 @@ export default {
         return {
           ops: {
             vuescroll: {},
-            scrollPanel: {},
+            scrollPanel: {
+              scrollingY: true
+            },
             rail: {
               background: '#cccccc'
             },
@@ -273,7 +276,11 @@ export default {
                 console.log('startYuAn',res);
                 this.$emit('close')
             });
-        }
+        },
+          stopParentScroll(){
+              console.log('stopParentScroll');
+              this.ops.scrollPanel.scrollingY = !this.ops.scrollPanel.scrollingY;
+          }
     }
 }
 </script>
@@ -328,7 +335,7 @@ export default {
   }
   .yuan-form-panel-body {
     width: 100%;
-    height: 100%;
+    height: calc(100% - 120px);
     position: relative;
     .yuan-form {
       padding: 0px 20px;
