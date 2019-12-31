@@ -25,7 +25,7 @@
         <label style="margin-left:7px;">车型：</label>
         <a-select v-model="query.carTypeId" showSearch placeholder="请选择" style="width:100px;">
           <a-select-option value="">所有</a-select-option>
-          <a-select-option v-for="(type, index) in carTypeList" :value="type.id" :key="index">{{
+          <a-select-option v-for="(type, index) in carTypeList" :value="type.id" :key="index" :title="type.name">{{
             type.name
             }}</a-select-option>
 <!--          <a-select-option value="C1">C1</a-select-option>-->
@@ -158,6 +158,7 @@ export default {
     getDataList(){
       console.log('this.query',this.query);
       this.showLoading = true;
+      this.times=0;
       this.getCarViolateRulesDataList(this.query).then(res=>{
         this.dataList = res.map(item=>{
           item.expend = false;

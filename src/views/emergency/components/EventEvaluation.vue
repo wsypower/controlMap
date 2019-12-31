@@ -48,10 +48,9 @@
                     <source :src="file.videoDisplaySrc" type="video/ogg">
                     <source :src="file.videoDisplaySrc" type="video/mp4">
                     Your browser does not support the video tag.
+                    <span>不支持在线播放，请<a :href="file.videoDisplaySrc" target="_blank">下载</a></span>
                   </video>
-                  <span>不支持在线播放，请<a :href="file.videoDisplaySrc" target="_blank">下载</a></span>
                 </div>
-
                 <div class="delete-btn" @click="deleteFileItem(index)">
                   <a-icon type="close" />
                 </div>
