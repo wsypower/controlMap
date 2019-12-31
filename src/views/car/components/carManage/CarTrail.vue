@@ -150,7 +150,9 @@ export default {
         ...mapActions('car/manage', ['getCarTrailDataList','getTrailDetailData']),
         //获取人员轨迹数据
         getDataList(){
-            console.log('this.query',this.query);
+            this.dataList=[];
+            this.trackSegments=[];
+            this.currentQueryTracks=[];
             if(!this.query.carId){
               this.$message.warning('没有选择车辆！！！');
               return
@@ -179,8 +181,6 @@ export default {
         },
         // 传过来的轨迹点位分段处理并保存
         trackDataHandler (coords) {
-            this.trackSegments=[];
-            this.currentQueryTracks=[];
             // 按间隔时间轨迹分段
             let currentCoord = coords[0];
             let nextCoord = null;

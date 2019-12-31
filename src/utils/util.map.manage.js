@@ -83,16 +83,6 @@ export class MapManager {
     this.map.addLayer(vectorLayer)
     return vectorLayer
   }
-    addVectorLayerByFeature(feature, zIndex) {
-        const source = new VectorSource({})
-        const vectorLayer = new VectorLayer({
-            source,
-            zIndex
-        })
-        source.addFeatures(feature);
-        this.map.addLayer(vectorLayer);
-        return vectorLayer
-    }
   /**
    * @description: 通过features数组添加热力图图层
    * @param {Array} features

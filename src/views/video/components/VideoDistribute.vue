@@ -185,7 +185,7 @@ export default {
       if(selectedKeys[0].indexOf('dept_')<0){
         let needData = e.selectedNodes[0].data.props;
         let mpid = needData.mpid;
-        this.selectLayer&&this.selectLayer.getSource().clear();
+        this.selectLayer && this.selectLayer.getSource().clear();
         if(!needData.x||!needData.y){
             this.$message.warning('当前视频无点位信息！！！');
         }else{
@@ -195,6 +195,7 @@ export default {
                 this.selectLayer.getSource().addFeatures([feature]);
             }else{
                 this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),4);
+                this.selectLayer.set('featureType','videoDistribute');
             }
         }
         this.playVideo(mpid);
