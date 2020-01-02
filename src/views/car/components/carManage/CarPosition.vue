@@ -193,8 +193,9 @@ export default {
           }
           else{
             item.key = 'dept_' + item.id;
-            item.slots = {icon: 'dept'}
-            this.changeTreeData(item.children, item.name)
+            item.slots = {icon: 'dept'};
+            item.title = item.title + '(' + item.onlineNum + '/' + item.allNum +')';
+            this.changeTreeData(item.children, item.name);
           }
         })
       },
