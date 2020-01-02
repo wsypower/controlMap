@@ -80,6 +80,7 @@ export default {
         console.log('current: ' + current);
       if(current === '/emergency'){
         this.showRightBtn = false;
+          this.showSelect=false;
       }else{
           this.showRightBtn = true;
       }

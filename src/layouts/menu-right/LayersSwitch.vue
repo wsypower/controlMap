@@ -34,8 +34,8 @@
     import selectedImg from '@/assets/mapImage/selected.png';
     import unselectedImg from '@/assets/mapImage/unselected.png';
     import { getTypePoint } from '@/api/map/service';
-    import {gridStyle} from '@/utils/util.map.style';
-    import {listToFeatures} from '@/utils/util.map.manage';
+    import { gridStyle } from '@/utils/util.map.style';
+    import { listToFeatures } from '@/utils/util.map.manage';
     import { getTypeEquip } from '@/api/map/service';
     import { emergencyEquipStyle } from '@/utils/util.map.style';
     import util from '@/utils/util'
@@ -118,8 +118,8 @@
         },
         mounted(){
             if(this.activeModule=='jm'){
-                this.moduleLayers.splice(0,2);
-                this.moduleLayers.splice(1,3);
+                // this.moduleLayers.splice(0,2);
+                this.moduleLayers.splice(3,3);
             }else if(this.activeModule=='ps'){
                 this.moduleLayers.splice(1,1);
                 this.moduleLayers.splice(2,2);
