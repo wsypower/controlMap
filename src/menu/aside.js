@@ -12,7 +12,7 @@ export default [
     icon: 'menu-section',
     active: false,
     role: ['admin'],
-    module: ['sz','hw','ps']
+    module: ['jm','sz','hw','ps']
   },
   {
     path: '/car',
@@ -20,7 +20,7 @@ export default [
     icon: 'menu-car',
     active: false,
     role: ['admin'],
-    module: ['sz','hw']
+    module: ['jm','sz','hw']
   },
   {
     path: '/records',

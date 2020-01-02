@@ -115,7 +115,7 @@
                 class="avatar-uploader"
                 accept=".jpg,.png"
                 :showUploadList="false"
-                action="http://192.168.71.33:50000/file/file/uploadFileWeb"
+                :action="fileURL"
                 :beforeUpload="beforeUpload"
                 @change="handleImgChange"
               >
@@ -131,7 +131,7 @@
               <a-upload
                 name="file"
                 :multiple="false"
-                action="http://192.168.71.33:50000/file/file/uploadFileWeb"
+                :action="fileURL"
                 :beforeUpload="beforeFileUpload"
                 :showUploadList="false"
                 @change="handleFileChange"
@@ -141,7 +141,7 @@
                 </a-button>
               </a-upload>
               <div v-if="fileList.length>0" class="upload-file-panel" flex="main:justify cross:center">
-                <div v-for="(file,index) in fileList" class="file-item" flex="cross:center">
+                <div v-for="(file,index) in fileList" class="file-item" flex="cross:center" :key="index">
                   <span>{{file.oldName}}</span><a-icon type="close" @click="deleteFile(index)"/>
                 </div>
               </div>
@@ -206,7 +206,9 @@ export default {
             //编辑时是否点击区域微调
             clickAreaEdit: false,
             //是否点击区域下拉框选择了
-            selectAreaType: false
+            selectAreaType: false,
+          //文件服务器地址
+          fileURL: ''
         }
     },
     props:{
@@ -221,6 +223,7 @@ export default {
     watch:{},
     created(){},
     mounted(){
+      this.fileURL = URL_CONFIG.fileURL;
         let _this = this;
         const p1 = this.getYuAnDataList({pageSize: 100}).then((res) => {
             // console.log('getYuAnDataList',res);

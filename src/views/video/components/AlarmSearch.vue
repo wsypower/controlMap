@@ -242,7 +242,7 @@ export default {
             var PalyType = "PlayReal";
             var SvrPort = "443";
             var httpsflag = "1";
-            var data = resultConfig.data;
+            var data = resultConfig.data.data;
             var SvrIp = data.SvrIp;
             var appkey = data.appkey;
             var appSecret = data.appSecret;

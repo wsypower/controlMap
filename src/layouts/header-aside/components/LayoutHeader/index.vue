@@ -70,7 +70,8 @@ export default {
       if(module === this.activeModule) return;
       if(modulePermission.indexOf(module)>=0){
         if(module==='ld'){
-          window.open('https://www.baidu.com');
+          // window.open('https://www.baidu.com');
+          this.$message.warning('页面正在开发尽情期待！！！');
         }
         else{
           this.asideCollapseSet(false);

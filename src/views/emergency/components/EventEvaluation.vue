@@ -14,7 +14,7 @@
               <a-upload
                   name="file"
                   :multiple="true"
-                  action="http://192.168.71.33:50000/file/file/uploadFileWeb"
+                  :action="fileURL"
                   :beforeUpload="beforeImageUpload"
                   :showUploadList="false"
                   @change="handleImageChange"
@@ -27,7 +27,7 @@
               <a-upload
                  name="file"
                  :multiple="true"
-                 action="http://192.168.71.33:50000/file/file/uploadFileWeb"
+                 :action="fileURL"
                  :beforeUpload="beforeVideoUpload"
                  :showUploadList="false"
                   @change="handleVideoChange"
@@ -173,8 +173,12 @@ export default {
       },
       totalSize: 0,
       modalVisible: false,
-      videoSrc: ''
+      videoSrc: '',
+      fileURL: '',
     }
+  },
+  mounted(){
+    this.fileURL = URL_CONFIG.fileURL;
   },
   methods:{
     ...mapActions('emergency/emergency', ['submitEventEvaluationMessage','getEvaluationListData', 'deleteEvaluation']),
