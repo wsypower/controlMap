@@ -7,10 +7,10 @@
       <a-tab-pane tab="轨迹查询" key="2">
         <people-trail :peopleDataList="peopleDataList" :infoId="infoId"></people-trail>
       </a-tab-pane>
-      <a-tab-pane tab="违规查询" key="3">
-        <violate-rules :peopleDataList="peopleDataList"></violate-rules>
-      </a-tab-pane>
-      <a-tab-pane tab="签到-签退" key="4">
+      <!--<a-tab-pane tab="违规查询" key="3">-->
+        <!--<violate-rules :peopleDataList="peopleDataList"></violate-rules>-->
+      <!--</a-tab-pane>-->
+      <a-tab-pane tab="签到-签退" key="3">
         <people-work-time :peopleDataList="peopleDataList"></people-work-time>
       </a-tab-pane>
     </a-tabs>
@@ -140,7 +140,7 @@ export default {
     .ant-tabs-nav {
       width: 100%;
       .ant-tabs-tab {
-        width: 25% !important;
+        width: 33.33% !important;
         text-align: center;
         margin: 0px;
       }

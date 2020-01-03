@@ -80,6 +80,8 @@ export default {
       peopleDataList: [],
       //处理后的新数据
       peopleNewDataList: [],
+      //新部门数据
+      deptNewDataList:[],
       //收入所有人员的名称与ID，给查询使用
       allPeopleData: [],
       //获取某个人员的详细数据，用于弹窗显示
@@ -150,6 +152,7 @@ export default {
     _this.timer = setInterval(function() {
       _this.getAllPeopleTreeData({userId:userId, moduleType:_this.activeModule}).then(res=>{
         _this.peopleNewDataList = [];
+        _this.deptNewDataList = [];
         _this.changeOldData(res);
         let idArr = _this.compareDataToIdArr();
         _this.peopleDataList = [];
@@ -223,6 +226,8 @@ export default {
           _this.peopleNewDataList.push(item);
         }
         else{
+          let str = 'dept_' + item.id + '@' + item.name + '(' + item.onlineNum + '/' + item.allNum +')';
+          _this.deptNewDataList.push(str);
           _this.changeOldData(item.children);
         }
       })
@@ -235,8 +240,6 @@ export default {
           idArr.push(oneItem.id);
         }
       });
-      // idArr.push('1ff6c550882e11e942d93f310682dce3');
-      // idArr.push('19c6a8e0eb3311e96e004b1aec0b83d6');
       return idArr
     },
     changeTreeDataMore(arr, idArr){
@@ -265,6 +268,10 @@ export default {
           _this.peopleDataList.push(item);
         }
         else{
+          let pItem = _this.deptNewDataList.find( it => it.split('@')[0] === item.key);
+          if(pItem){
+            item.title = pItem.split('@')[1];
+          }
           _this.changeTreeDataMore(item.children, idArr);
         }
       })

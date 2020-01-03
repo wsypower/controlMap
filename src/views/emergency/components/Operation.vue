@@ -120,13 +120,13 @@ export default {
                     icon:'menu-section',
                     checked: false
                 },{
-                    key:'terminal',
-                    name:'执法终端',
+                    key:'zfPeople',
+                    name:'执法人员',
                     icon:'zhifa',
                     checked: false
                 },{
-                    key:'gps',
-                    name:'车载卡口gps',
+                    key:'zfCar',
+                    name:'执法车辆',
                     icon:'gps',
                     checked: false
                 },{

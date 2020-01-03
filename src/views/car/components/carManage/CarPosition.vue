@@ -72,6 +72,8 @@ export default {
           carDataList: [],
           //处理后的新数据
           carNewDataList: [],
+          //新部门数据
+          deptNewDataList:[],
           //收入所有车辆name与id，给自动查询使用
           allCarData: [],
           //车辆数据的展示
@@ -139,13 +141,14 @@ export default {
         _this.getAllCarTreeData({userId:userId, moduleType: this.activeModule}).then(res=>{
           // _this.sourceData = res;
           _this.peopleNewDataList = [];
+          _this.deptNewDataList = [];
           _this.changeOldData(res);
           let idArr = _this.compareDataToIdArr();
           this.isLoadData = !this.isLoadData;
           _this.peopleDataList = [];
           _this.changeTreeDataMore(_this.treeData, idArr);
         });
-      },60000)
+      },600000)
     },
     beforeDestroy(){
       clearInterval(this.timer)
@@ -206,6 +209,8 @@ export default {
             _this.carNewDataList.push(item);
           }
           else{
+            let parentString = 'dept_' + item.id + '@' + item.name + '(' + item.onlineNum + '/' + item.allNum +')';
+            _this.deptNewDataList.push(parentString);
             _this.changeOldData(item.children);
           }
         })
@@ -222,7 +227,7 @@ export default {
       },
       changeTreeDataMore(arr, idArr){
         const _this = this;
-        arr.forEach(item=>{
+        arr.forEach(item => {
           if(item.isLeaf){
             if(idArr.indexOf(item.id) >= 0){
               item.online = !item.online;
@@ -236,6 +241,10 @@ export default {
             _this.carDataList.push(item);
           }
           else{
+            let pItem = _this.deptNewDataList.find( it => it.split('@')[0] === item.key);
+            if(pItem){
+              item.title = pItem.split('@')[1];
+            }
             _this.changeTreeDataMore(item.children, idArr);
           }
         })
