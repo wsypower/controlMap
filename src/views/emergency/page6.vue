@@ -307,6 +307,7 @@ export default {
           if(type==='car'){
               this.tipComponentId = CarInfo;
               this.infoData = info;
+            console.log('carInfo',info);
               this.iconName = '';
               this.modalTitle = '市政环卫车辆';
               this.subTitle = '';
