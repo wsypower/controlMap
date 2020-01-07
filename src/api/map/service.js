@@ -86,6 +86,7 @@ export async function getTypeResources(type) {
   const data = result.map(r => {
     if (r.x.length > 0 && r.y.length > 0 && r.x.indexOf('.') > 1 && r.y.indexOf('.') > 1){
       r.position = [parseFloat(r.x), parseFloat(r.y)];
+      r.info.type = r.type;
       return {
         id: r.id,
         position: r.position,

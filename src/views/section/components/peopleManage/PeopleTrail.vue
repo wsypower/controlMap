@@ -135,10 +135,12 @@ export default {
         else{
             userId = util.cookies.get('userId');
         }
-        let temp = this.peopleDataList.find(item => item.id === userId );
         this.query.userId = userId;
-        this.query.userDisplayId = temp.userDisplayId;
+        let temp = this.peopleDataList.find(item => item.id === userId );
 
+        if(temp) {
+          this.query.userDisplayId = temp.userDisplayId;
+        }
         let day = moment(new Date()).format('YYYY-MM-DD');
         this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
         this.query.startTime = new Date(day).getTime();
