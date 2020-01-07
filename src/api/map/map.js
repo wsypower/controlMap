@@ -81,7 +81,7 @@ export function getVideoListApi() {
 const apiMapping = {
   manager: 'getManageList',
   equip:'',
-  terminal:'getArmGPSList',
+  // terminal:'getArmGPSList',
   gps:'getHKCarGPSList',
   car:'getCarGpsList'
 }

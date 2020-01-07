@@ -54,7 +54,7 @@
 <script type="text/ecmascript-6">
 import { mapState, mapActions, mapMutations } from 'vuex'
 import { getAreaVideo,getTypeResources } from '@/api/map/service'
-import { videoStyle,emergencyResourceStyle } from '@/utils/util.map.style'
+import { videoStyle,emergencyResourceStyle,emergencyBestResourceStyle } from '@/utils/util.map.style'
 import { filterMeetingPeople } from '@/utils/util.map.manage'
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
@@ -119,13 +119,15 @@ export default {
                     name:'管理人员',
                     icon:'menu-section',
                     checked: false
-                },{
-                    key:'zfPeople',
-                    name:'执法人员',
-                    icon:'zhifa',
-                    checked: false
-                },{
-                    key:'zfCar',
+                },
+                // {
+                //     key:'zfPeople',
+                //     name:'执法人员',
+                //     icon:'zhifa',
+                //     checked: false
+                // },
+                {
+                    key:'gps',
                     name:'执法车辆',
                     icon:'gps',
                     checked: false
@@ -396,11 +398,12 @@ export default {
                   });
                   point.set('id', p.id);
                   point.set('info',p.info);
+                  point.set('online',p.online);
                   point.set('pointType','bestResource');
                   point.set('key',item.key);
                   return point;
                 });
-                this.selectType[index].layer = this.mapManager.addVectorLayerByFeatures(features, emergencyResourceStyle(item.name), 3);
+                this.selectType[index].layer = this.mapManager.addVectorLayerByFeatures(features, emergencyBestResourceStyle(item.name), 3);
                 this.mapManager.getMap().getView().fit(this.selectType[index].layer.getSource().getExtent());
                 // this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
               })
