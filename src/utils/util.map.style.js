@@ -209,12 +209,12 @@ export function emergencyPeopleStyle() {
 export function videoStyle() {
   return new Style({
     image: new Icon({
-      src: require('@/assets/mapImage/周边视频.png')
+      src: require('@/assets/mapImage/zbsp.png')
     }),
     anchor: [0.5, 1]
   })
 }
-const allType=['挖掘机','救援绳','救生衣','水车','渣土车','皮划艇','管理人员','执法车辆','市政环卫车辆']
+const allType=['jiuyuanshen','jiushengyi','wajueji','shashuiche','zhatuche','pihuating','manager','gps','hwcl']
 /**
  * @description:应急资源图标
  * @author:sijianting

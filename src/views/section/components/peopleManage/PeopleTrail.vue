@@ -168,6 +168,8 @@ export default {
         getDataList(){
             console.log('this.query',this.query);
             this.showLoading = true;
+            this.trackSegments=[];
+            this.currentQueryTracks=[];
             this.getUserTrailDataList(this.query).then(res=>{
               this.showLoading = false;
               this.dataList = res.map(item=>{

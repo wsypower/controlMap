@@ -132,7 +132,7 @@ export default {
                     icon:'gps',
                     checked: false
                 },{
-                    key:'car',
+                    key:'hwcl',
                     name:'市政环卫车辆',
                     icon:'huoche',
                     checked: false
@@ -278,7 +278,7 @@ export default {
                       return point;
                     }
                   })
-                  const layer=this.mapManager.addVectorLayerByFeatures(features.filter(Boolean), emergencyResourceStyle(item.name), 3);
+                  const layer=this.mapManager.addVectorLayerByFeatures(features.filter(Boolean), emergencyResourceStyle(item.icon), 3);
                   this.mapManager.getMap().getView().fit(layer.getSource().getExtent());
                   this.resourceLayer.push({
                     key:item.key,
@@ -315,7 +315,7 @@ export default {
                             return point;
                         }
                     })
-                    const layer=this.mapManager.addVectorLayerByFeatures(features.filter(Boolean), emergencyResourceStyle(this.checkedResourceList[i].name), 3);
+                    const layer=this.mapManager.addVectorLayerByFeatures(features.filter(Boolean), emergencyResourceStyle(this.checkedResourceList[i].icon), 3);
                     for(let k=0;k<this.resourceLayer.length;k++){
                         if(this.resourceLayer[k].key==this.checkedResourceList[i].key){
                             this.resourceLayer[k].layer = layer;
@@ -403,7 +403,7 @@ export default {
                   point.set('key',item.key);
                   return point;
                 });
-                this.selectType[index].layer = this.mapManager.addVectorLayerByFeatures(features, emergencyBestResourceStyle(item.name), 3);
+                this.selectType[index].layer = this.mapManager.addVectorLayerByFeatures(features, emergencyBestResourceStyle(item.key), 3);
                 this.mapManager.getMap().getView().fit(this.selectType[index].layer.getSource().getExtent());
                 // this.emergencyResourceLayer=this.mapManager.addVectorLayerByFeatures(features,emergencyResourceStyle(item.name),3);
               })
