@@ -83,7 +83,7 @@ const apiMapping = {
   equip:'',
   // terminal:'getArmGPSList',
   gps:'getHKCarGPSList',
-  car:'getCarGpsList'
+  hwcl:'getCarGpsList'
 }
 /**
  * @description:获取应急资源接口
@@ -92,7 +92,7 @@ const apiMapping = {
  */
 export function getResourceListApi(type) {
   return request({
-    url: URL_CONFIG.baseURL + '/point/' + apiMapping[type],
+    url: URL_CONFIG.baseURL + 'point/' + apiMapping[type],
     method: 'post'
   });
 }
