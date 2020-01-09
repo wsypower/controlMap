@@ -170,6 +170,13 @@ export default {
             this.showLoading = true;
             this.trackSegments=[];
             this.currentQueryTracks=[];
+            this.trackLayer&&this.map.removeLayer(this.trackLayer);
+            this.eventLayer&&this.map.removeLayer(this.eventLayer);
+            if(this.trackPlaying){
+                this.trackPlaying.stopMoving();
+                this.trackPlaying.clearLayer();
+                this.trackPlaying=null;
+            }
             this.getUserTrailDataList(this.query).then(res=>{
               this.showLoading = false;
               this.dataList = res.map(item=>{

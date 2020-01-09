@@ -157,6 +157,13 @@ export default {
               this.$message.warning('没有选择车辆！！！');
               return
             }
+            this.trackLayer&&this.map.removeLayer(this.trackLayer);
+            this.eventLayer&&this.map.removeLayer(this.eventLayer);
+            if(this.trackPlaying){
+                this.trackPlaying.stopMoving();
+                this.trackPlaying.clearLayer();
+                this.trackPlaying=null;
+            }
             this.showLoading = true;
             this.getCarTrailDataList(this.query).then(res=>{
                 this.showLoading = false;
@@ -283,13 +290,14 @@ export default {
             this.query.startTime = this.dayRange[0]._d.getTime();
             this.query.endTime = this.dayRange[1]._d.getTime();
             // this.query.pageNo = 1;
-            this.getDataList();
-            this.map.removeLayer(this.trackLayer);
-            this.map.removeLayer(this.eventLayer);
+            this.trackLayer&&this.map.removeLayer(this.trackLayer);
+            this.eventLayer&&this.map.removeLayer(this.eventLayer);
             if(this.trackPlaying){
                 this.trackPlaying.stopMoving();
                 this.trackPlaying.clearLayer();
+                this.trackPlaying=null;
             }
+            this.getDataList();
         },
         // //翻页
         // changePagination(pageNo, pageSize) {
