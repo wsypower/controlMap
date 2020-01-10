@@ -146,7 +146,8 @@ export default {
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
-            feature.set('icon','carmera_online');
+            // feature.set('icon','carmera_online');
+            feature.set('icon',item.type);
             feature.set('props',item);
             feature.set('type','VideoDistribute');
             _this.videoFeatures.push(feature);
