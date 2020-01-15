@@ -12,7 +12,7 @@ export default [
     icon: 'menu-section',
     active: false,
     role: ['admin'],
-    module: ['jm','sz','hw','ps']
+    module: ['jm','sz','hw','ps','zf']
   },
   {
     path: '/car',
@@ -20,7 +20,7 @@ export default [
     icon: 'menu-car',
     active: false,
     role: ['admin'],
-    module: ['jm','sz','hw']
+    module: ['jm','sz','hw','zf']
   },
   {
     path: '/records',
@@ -36,7 +36,7 @@ export default [
     icon: 'menu-video',
     active: false,
     role: ['admin'],
-    module: ['jm','sz','hw','ps']
+    module: ['jm','sz','hw','ps','zf']
   },
   // {
   //   path: '/special',
@@ -73,6 +73,6 @@ export default [
     icon: 'menu-emergency',
     active: false,
     role: ['admin', 'super_editor'],
-    module: ['jm']
+    module: ['jm','zf']
   }
 ]
