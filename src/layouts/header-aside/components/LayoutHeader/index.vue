@@ -4,6 +4,7 @@
       <ul flex="cross:center main:justify">
         <li :class="{active:activeHeaderModule == 'jm'}" @click="toPage('jm')"><cg-icon-svg name="jiemian" class="svg_icon jiemian"></cg-icon-svg>智慧街面</li>
         <li :class="{active:activeHeaderModule == 'sz'}" @click="toPage('sz')"><cg-icon-svg name="shizheng" class="svg_icon shizheng"></cg-icon-svg>智慧市政</li>
+        <li :class="{active:activeHeaderModule == 'zf'}" @click="toPage('zf')"><cg-icon-svg name="zhifa-module" class="svg_icon zhifa"></cg-icon-svg>智慧执法</li>
         <li :class="{active:activeHeaderModule == 'hw'}" @click="toPage('hw')"><cg-icon-svg name="huanwei" class="svg_icon huanwei"></cg-icon-svg>智慧环卫</li>
         <li :class="{active:activeHeaderModule == 'ps'}" @click="toPage('ps')"><cg-icon-svg name="paishui" class="svg_icon paishui"></cg-icon-svg>智慧排水</li>
         <li :class="{active:activeHeaderModule == 'ld'}" @click="toPage('ld')"><cg-icon-svg name="ludeng" class="svg_icon ludeng"></cg-icon-svg>智慧路灯</li>
@@ -35,6 +36,7 @@ import util from '@/utils/util';
 const MODULE = {
   'jm':'智慧街面',
   'sz':'智慧市政',
+  'zf':'智慧执法',
   'hw':'智慧环卫',
   'ps':'智慧排水',
   'ld':'智慧路灯'
@@ -70,7 +72,6 @@ export default {
       if(module === this.activeModule) return;
       if(modulePermission.indexOf(module)>=0){
         if(module==='ld'){
-          // window.open('https://www.baidu.com');
           this.$message.warning('页面正在开发尽情期待！！！');
         }
         else{
@@ -81,8 +82,6 @@ export default {
           });
           const menu = menuAside.filter(v => v.role.includes('admin')&&v.module.includes(module))
           this.$store.commit('cgadmin/menu/asideSet', menu)
-          // console.log(this.$router,this.$route);
-          // this.$route.meta.title = MODULE[this.activeModule];
           this.$router.replace('/changePage');
           // 更改标题
           util.title(MODULE[this.activeModule])
