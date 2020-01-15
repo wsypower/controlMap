@@ -20,6 +20,7 @@
         >
           <img slot="dept" src="~@img/avatar_dept.png" />
           <img slot="camera" src="~@img/globel-eye.png" />
+          <img slot="camera_offline" src="~@img/globel-eye_offline.png" />
           <template slot="title" slot-scope="{ title }">
             <span v-if="title.indexOf(searchValue) > -1">
               {{ title.substr(0, title.indexOf(searchValue)) }}
@@ -136,7 +137,13 @@ export default {
           item.title = item.mpname;
           item.key = item.mpid;
           item.dept = deptName;
-          item.slots = {icon: 'camera'};
+          if(item.online){
+            item.slots = {icon: 'camera'};
+          }
+          else{
+            item.slots = {icon: 'camera_offline'};
+          }
+
           item.class = 'itemClass';
           let temp = {
             title: item.mpname,
