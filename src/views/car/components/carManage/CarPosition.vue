@@ -138,17 +138,17 @@ export default {
       });
       let _this = this;
       this.timer = setInterval(function() {
-        _this.getAllCarTreeData({userId:userId, moduleType: this.activeModule}).then(res=>{
+        _this.getAllCarTreeData({userId:userId, moduleType: _this.activeModule}).then(res=>{
           // _this.sourceData = res;
           _this.peopleNewDataList = [];
           _this.deptNewDataList = [];
           _this.changeOldData(res);
           let idArr = _this.compareDataToIdArr();
-          this.isLoadData = !this.isLoadData;
+          _this.isLoadData = !_this.isLoadData;
           _this.peopleDataList = [];
           _this.changeTreeDataMore(_this.treeData, idArr);
         });
-      },600000)
+      },5000)
     },
     beforeDestroy(){
       clearInterval(this.timer)

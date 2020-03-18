@@ -158,7 +158,7 @@ export default {
         _this.peopleDataList = [];
         _this.changeTreeDataMore(_this.treeData, idArr);
       });
-    },600000)
+    },5000)
   },
   beforeDestroy(){
     clearInterval(this.timer)
