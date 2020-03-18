@@ -16,12 +16,13 @@ import Vuex from 'vuex'
 //默认持久化所有state
 // import createPersistedState from 'vuex-persistedstate'
 import cgadmin from './modules/cgadmin'
-import section from './modules/section'
-import car from './modules/car'
-import records from './modules/records'
-import video from './modules/video'
-import emergency from './modules/emergency'
-import intelligence from './modules/intelligence'
+import drainoffwater from './modules/drainoffwater'
+// import section from './modules/section'
+// import car from './modules/car'
+// import records from './modules/records'
+// import video from './modules/video'
+// import emergency from './modules/emergency'
+// import intelligence from './modules/intelligence'
 import map from './modules/map'
 
 Vue.use(Vuex)
@@ -41,13 +42,8 @@ const store = new Vuex.Store({
   // ],
   modules: {
     cgadmin,
-    section,
-    car,
-    records,
-    video,
-    emergency,
-    intelligence,
-    map
+    map,
+    drainoffwater
   }
 })
 

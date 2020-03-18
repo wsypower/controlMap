@@ -54,14 +54,15 @@ export default {
   /deep/.ant-tabs-bar {
     background-color: #f5f5f5;
     margin-bottom: 3px;
-    padding: 0px 20px;
+    padding: 0px 10px;
     .ant-tabs-nav {
       width: 100%;
       .ant-tabs-tab {
         //width: 50%;
         text-align: center;
         margin: 0;
-        font-size: 18px;
+        font-size: 16px;
+        padding: 12px 5px;
       }
       .ant-tabs-tab {
         //@include n-items(1);

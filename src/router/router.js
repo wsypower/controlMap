@@ -26,92 +26,63 @@ const frameIn = [
   {
     path: '/',
     name: 'layoutHeaderAside',
-    redirect: { path: '/section' },
+    redirect: { path: '/drainoffwater' },
     component: layoutHeaderAside,
     meta: {
-      title: '管控平台'
+      title: '管控系统'
     },
     children: [
       {
-        path: '/section',
-        name: 'people',
+        path: '/drainoffwater',
+        name: 'drainoffwater',
         meta: {
-          title: '人员管控',
-          role: ['admin', 'super_editor']
+          title: '排水监测',
+          role: ['admin']
         },
-        component: _import('section/index.vue')
-      },
-      //测试 => page2
-      {
-        path: '/car',
-        name: 'car',
-        meta: {
-          title: '车辆管控',
-          role: ['admin', 'super_editor']
-        },
-        component: _import('car/index.vue')
-      },
-      //测试 => page3
-      {
-        path: '/records',
-        name: 'records',
-        meta: {
-          title: '案卷管控',
-          role: ['admin', 'super_editor']
-        },
-        component: _import('records/index.vue')
+        component: _import('drainoffwater/index.vue')
       },
       {
-        path: '/video',
-        name: 'video',
+        path: '/watersupply',
+        name: 'watersupply',
         meta: {
-          title: '视频管控',
-          role: ['admin', 'super_editor']
+          title: '供水监测',
+          role: ['admin']
         },
-        component: _import('video/index.vue')
+        component: _import('watersupply/index.vue')
       },
       {
-        path: '/emergency',
-        name: 'emergency',
+        path: '/gas',
+        name: 'gas',
         meta: {
-          title: '应急指挥',
-          role: ['admin', 'super_editor']
+          title: '燃气监测',
+          role: ['admin']
         },
-        component: _import('emergency/page6.vue')
+        component: _import('gas/index.vue')
       },
       {
-        path: '/manhole',
-        name: 'manhole',
+        path: '/streetlight',
+        name: 'streetlight',
         meta: {
-          title: '智能井盖',
-          role: ['admin', 'super_editor']
+          title: '智慧路灯',
+          role: ['admin']
         },
-        component: _import('manhole/index.vue')
+        component: _import('streetlight/index.vue')
       },
       {
-        path: '/dustbin',
-        name: 'dustbin',
+        path: '/bridge',
+        name: 'bridge',
         meta: {
-          title: '智能垃圾桶',
-          role: ['admin', 'super_editor']
+          title: '桥梁监控',
+          role: ['admin']
         },
-        component: _import('dustbin/index.vue')
-      },
-      {
-        path: '/water',
-        name: 'water',
-        meta: {
-          title: '智能水位计',
-          role: ['admin', 'super_editor']
-        },
-        component: _import('water/index.vue')
+        component: _import('bridge/index.vue')
       },
       // 刷新页面 必须保留
       {
         path: 'refresh',
         name: 'refresh',
         meta: {
-          title: '案卷',
+          title: '页面刷新',
           role: ['admin', 'super_editor']
         },
         component: _import('function/refresh')
@@ -121,7 +92,7 @@ const frameIn = [
         path: 'redirect/:route*',
         name: 'redirect',
         meta: {
-          title: '案卷',
+          title: '页面重定向',
           role: ['admin', 'super_editor']
         },
         component: _import('function/redirect')

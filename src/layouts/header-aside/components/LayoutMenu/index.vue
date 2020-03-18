@@ -75,10 +75,10 @@ export default {
 //menu
 .menu {
   width: 60px;
-  height: calc(100% - 60px);
+  height: 100%;
   background-image: $color-menu;
   position: relative;
-  top: 60px;
+  top: 0px;
   z-index: 9;
   &__items {
     position: absolute;

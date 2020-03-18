@@ -24,10 +24,10 @@ export default {
 
 <style lang="scss" >
 .drawer {
-  top: 60px;
+  top: 0px;
   left: 60px;
   .ant-drawer-content-wrapper {
-    height: calc(100% - 60px);
+    height: 100%;
     .ant-drawer-wrapper-body {
       overflow: hidden !important;
     }

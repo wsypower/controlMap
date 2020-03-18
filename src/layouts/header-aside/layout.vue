@@ -6,7 +6,7 @@
       <!-- 加载动效 -->
       <loading>
         <!-- 顶栏 -->
-        <layout-header />
+        <!--<layout-header />-->
         <!-- 主体 -->
         <div class="container" flex>
           <!-- 主体 左侧边栏 -->
