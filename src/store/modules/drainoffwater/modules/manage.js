@@ -1,7 +1,8 @@
 import {
   getAllCameraTreeData,
   getCameraUrl,
-  getAllRainMacTreeData
+  getAllRainMacTreeData,
+  getOneMacData
 } from '@/api/drainoffwater/manage.js'
 
 export default {
@@ -37,6 +38,19 @@ export default {
       console.log('store', data)
       return new Promise((resolve, reject) => {
         getAllRainMacTreeData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getOneMacData(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getOneMacData(data)
           .then(res => {
             resolve(res)
           })

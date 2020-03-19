@@ -33,17 +33,21 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
+    <div style="position: fixed; top: 20px;right: 20px;">
+      <detail-info ref="detailInfo" :info="detailInfoData" @closeTip="closeTip"></detail-info>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import { mapState,mapActions } from 'vuex'
 import util from '@/utils/util';
 import {videoPointStyle} from '@/utils/util.map.style'
-import axios from 'axios'
+import DetailInfo from './components/DetailInfo.vue'
 const userId = util.cookies.get('userId');
 export default {
   name: 'Rainfall',
   components:{
+    DetailInfo
   },
   data(){
     return {
@@ -57,6 +61,17 @@ export default {
       sourceData: [],
       //查询结果个数
       resultCount: 0,
+      //详情需要的所有数据
+      detailInfoData: {
+        detailMessage:{
+          name: '',
+          value: 0,
+          unit: '',
+          yty: '0',
+          mtm: '0'
+        },
+        chartData: []
+      },
 
       //地图相关
       videoFeatures: [],
@@ -98,12 +113,12 @@ export default {
     this.map.on('click', this.videoMapClickHandler);
     this.getAllRainMacTreeData({userId:userId}).then(res=>{
       console.log('getAllRainMacTreeData',res);
-      this.sourceData = res.data[0].children;
+      this.sourceData = res.data;
       this.showLoading = false;
     });
   },
   methods:{
-    ...mapActions('drainoffwater/manage', ['getAllRainMacTreeData']),
+    ...mapActions('drainoffwater/manage', ['getAllRainMacTreeData','getOneMacData']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
@@ -114,8 +129,8 @@ export default {
       arr.forEach(item=>{
         item.scopedSlots = { title: 'title' };
         if(item.isLeaf){
-          item.title = item.mpname;
-          item.key = item.mpid;
+          item.title = item.name;
+          item.key = item.id;
           item.dept = deptName;
           item.slots = {icon: 'camera'};
           item.class = 'itemClass';
@@ -133,7 +148,7 @@ export default {
           item.title = item.name;
           item.key = 'dept_' + item.id;
           item.slots = {icon: 'dept'};
-          this.changeTreeData(item.children, item.mpname);
+          this.changeTreeData(item.children, item.name);
         }
       })
     },
@@ -141,7 +156,7 @@ export default {
       //入参：城市范围、监测点名称，用户ID
       this.getAllRainMacTreeData({userId:userId}).then(res=>{
         console.log('getAllRainMacTreeData',res);
-        this.sourceData = res.data[0].children;
+        this.sourceData = res.data;
         this.showLoading = false;
       });
     },
@@ -149,28 +164,25 @@ export default {
     //点击树中某个节点（某个人员）时触发
     onSelect(selectedKeys, e){
       console.log(selectedKeys, e);
-      if(selectedKeys[0].indexOf('dept_')<0){
-        let needData = e.selectedNodes[0].data.props;
-        let mpid = needData.mpid;
-        this.playVideo(mpid);
-      }
-    },
-      videoMapClickHandler({ pixel, coordinate }) {
-          const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-          if(feature.get('features')) {
-              const clickFeature = feature.get('features')[0];
-              // const coordinates=clickFeature.getGeometry().getCoordinates();
-              if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
-                  const videoInfoData = clickFeature.get('props');
-                  this.playVideo(videoInfoData.mpid);
-              }
-          }
-      },
-    playVideo(mpid){
-      //打开摄像头播放
-      this.getCameraUrl({userId: userId, mpId: mpid}).then(res => {
-        this.videoSrc = res.mediaURL;
+      //地图上的点位放大居中
+      // 获取详情数据
+      this.getOneMacData({userId:userId}).then(res=>{
+        this.detailInfoData = res.data;
       });
+    },
+    videoMapClickHandler({ pixel, coordinate }) {
+        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+        if(feature.get('features')) {
+            const clickFeature = feature.get('features')[0];
+            // const coordinates=clickFeature.getGeometry().getCoordinates();
+            if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
+                const videoInfoData = clickFeature.get('props');
+                this.playVideo(videoInfoData.mpid);
+            }
+        }
+    },
+    closeTip(){
+
     }
   }
 }

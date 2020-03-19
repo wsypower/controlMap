@@ -12,18 +12,18 @@
           <!-- 主体 左侧边栏 -->
           <layout-menu />
           <!-- 主体 右侧上按钮栏 -->
-           <div class="container__aside--top">
+           <!--<div class="container__aside&#45;&#45;top">-->
              <!---->
-            <div v-if="showSelect">
-              <LayersSwitch @show="showSelect"></LayersSwitch>
-            </div>
-            <a-button class="container__aside__item" @click="showLayerSwitch">
-              <img src="@/assets/mapImage/layer.png" alt="" class="icon">
-            </a-button>
+            <!--<div v-if="showSelect">-->
+              <!--<LayersSwitch @show="showSelect"></LayersSwitch>-->
+            <!--</div>-->
+            <!--<a-button class="container__aside__item" @click="showLayerSwitch">-->
+              <!--<img src="@/assets/mapImage/layer.png" alt="" class="icon">-->
+            <!--</a-button>-->
             <!--<a-button class="container__aside__item">2</a-button>-->
             <!--<a-button class="container__aside__item">3</a-button>-->
             <!--<a-button class="container__aside__item">4</a-button>-->
-          </div>
+          <!--</div>-->
           <!-- 主体 右侧下按钮栏 -->
           <!--<div class="container__aside&#45;&#45;bottom" flex="dir:top cross:top">-->
             <!--<a-button class="container__aside__item">1</a-button>-->

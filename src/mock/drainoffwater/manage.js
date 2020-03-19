@@ -467,3 +467,32 @@ const getAllRainMacTreeData = options => {
   )
 }
 Mock.mock(/\/@test\/getAllRainMacTreeData/, 'get', getAllRainMacTreeData)
+
+const getOneMacData = options => {
+  console.log('getOneMacData options', options)
+  const queryParameters = getQueryParameters(options)
+  console.log('getOneMacData query', queryParameters)
+  let data = {
+    detailMessage:{
+      name: '监测点1-设备001',
+      value: 15,
+      unit: 'mm',
+      yty: '-4',
+      mtm: '+5'
+    },
+    chartData: [['2020-03-19 07:00','2020-03-19 07:30','2020-03-19 08:00','2020-03-19 08:30','2020-03-19 09:00','2020-03-19 09:30','2020-03-29 10:00'],
+      [13,23,16,29,55,33,40]]
+  }
+
+  return builder(
+    {
+      code: 0,
+      data: data,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/getOneMacData/, 'get', getOneMacData)

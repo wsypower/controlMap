@@ -68,3 +68,22 @@ export function getAllRainMacTreeData(data) {
   })
 }
 
+/**
+ * @description 获取某一个雨量监测点的某一个监测设备具体数据
+ * @author moxuejuan
+ * @date 2020-03-18 16:44
+ * @param {String} macId 设备Id
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+
+export function getOneMacData(data) {
+  console.log('api:getOneMacData', data)
+  return request({
+    url: '@test/getOneMacData?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}

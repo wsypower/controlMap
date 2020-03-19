@@ -22,6 +22,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('./video/manage')
   require('./video/statistical')
   require('./drainoffwater/manage')
+  require('./drainoffwater/statistical')
   Mock.setup({
     timeout: 800 // setter delay time
   })
