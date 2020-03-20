@@ -4,32 +4,22 @@
       <my-address @getAddressData="getAddressData"></my-address>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
         <label>监测点名称：</label>
-        <a-input placeholder="输入监测点名称" v-model="watchPointName" style="flex:1"/>
+        <a-input placeholder="输入监测点名称" v-model="watchPointName" style="flex:1" />
       </div>
       <a-button type="primary" style="width: 100%;margin-bottom:5px;" @click="onSearch">查询</a-button>
-      <div>共计{{resultCount}}个查询结果</div>
+      <div>共计{{ resultCount }}个查询结果</div>
     </div>
     <div class="yuan_dialog_body">
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
         <a-spin tip="数据加载中..."></a-spin>
       </div>
       <cg-container scroll v-if="!showLoading && treeData.length > 0">
-        <a-tree
-          class="tree-panel"
-          showIcon
-          showLine
-          :treeData="treeData"
-          @select="onSelect"
-        >
-          <img slot="dept" src="~@img/avatar_dept.png" />
+        <a-tree class="tree-panel" showIcon showLine :treeData="treeData" @select="onSelect">
+          <img slot="dept" src="~@img/avatar-jiance.png" />
           <img slot="camera" src="~@img/globel-eye.png" />
         </a-tree>
       </cg-container>
-      <div
-        v-if="!showLoading && treeData.length == 0"
-        class="nodata-panel"
-        flex="main:center cross:center"
-      >
+      <div v-if="!showLoading && treeData.length == 0" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
@@ -205,6 +195,7 @@ export default {
         display: inline-block;
         border-radius: 12px;
         margin-right: 8px;
+        margin-top: -3px;
       }
     }
     .nodata-panel,

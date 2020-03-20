@@ -79,10 +79,77 @@ export function getAllRainMacTreeData(data) {
  * }
  */
 
-export function getOneMacData(data) {
-  console.log('api:getOneMacData', data)
+export function getOneRainMacData(data) {
+  console.log('api:getOneRainMacData', data)
   return request({
-    url: '@test/getOneMacData?_t=' + new Date().getTime(),
+    url: '@test/getOneRainMacData?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * @description 获取所有水位监测设备（树形结构）
+ * @author moxuejuan
+ * @date 2020-03-20 10:36
+ * @param {String} address 选择的地址
+ * @param {String} watchPlaceName 监测场景
+ * @param {String} watchPointName 监测点名称（模糊搜索）
+ * @method：GET
+ * @response：{
+ *     树形结构数据
+ * }
+ */
+
+export function getAllWaterLevelMacTreeData(data) {
+  console.log('api:getAllWaterLevelMacTreeData', data)
+  return request({
+    url: '@test/getAllWaterLevelMacTreeData?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * @description 获取某一个水位监测点的某一个监测设备具体数据
+ * @author moxuejuan
+ * @date 2020-03-20 10:37
+ * @param {String} macId 设备Id
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+
+export function getOneWaterLevelMacData(data) {
+  console.log('api:getOneWaterLevelMacData', data)
+  return request({
+    url: '@test/getOneWaterLevelMacData?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * @description 获取所有井盖设备
+ * @author moxuejuan
+ * @date 2020-03-20 10:36
+ * @param {Array} selectedCity 选择的地址
+ * @param {String} address 详细地址
+ * @param {String} status 井盖状态
+ * @param {String} code 井盖编号
+ * @param {Number} pageNo 翻页设置页码
+ * @param {Number} pageSize 翻页设置一页数
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+
+export function getDeviceDataList(data) {
+  console.log('api:getDeviceDataList', data)
+  return request({
+    url: '@test/getDeviceDataList?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

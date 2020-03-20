@@ -1,7 +1,7 @@
 <template>
   <div class="analysis-panel">
     <div class="panel-header" flex="dir:left cross:center">
-      <span class="title">雨量监测设备统计</span>
+      <span class="title">智能井盖统计</span>
     </div>
     <div class="panel-content" ref="statusPieChart"></div>
   </div>
@@ -21,11 +21,11 @@ export default {
         this.getChartData();
     },
     methods:{
-        ...mapActions('drainoffwater/statistical', ['getStatusAnalysisData']),
+        ...mapActions('drainoffwater/statistical', ['getManholeStatusAnalysisData']),
         //获取全部数据
         getChartData(){
-            this.getStatusAnalysisData().then(res=>{
-                console.log('getStatusAnalysisData',res);
+            this.getManholeStatusAnalysisData().then(res=>{
+                console.log('getManholeStatusAnalysisData',res);
                 res.data.forEach(item=>{
                   this.totalNum += item.num;
                 });
@@ -104,7 +104,7 @@ export default {
                     type: "pie",
                     center: ["30%", "50%"],
                     radius: ["55%", "70%"],
-                    color: [ "#50cf3f", "#cccccc"],
+                    color: [ "#50cf3f", "#cccccc", "#ff1f34"],
                     startAngle: 135,
                     label: {
                         show: false

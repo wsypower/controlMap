@@ -1,7 +1,7 @@
 <template>
   <div class="analysis-panel">
     <div class="panel-header" flex="dir:left cross:center">
-      <span class="title">雨量监测设备统计</span>
+      <span class="title">水位监测设备统计</span>
     </div>
     <div class="panel-content" ref="statusPieChart"></div>
   </div>
@@ -14,18 +14,17 @@ export default {
         return {
             totalNum: 0,
             totalArr: [],
-
         }
     },
     mounted(){
         this.getChartData();
     },
     methods:{
-        ...mapActions('drainoffwater/statistical', ['getStatusAnalysisData']),
+        ...mapActions('drainoffwater/statistical', ['getWaterStatusAnalysisData']),
         //获取全部数据
         getChartData(){
-            this.getStatusAnalysisData().then(res=>{
-                console.log('getStatusAnalysisData',res);
+            this.getWaterStatusAnalysisData().then(res=>{
+                console.log('getWaterStatusAnalysisData',res);
                 res.data.forEach(item=>{
                   this.totalNum += item.num;
                 });

@@ -4,32 +4,23 @@
       <my-address @getAddressData="getAddressData"></my-address>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
         <label>监测点名称：</label>
-        <a-input placeholder="输入监测点名称" v-model="watchPointName" style="flex:1"/>
+        <a-input placeholder="输入监测点名称" v-model="watchPointName" style="flex:1" />
       </div>
       <a-button type="primary" style="width: 100%;margin-bottom:5px;" @click="onSearch">查询</a-button>
-      <div>共计{{resultCount}}个查询结果</div>
+      <div>共计{{ resultCount }}个查询结果</div>
     </div>
     <div class="yuan_dialog_body">
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
         <a-spin tip="数据加载中..."></a-spin>
       </div>
       <cg-container scroll v-if="!showLoading && treeData.length > 0">
-        <a-tree
-          class="tree-panel"
-          showIcon
-          showLine
-          :treeData="treeData"
-          @select="onSelect"
-        >
-          <img slot="dept" src="~@img/avatar_dept.png" />
-          <img slot="camera" src="~@img/globel-eye.png" />
+        <a-tree class="tree-panel" showIcon showLine :treeData="treeData" @select="onSelect">
+          <img slot="dept" src="~@img/avatar-jiance.png" />
+          <img slot="equipment" src="~@img/avatar-equipment.png" />
+          <img slot="equipment-outline" src="~@img/avatar-equipment-outline.png" />
         </a-tree>
       </cg-container>
-      <div
-        v-if="!showLoading && treeData.length == 0"
-        class="nodata-panel"
-        flex="main:center cross:center"
-      >
+      <div v-if="!showLoading && treeData.length == 0" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
@@ -42,7 +33,7 @@
 import { mapState,mapActions } from 'vuex'
 import util from '@/utils/util';
 import {videoPointStyle} from '@/utils/util.map.style'
-import DetailInfo from './components/DetailInfo.vue'
+import DetailInfo from '../common/DetailInfo.vue'
 const userId = util.cookies.get('userId');
 export default {
   name: 'Rainfall',
@@ -63,6 +54,7 @@ export default {
       resultCount: 0,
       //详情需要的所有数据
       detailInfoData: {
+        type: 'water',
         detailMessage:{
           name: '',
           value: 0,
@@ -118,7 +110,7 @@ export default {
     });
   },
   methods:{
-    ...mapActions('drainoffwater/manage', ['getAllRainMacTreeData','getOneMacData']),
+    ...mapActions('drainoffwater/manage', ['getAllRainMacTreeData','getOneRainMacData']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
@@ -132,7 +124,12 @@ export default {
           item.title = item.name;
           item.key = item.id;
           item.dept = deptName;
-          item.slots = {icon: 'camera'};
+          if(item.online){
+            item.slots = {icon: 'equipment'};
+          }
+          else{
+            item.slots = {icon: 'equipment-outline'};
+          }
           item.class = 'itemClass';
           this.resultCount++;
           // 通过经纬度生成点位加到地图上
@@ -166,8 +163,9 @@ export default {
       console.log(selectedKeys, e);
       //地图上的点位放大居中
       // 获取详情数据
-      this.getOneMacData({userId:userId}).then(res=>{
+      this.getOneRainMacData({userId:userId}).then(res=>{
         this.detailInfoData = res.data;
+        this.detailInfoData.type = 'water';
       });
     },
     videoMapClickHandler({ pixel, coordinate }) {
@@ -204,11 +202,12 @@ export default {
       height: 100%;
       padding: 10px;
       img {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
         display: inline-block;
         border-radius: 12px;
         margin-right: 8px;
+        margin-top: -3px;
       }
     }
     .nodata-panel,

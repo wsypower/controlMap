@@ -1,60 +1,44 @@
 <template>
   <div class="analysis-panel">
     <div class="panel-header" flex="dir:left cross:center">
-      <span class="title">雨量趋势图</span>
+      <span class="title">今日水位总体趋势图</span>
     </div>
     <div class="panel-content">
-      <div class="time-range" flex="dir:top cross:center">
-        <div class="status-choose-panel">
-          <a-radio-group @change="onChange" v-model="timeMethod">
-            <a-radio value="day">今日</a-radio>
-            <a-radio value="week">本周</a-radio>
-            <a-radio value="month">本月</a-radio>
-          </a-radio-group>
+      <div class="place-range">
+        <div flex="fir:left cross:center">
+          <label>监测场景：</label>
+          <a-select v-model="watchPlaceName" style="flex:1">
+            <a-select-option value="all">全部</a-select-option>
+            <a-select-option value="hedao">河道</a-select-option>
+            <a-select-option value="jishui">积水点</a-select-option>
+            <a-select-option value="wushui">污水液位</a-select-option>
+            <a-select-option value="yushui">雨水液位</a-select-option>
+          </a-select>
         </div>
-        <a-range-picker @change="onChange" style="width:240px" v-model="dayRange" />
       </div>
       <div ref="trendLineChart" class="trend-line-chart"></div>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
-import moment from 'moment';
-import { getSelectDateRange } from '@/utils/util.tool.js'
 import { mapActions } from 'vuex'
 export default {
-    name: 'RainTrend',
+    name: 'WaterTrend',
     data(){
         return {
-          dateFormat: 'YYYY-MM-DD',
-          timeMethod: 'week',
+          watchPlaceName: 'all'
         }
     },
-    computed:{
-      dayRange: function(){
-        let dayRangeArr = getSelectDateRange(this.timeMethod);
-        // if(this.timeMethod==='week'){
-        //   this.getSelectDateRange(this.timeMethod)
-        // }
-        // if(this.timeMethod==='week'){
-        //
-        // }
-        // if(this.timeMethod==='week'){
-        //
-        // }
-        return [moment(dayRangeArr[0], this.dateFormat), moment(dayRangeArr[1], this.dateFormat)]
-      }
-    },
+    computed:{},
     mounted(){
         this.getChartData();
     },
     methods:{
-        ...mapActions('drainoffwater/statistical', ['getRainTrendData']),
-        moment,
+        ...mapActions('drainoffwater/statistical', ['getWaterLevelTrendData']),
         //获取全部数据
         getChartData(){
-            this.getRainTrendData().then(res=>{
-                console.log('getRainTrendData',res);
+            this.getWaterLevelTrendData().then(res=>{
+                console.log('getWaterLevelTrendData',res);
                 let xArr = [];
                 let yArr = [];
               res.data.forEach(item => {
@@ -189,7 +173,7 @@ export default {
 <style lang="scss" scoped>
 .analysis-panel {
   width: 100%;
-  height: 400px;
+  height: 380px;
   padding-top: 6px;
   .panel-header {
     width: 100%;
@@ -204,15 +188,13 @@ export default {
     width: 100%;
     height: calc(100% - 30px);
     background-color: #f5f5f5;
-    .time-range {
-      height: 80px;
+    .place-range {
+      height: 60px;
       width: 100%;
-      .status-choose-panel {
-        padding: 10px 0px;
-      }
+      padding: 10px 20px 20px 20px;
     }
     .trend-line-chart {
-      height: calc(100% - 80px);
+      height: calc(100% - 60px);
     }
   }
 }

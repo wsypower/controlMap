@@ -1,6 +1,9 @@
 import {
   getStatusAnalysisData,
-  getRainTrendData
+  getRainTrendData,
+  getWaterStatusAnalysisData,
+  getWaterLevelTrendData,
+  getManholeStatusAnalysisData
 } from '@/api/drainoffwater/statistical.js'
 
 export default {
@@ -32,18 +35,44 @@ export default {
           })
       })
     },
-    // getPeopleTopThreeData(state, data) {
-    //   console.log('store', data)
-    //   return new Promise((resolve, reject) => {
-    //     getPeopleTopThreeData(data)
-    //       .then(res => {
-    //         resolve(res)
-    //       })
-    //       .catch(err => {
-    //         console.log(err)
-    //         reject(err)
-    //       })
-    //   })
-    // }
+    getWaterStatusAnalysisData(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getWaterStatusAnalysisData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getWaterLevelTrendData(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getWaterLevelTrendData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getManholeStatusAnalysisData(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getManholeStatusAnalysisData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    }
   }
 }

@@ -1,13 +1,15 @@
 <template>
   <div class="statistical" flex="dir:top">
-
+    <status-analysis></status-analysis>
   </div>
 </template>
 <script type="text/ecmascript-6">
-
+import StatusAnalysis from './components/StatusAnalysis.vue'
 export default{
     name:'statistical',
-    components:{},
+    components:{
+      StatusAnalysis
+    },
     data(){
       return {
       }
@@ -19,6 +21,6 @@ export default{
 <style lang="scss" scoped>
 .statistical {
   width: 100%;
-  padding: 0px 20px 20px 20px;
+  padding-bottom: 20px;
 }
 </style>
