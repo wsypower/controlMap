@@ -17,12 +17,8 @@ import Vuex from 'vuex'
 // import createPersistedState from 'vuex-persistedstate'
 import cgadmin from './modules/cgadmin'
 import drainoffwater from './modules/drainoffwater'
-// import section from './modules/section'
-// import car from './modules/car'
-// import records from './modules/records'
-// import video from './modules/video'
-// import emergency from './modules/emergency'
-// import intelligence from './modules/intelligence'
+import watersupply from './modules/watersupply'
+import gas from './modules/gas'
 import map from './modules/map'
 
 Vue.use(Vuex)
@@ -43,7 +39,9 @@ const store = new Vuex.Store({
   modules: {
     cgadmin,
     map,
-    drainoffwater
+    drainoffwater,
+    watersupply,
+    gas
   }
 })
 

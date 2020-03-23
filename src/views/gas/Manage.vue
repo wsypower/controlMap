@@ -33,7 +33,7 @@
 import { mapState,mapActions } from 'vuex'
 import util from '@/utils/util';
 import {videoPointStyle} from '@/utils/util.map.style'
-import DetailInfo from '../../../common/DetailInfo.vue'
+import DetailInfo from '../common/DetailInfo.vue'
 const userId = util.cookies.get('userId');
 export default {
   name: 'manage',
@@ -54,13 +54,14 @@ export default {
       resultCount: 0,
       //详情需要的所有数据
       detailInfoData: {
-        type: 'water',
+        type: 'gas',
         detailMessage:{
           name: '',
+          flagName: '',
           value: 0,
           unit: '',
-          yty: '0',
-          mtm: '0'
+          yty: '+0',
+          mtm: '+0'
         },
         chartData: []
       },
@@ -103,14 +104,14 @@ export default {
     this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
-    this.getAllRainMacTreeData({userId:userId}).then(res=>{
-      console.log('getAllRainMacTreeData',res);
+    this.getAllGasMacTreeData({userId:userId}).then(res=>{
+      console.log('getAllGasMacTreeData',res);
       this.sourceData = res.data;
       this.showLoading = false;
     });
   },
   methods:{
-    ...mapActions('drainoffwater/manage', ['getAllRainMacTreeData','getOneRainMacData']),
+    ...mapActions('gas/manage', ['getAllGasMacTreeData','getOneGasMacData']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
@@ -151,8 +152,8 @@ export default {
     },
     onSearch(){
       //入参：城市范围、监测点名称，用户ID
-      this.getAllRainMacTreeData({userId:userId}).then(res=>{
-        console.log('getAllRainMacTreeData',res);
+      this.getAllGasMacTreeData({userId:userId}).then(res=>{
+        console.log('getAllGasMacTreeData',res);
         this.sourceData = res.data;
         this.showLoading = false;
       });
@@ -163,9 +164,9 @@ export default {
       console.log(selectedKeys, e);
       //地图上的点位放大居中
       // 获取详情数据
-      this.getOneRainMacData({userId:userId}).then(res=>{
+      this.getOneGasMacData({userId:userId}).then(res=>{
         this.detailInfoData = res.data;
-        this.detailInfoData.type = 'water';
+        this.detailInfoData.type = 'gas';
       });
     },
     videoMapClickHandler({ pixel, coordinate }) {
@@ -189,7 +190,7 @@ export default {
 .video-manage {
   height: 100%;
   width: 100%;
-  padding-top: 20px;
+  padding: 20px;
   .search-panel {
     padding-bottom: 0px;
   }

@@ -43,7 +43,7 @@
 import { mapState,mapActions } from 'vuex'
 import util from '@/utils/util';
 import {videoPointStyle} from '@/utils/util.map.style'
-import DetailInfo from '../common/DetailInfo.vue'
+import DetailInfo from '../../../common/DetailInfo.vue'
 const userId = util.cookies.get('userId');
 export default {
   name: 'WaterLevel',
