@@ -12,12 +12,16 @@
         <div class="detail-left" flex="dir:left cross:center">
           <img v-if="info.type === 'water'" src="~@img/shui.png" />
           <img v-if="info.type === 'gas'" src="~@img/ranqi.png" />
-          <div class="mes" flex="dir:top">
+          <img v-if="info.type === 'light'" src="~@img/ludeng.png" />
+          <div class="mes" flex="dir:top" v-if="info.type === 'water' || info.type === 'gas'">
             <span>{{ info.detailMessage.value }}<em>{{ info.detailMessage.unit }}</em></span>
             <span>当前监测值</span>
           </div>
+          <div class="mes" v-if="info.type === 'light'">
+            当前状态
+          </div>
         </div>
-        <div class="detail-right" flex="dir:left cross:bottom">
+        <div class="detail-right" flex="dir:left cross:bottom" v-if="info.type === 'water' || info.type === 'gas'">
           <span
             >日同比&nbsp;&nbsp;{{ info.detailMessage.yty }}{{ info.detailMessage.unit }}
             <a-icon v-if="info.detailMessage.yty.indexOf('+') === 0" style="color: #50cf3f" type="arrow-down" />
@@ -28,6 +32,9 @@
             <a-icon v-if="info.detailMessage.mtm.indexOf('+') === 0" style="color: #50cf3f" type="arrow-down" />
             <a-icon v-else style="color: #f07171" type="arrow-up" />
           </span>
+        </div>
+        <div class="detail-right" flex="dir:left cross:center" v-if="info.type === 'light'">
+          <span class="status-c">{{info.detailMessage.online ? '在线' : '离线' }}</span>
         </div>
       </div>
       <div class="line-chart" ref="lineChart"></div>
@@ -271,6 +278,12 @@ export default{
           }
           i {
           }
+        }
+        .status-c{
+          font-family: PingFang-SC-Heavy;
+          font-size: 30px;
+          color: #2c90f3;
+          margin-bottom: -20px;
         }
       }
     }

@@ -16,6 +16,8 @@ if (process.env.NODE_ENV !== 'production') {
   require('./watersupply/statistical')
   require('./gas/manage')
   require('./gas/statistical')
+  require('./streetlight/manage')
+  require('./streetlight/statistical')
   Mock.setup({
     timeout: 800 // setter delay time
   })

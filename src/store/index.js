@@ -19,6 +19,7 @@ import cgadmin from './modules/cgadmin'
 import drainoffwater from './modules/drainoffwater'
 import watersupply from './modules/watersupply'
 import gas from './modules/gas'
+import streetlight from './modules/streetlight'
 import map from './modules/map'
 
 Vue.use(Vuex)
@@ -41,7 +42,8 @@ const store = new Vuex.Store({
     map,
     drainoffwater,
     watersupply,
-    gas
+    gas,
+    streetlight
   }
 })
 
