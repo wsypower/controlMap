@@ -16,11 +16,12 @@ import Vuex from 'vuex'
 //默认持久化所有state
 // import createPersistedState from 'vuex-persistedstate'
 import cgadmin from './modules/cgadmin'
+import map from './modules/map'
 import drainoffwater from './modules/drainoffwater'
 import watersupply from './modules/watersupply'
 import gas from './modules/gas'
 import streetlight from './modules/streetlight'
-import map from './modules/map'
+import bridge from './modules/bridge'
 
 Vue.use(Vuex)
 /* eslint-disable no-new */
@@ -43,7 +44,8 @@ const store = new Vuex.Store({
     drainoffwater,
     watersupply,
     gas,
-    streetlight
+    streetlight,
+    bridge
   }
 })
 

@@ -1,298 +1,241 @@
 <template>
-  <div class="left-message">
+  <div class="video-manage" flex="dir:top">
     <div class="left-message-title">
-      水质监测
+      桥梁管控
     </div>
-    <!--<div class="search-panel">-->
-    <!--<a-input-search placeholder="输入关键词搜索" @search="onSearch" enterButton="搜 索"></a-input-search>-->
-    <!--</div>-->
-    <!--<div class="search-result">-->
-    <!--<div class="spin-panel" flex="main:center cross:center" v-if="showLoading">-->
-    <!--<a-spin tip="数据加载中..."></a-spin>-->
-    <!--</div>-->
-    <!--<div class="data-panel" v-else>-->
-    <!--<cg-container scroll v-if="dataArr.length > 0">-->
-    <!--<div-->
-    <!--v-for="(item, index) in dataArr"-->
-    <!--:key="index"-->
-    <!--class="item"-->
-    <!--:class="{ active: activeIndex === index, warning: item.alarmState === '2' }"-->
-    <!--flex="cross:center main:justify"-->
-    <!--@click="clickDataItem(item,index)"-->
-    <!--&gt;-->
-    <!--<div class="item_left">-->
-    <!--<cg-icon-svg name="waterl" class="svg_icon"></cg-icon-svg>-->
-    <!--<span>{{ item.imei }}</span>-->
-    <!--</div>-->
-    <!--<div class="item_right">-->
-    <!--<span>{{ item.alarmReason }}</span>-->
-    <!--<cg-icon-svg name="pin" class="svg_icon"></cg-icon-svg>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</cg-container>-->
-    <!--<div v-else class="none-panel" flex="main:center cross:center">-->
-    <!--<img src="~@img/zanwudata.png" />-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div class="pagination-panel">-->
-    <!--<a-pagination-->
-    <!--:total="totalSize"-->
-    <!--:showTotal="total => `共 ${total} 条`"-->
-    <!--:pageSize="50"-->
-    <!--:defaultCurrent="1"-->
-    <!--@change="changePagination"-->
-    <!--/>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div hidden>-->
-    <!--<tip-modal-->
-    <!--ref="waterOverlay"-->
-    <!--:modalWidth="modalWidth"-->
-    <!--:modalHeight="modalHeight"-->
-    <!--:iconName="iconName"-->
-    <!--:title="modalTitle"-->
-    <!--:subTitle="subTitle"-->
-    <!--:componentId="tipComponentId"-->
-    <!--:info="infoData"-->
-    <!--@closeDialog="closeOverlay()"-->
-    <!--&gt;</tip-modal>-->
-    <!--</div>-->
+    <div class="search-panel">
+      <my-address @getAddressData="getAddressData"></my-address>
+      <div flex="fir:left cross:center" style="margin:10px 0px;">
+        <label>桥梁名称：</label>
+        <a-input placeholder="输入桥梁名称" v-model="bridgeName" style="flex:1" />
+      </div>
+      <a-button type="primary" style="width: 100%;margin-bottom:5px;" @click="onSearch">查询</a-button>
+      <div>共计{{ resultCount }}个查询结果</div>
+    </div>
+    <div class="yuan_dialog_body">
+      <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
+        <a-spin tip="数据加载中..."></a-spin>
+      </div>
+      <cg-container scroll v-if="!showLoading && treeData.length > 0">
+        <a-tree class="tree-panel" showIcon showLine :treeData="treeData" @select="onSelect">
+          <img slot="dept" src="~@img/bridge.png" />
+          <img slot="camera" src="~@img/globel-eye.png" />
+        </a-tree>
+      </cg-container>
+      <div v-if="!showLoading && treeData.length == 0" class="nodata-panel" flex="main:center cross:center">
+        <img src="~@img/zanwudata.png" />
+      </div>
+    </div>
+    <div class="player-panel active">
+      <my-video-player :videoSrc.sync="videoSrc" :multiple="true"></my-video-player>
+    </div>
   </div>
 </template>
-
-<script>
-  import { mapActions,mapMutations,mapState } from 'vuex'
-  // import WaterLevelInfo from './components/WaterLevelInfo'
-  import { getTypeEquip } from '@/api/map/service'
-  import { emergencyEquipStyle } from '@/utils/util.map.style'
-  import Feature from 'ol/Feature'
-  import Point from 'ol/geom/Point'
-  export default {
-    name: 'waterLevel',
-    data() {
-      return {
-        //查询条件
-        query: {
-          deviceType: 8,
-          searchContent: '', //搜索关键字
-          status: '', //状态，‘’代表全部
-          pageNo: 1,
-          pageSize: 50
-        },
-        //数据查询中
-        showLoading: false,
-        //数据存放处
-        dataArr: [],
-        //总数
-        totalSize: 0,
-        //目前激活的水位计序号
-        activeIndex: null,
-        //信息窗的宽度
-        modalWidth: 300,
-        //信息窗的高度
-        modalHeight: 180,
-        //tipModal弹窗标题上的icon
-        iconName: 'waterl',
-        //tipModal弹窗标题
-        modalTitle: '',
-        //tipModal弹窗副标题
-        subTitle: '',
-        //tipModal弹窗body内组件
-        tipComponentId: {},
-        //tipModal组件内组件的原始数据
-        infoData: {},
-        waterLayer:null,
-        waterOverlay:null
+<script type="text/ecmascript-6">
+import { mapState,mapActions } from 'vuex'
+import util from '@/utils/util';
+import MyVideoPlayer from "./MyVideoPlayer.vue";
+import {videoPointStyle} from '@/utils/util.map.style'
+const userId = util.cookies.get('userId');
+export default {
+  name: 'BridgeVideo',
+  components:{
+    MyVideoPlayer
+  },
+  data(){
+    return {
+      //选择的城市---数组形式
+      selectedCity: [],
+      //桥梁名称
+      bridgeName: '',
+      //展示数据的过渡效果
+      showLoading: false,
+      //后台传过来的数据
+      sourceData: [],
+      //查询结果个数
+      resultCount: 0,
+      //视频流URL
+      videoSrc: '',
+      //地图相关
+      videoFeatures: [],
+      videoLayer: null,
+      isLoadData: false,
+      clusterLayer:null
+    }
+  },
+  computed:{
+    ...mapState('map', ['mapManager']),
+    //获得展示的数据与属性
+    treeData:function(){
+      let data = JSON.parse(JSON.stringify(this.sourceData));
+      this.videoFeatures=[];
+      this.resultCount = 0;
+      this.changeTreeData(data,'');
+      this.isLoadData=!this.isLoadData;
+      return data;
+    }
+  },
+  watch:{
+    isLoadData:function() {
+      if(this.videoFeatures.length>0){
+        if(this.videoLayer){
+          this.videoLayer.getSource().clear();
+          this.videoLayer.getSource().addFeatures(this.carFeatures);
+        }else{
+          this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
+          this.videoLayer.set('featureType','videoDistribute');
+        }
+        const extent=this.videoLayer.getSource().getSource().getExtent();
+        this.mapManager.getMap().getView().fit(extent);
       }
+    }
+  },
+  mounted(){
+    this.showLoading = true;
+    this.map = this.mapManager.getMap();
+    this.map.on('click', this.videoMapClickHandler);
+    //入参：地址、桥梁名称
+    this.getAllCameraTreeDataForBridge({userId:userId}).then(res=>{
+      console.log('getAllCameraTreeDataForBridge',res);
+      this.sourceData = res.data;
+      this.showLoading = false;
+    });
+  },
+  methods:{
+    ...mapActions('bridge/manage', ['getAllCameraTreeDataForBridge','getCameraUrl']),
+    getAddressData(val){
+      console.log('selected city data',val);
+      this.selectedCity = val;
     },
-    components: {
-
+    //给后端的数据增加一些前端展示与判断需要的属性
+    changeTreeData(arr,deptName){
+      const _this = this;
+      arr.forEach(item=>{
+        item.scopedSlots = { title: 'title' };
+        if(item.isLeaf){
+          item.title = item.mpname;
+          item.key = item.mpid;
+          item.dept = deptName;
+          item.slots = {icon: 'camera'};
+          item.class = 'itemClass';
+          this.resultCount++;
+          // 通过经纬度生成点位加到地图上
+          if(item.x && item.x.length>0 && item.y && item.y.length>0){
+            const feature=_this.mapManager.xyToFeature(item.x,item.y);
+            feature.set('icon','carmera_online');
+            feature.set('props',item);
+            feature.set('type','VideoDistribute');
+            _this.videoFeatures.push(feature);
+          }
+        }
+        else{
+          item.title = item.name;
+          item.key = 'dept_' + item.id;
+          item.slots = {icon: 'dept'};
+          this.changeTreeData(item.children, item.mpname);
+        }
+      })
     },
-    computed:{
-      ...mapState('map', ['mapManager']),
-    },
-    mounted() {
-      this.getDataList();
-      this.getEquipPoints();
-      this.map = this.mapManager.getMap()
-      this.map.on('click', this.waterClickHandler);
-      this.setClickHandler(this.waterClickHandler);
-      this.waterOverlay = this.mapManager.addOverlay({
-        element: this.$refs.waterOverlay.$el
+    onSearch(){
+      //入参：城市范围、桥梁名称，用户ID
+      this.getAllCameraTreeDataForBridge({userId:userId}).then(res=>{
+        console.log('getAllCameraTreeDataForBridge',res);
+        this.sourceData = res.data;
+        this.showLoading = false;
       });
-      this.setOverlay(this.waterOverlay);
     },
-    watch: {},
-    methods: {
-      ...mapActions('intelligence/intelligence', ['getDeviceDataList']),
-      ...mapMutations('map', ['pushPageLayers','setClickHandler','setOverlay']),
-      waterClickHandler({ pixel, coordinate }) {
-        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
-        if(feature){
-          this.clickDataItem(feature.get('info'),null)
-          this.waterOverlay.setPosition(coordinate);
-        }
-      },
-      //获取预案数据
-      getDataList() {
-        this.showLoading = true
-        this.getDeviceDataList(this.query).then(res => {
-          console.log(res)
-          this.dataArr = res.list
-          this.totalSize = res.total
-          this.showLoading = false
-        })
-      },
-      //搜索关键字查询
-      onSearch(val) {
-        this.query.searchContent = val
-        this.getDataList()
-      },
-      getEquipPoints() {
-        getTypeEquip('8').then(res => {
-          console.log('===物联信息-8', res)
-          const features = res.map(p => {
-            const point = new Feature({
-              geometry: new Point(p.position)
-            });
-            point.set('id', p.id);
-            point.set('info',p.info);
-            point.set('state',p.info.alarmState);
-            return point;
-          });
-          this.waterLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('8'), 3);
-          this.map.getView().fit(this.waterLayer.getSource().getExtent());
-          this.pushPageLayers(this.waterLayer);
-        })
-      },
-      //翻页
-      changePagination(pageNo, pageSize) {
-        console.log('changePagination', pageNo, pageSize)
-        this.query.pageNo = pageNo
-        this.getDataList()
-      },
 
-      //选择某个预案
-      clickDataItem(item,index) {
-        console.log('clickDataItem', index)
-        this.activeIndex = index
-        const data = item
-        if (data.alarmState === '2') {
-          this.$refs.waterOverlay.$el.style.backgroundImage =
-            'linear-gradient(90deg, #f76a63 0%, #f77f6e 50%, #f79378 100%)'
-        } else {
-          this.$refs.waterOverlay.$el.style.backgroundImage = 'linear-gradient(90deg, #0065ea 0%, #00a5ff 100%)'
-        }
-        this.modalTitle = data.imei
-        this.tipComponentId = WaterLevelInfo
-        this.infoData = data;
-        const xy=[parseFloat(data.longitudeGps84Y), parseFloat(data.latitudeGps84X)];
-        this.mapManager.locateTo(xy);
-        this.waterOverlay.setPosition(xy);
-      },
-
-      closeOverlay() {
-        this.waterOverlay.setPosition(undefined);
+    //点击树中某个节点（某个人员）时触发
+    onSelect(selectedKeys, e){
+      console.log(selectedKeys, e);
+      if(selectedKeys[0].indexOf('dept_')<0){
+        let needData = e.selectedNodes[0].data.props;
+        let mpid = needData.mpid;
+        this.playVideo(mpid);
       }
+    },
+    videoMapClickHandler({ pixel, coordinate }) {
+      const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+      if(feature.get('features')) {
+        const clickFeature = feature.get('features')[0];
+        // const coordinates=clickFeature.getGeometry().getCoordinates();
+        if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
+          const videoInfoData = clickFeature.get('props');
+          this.playVideo(videoInfoData.mpid);
+        }
+      }
+    },
+    playVideo(mpid){
+      //打开摄像头播放
+      this.getCameraUrl({userId: userId, mpId: mpid}).then(res => {
+        this.videoSrc = res.data;
+      });
     }
   }
+}
 </script>
-
 <style lang="scss" scoped>
-  .left-message {
+.video-manage {
+  height: 100%;
+  width: 100%;
+  .left-message-title {
+    height: 50px;
     width: 100%;
-    height: 100%;
-    background-color: #ffffff;
+    padding-left: 20px;
+    line-height: 50px;
+    background-color: #f5f7f8;
+    color: #2b90f3;
+    font-size: 18px;
+    text-align: left;
+  }
+  .search-panel {
+    padding: 20px 20px 0px 20px;
+  }
+  .yuan_dialog_body {
+    background-color: #f5f5f5;
+    height: calc(100% - 50px);
+    margin: 0px 20px 20px 20px;
     position: relative;
-    .left-message-title {
-      height: 50px;
+    .tree-panel {
       width: 100%;
-      padding-left: 20px;
-      line-height: 50px;
-      background-color: #f5f7f8;
-      color: #2b90f3;
-      font-size: 18px;
-      text-align: left;
+      height: 100%;
+      padding: 10px;
+      img {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        /*border-radius: 12px;*/
+        margin-right: 8px;
+        margin-top: -3px;
+      }
     }
-    .search-panel {
-      padding: 20px;
-    }
-    .search-result {
+    .nodata-panel,
+    .spin-panel {
       width: 100%;
-      height: calc(100% - 180px);
-      padding: 0px 20px;
-      .spin-panel {
-        width: 100%;
-        height: 100%;
+      height: 100%;
+    }
+    /deep/.ant-tree.ant-tree-show-line li:not(:last-child):before {
+      border-left: 1px dashed rgba(0, 164, 254, 0.8);
+    }
+    /deep/.ant-tree.ant-tree-show-line li span.ant-tree-switcher {
+      background-color: #f5f5f5;
+      color: rgba(43, 144, 243, 0.8);
+    }
+    /deep/.itemClass {
+      &::before {
+        opacity: 0;
       }
-      .data-panel {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        .none-panel {
-          width: 100%;
-          height: 100%;
-        }
-        .item {
-          width: 100%;
-          height: 40px;
-          margin-top: 2px;
-          background-color: #f5f7f8;
-          font-family: PingFang-SC-Medium;
-          font-size: 14px;
-          color: #333333;
-          cursor: pointer;
-          &.active {
-            background-color: #e9f6ff;
-          }
-          &.warning {
-            color: #f07171;
-            .item_left {
-              .svg_icon {
-                color: #f07171;
-              }
-            }
-          }
-          .svg_icon {
-            width: 16px;
-            height: 16px;
-          }
-          .item_left {
-            margin-left: 10px;
-            .svg_icon {
-              color: #2b8ff3;
-            }
-            span {
-              display: inline-block;
-              max-width: 150px;
-              margin-left: 5px;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              vertical-align: middle;
-            }
-          }
-          .item_right {
-            margin-right: 10px;
-            .svg_icon {
-              color: #2b8ff3;
-            }
-            span {
-              display: inline-block;
-              max-width: 100px;
-              margin-right: 5px;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              vertical-align: middle;
-            }
-          }
-        }
-      }
-      .pagination-panel {
-        text-align: right;
-        padding: 20px 0px 10px 0px;
+      span.ant-tree-switcher {
+        opacity: 0;
+        display: none;
       }
     }
   }
+  .player-panel {
+    display: none;
+    &.active {
+      display: block;
+    }
+  }
+}
 </style>
