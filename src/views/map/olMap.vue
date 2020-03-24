@@ -1,9 +1,8 @@
 <template>
-  <div id="map">
-  </div>
+  <div id="map"></div>
 </template>
 <script>
-import { mapMutations,mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import 'ol/ol.css'
 import { Map, View } from 'ol'
 import { defaults as defaultControls } from 'ol/control'
@@ -22,17 +21,17 @@ export default {
       mockPoints: []
     }
   },
-  watch:{
+  watch: {
     //监听从而实现动画效果
-    current: function(current){
-      if(current){
-          this.layerClear();
+    current: function(current) {
+      if (current) {
+        this.layerClear()
       }
     },
-    activeModule:function (activeModule) {
-        if(activeModule){
-            this.layerClear();
-        }
+    activeModule: function(activeModule) {
+      if (activeModule) {
+        this.layerClear()
+      }
     }
   },
   mounted() {
@@ -42,10 +41,7 @@ export default {
     })
   },
   methods: {
-    ...mapMutations(namespace, [
-      'setMapManager',
-      'setPageLayers'
-    ]),
+    ...mapMutations(namespace, ['setMapManager', 'setPageLayers']),
     initMap() {
       /* 添加影像地图 */
       this.map = new Map({
@@ -53,7 +49,7 @@ export default {
         target: 'map',
         view: new View({
           projection: 'EPSG:4326',
-          center: [122.22190299972,30.26656000004],
+          center: [122.22190299972, 30.26656000004],
           zoom: 13,
           maxZoom: 20,
           minZoom: 7
@@ -171,31 +167,31 @@ export default {
       })
       return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
     },
-      //切换时清除地图上的内容
-    layerClear(){
-        this.pageLayers.map(layer=>{
-            this.map.removeLayer(layer)
-        });
-        this.setPageLayers([]);
-        this.map.un('click',this.clickHandler);
-        console.log(this.yuanOverlay);
-        this.map.removeOverlay(this.yuanOverlay);
-        //管控的地图清除
-        this.map.removeOverlay(this.map.getOverlayById('carPositionOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));
-        const layers=this.map.getLayers().array_;
-        layers.forEach(l=>{
-            if(l.get('featureType')){
-                this.map.removeLayer(l);
-            }
-        });
+    //切换时清除地图上的内容
+    layerClear() {
+      this.pageLayers.map(layer => {
+        this.map.removeLayer(layer)
+      })
+      this.setPageLayers([])
+      this.map.un('click', this.clickHandler)
+      console.log(this.yuanOverlay)
+      this.map.removeOverlay(this.yuanOverlay)
+      //管控的地图清除
+      this.map.removeOverlay(this.map.getOverlayById('carPositionOverlay'))
+      this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'))
+      this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'))
+      this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'))
+      const layers = this.map.getLayers().array_
+      layers.forEach(l => {
+        if (l.get('featureType')) {
+          this.map.removeLayer(l)
+        }
+      })
     }
   },
-  computed:{
+  computed: {
     ...mapState('cgadmin/page', ['current']),
-    ...mapState('map', ['pageLayers','clickHandler','yuanOverlay']),
+    ...mapState('map', ['pageLayers', 'clickHandler', 'yuanOverlay'])
   }
 }
 </script>
@@ -207,18 +203,18 @@ export default {
 }
 .draw {
   position: absolute;
-  top: 1.333rem  /* 100/75 */;
-  right: 1.333rem  /* 100/75 */;
-  width: 0.8rem  /* 60/75 */;
-  height: 0.533rem  /* 40/75 */;
+  top: 1.333rem /* 100/75 */;
+  right: 1.333rem /* 100/75 */;
+  width: 0.8rem /* 60/75 */;
+  height: 0.533rem /* 40/75 */;
   z-index: 999;
 }
 .draw1 {
   position: absolute;
-  top: 2.667rem  /* 200/75 */;
-  right: 1.333rem  /* 100/75 */;
-  width: 0.8rem  /* 60/75 */;
-  height: 0.533rem  /* 40/75 */;
+  top: 2.667rem /* 200/75 */;
+  right: 1.333rem /* 100/75 */;
+  width: 0.8rem /* 60/75 */;
+  height: 0.533rem /* 40/75 */;
   z-index: 999;
 }
 </style>

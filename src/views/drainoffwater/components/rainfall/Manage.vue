@@ -66,8 +66,8 @@ export default {
       },
 
       //地图相关
-      videoFeatures: [],
-      videoLayer: null,
+      watchFeatures: [],
+      watchLayer: null,
       isLoadData: false,
       clusterLayer:null
     }
@@ -77,7 +77,7 @@ export default {
     //获得展示的数据与属性
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
-      this.videoFeatures=[];
+      this.watchFeatures=[];
       this.resultCount = 0;
       this.changeTreeData(data,'');
       this.isLoadData=!this.isLoadData;
@@ -86,15 +86,15 @@ export default {
   },
   watch:{
     isLoadData:function() {
-      if(this.videoFeatures.length>0){
-        if(this.videoLayer){
-            this.videoLayer.getSource().clear();
-            this.videoLayer.getSource().addFeatures(this.carFeatures);
+      if(this.watchFeatures.length>0){
+        if(this.watchLayer){
+            this.watchLayer.getSource().clear();
+            this.watchLayer.getSource().addFeatures(this.watchFeatures);
         }else{
-            this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
-            this.videoLayer.set('featureType','videoDistribute');
+            this.watchLayer = this.mapManager.addClusterLayerByFeatures(this.watchFeatures);
+            this.watchLayer.set('featureType','videoDistribute');
         }
-        const extent=this.videoLayer.getSource().getSource().getExtent();
+        const extent=this.watchLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
     }
@@ -134,11 +134,11 @@ export default {
           this.resultCount++;
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
-            const feature=_this.mapManager.xyToFeature(item.x,item.y);
+            const feature=_this.mapManager.xyToFeature(item.y,item.x);
             feature.set('icon','carmera_online');
             feature.set('props',item);
             feature.set('type','VideoDistribute');
-            _this.videoFeatures.push(feature);
+            _this.watchFeatures.push(feature);
           }
         }
         else{
@@ -166,6 +166,7 @@ export default {
       this.getOneRainMacData({userId:userId}).then(res=>{
         this.detailInfoData = res.data;
         this.detailInfoData.type = 'water';
+        console.log('res',res);
       });
     },
     videoMapClickHandler({ pixel, coordinate }) {
