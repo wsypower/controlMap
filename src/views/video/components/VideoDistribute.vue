@@ -102,7 +102,23 @@ export default {
   watch:{
     isLoadData:function() {
       if(this.videoFeatures.length>0){
-        this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
+        const data=this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
+        this.videoLayer = data[0];
+        const selectCluster = data[1];
+        selectCluster.getFeatures().on(['add'], function(e) {
+            console.log('e==',e);
+              const c = e.element.get('features');
+              if (!c) {
+                  return;
+              }
+              if (c.length == 1) {
+                  const feature = c[0];
+                  // _this.showCameraPopup(feature);
+                  console.log('selectCluster',feature);
+              } else {
+                  console.log('selectCluster','多个要素');
+              }
+          });
         this.videoLayer.set('featureType','videoDistribute');
         const extent=this.videoLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
@@ -216,7 +232,7 @@ export default {
     },
       videoMapClickHandler({ pixel, coordinate }) {
           const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-          if(feature.get('features')){
+          if(feature && feature.get('features')){
               const clickFeature=feature.get('features')[0];
               // const coordinates=clickFeature.getGeometry().getCoordinates();
               if(clickFeature&& clickFeature.get('type')=='VideoDistribute'){
