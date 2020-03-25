@@ -119,7 +119,7 @@ export default {
         // this.peopleLayer = this.mapManager.addVectorLayerByFeatures(this.peopleFeatures,PeoplePointStyle(),3);
         // this.peopleLayer.set('featureType','PeoplePosition');
         // this.mapManager.getMap().getView().fit(this.peopleLayer.getSource().getExtent());
-        this.peopleLayer= this.mapManager.addClusterLayerByFeatures(this.peopleFeatures);
+        this.peopleLayer= this.mapManager.addClusterLayerByFeatures(this.peopleFeatures)[0];
         this.peopleLayer.set('featureType','PeoplePosition');
         const extent=this.peopleLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);

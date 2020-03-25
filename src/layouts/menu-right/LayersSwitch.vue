@@ -183,7 +183,7 @@
             //数据生成对应图层
             datToLayer(layer,data,type){
                 const features=listToFeatures(data,type);
-                layer.lyr=this.mapManager.addClusterLayerByFeatures(features);
+                layer.lyr=this.mapManager.addClusterLayerByFeatures(features)[0];
                 layer.lyr.setVisible(false);
             },
             toggleService (layer) {
