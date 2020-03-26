@@ -104,6 +104,9 @@ export default {
     this.map.on('click', this.manholeClickHandler);
     this.setClickHandler(this.manholeClickHandler);
     this.lightOverlay = this.mapManager.addOverlay({
+        id:'lightOverlay',
+        offset:[0,-20],
+        positioning: 'bottom-center',
       element: this.$refs.detailInfo.$el
     });
     this.setOverlay(this.lightOverlay);
@@ -148,6 +151,7 @@ export default {
           return point;
         });
         this.lightLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
+        this.lightLayer.set('featureType','light');
         this.map.getView().fit(this.lightLayer.getSource().getExtent());
         // this.pushPageLayers(this.lightLayer);
       })
@@ -167,7 +171,9 @@ export default {
 
     //选择某个路灯
     clickDataItem(item, index) {
-      console.log('clickDataItem', item)
+      console.log('clickDataItem', item);
+      this.lightOverlay.setPosition([parseFloat(item.x),parseFloat(item.y)]);
+      this.mapManager.locateTo([parseFloat(item.x),parseFloat(item.y)]);
       this.activeIndex = index;
       //detailInfoData
       this.getOneLightMacData().then( res =>{
