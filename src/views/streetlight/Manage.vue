@@ -109,7 +109,6 @@ export default {
         positioning: 'bottom-center',
       element: this.$refs.detailInfo.$el
     });
-    this.setOverlay(this.lightOverlay);
   },
   watch: {},
   methods: {
@@ -120,17 +119,19 @@ export default {
       this.selectedCity = val;
     },
     manholeClickHandler({ pixel, coordinate }) {
-      const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
-      if(feature){
-        this.clickDataItem(feature.get('info'),null)
-        this.lightOverlay.setPosition(coordinate);
-      }
+        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+        if(feature.get('features')) {
+            const clickFeature = feature.get('features')[0];
+            // const coordinates=clickFeature.getGeometry().getCoordinates();
+            if (clickFeature && clickFeature.get('type') == 'light') {
+                this.lightOverlay.setPosition(coordinate);
+            }
+        }
     },
     //获取预案数据
     getDataList() {
       this.showLoading = true
       this.getAllLightListData(this.query).then(res => {
-        console.log(res)
         this.dataArr = res.data
         this.totalSize = res.data.length
         this.showLoading = false
@@ -148,11 +149,14 @@ export default {
           point.set('info',p.info);
           point.set('state',p.info.alarmState);
           point.set('type','light');
+          point.set('icon','carmera_online');
           return point;
         });
-        this.lightLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
+        // this.lightLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
+        this.lightLayer = this.mapManager.addClusterLayerByFeatures(features);
         this.lightLayer.set('featureType','light');
-        this.map.getView().fit(this.lightLayer.getSource().getExtent());
+        const extent=this.lightLayer.getSource().getSource().getExtent();
+        this.mapManager.getMap().getView().fit(extent);
         // this.pushPageLayers(this.lightLayer);
       })
     },

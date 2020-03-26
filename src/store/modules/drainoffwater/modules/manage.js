@@ -12,7 +12,6 @@ export default {
   namespaced: true,
   actions: {
     getAllCameraTreeData(state, data) {
-      console.log('store', data)
       return new Promise((resolve, reject) => {
         getAllCameraTreeData(data)
           .then(res => {
@@ -38,7 +37,6 @@ export default {
       })
     },
     getAllRainMacTreeData(state, data) {
-      console.log('store', data)
       return new Promise((resolve, reject) => {
         getAllRainMacTreeData(data)
           .then(res => {

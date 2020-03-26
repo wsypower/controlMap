@@ -18,7 +18,6 @@ export default {
         //判断参数是不是key是不是userId
         const isUserId = has(UrlParameters, 'userId')
         if (!isUserId) {
-          console.log('meiyou isUserId')
           dispatch('logout')
           return false
         }

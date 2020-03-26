@@ -54,7 +54,6 @@ new Vue({
     this.$store
       .dispatch('cgadmin/account/login')
       .then((res) => {
-        console.log(111,res);
         //登录后获取用户权限
         // const role = this.$store.getters['cgadmin/user/role']
         // console.log(role)
@@ -64,7 +63,6 @@ new Vue({
         this.$store.commit('cgadmin/menu/asideSet', menu)
       })
       .catch(err => {
-        console.log(err)
       })
     //设置侧边栏伸缩
     this.$store.commit('cgadmin/menu/asideCollapseSetState', setting.menu.asideCollapse)

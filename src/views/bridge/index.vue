@@ -96,7 +96,6 @@ export default {
     this.map.on('click', this.videoMapClickHandler);
     //入参：地址、桥梁名称
     this.getAllCameraTreeDataForBridge({userId:userId}).then(res=>{
-      console.log('getAllCameraTreeDataForBridge',res);
       this.sourceData = res.data;
       this.showLoading = false;
     });
@@ -139,7 +138,6 @@ export default {
     onSearch(){
       //入参：城市范围、桥梁名称，用户ID
       this.getAllCameraTreeDataForBridge({userId:userId}).then(res=>{
-        console.log('getAllCameraTreeDataForBridge',res);
         this.sourceData = res.data;
         this.showLoading = false;
       });

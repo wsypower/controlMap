@@ -95,7 +95,6 @@ export default {
     this.map.on('click', this.videoMapClickHandler);
     //入参：地址、监测点名称
     this.getAllCameraTreeData({userId:userId}).then(res=>{
-      console.log('getAllCameraTreeData',res);
       this.sourceData = res.data;
       this.showLoading = false;
     });
@@ -138,7 +137,6 @@ export default {
     onSearch(){
       //入参：城市范围、监测点名称，用户ID
       this.getAllCameraTreeData({userId:userId}).then(res=>{
-        console.log('getAllCameraTreeData',res);
         this.sourceData = res.data;
         this.showLoading = false;
       });
