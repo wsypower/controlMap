@@ -156,7 +156,7 @@ const getAllCameraTreeData = options => {
           puid: '33092104001320016549',
           typename: '老区监控',
           y: '30.252497',
-          x: '122.201541'
+          y: '122.201541'
         },
         {
           ip: '192.168.100.22',
@@ -340,32 +340,32 @@ const getAllRainMacTreeData = options => {
           name: '设备0001',
           isLeaf: true,
           online: false,
-          x: '30.247886',
-          y: '122.202261'
+          y: '30.247886',
+          x: '122.202261'
         },
         {
           id: '33092104001320010677',
           name: '设备0002',
           isLeaf: true,
           online: false,
-          x: '30.247886',
-          y: '122.202261'
+          y: '30.247886',
+          x: '122.202261'
         },
         {
           id: '33092104001320010678',
           name: '设备0003',
           isLeaf: true,
           online: false,
-          x: '30.265587',
-          y: '122.218019'
+          y: '30.265587',
+          x: '122.218019'
         },
         {
           id: '33092104001320010679',
           name: '设备0004',
           isLeaf: true,
           online: false,
-          x: '30.265587',
-          y: '122.218019'
+          y: '30.265587',
+          x: '122.218019'
         }
       ]
     },
@@ -379,80 +379,80 @@ const getAllRainMacTreeData = options => {
           name: '设备0001',
           isLeaf: true,
           online: false,
-          x: '30.245140',
-          y: '122.208213'
+          y: '30.245140',
+          x: '122.208213'
         },
         {
           id: '33092104001320011641',
           name: '设备0002',
           isLeaf: true,
           online: false,
-          x: '30.245140',
-          y: '122.208213'
+          y: '30.245140',
+          x: '122.208213'
         },
         {
           id: '33092104001320011642',
           name: '设备0003',
           isLeaf: true,
           online: false,
-          x: '30.252779',
-          y: '122.220688'
+          y: '30.252779',
+          x: '122.220688'
         },
         {
           id: '33092104001320011643',
           name: '设备0004',
           isLeaf: true,
           online: false,
-          x: '30.252779',
-          y: '122.220688'
+          y: '30.252779',
+          x: '122.220688'
         },
         {
           id: '33092104001320011644',
           name: '设备0005',
           isLeaf: true,
           online: false,
-          x: '30.245192',
-          y: '122.206967'
+          y: '30.245192',
+          x: '122.206967'
         },
         {
           id: '33092104001320011645',
           name: '设备0006',
           isLeaf: true,
           online: false,
-          x: '30.240435',
-          y: '122.203112'
+          y: '30.240435',
+          x: '122.203112'
         },
         {
           id: '33092104001320011646',
           name: '设备0007',
           isLeaf: true,
           online: false,
-          x: '30.247607',
-          y: '122.202172'
+          y: '30.247607',
+          x: '122.202172'
         },
         {
           id: '33092104001320011647',
           name: '设备0008',
           isLeaf: true,
           online: false,
-          x: '30.252497',
-          y: '122.201541'
+          y: '30.252497',
+          x: '122.201541'
         },
         {
           id: '33092104001320011648',
           name: '设备0009',
           isLeaf: true,
           online: false,
-          x: '30.252497',
-          y: '122.201541'
+          y: '30.252497',
+          x: '122.201541'
         },
         {
           id: '33092104001320011649',
           name: '设备0010',
           isLeaf: true,
           online: false,
-          x: '30.252497',
-          y: '122.201541'
+          y: '30.252497',
+          x: '122.201541'
         }
       ]
     }
@@ -495,8 +495,8 @@ const getOneRainMacData = options => {
       ],
       [13, 23, 16, 29, 55, 33, 40]
     ],
-    x:'',
-    y:''
+    x:'122.201541',
+    y:'30.252497'
   }
 
   return builder(
@@ -527,32 +527,32 @@ const getAllWaterLevelMacTreeData = options => {
           name: '设备0001',
           isLeaf: true,
           online: false,
-          x: '30.247886',
-          y: '122.202261'
+          y: '30.247886',
+          x: '122.202261'
         },
         {
           id: '33092104001320010677',
           name: '设备0002',
           isLeaf: true,
           online: true,
-          x: '30.247886',
-          y: '122.202261'
+          y: '30.247886',
+          x: '122.202261'
         },
         {
           id: '33092104001320010678',
           name: '设备0003',
           isLeaf: true,
           online: false,
-          x: '30.265587',
-          y: '122.218019'
+          y: '30.265587',
+          x: '122.218019'
         },
         {
           id: '33092104001320010679',
           name: '设备0004',
           isLeaf: true,
           online: false,
-          x: '30.265587',
-          y: '122.218019'
+          y: '30.265587',
+          x: '122.218019'
         }
       ]
     },
@@ -566,80 +566,80 @@ const getAllWaterLevelMacTreeData = options => {
           name: '设备0001',
           isLeaf: true,
           online: false,
-          x: '30.245140',
-          y: '122.208213'
+          y: '30.245140',
+          x: '122.208213'
         },
         {
           id: '33092104001320011641',
           name: '设备0002',
           isLeaf: true,
           online: false,
-          x: '30.245140',
-          y: '122.208213'
+          y: '30.245140',
+          x: '122.208213'
         },
         {
           id: '33092104001320011642',
           name: '设备0003',
           isLeaf: true,
           online: true,
-          x: '30.252779',
-          y: '122.220688'
+          y: '30.252779',
+          x: '122.220688'
         },
         {
           id: '33092104001320011643',
           name: '设备0004',
           isLeaf: true,
           online: false,
-          x: '30.252779',
-          y: '122.220688'
+          y: '30.252779',
+          x: '122.220688'
         },
         {
           id: '33092104001320011644',
           name: '设备0005',
           isLeaf: true,
           online: true,
-          x: '30.245192',
-          y: '122.206967'
+          y: '30.245192',
+          x: '122.206967'
         },
         {
           id: '33092104001320011645',
           name: '设备0006',
           isLeaf: true,
           online: false,
-          x: '30.240435',
-          y: '122.203112'
+          y: '30.240435',
+          x: '122.203112'
         },
         {
           id: '33092104001320011646',
           name: '设备0007',
           isLeaf: true,
           online: true,
-          x: '30.247607',
-          y: '122.202172'
+          y: '30.247607',
+          x: '122.202172'
         },
         {
           id: '33092104001320011647',
           name: '设备0008',
           isLeaf: true,
           online: true,
-          x: '30.252497',
-          y: '122.201541'
+          y: '30.252497',
+          x: '122.201541'
         },
         {
           id: '33092104001320011648',
           name: '设备0009',
           isLeaf: true,
           online: false,
-          x: '30.252497',
-          y: '122.201541'
+          y: '30.252497',
+          x: '122.201541'
         },
         {
           id: '33092104001320011649',
           name: '设备0010',
           isLeaf: true,
           online: false,
-          x: '30.252497',
-          y: '122.201541'
+          y: '30.252497',
+          x: '122.201541'
         }
       ]
     }
@@ -708,9 +708,9 @@ const getDeviceDataList = options => {
       statusId: 0,
       statusName: '正常',
       area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      address: 'yyyyyyyyyyyy',
+      y: '30.247886',
+      x: '122.202261'
     },
     {
       id: '33092104001320015992',
@@ -718,9 +718,9 @@ const getDeviceDataList = options => {
       statusId: 0,
       statusName: '正常',
       area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      address: 'yyyyyyyyyyyy',
+      y: '30.247886',
+      x: '122.202261'
     },
     {
       id: '33092104001320015993',
@@ -728,9 +728,9 @@ const getDeviceDataList = options => {
       statusId: 0,
       statusName: '正常',
       area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      address: 'yyyyyyyyyyyy',
+      y: '30.247886',
+      x: '122.202261'
     },
     {
       id: '33092104001320015994',
@@ -738,9 +738,9 @@ const getDeviceDataList = options => {
       statusId: 1,
       statusName: '警告',
       area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      address: 'yyyyyyyyyyyy',
+      y: '30.247886',
+      x: '122.202261'
     },
     {
       id: '33092104001320015995',
@@ -748,9 +748,9 @@ const getDeviceDataList = options => {
       statusId: 0,
       statusName: '正常',
       area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      address: 'yyyyyyyyyyyy',
+      y: '30.247886',
+      x: '122.202261'
     },
     {
       id: '33092104001320015996',
@@ -758,9 +758,9 @@ const getDeviceDataList = options => {
       statusId: 2,
       statusName: '离线',
       area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      address: 'yyyyyyyyyyyy',
+      y: '30.247886',
+      x: '122.202261'
     },
     {
       id: '33092104001320015997',
@@ -768,9 +768,9 @@ const getDeviceDataList = options => {
       statusId: 0,
       statusName: '正常',
       area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      address: 'yyyyyyyyyyyy',
+      y: '30.247886',
+      x: '122.202261'
     }
   ]
 

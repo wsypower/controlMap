@@ -24,7 +24,7 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
-    <div style="position: fixed; top: 20px;right: 20px;">
+    <div hidden>
       <detail-info ref="detailInfo" :info="detailInfoData" @closeTip="closeTip"></detail-info>
     </div>
   </div>
@@ -67,10 +67,11 @@ export default {
       },
 
       //地图相关
-      videoFeatures: [],
-      videoLayer: null,
+      waterFeatures: [],
+      waterLayer: null,
       isLoadData: false,
-      clusterLayer:null
+      clusterLayer:null,
+        waterOverlay:null
     }
   },
   computed:{
@@ -78,7 +79,7 @@ export default {
     //获得展示的数据与属性
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
-      this.videoFeatures=[];
+      this.waterFeatures=[];
       this.resultCount = 0;
       this.changeTreeData(data,'');
       this.isLoadData=!this.isLoadData;
@@ -87,15 +88,15 @@ export default {
   },
   watch:{
     isLoadData:function() {
-      if(this.videoFeatures.length>0){
-        if(this.videoLayer){
-            this.videoLayer.getSource().clear();
-            this.videoLayer.getSource().addFeatures(this.carFeatures);
+      if(this.waterFeatures.length>0){
+        if(this.waterLayer){
+            this.waterLayer.getSource().clear();
+            this.waterLayer.getSource().addFeatures(this.carFeatures);
         }else{
-            this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
-            this.videoLayer.set('featureType','videoDistribute');
+            this.waterLayer = this.mapManager.addClusterLayerByFeatures(this.waterFeatures);
+            this.waterLayer.set('featureType','videoDistribute');
         }
-        const extent=this.videoLayer.getSource().getSource().getExtent();
+        const extent=this.waterLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
     }
@@ -104,6 +105,13 @@ export default {
     this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
+    // 地图弹框初始化
+    this.waterOverlay = this.mapManager.addOverlay({
+        id:'waterSupplyOverlay',
+        offset:[0,-20],
+        positioning: 'bottom-center',
+        element: this.$refs.detailInfo.$el
+    });
     this.getAllWaterQMMacTreeData({userId:userId}).then(res=>{
       console.log('getAllWaterQMMacTreeData',res);
       this.sourceData = res.data;
@@ -138,8 +146,8 @@ export default {
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
             feature.set('icon','carmera_online');
             feature.set('props',item);
-            feature.set('type','VideoDistribute');
-            _this.videoFeatures.push(feature);
+            feature.set('type','waterSupply');
+            _this.waterFeatures.push(feature);
           }
         }
         else{
@@ -162,7 +170,10 @@ export default {
     //点击树中某个节点（某个人员）时触发
     onSelect(selectedKeys, e){
       console.log(selectedKeys, e);
-      //地图上的点位放大居中
+      const obj = e.selectedNodes[0].data.props;
+      this.waterOverlay.setPosition([parseFloat(obj.x),parseFloat(obj.y)]);
+      this.mapManager.locateTo([parseFloat(obj.x),parseFloat(obj.y)]);
+      // 地图上的点位放大居中
       // 获取详情数据
       this.getOneWaterQMMacData({userId:userId}).then(res=>{
         this.detailInfoData = res.data;
@@ -174,14 +185,14 @@ export default {
         if(feature.get('features')) {
             const clickFeature = feature.get('features')[0];
             // const coordinates=clickFeature.getGeometry().getCoordinates();
-            if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
-                const videoInfoData = clickFeature.get('props');
-                this.playVideo(videoInfoData.mpid);
+            if (clickFeature && clickFeature.get('type') == 'waterSupply') {
+                this.waterOverlay.setPosition( coordinate );
+                // const videoInfoData = clickFeature.get('props');
             }
         }
     },
     closeTip(){
-
+        this.waterOverlay.setPosition( undefined );
     }
   }
 }

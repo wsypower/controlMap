@@ -24,7 +24,7 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
-    <div style="position: fixed; top: 20px;right: 20px;">
+    <div hidden>
       <detail-info ref="detailInfo" :info="detailInfoData" @closeTip="closeTip"></detail-info>
     </div>
   </div>
@@ -64,12 +64,12 @@ export default {
         },
         chartData: []
       },
-
       //地图相关
       watchFeatures: [],
       watchLayer: null,
       isLoadData: false,
-      clusterLayer:null
+      clusterLayer: null,
+      watchOverlay: null
     }
   },
   computed:{
@@ -92,7 +92,7 @@ export default {
             this.watchLayer.getSource().addFeatures(this.watchFeatures);
         }else{
             this.watchLayer = this.mapManager.addClusterLayerByFeatures(this.watchFeatures);
-            this.watchLayer.set('featureType','videoDistribute');
+            this.watchLayer.set('featureType','rainWatch');
         }
         const extent=this.watchLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
@@ -107,6 +107,13 @@ export default {
       console.log('getAllRainMacTreeData',res);
       this.sourceData = res.data;
       this.showLoading = false;
+    });
+    // 地图弹框初始化
+    this.watchOverlay = this.mapManager.addOverlay({
+        id:'rainWatchOverlay',
+        offset:[0,-20],
+        positioning: 'bottom-center',
+        element: this.$refs.detailInfo.$el
     });
   },
   methods:{
@@ -134,10 +141,10 @@ export default {
           this.resultCount++;
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
-            const feature=_this.mapManager.xyToFeature(item.y,item.x);
+            const feature=_this.mapManager.xyToFeature(item.x,item.y);
             feature.set('icon','carmera_online');
             feature.set('props',item);
-            feature.set('type','VideoDistribute');
+            feature.set('type','rainfall');
             _this.watchFeatures.push(feature);
           }
         }
@@ -160,7 +167,11 @@ export default {
 
     //点击树中某个节点（某个人员）时触发
     onSelect(selectedKeys, e){
-      console.log(selectedKeys, e);
+      console.log('selectedKeys',selectedKeys)
+      console.log('e', e.selectedNodes[0].data.props);
+      const obj = e.selectedNodes[0].data.props;
+      this.watchOverlay.setPosition([parseFloat(obj.x),parseFloat(obj.y)]);
+        this.mapManager.locateTo([parseFloat(obj.x),parseFloat(obj.y)]);
       //地图上的点位放大居中
       // 获取详情数据
       this.getOneRainMacData({userId:userId}).then(res=>{
@@ -169,19 +180,21 @@ export default {
         console.log('res',res);
       });
     },
+    // 地图点击事件处理器
     videoMapClickHandler({ pixel, coordinate }) {
         const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
         if(feature.get('features')) {
             const clickFeature = feature.get('features')[0];
             // const coordinates=clickFeature.getGeometry().getCoordinates();
-            if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
-                const videoInfoData = clickFeature.get('props');
-                this.playVideo(videoInfoData.mpid);
+            if (clickFeature && clickFeature.get('type') == 'rainfall') {
+                // this.detailInfoData = clickFeature.get('props');
+                this.watchOverlay.setPosition( coordinate );
             }
         }
     },
+    // 地图弹框关闭方法
     closeTip(){
-
+        this.watchOverlay.setPosition( undefined );
     }
   }
 }
