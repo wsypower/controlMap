@@ -39,6 +39,10 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
+    <div style="position:fixed;top:100px;right:100px;">
+      <video-info ref="videoInfo" :info="videoInfoData" @closeTip="closeTip" @openVideoPlayer="openVideoPlayer"></video-info>
+    </div>
+
     <div class="player-panel active" v-if="playerMethod === 'browser'">
       <my-video-player :videoSrc.sync="videoSrc" :multiple="true"></my-video-player>
     </div>
@@ -49,6 +53,7 @@
 import { mapState,mapActions } from 'vuex'
 import util from '@/utils/util';
 import MyVideoPlayer from "./MyVideoPlayer.vue";
+import VideoInfo from "./VideoInfo.vue"
 import {videoPointStyle} from '@/utils/util.map.style'
 import { pointToFeature  } from "@/utils/util.map.manage";
 import axios from 'axios'
@@ -56,7 +61,8 @@ const userId = util.cookies.get('userId');
 export default {
   name: 'VideoDistribute',
   components:{
-    MyVideoPlayer
+    MyVideoPlayer,
+    VideoInfo
   },
   data(){
     return {
@@ -77,6 +83,10 @@ export default {
       playerMethod: 'tool', //browser：flash播放  tool：C端播放
       //视频流URL
       videoSrc: '',
+      videoInfoData:{
+        addressName: '岱山中心',
+        videoList: []
+      },
       //地图相关
       videoFeatures: [],
       //地图相关
@@ -228,6 +238,11 @@ export default {
             }
         }
         this.playVideo(mpid);
+        // this.videoInfoData.addressName = '半岛城市花园东门xxx';
+        // this.videoInfoData.videoList = [{ label: '半岛城市花园东门-枪', value: '111111' },
+        //   { label: '半岛城市花园东门-枪', value: '2' },
+        //   { label: '半岛城市花园东门-枪', value: '3' },
+        //   { label: '半岛城市花园东门-枪', value: '4' }];
       }
     },
       videoMapClickHandler({ pixel, coordinate }) {
@@ -241,6 +256,32 @@ export default {
               }
           }
       },
+    //从预览过来打开摄像头
+    openVideoPlayer(videoList){
+      console.log('openVideoPlayer',videoList);
+      //打开C端工具播放
+      axios.get('http://61.153.37.214:81/api/sp/getSecretApi').then(resultConfig => {
+        if (resultConfig) {
+          var PalyType = "PlayReal";
+          var SvrPort = "443";
+          var httpsflag = "1";
+          var data = resultConfig.data.data;
+          var SvrIp = data.SvrIp;
+          var appkey = data.appkey;
+          var appSecret = data.appSecret;
+          var time = data.time;
+          var timeSecret = data.timeSecret;
+          for(let i=0;i<videoList.length;i++){
+            var CamList = videoList[i];
+            //主要是添加了'hikvideoclient://' 和 'VersionTag:artemis'2段字符串
+            var param = 'hikvideoclient://ReqType:' + PalyType + ';' + 'VersionTag:artemis' + ';' + 'SvrIp:' + SvrIp + ';' + 'SvrPort:' + SvrPort + ';' + 'Appkey:' + appkey + ';' + 'AppSecret:' + appSecret + ';' + 'time:' + time + ';' + 'timesecret:' + timeSecret + ';' + 'httpsflag:' + httpsflag + ';' + 'CamList:' + CamList + ';';
+            document.getElementById("url").src = param;
+          }
+        }
+      }).catch(err => {
+        console.log("错误信息---------->" + err);
+      });
+    },
     playVideo(mpid){
       if (this.playerMethod === 'browser') {
         //打开摄像头播放
@@ -269,6 +310,9 @@ export default {
           console.log("错误信息---------->" + err);
         });
       }
+    },
+    closeTip(){
+
     }
   }
 }

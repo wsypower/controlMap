@@ -29,6 +29,9 @@ Vue.use(vueFiltersDate)
 import echarts from "echarts";
 Vue.prototype.$echarts = echarts;
 
+import vuescroll from 'vuescroll';
+Vue.use(vuescroll);
+
 import { HappyScroll } from 'vue-happy-scroll'
 //自定义组件名
 Vue.component('happy-scroll', HappyScroll)
