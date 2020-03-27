@@ -72,6 +72,7 @@ export default {
       if(module === this.activeModule) return;
       if(modulePermission.indexOf(module)>=0){
         if(module==='ld'){
+          this.$message.config({top: '100px'});
           this.$message.warning('页面正在开发尽情期待！！！');
         }
         else{
@@ -88,6 +89,7 @@ export default {
         }
       }
       else{
+        this.$message.config({top: '100px'});
         this.$message.warning('你没有这个模块的使用权限！！！');
       }
     }
