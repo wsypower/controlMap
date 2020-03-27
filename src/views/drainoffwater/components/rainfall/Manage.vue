@@ -146,6 +146,7 @@ export default {
             feature.set('props',item);
             feature.set('type','rainfall');
             _this.watchFeatures.push(feature);
+            console.log('test');
           }
         }
         else{
