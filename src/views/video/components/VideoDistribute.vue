@@ -238,7 +238,6 @@ export default {
               if(clickFeature&& clickFeature.get('type')=='VideoDistribute'){
                   const videoInfoData=clickFeature.get('props');
                   this.playVideo(videoInfoData.mpid);
-                  console.log('ttss123')
               }
           }
       },
