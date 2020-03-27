@@ -39,7 +39,7 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
-    <div style="position:fixed;top:100px;right:100px;">
+    <div hidden>
       <video-info ref="videoInfo" :info="videoInfoData" @closeTip="closeTip" @openVideoPlayer="openVideoPlayer"></video-info>
     </div>
 
@@ -84,7 +84,7 @@ export default {
       //视频流URL
       videoSrc: '',
       videoInfoData:{
-        addressName: '岱山中心',
+        addressName: '视频列表',
         videoList: []
       },
       //地图相关
@@ -93,7 +93,9 @@ export default {
       videoLayer: null,
       isLoadData: false,
       clusterLayer:null,
-      selectLayer:null
+      selectLayer:null,
+      selectList:[],
+        selectOverlay:null,
     }
   },
   computed:{
@@ -115,22 +117,29 @@ export default {
         const data=this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
         this.videoLayer = data[0];
         const selectCluster = data[1];
+        const _this=this;
         selectCluster.getFeatures().on(['add'], function(e) {
-            console.log('e==',e);
               const c = e.element.get('features');
               if (!c) {
                   return;
               }
               if (c.length == 1) {
-                  const feature = c[0];
-                  // _this.showCameraPopup(feature);
-                  console.log('selectCluster',feature);
-              } else {
-                  console.log('selectCluster','多个要素');
+              } else if(c.length <5){
+                  _this.videoInfoData.videoList=[];
+                  for(let i=0;i<c.length;i++){
+                      const props=c[i].get('props');
+                      _this.videoInfoData.videoList.push({
+                          label:props.mpname,
+                          value:props.mpid
+                      })
+                  }
+                  const coor = e.element.get('geometry').getCoordinates();
+                  _this.selectOverlay.setPosition(coor);
+                  console.log('selectCluster',c);
               }
           });
         this.videoLayer.set('featureType','videoDistribute');
-        const extent=this.videoLayer.getSource().getSource().getExtent();
+        const extent = this.videoLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
     }
@@ -139,6 +148,12 @@ export default {
     this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
+    this.selectOverlay = this.mapManager.addOverlay({
+        id:'selectVideoOverlay',
+        offset:[0,-20],
+        positioning: 'bottom-center',
+        element: this.$refs.videoInfo.$el
+    });
     let acModule = '';
     if(this.activeModule === 'jm'){
       acModule = '';
@@ -151,6 +166,7 @@ export default {
       this.sourceData = res;
       this.showLoading = false;
     });
+
   },
   methods:{
     ...mapActions('video/manage', ['getAllCameraTreeData','getCameraUrl']),
@@ -247,10 +263,11 @@ export default {
     },
       videoMapClickHandler({ pixel, coordinate }) {
           const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-          if(feature && feature.get('features')){
+          if(feature && feature.get('features').length==1){
               const clickFeature=feature.get('features')[0];
               // const coordinates=clickFeature.getGeometry().getCoordinates();
               if(clickFeature&& clickFeature.get('type')=='VideoDistribute'){
+                  console.log('测试');
                   const videoInfoData=clickFeature.get('props');
                   this.playVideo(videoInfoData.mpid);
               }
@@ -312,7 +329,7 @@ export default {
       }
     },
     closeTip(){
-
+        this.selectOverlay.setPosition(undefined);
     }
   }
 }
