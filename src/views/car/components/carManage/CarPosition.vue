@@ -87,7 +87,8 @@ export default {
           //地图相关
           carLayer: null,
           //地图更新需要
-          isLoadData: false
+          isLoadData: false,
+          isFirstLoading:true
         }
     },
     computed:{
@@ -108,10 +109,15 @@ export default {
       if(this.carFeatures.length>0){
         // this.carLayer = this.mapManager.addVectorLayerByFeatures(this.carFeatures,carPointStyle(),3);
         //加载聚类车辆图层
-        this.carLayer = this.mapManager.addClusterLayerByFeatures(this.carFeatures)[0];
-        this.carLayer.set('featureType','CarPosition');
-        const extent=this.carLayer.getSource().getSource().getExtent();
-        this.mapManager.getMap().getView().fit(extent);
+        if(this.isFirstLoading){
+            this.carLayer = this.mapManager.addClusterLayerByFeatures(this.carFeatures)[0];
+            this.carLayer.set('featureType','CarPosition');
+            const extent=this.carLayer.getSource().getSource().getExtent();
+            this.mapManager.getMap().getView().fit(extent);
+        }else{
+            this.carLayer.getSource().getSource().clear();
+            this.carLayer.getSource().getSource().addFeatures(this.carFeatures);
+        }
       }
     }
   },
@@ -138,10 +144,12 @@ export default {
       });
       let _this = this;
       this.timer = setInterval(function() {
+        _this.isFirstLoading=false;
         _this.getAllCarTreeData({userId:userId, moduleType: _this.activeModule}).then(res=>{
           // _this.sourceData = res;
           _this.peopleNewDataList = [];
           _this.deptNewDataList = [];
+          _this.carFeatures=[];
           _this.changeOldData(res);
           let idArr = _this.compareDataToIdArr();
           _this.isLoadData = !_this.isLoadData;
@@ -205,8 +213,27 @@ export default {
       changeOldData(data){
         const _this = this;
         data.forEach(item=>{
+          let pointImg;
           if(item.isLeaf){
+            if(item.online){
+                if(item.isOverSpeed){
+                    pointImg='car-overspeed';
+                }else{
+                    pointImg='car-online';
+                }
+            }
+            else{
+                pointImg='car-offline';
+            }
             _this.carNewDataList.push(item);
+            // 通过经纬度生成点位加到地图上
+            if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                const feature=_this.mapManager.xyToFeature(item.x,item.y);
+                feature.set('icon',pointImg);
+                feature.set('props',item);
+                feature.set('type','CarPosition');
+                _this.carFeatures.push(feature);
+            }
           }
           else{
             let parentString = 'dept_' + item.id + '@' + item.name + '(' + item.onlineNum + '/' + item.allNum +')';
