@@ -124,7 +124,7 @@ export default {
                   return;
               }
               if (c.length == 1) {
-              } else if(c.length <5){
+              } else if(c.length <6){
                   _this.videoInfoData.videoList=[];
                   for(let i=0;i<c.length;i++){
                       const props=c[i].get('props');
@@ -254,11 +254,6 @@ export default {
             }
         }
         this.playVideo(mpid);
-        // this.videoInfoData.addressName = '半岛城市花园东门xxx';
-        // this.videoInfoData.videoList = [{ label: '半岛城市花园东门-枪', value: '111111' },
-        //   { label: '半岛城市花园东门-枪', value: '2' },
-        //   { label: '半岛城市花园东门-枪', value: '3' },
-        //   { label: '半岛城市花园东门-枪', value: '4' }];
       }
     },
       videoMapClickHandler({ pixel, coordinate }) {
@@ -329,7 +324,8 @@ export default {
       }
     },
     closeTip(){
-        this.selectOverlay.setPosition(undefined);
+      this.selectOverlay.setPosition(undefined);
+      this.videoInfoData.videoList=[];
     }
   }
 }

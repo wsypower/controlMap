@@ -9,7 +9,12 @@
     </div>
     <div class="tip-body">
       <!--<vue-scroll :ops="ops">-->
-        <a-checkbox-group :options="info.videoList" v-model="selectVideo"/>
+        <!--<a-checkbox-group :options="info.videoList" v-model="selectVideo"/>-->
+      <a-checkbox-group v-model="selectVideo">
+        <a-checkbox v-for="(item,index) in info.videoList" :value="item.value" :key="index">
+          <span class="label-c" :title="item.label">{{item.label}}</span>
+        </a-checkbox>
+      </a-checkbox-group>
       <!--</vue-scroll>-->
     </div>
     <div class="info-body-operation" @click="openVideoPlayer">
@@ -54,6 +59,11 @@ export default{
         }
     },
     mounted(){},
+    watch:{
+      'info.videoList': function(){
+        this.selectVideo = [];
+      }
+    },
     methods:{
         //打开视频，触发父组件的方法
         openVideoPlayer(){
@@ -142,15 +152,24 @@ export default{
   .tip-body {
     width: 100%;
     /*height: 150px;*/
-    max-height: 150px;
+    /*max-height: 150px;*/
     //height: calc(100% - 75px);
     overflow: hidden;
     background-color: #ffffff;
     padding: 10px 20px;
     font-size: 13px;
     color: #333333;
-    /deep/.ant-checkbox-group-item{
+    /deep/.ant-checkbox-wrapper{
       margin: 5px 5px 5px 0px !important;
+      .ant-checkbox-wrapper + span, .ant-checkbox + span{
+        padding-right: 0px;
+        display: inline-block;
+        width: 175px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        vertical-align: top;
+      }
     }
     > div {
       line-height: 24px;
