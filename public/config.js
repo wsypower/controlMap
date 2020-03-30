@@ -1,3 +1,7 @@
+const TIMER = {
+  time: 60000
+}
+
 const URL_CONFIG = {
   baseURL: "http://192.168.71.33:8015/api", //测试服务器
   // baseURL: "http://192.168.71.238:8015/api/", //开发本地后端服务器
