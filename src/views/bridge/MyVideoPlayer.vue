@@ -57,7 +57,6 @@ export default {
           this.realVideoSrcArr.push(temp)
         }
       } else {
-        console.log(11111)
         this.$emit('update:videoSrc', '')
       }
     }

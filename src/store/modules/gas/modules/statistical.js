@@ -4,7 +4,6 @@ export default {
   namespaced: true,
   actions: {
     getStatusAnalysisData(state, data) {
-      console.log('store', data)
       return new Promise((resolve, reject) => {
         getStatusAnalysisData(data)
           .then(res => {

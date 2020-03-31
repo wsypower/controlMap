@@ -38,7 +38,6 @@ export function getStatusAnalysisData(data) {
  */
 
 export function getRainTrendData(data) {
-  console.log('api:getRainTrendData', data)
   return request({
     url: '@test/getRainfallTrendData?_t=' + new Date().getTime(),
     method: 'get',
@@ -80,7 +79,6 @@ export function getWaterStatusAnalysisData(data) {
  */
 
 export function getWaterLevelTrendData(data) {
-  console.log('api:getWaterLevelTrendData', data)
   return request({
     url: '@test/getWaterLevelTrendData?_t=' + new Date().getTime(),
     method: 'get',

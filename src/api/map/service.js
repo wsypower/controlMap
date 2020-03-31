@@ -45,7 +45,6 @@ export async function postEmergencyArea(type, feature) {
     xml = format.writeTransaction([feature], null, null, obj)
   } else if (type == 'edit') {
     obj.version = '1.0.0';
-    console.log('==编辑圆形===', feature)
     xml = format.writeTransaction(null, [feature], null, obj)
   } else {
     xml = format.writeTransaction(null, null, feature, obj)

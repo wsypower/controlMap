@@ -36,7 +36,6 @@ export default {
       })
     },
     getWaterStatusAnalysisData(state, data) {
-      console.log('store', data)
       return new Promise((resolve, reject) => {
         getWaterStatusAnalysisData(data)
           .then(res => {
@@ -49,14 +48,12 @@ export default {
       })
     },
     getWaterLevelTrendData(state, data) {
-      console.log('store', data)
       return new Promise((resolve, reject) => {
         getWaterLevelTrendData(data)
           .then(res => {
             resolve(res)
           })
           .catch(err => {
-            console.log(err)
             reject(err)
           })
       })
@@ -69,7 +66,6 @@ export default {
             resolve(res)
           })
           .catch(err => {
-            console.log(err)
             reject(err)
           })
       })

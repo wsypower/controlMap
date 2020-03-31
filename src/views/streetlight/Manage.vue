@@ -15,12 +15,12 @@
       </div>
       <cg-container scroll v-if="!showLoading && dataArr.length > 0">
         <div
-                v-for="(item, index) in dataArr"
-                :key="index"
-                class="item"
-                :class="{ active: activeIndex === index, outline: !item.online }"
-                flex="cross:center main:justify"
-                @click="clickDataItem(item, index)"
+          v-for="(item, index) in dataArr"
+          :key="index"
+          class="item"
+          :class="{ active: activeIndex === index, outline: !item.online }"
+          flex="cross:center main:justify"
+          @click="clickDataItem(item, index)"
         >
           <div class="item_left">
             <cg-icon-svg name="zhld" class="svg_icon"></cg-icon-svg>
@@ -38,235 +38,243 @@
     </div>
     <div class="pagination-panel">
       <a-pagination
-              :total="totalSize"
-              :showTotal="total => `共 ${total} 条`"
-              :pageSize="50"
-              :defaultCurrent="1"
-              @change="changePagination"
+        :total="totalSize"
+        :showTotal="total => `共 ${total} 条`"
+        :pageSize="50"
+        :defaultCurrent="1"
+        @change="changePagination"
       />
     </div>
-  <div style="position: fixed; top: 20px;right: 20px;">
+    <div hidden>
       <detail-info ref="detailInfo" :info="detailInfoData" @closeTip="closeTip"></detail-info>
-  </div>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
-  import { mapState, mapActions, mapMutations } from 'vuex'
-  import DetailInfo from '../common/DetailInfo.vue'
-  import { getTypeEquip } from '@/api/map/service'
-  import { emergencyEquipStyle } from '@/utils/util.map.style'
-  import Feature from 'ol/Feature'
-  import Point from 'ol/geom/Point'
-  export default {
-    name: 'manage',
-    components:{ DetailInfo },
-    data(){
-      return {
+import { mapState, mapActions, mapMutations } from 'vuex'
+import DetailInfo from '../common/DetailInfo.vue'
+import { getTypeEquip } from '@/api/map/service'
+import { emergencyEquipStyle } from '@/utils/util.map.style'
+import Feature from 'ol/Feature'
+import Point from 'ol/geom/Point'
+export default {
+  name: 'manage',
+  components:{ DetailInfo },
+  data(){
+    return {
+      //选择的城市---数组形式
+      selectedCity: [],
+      //查询条件
+      query: {
+        deviceType: 3,
         //选择的城市---数组形式
         selectedCity: [],
-        //查询条件
-        query: {
-          deviceType: 3,
-          //选择的城市---数组形式
-          selectedCity: [],
-          //路灯编号
-          code: '',
-          pageNo: 1,
-          pageSize: 50
-        },
-        //展示数据的过渡效果
-        showLoading: false,
-        //后台传过来的数据
-        dataArr: [],
-        //查询结果个数
-        totalSize: 0,
-        //目前激活的路灯序号
-        activeIndex: null,
-        detailInfoData:{
-          type: 'light',
-          detailMessage:{
-            online: false,
-            unit: ''
-          },
-          chartData: []
-        },
-        manholeLayer: null,
-        manholeOverlay:null
-      }
-    },
-    computed:{
-      ...mapState('map', ['mapManager']),
-    },
-    mounted() {
-      this.getDataList();
-      this.getEquipPoints();
-      this.map = this.mapManager.getMap()
-      this.map.on('click', this.manholeClickHandler);
-      this.setClickHandler(this.manholeClickHandler);
-      // this.manholeOverlay = this.mapManager.addOverlay({
-      //   element: this.$refs.manholeOverlay.$el
-      // });
-      // this.setOverlay(this.manholeOverlay);
-    },
-    watch: {},
-    methods: {
-      ...mapActions('streetlight/manage', ['getAllLightListData','getOneLightMacData']),
-      ...mapMutations('map', ['pushPageLayers','setClickHandler','setOverlay']),
-      getAddressData(val){
-        console.log('selected city data',val);
-        this.selectedCity = val;
+        //路灯编号
+        code: '',
+        pageNo: 1,
+        pageSize: 50
       },
-      manholeClickHandler({ pixel, coordinate }) {
-        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
-        if(feature){
-          this.clickDataItem(feature.get('info'),null)
-          this.manholeOverlay.setPosition(coordinate);
+      //展示数据的过渡效果
+      showLoading: false,
+      //后台传过来的数据
+      dataArr: [],
+      //查询结果个数
+      totalSize: 0,
+      //目前激活的路灯序号
+      activeIndex: null,
+      detailInfoData:{
+        type: 'light',
+        detailMessage:{
+          online: false,
+          unit: ''
+        },
+        chartData: []
+      },
+      lightLayer: null,
+      lightOverlay:null
+    }
+  },
+  computed:{
+    ...mapState('map', ['mapManager']),
+  },
+  mounted() {
+    this.getDataList();
+    this.getEquipPoints();
+    this.map = this.mapManager.getMap()
+    this.map.on('click', this.manholeClickHandler);
+    this.setClickHandler(this.manholeClickHandler);
+    this.lightOverlay = this.mapManager.addOverlay({
+        id:'lightOverlay',
+        offset:[0,-20],
+        positioning: 'bottom-center',
+      element: this.$refs.detailInfo.$el
+    });
+  },
+  watch: {},
+  methods: {
+    ...mapActions('streetlight/manage', ['getAllLightListData','getOneLightMacData']),
+    ...mapMutations('map', ['pushPageLayers','setClickHandler','setOverlay']),
+    getAddressData(val){
+      console.log('selected city data',val);
+      this.selectedCity = val;
+    },
+    manholeClickHandler({ pixel, coordinate }) {
+        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+        if(feature.get('features')) {
+            const clickFeature = feature.get('features')[0];
+            // const coordinates=clickFeature.getGeometry().getCoordinates();
+            if (clickFeature && clickFeature.get('type') == 'light') {
+                this.lightOverlay.setPosition(coordinate);
+            }
         }
-      },
-      //获取预案数据
-      getDataList() {
-        this.showLoading = true
-        this.getAllLightListData(this.query).then(res => {
-          console.log(res)
-          this.dataArr = res.data
-          this.totalSize = res.data.length
-          this.showLoading = false
-        })
-      },
-      //获取井盖设备点位
-      getEquipPoints() {
-        getTypeEquip('3').then(res => {
-          console.log('===物联信息-3', res)
-          const features = res.map(p => {
-            const point = new Feature({
-              geometry: new Point(p.position)
-            });
-            point.set('id', p.id);
-            point.set('info',p.info);
-            point.set('state',p.info.alarmState);
-            return point;
+    },
+    //获取预案数据
+    getDataList() {
+      this.showLoading = true
+      this.getAllLightListData(this.query).then(res => {
+        this.dataArr = res.data
+        this.totalSize = res.data.length
+        this.showLoading = false
+      })
+    },
+    //获取井盖设备点位
+    getEquipPoints() {
+      getTypeEquip('3').then(res => {
+        console.log('===物联信息-3', res)
+        const features = res.map(p => {
+          const point = new Feature({
+            geometry: new Point(p.position)
           });
-          this.manholeLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
-          this.map.getView().fit(this.manholeLayer.getSource().getExtent());
-          this.pushPageLayers(this.manholeLayer);
-        })
-      },
-      //搜索关键字查询
-      onSearch(val) {
-        this.query.searchContent = val
-        this.getDataList()
-      },
+          point.set('id', p.id);
+          point.set('info',p.info);
+          point.set('state',p.info.alarmState);
+          point.set('type','light');
+          point.set('icon','carmera_online');
+          return point;
+        });
+        // this.lightLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
+        this.lightLayer = this.mapManager.addClusterLayerByFeatures(features);
+        this.lightLayer.set('featureType','light');
+        const extent=this.lightLayer.getSource().getSource().getExtent();
+        this.mapManager.getMap().getView().fit(extent);
+        // this.pushPageLayers(this.lightLayer);
+      })
+    },
+    //搜索关键字查询
+    onSearch(val) {
+      this.query.searchContent = val
+      this.getDataList()
+    },
 
-      //翻页
-      changePagination(pageNo, pageSize) {
-        console.log('changePagination', pageNo, pageSize)
-        this.query.pageNo = pageNo
-        this.getDataList()
-      },
+    //翻页
+    changePagination(pageNo, pageSize) {
+      console.log('changePagination', pageNo, pageSize)
+      this.query.pageNo = pageNo
+      this.getDataList()
+    },
 
-      //选择某个路灯
-      clickDataItem(item, index) {
-        console.log('clickDataItem', item)
-        this.activeIndex = index;
-        //detailInfoData
-        this.getOneLightMacData().then( res =>{
-          this.detailInfoData = res.data;
-          this.detailInfoData.type = 'light';
-        })
-      },
-      closeOverlay() {
-        this.manholeOverlay.setPosition(undefined);
-      },
-      closeTip(){
-
-      }
+    //选择某个路灯
+    clickDataItem(item, index) {
+      console.log('clickDataItem', item);
+      this.lightOverlay.setPosition([parseFloat(item.x),parseFloat(item.y)]);
+      this.mapManager.locateTo([parseFloat(item.x),parseFloat(item.y)]);
+      this.activeIndex = index;
+      //detailInfoData
+      this.getOneLightMacData().then( res =>{
+        this.detailInfoData = res.data;
+        this.detailInfoData.type = 'light';
+      })
+    },
+    closeTip(){
+        this.lightOverlay.setPosition(undefined);
     }
   }
+}
 </script>
 <style lang="scss" scoped>
-  .video-manage {
-    height: 100%;
-    width: 100%;
-    padding: 20px;
-    .search-panel {
-      padding-bottom: 0px;
-    }
-    .yuan_dialog_body {
-      background-color: #f5f5f5;
-      height: calc(100% - 50px);
-      position: relative;
-      .item {
-        width: 100%;
-        height: 40px;
-        margin-top: 2px;
-        background-color: #f5f7f8;
-        font-family: PingFang-SC-Medium;
-        font-size: 14px;
-        color: #333333;
-        cursor: pointer;
-        &.active {
-          background-color: #e9f6ff;
-        }
-        &.warning {
-          color: #f07171;
-          .item_left {
-            .svg_icon {
-              color: #f07171;
-            }
-          }
-        }
-        &.outline {
-          color: #cccccc;
-          .item_left {
-            .svg_icon {
-              color: #cccccc;
-            }
-          }
-        }
-        .svg_icon {
-          width: 16px;
-          height: 14px;
-        }
+.video-manage {
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+  .search-panel {
+    padding-bottom: 0px;
+  }
+  .yuan_dialog_body {
+    background-color: #f5f5f5;
+    height: calc(100% - 50px);
+    position: relative;
+    .item {
+      width: 100%;
+      height: 40px;
+      margin-top: 2px;
+      background-color: #f5f7f8;
+      font-family: PingFang-SC-Medium;
+      font-size: 14px;
+      color: #333333;
+      cursor: pointer;
+      &.active {
+        background-color: #e9f6ff;
+      }
+      &.warning {
+        color: #f07171;
         .item_left {
-          margin-left: 10px;
           .svg_icon {
-            color: #2b8ff3;
-          }
-          span {
-            display: inline-block;
-            max-width: 150px;
-            margin-left: 5px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            vertical-align: middle;
-          }
-        }
-        .item_right {
-          margin-right: 10px;
-          .svg_icon {
-            color: #2b8ff3;
-          }
-          span {
-            display: inline-block;
-            max-width: 100px;
-            margin-right: 5px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            vertical-align: middle;
+            color: #f07171;
           }
         }
       }
-      .nodata-panel,
-      .spin-panel {
-        width: 100%;
-        height: 100%;
+      &.outline {
+        color: #cccccc;
+        .item_left {
+          .svg_icon {
+            color: #cccccc;
+          }
+        }
+      }
+      .svg_icon {
+        width: 16px;
+        height: 14px;
+      }
+      .item_left {
+        margin-left: 10px;
+        .svg_icon {
+          color: #2b8ff3;
+        }
+        span {
+          display: inline-block;
+          max-width: 150px;
+          margin-left: 5px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          vertical-align: middle;
+        }
+      }
+      .item_right {
+        margin-right: 10px;
+        .svg_icon {
+          color: #2b8ff3;
+        }
+        span {
+          display: inline-block;
+          max-width: 100px;
+          margin-right: 5px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          vertical-align: middle;
+        }
       }
     }
-    .pagination-panel {
-      text-align: right;
-      padding: 20px 0px 10px 0px;
+    .nodata-panel,
+    .spin-panel {
+      width: 100%;
+      height: 100%;
     }
   }
+  .pagination-panel {
+    text-align: right;
+    padding: 20px 0px 10px 0px;
+  }
+}
 </style>

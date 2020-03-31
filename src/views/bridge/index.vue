@@ -57,8 +57,8 @@ export default {
       //视频流URL
       videoSrc: '',
       //地图相关
-      videoFeatures: [],
-      videoLayer: null,
+      bridgeFeatures: [],
+      bridgeLayer: null,
       isLoadData: false,
       clusterLayer:null
     }
@@ -68,7 +68,7 @@ export default {
     //获得展示的数据与属性
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
-      this.videoFeatures=[];
+      this.bridgeFeatures=[];
       this.resultCount = 0;
       this.changeTreeData(data,'');
       this.isLoadData=!this.isLoadData;
@@ -77,15 +77,15 @@ export default {
   },
   watch:{
     isLoadData:function() {
-      if(this.videoFeatures.length>0){
-        if(this.videoLayer){
-          this.videoLayer.getSource().clear();
-          this.videoLayer.getSource().addFeatures(this.carFeatures);
-        }else{
-          this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
-          this.videoLayer.set('featureType','videoDistribute');
+      if(this.bridgeFeatures.length>0){
+        if(this.bridgeLayer){
+          this.bridgeLayer.getSource().clear();
+          this.bridgeLayer.getSource().addFeatures(this.carFeatures);
+        } else {
+          this.bridgeLayer = this.mapManager.addClusterLayerByFeatures(this.bridgeFeatures);
+          this.bridgeLayer.set('featureType','bridge');
         }
-        const extent=this.videoLayer.getSource().getSource().getExtent();
+        const extent=this.bridgeLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
     }
@@ -96,7 +96,6 @@ export default {
     this.map.on('click', this.videoMapClickHandler);
     //入参：地址、桥梁名称
     this.getAllCameraTreeDataForBridge({userId:userId}).then(res=>{
-      console.log('getAllCameraTreeDataForBridge',res);
       this.sourceData = res.data;
       this.showLoading = false;
     });
@@ -124,8 +123,8 @@ export default {
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
             feature.set('icon','carmera_online');
             feature.set('props',item);
-            feature.set('type','VideoDistribute');
-            _this.videoFeatures.push(feature);
+            feature.set('type','light');
+            _this.bridgeFeatures.push(feature);
           }
         }
         else{
@@ -139,7 +138,6 @@ export default {
     onSearch(){
       //入参：城市范围、桥梁名称，用户ID
       this.getAllCameraTreeDataForBridge({userId:userId}).then(res=>{
-        console.log('getAllCameraTreeDataForBridge',res);
         this.sourceData = res.data;
         this.showLoading = false;
       });

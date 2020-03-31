@@ -68,7 +68,7 @@
         :subTitle="subTitle"
         :componentId="tipComponentId"
         :info="infoData"
-        @closeDialog="closeOverlay()"
+        @closeDialog="closeOverlay"
       ></tip-modal>
     </div>
   </div>
@@ -135,6 +135,9 @@ export default {
     this.map.on('click', this.manholeClickHandler);
     this.setClickHandler(this.manholeClickHandler);
     this.manholeOverlay = this.mapManager.addOverlay({
+      id:'manholeOverlay',
+      offset:[0,-20],
+      positioning: 'bottom-center',
       element: this.$refs.manholeOverlay.$el
     });
     this.setOverlay(this.manholeOverlay);
@@ -175,11 +178,13 @@ export default {
           point.set('id', p.id);
           point.set('info',p.info);
           point.set('state',p.info.alarmState);
+          point.set('type','manhole')
           return point;
         });
         this.manholeLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
+        this.manholeLayer.set('featureType','manhole');
         this.map.getView().fit(this.manholeLayer.getSource().getExtent());
-        this.pushPageLayers(this.manholeLayer);
+        // this.pushPageLayers(this.manholeLayer);
       })
     },
     //搜索关键字查询

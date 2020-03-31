@@ -24,7 +24,7 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
-    <div style="position: fixed; top: 20px;right: 20px;">
+    <div hidden>
       <detail-info ref="detailInfo" :info="detailInfoData" @closeTip="closeTip"></detail-info>
     </div>
   </div>
@@ -57,12 +57,12 @@ export default {
         },
         chartData: []
       },
-
       //地图相关
-      videoFeatures: [],
-      videoLayer: null,
+      watchFeatures: [],
+      watchLayer: null,
       isLoadData: false,
-      clusterLayer:null
+      clusterLayer: null,
+      watchOverlay: null
     }
   },
   computed:{
@@ -70,7 +70,7 @@ export default {
     //获得展示的数据与属性
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
-      this.videoFeatures=[];
+      this.watchFeatures=[];
       this.changeTreeData(data,'');
       this.isLoadData=!this.isLoadData;
       return data;
@@ -78,15 +78,15 @@ export default {
   },
   watch:{
     isLoadData:function() {
-      if(this.videoFeatures.length>0){
-        if(this.videoLayer){
-            this.videoLayer.getSource().clear();
-            this.videoLayer.getSource().addFeatures(this.carFeatures);
+      if(this.watchFeatures.length>0){
+        if(this.watchLayer){
+            this.watchLayer.getSource().clear();
+            this.watchLayer.getSource().addFeatures(this.watchFeatures);
         }else{
-            this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
-            this.videoLayer.set('featureType','videoDistribute');
+            this.watchLayer = this.mapManager.addClusterLayerByFeatures(this.watchFeatures);
+            this.watchLayer.set('featureType','rainWatch');
         }
-        const extent=this.videoLayer.getSource().getSource().getExtent();
+        const extent=this.watchLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
     }
@@ -100,6 +100,13 @@ export default {
       this.sourceData = res.data.treeData;
       this.totalSize = res.data.total;
       this.showLoading = false;
+    });
+    // 地图弹框初始化
+    this.watchOverlay = this.mapManager.addOverlay({
+        id:'rainWatchOverlay',
+        offset:[0,-20],
+        positioning: 'bottom-center',
+        element: this.$refs.detailInfo.$el
     });
   },
   methods:{
@@ -130,8 +137,9 @@ export default {
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
             feature.set('icon','carmera_online');
             feature.set('props',item);
-            feature.set('type','VideoDistribute');
-            _this.videoFeatures.push(feature);
+            feature.set('type','rainfall');
+            _this.watchFeatures.push(feature);
+            console.log('test');
           }
         }
         else{
@@ -160,6 +168,8 @@ export default {
       if(selectedKeys.length>0){
         if(selectedKeys[0].indexOf('dept_')<0){
           let needData = e.selectedNodes[0].data.props;
+          this.watchOverlay.setPosition([parseFloat(needData.x),parseFloat(needData.y)]);
+          this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
           //地图上的点位放大居中显示
           // 获取详情数据
           this.detailInfoData.detailMessage.name = needData.dept + '-' +needData.name;
@@ -182,18 +192,20 @@ export default {
         }
       }
     },
+    // 地图点击事件处理器
     videoMapClickHandler({ pixel, coordinate }) {
         const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
         if(feature.get('features')) {
             const clickFeature = feature.get('features')[0];
-            // const coordinates=clickFeature.getGeometry().getCoordinates();
-            if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
-                const videoInfoData = clickFeature.get('props');
+            if (clickFeature && clickFeature.get('type') == 'rainfall') {
+                // this.detailInfoData = clickFeature.get('props');
+                this.watchOverlay.setPosition( coordinate );
             }
         }
     },
+    // 地图弹框关闭方法
     closeTip(){
-
+        this.watchOverlay.setPosition( undefined );
     }
   }
 }
