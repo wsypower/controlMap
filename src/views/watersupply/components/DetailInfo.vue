@@ -12,13 +12,19 @@
         <div class="item" v-for="(item, index) in info.detailMessage" :key="index" flex="dir:top cross:center">
           <div class="item-header">{{item.name}}当前监测值</div>
           <div class="item-value">{{item.value}}</div>
-          <div>日同比&nbsp;&nbsp;{{ item.yty }}{{ item.unit }}
-            <a-icon v-if="item.ytyStatus === '+'" style="color: #50cf3f" type="arrow-down" />
-            <a-icon v-else style="color: #f07171" type="arrow-up" />
+          <div v-if="item.yty>0">日同比&nbsp;&nbsp;+{{ item.yty }}{{ item.unit }}
+            <a-icon style="color: #50cf3f" type="arrow-up" />
           </div>
-          <div>日环比&nbsp;&nbsp;{{ item.mtm }}{{ item.unit }}
-            <a-icon v-if="item.mtmStatus === '+'" style="color: #50cf3f" type="arrow-down" />
-            <a-icon v-else style="color: #f07171" type="arrow-up" />
+          <div v-else-if="item.yty===0">日同比&nbsp;&nbsp;{{ item.yty }}{{ item.unit }}</div>
+          <div v-else>日同比&nbsp;&nbsp;{{ item.yty }}{{ item.unit }}
+            <a-icon style="color: #f07171" type="arrow-down" />
+          </div>
+          <div v-if="item.mtm>0">日环比&nbsp;&nbsp;+{{ item.mtm }}{{ item.unit }}
+            <a-icon style="color: #50cf3f" type="arrow-up" />
+          </div>
+          <div v-else-if="item.mtm===0">日环比&nbsp;&nbsp;{{ item.mtm }}{{ item.unit }}</div>
+          <div v-else>日环比&nbsp;&nbsp;{{ item.mtm }}{{ item.unit }}
+            <a-icon style="color: #f07171" type="arrow-down" />
           </div>
         </div>
       </div>
@@ -47,17 +53,8 @@ export default{
     info:{
       default(){
         return {
-          type: 'water',
           name: '监测设备',
-          detailMessage:[{
-            name: '',
-            value: 0,
-            unit: '',
-            ytyStatus: '+',
-            yty: '+1',
-            mtmStatus: '-',
-            mtm: '-1'
-          }],
+          detailMessage:[],
           chartData: []
         }
       }

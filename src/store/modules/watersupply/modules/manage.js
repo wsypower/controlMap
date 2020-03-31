@@ -1,6 +1,7 @@
 import {
   getAllWaterQMMacTreeData,
-  getOneWaterQMMacData
+  getOneWaterQMMacData,
+  getWaterQualityTrendDataForOneMac
 } from '@/api/watersupply/manage.js'
 
 export default {
@@ -23,6 +24,19 @@ export default {
       console.log('store', data)
       return new Promise((resolve, reject) => {
         getOneWaterQMMacData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getWaterQualityTrendDataForOneMac(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getWaterQualityTrendDataForOneMac(data)
           .then(res => {
             resolve(res)
           })

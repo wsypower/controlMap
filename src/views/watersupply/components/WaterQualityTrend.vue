@@ -36,6 +36,7 @@ export default {
     data(){
         return {
           waterFlag: 'ph',
+          chartData: []
         }
     },
     computed:{
@@ -54,18 +55,33 @@ export default {
             this.getWaterQualityTrendData().then(res=>{
                 console.log('getWaterQualityTrendData',res);
                 let xArr = [];
-                let yArr = [];
+                let yPHArr = [];
+                let yTurbidityArr = [];
+                let yRCArr = [];
               res.data.forEach(item => {
-                xArr.push(item.day);
-                yArr.push(item.num);
+                xArr.push(item.dayTime);
+                yPHArr.push(item.phValue);
+                yTurbidityArr.push(item.turbidityValue);
+                yRCArr.push(item.rcValue);
               })
-              let chartData = [xArr,yArr];
-              console.log('chartData',chartData);
-              this.chartInit(chartData);
+              this.chartData = [xArr,yPHArr,yTurbidityArr,yRCArr]
+              let nowChartData = [xArr,yPHArr];
+              console.log('chartData',nowChartData);
+              this.chartInit(nowChartData);
             })
         },
       onChange() {
-        this.getChartData();
+        let nowChartData = [];
+        if(this.waterFlag === 'ph'){
+          nowChartData = [this.chartData[0],this.chartData[1]];
+        }
+        else if(this.waterFlag === 'zd'){
+          nowChartData = [this.chartData[0],this.chartData[2]];
+        }
+        else{
+          nowChartData = [this.chartData[0],this.chartData[3]];
+        }
+        this.chartInit(nowChartData);
       },
       //初始化图表
       chartInit(data){
@@ -74,8 +90,8 @@ export default {
         ChartColumnar.setOption({
           grid: {
             top: 10,
-            left: 30,
-            right: 30,
+            left: 10,
+            right: 10,
             bottom: 50,
             containLabel: true
           },
@@ -89,7 +105,9 @@ export default {
               }
             },
             formatter: function(params){
+
               let text = params[0].seriesName + '：' + params[0].value +  _this.unit;
+              console.log(params[0]);
               return text + "<br/>" + params[0].name
             }
           },
@@ -98,6 +116,7 @@ export default {
             data: data[0],
             axisLabel: {
               show: true,
+              interval: 0,
               textStyle:{
                 fontSize: 13,
                 color: '#333333'
