@@ -129,6 +129,25 @@ export function getRainfallTrendDataForOneMac(data) {
 }
 
 /**
+ * @description 获取所有水位监测场景
+ * @author moxuejuan
+ * @date 2020-03-31 14:54
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+
+export function getAllWatchPlaceData(data) {
+  console.log('api:getAllWatchPlaceData', data)
+  return request({
+    url: '@test/getAllWatchPlaceData?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
  * @description 获取所有水位监测设备（树形结构）
  * @author moxuejuan
  * @date 2020-03-20 10:36
@@ -151,7 +170,7 @@ export function getAllWaterLevelMacTreeData(data) {
 }
 
 /**
- * @description 获取某一个水位监测点的某一个监测设备具体数据
+ * @description 获取某一个水位监测点的某一个监测设备具体数据(日同比、日环比)
  * @author moxuejuan
  * @date 2020-03-20 10:37
  * @param {String} macId 设备Id
@@ -171,6 +190,25 @@ export function getOneWaterLevelMacData(data) {
 }
 
 /**
+ * @description 获取某一个水位监测点的某一个监测设备近3个小时的监测数据
+ * @author moxuejuan
+ * @date 2020-03-20 15:13
+ * @param {String} macId 设备Id
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+
+export function getWaterLevelTrendDataForOneMac(data) {
+  console.log('api:getWaterLevelTrendDataForOneMac', data)
+  return request({
+    url: '@test/getWaterLevelTrendDataForOneMac?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+/**
  * @description 获取所有井盖设备
  * @author moxuejuan
  * @date 2020-03-20 10:36
@@ -186,10 +224,10 @@ export function getOneWaterLevelMacData(data) {
  * }
  */
 
-export function getDeviceDataList(data) {
-  console.log('api:getDeviceDataList', data)
+export function getAllManholeMacData(data) {
+  console.log('api:getAllManholeMacData', data)
   return request({
-    url: '@test/getDeviceDataList?_t=' + new Date().getTime(),
+    url: '@test/getAllManholeMacData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

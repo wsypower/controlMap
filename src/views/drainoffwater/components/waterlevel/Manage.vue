@@ -4,12 +4,9 @@
       <my-address @getAddressData="getAddressData"></my-address>
       <div flex="fir:left cross:center" style="margin-top:10px">
         <label>监测场景：</label>
-        <a-select v-model="watchPlaceName" style="flex:1">
+        <a-select v-model="watchPlaceId" style="flex:1">
           <a-select-option value="all">全部</a-select-option>
-          <a-select-option value="hedao">河道</a-select-option>
-          <a-select-option value="jishui">积水点</a-select-option>
-          <a-select-option value="wushui">污水液位</a-select-option>
-          <a-select-option value="yushui">雨水液位</a-select-option>
+          <a-select-option v-for="(item, index) in watchPlaceList" :value="item.id" :key="index">{{item.name}}</a-select-option>
         </a-select>
       </div>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
@@ -17,7 +14,7 @@
         <a-input placeholder="输入监测点名称" v-model="watchPointName" style="flex:1" />
       </div>
       <a-button type="primary" style="width: 100%;margin-bottom:5px;" @click="onSearch">查询</a-button>
-      <div>共计{{ resultCount }}个查询结果</div>
+      <div>共计{{ totalSize }}个查询结果</div>
     </div>
     <div class="yuan_dialog_body">
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
@@ -25,7 +22,7 @@
       </div>
       <cg-container scroll v-if="!showLoading && treeData.length > 0">
         <a-tree class="tree-panel" showIcon showLine :treeData="treeData" @select="onSelect">
-          <img slot="dept" src="~@img/avatar_dept.png" />
+          <img slot="dept" src="~@img/avatar-jiance.png" />
           <img slot="equipment" src="~@img/avatar-equipment.png" />
           <img slot="equipment-outline" src="~@img/avatar-equipment-outline.png" />
         </a-tree>
@@ -42,28 +39,22 @@
 <script type="text/ecmascript-6">
 import { mapState,mapActions } from 'vuex'
 import util from '@/utils/util';
+import {mixins} from '@/mixins/index'
 import {videoPointStyle} from '@/utils/util.map.style'
 import DetailInfo from '../../../common/DetailInfo.vue'
 const userId = util.cookies.get('userId');
 export default {
-  name: 'WaterLevel',
+  name: 'manage',
+  mixins: [mixins],
   components:{
     DetailInfo
   },
   data(){
     return {
-      //选择的城市---数组形式
-      selectedCity: [],
-      //监测场景
-      watchPlaceName: 'all',
-      //监测点名称
-      watchPointName: '',
-      //展示数据的过渡效果
-      showLoading: false,
-      //后台传过来的数据
-      sourceData: [],
-      //查询结果个数
-      resultCount: 0,
+      //监测场景list
+      watchPlaceList: [],
+      //监测场景key
+      watchPlaceId: 'all',
       //详情需要的所有数据
       detailInfoData: {
         type: 'water',
@@ -71,12 +62,11 @@ export default {
           name: '',
           value: 0,
           unit: '',
-          yty: '0',
-          mtm: '0'
+          yty: 0,
+          mtm: 0
         },
         chartData: []
       },
-
       //地图相关
       videoFeatures: [],
       videoLayer: null,
@@ -90,7 +80,6 @@ export default {
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
       this.videoFeatures=[];
-      this.resultCount = 0;
       this.changeTreeData(data,'');
       this.isLoadData=!this.isLoadData;
       return data;
@@ -112,17 +101,22 @@ export default {
     }
   },
   mounted(){
+    this.getAllWatchPlaceData().then(res => {
+      this.watchPlaceList = res.data;
+    });
     this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
-    this.getAllWaterLevelMacTreeData({userId:userId}).then(res=>{
+    //入参：城市范围、监测场景、监测点名称，用户ID
+    this.getAllWaterLevelMacTreeData({}).then(res=>{
       console.log('getAllWaterLevelMacTreeData',res);
-      this.sourceData = res.data;
+      this.sourceData = res.data.treeData;
+      this.totalSize = res.data.total;
       this.showLoading = false;
     });
   },
   methods:{
-    ...mapActions('drainoffwater/manage', ['getAllWaterLevelMacTreeData','getOneWaterLevelMacData']),
+    ...mapActions('drainoffwater/manage', ['getAllWatchPlaceData', 'getAllWaterLevelMacTreeData','getOneWaterLevelMacData','getWaterLevelTrendDataForOneMac']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
@@ -143,7 +137,6 @@ export default {
             item.slots = {icon: 'equipment-outline'};
           }
           item.class = 'itemClass';
-          this.resultCount++;
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
@@ -162,10 +155,12 @@ export default {
       })
     },
     onSearch(){
-      //入参：城市范围、监测点名称，用户ID
-      this.getAllWaterLevelMacTreeData({userId:userId}).then(res=>{
+      this.showLoading = true;
+      //入参：城市范围(area)、监测场景(watchPlaceId)、监测点名称(watchPointName)，用户ID(userId)
+      this.getAllWaterLevelMacTreeData({}).then(res=>{
         console.log('getAllWaterLevelMacTreeData',res);
-        this.sourceData = res.data;
+        this.sourceData = res.data.treeData;
+        this.totalSize = res.data.total;
         this.showLoading = false;
       });
     },
@@ -173,23 +168,41 @@ export default {
     //点击树中某个节点（某个人员）时触发
     onSelect(selectedKeys, e){
       console.log(selectedKeys, e);
-      //地图上的点位放大居中
-      // 获取详情数据
-      this.getOneWaterLevelMacData({userId:userId}).then(res=>{
-        this.detailInfoData = res.data;
-        this.detailInfoData.type = 'water';
-      });
+      if(selectedKeys.length>0){
+        if(selectedKeys[0].indexOf('dept_')<0){
+          let needData = e.selectedNodes[0].data.props;
+          //地图上的点位放大居中显示
+          // 获取详情数据
+          this.detailInfoData.detailMessage.name = needData.dept + '-' +needData.name;
+          this.detailInfoData.detailMessage.value = needData.value;
+          this.detailInfoData.detailMessage.unit = needData.unit;
+          this.detailInfoData.type = 'water';
+          console.log('macId: ' + needData.id, 'userId: ' + userId);
+          this.getOneWaterLevelMacData({}).then(res=>{
+            this.detailInfoData.detailMessage.yty = res.data.yty;
+            this.detailInfoData.detailMessage.mtm = res.data.mtm;
+          });
+          this.getWaterLevelTrendDataForOneMac({}).then(res=>{
+            let needData = res.data.reduce((acc,item) => {
+              acc[0].push(item.dayTime);
+              acc[1].push(item.value);
+              return acc
+            },[[],[]]);
+            this.detailInfoData.chartData = needData;
+          });
+        }
+      }
     },
     videoMapClickHandler({ pixel, coordinate }) {
-        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-        if(feature.get('features')) {
-            const clickFeature = feature.get('features')[0];
-            // const coordinates=clickFeature.getGeometry().getCoordinates();
-            if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
-                const videoInfoData = clickFeature.get('props');
-                this.playVideo(videoInfoData.mpid);
-            }
+      const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+      if(feature.get('features')) {
+        const clickFeature = feature.get('features')[0];
+        // const coordinates=clickFeature.getGeometry().getCoordinates();
+        if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
+          const videoInfoData = clickFeature.get('props');
+          this.playVideo(videoInfoData.mpid);
         }
+      }
     },
     closeTip(){
 

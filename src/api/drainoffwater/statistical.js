@@ -60,7 +60,7 @@ export function getRainTrendData(data) {
 export function getWaterStatusAnalysisData(data) {
   console.log('api:getWaterStatusAnalysisData', data)
   return request({
-    url: '@test/getWaterStatusAnalysisData?_t=' + new Date().getTime(),
+    url: '@test/getWaterLevelMacStatusAnalysisData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -102,7 +102,7 @@ export function getWaterLevelTrendData(data) {
 export function getManholeStatusAnalysisData(data) {
   console.log('api:getManholeStatusAnalysisData', data)
   return request({
-    url: '@test/getManholeStatusAnalysisData?_t=' + new Date().getTime(),
+    url: '@test/getManholeMacStatusAnalysisData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

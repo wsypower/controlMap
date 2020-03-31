@@ -5,9 +5,11 @@ import {
   getAllRainMacTreeData,
   getOneRainMacData,
   getRainfallTrendDataForOneMac,
+  getAllWatchPlaceData,
   getAllWaterLevelMacTreeData,
   getOneWaterLevelMacData,
-  getDeviceDataList
+  getWaterLevelTrendDataForOneMac,
+  getAllManholeMacData
 } from '@/api/drainoffwater/manage.js'
 
 export default {
@@ -91,6 +93,19 @@ export default {
           })
       })
     },
+    getAllWatchPlaceData(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getAllWatchPlaceData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
     getAllWaterLevelMacTreeData(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
@@ -117,10 +132,23 @@ export default {
           })
       })
     },
-    getDeviceDataList(state, data) {
+    getWaterLevelTrendDataForOneMac(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
-        getDeviceDataList(data)
+        getWaterLevelTrendDataForOneMac(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getAllManholeMacData(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getAllManholeMacData(data)
           .then(res => {
             resolve(res)
           })

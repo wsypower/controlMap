@@ -4,7 +4,7 @@
       <my-address @getAddressData="getAddressData"></my-address>
       <div flex="fir:left cross:center" style="margin-top:10px">
         <label>井盖状态：</label>
-        <a-select v-model="query.status" style="flex:1">
+        <a-select v-model="query.statusId" style="flex:1">
           <a-select-option value="all">全部</a-select-option>
           <a-select-option value="normal">正常</a-select-option>
           <a-select-option value="outline">离线</a-select-option>
@@ -26,9 +26,9 @@
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
         <a-spin tip="数据加载中..."></a-spin>
       </div>
-      <cg-container scroll v-if="!showLoading && dataArr.length > 0">
+      <cg-container scroll v-if="!showLoading && sourceData.length > 0">
         <div
-          v-for="(item, index) in dataArr"
+          v-for="(item, index) in sourceData"
           :key="index"
           class="item"
           :class="{ active: activeIndex === index, warning: item.statusId === 1, outline: item.statusId === 2 }"
@@ -45,7 +45,7 @@
           </div>
         </div>
       </cg-container>
-      <div v-if="!showLoading && dataArr.length == 0" class="nodata-panel" flex="main:center cross:center">
+      <div v-if="!showLoading && sourceData.length == 0" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
@@ -75,26 +75,29 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapState, mapActions, mapMutations } from 'vuex'
+import util from '@/utils/util';
+import {mixins} from '@/mixins/index'
 import ManholeInfo from './components/ManholeInfo'
 import { getTypeEquip } from '@/api/map/service'
 import { emergencyEquipStyle } from '@/utils/util.map.style'
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
+const userId = util.cookies.get('userId');
 export default {
   name: 'manage',
+  mixins: [mixins],
   components:{
   },
   data(){
     return {
-      //选择的城市---数组形式
-      selectedCity: [],
       //查询条件
       query: {
         deviceType: 3,
+        userId: userId,
         //选择的城市---数组形式
-        selectedCity: [],
+        area: [],
         //井盖状态
-        status: 'all',
+        statusId: 'all',
         //井盖地址
         address: '',
         //井盖编号
@@ -102,12 +105,6 @@ export default {
         pageNo: 1,
         pageSize: 50
       },
-      //展示数据的过渡效果
-      showLoading: false,
-      //后台传过来的数据
-      dataArr: [],
-      //查询结果个数
-      totalSize: 0,
       //目前激活的窨井盖序号
       activeIndex: null,
       //信息窗的宽度
@@ -144,7 +141,7 @@ export default {
   },
   watch: {},
   methods: {
-    ...mapActions('drainoffwater/manage', ['getDeviceDataList']),
+    ...mapActions('drainoffwater/manage', ['getAllManholeMacData']),
     ...mapMutations('map', ['pushPageLayers','setClickHandler','setOverlay']),
     getAddressData(val){
       console.log('selected city data',val);
@@ -160,10 +157,10 @@ export default {
     //获取预案数据
     getDataList() {
       this.showLoading = true
-      this.getDeviceDataList(this.query).then(res => {
+      this.getAllManholeMacData(this.query).then(res => {
         console.log(res)
-        this.dataArr = res.data
-        this.totalSize = res.data.length
+        this.sourceData = res.data.list;
+        this.totalSize = res.data.total;
         this.showLoading = false
       })
     },

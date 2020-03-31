@@ -288,8 +288,8 @@ const getOneRainMacData = options => {
   const queryParameters = getQueryParameters(options)
   console.log('getOneRainMacData query', queryParameters)
   let data = {
-        yty: -4,
-        mtm: 5
+    yty: -4,
+    mtm: 5
   }
   return builder(
     {
@@ -310,27 +310,34 @@ const getRainfallTrendDataForOneMac = options => {
   console.log('getRainfallTrendDataForOneMac query', queryParameters)
   let data = [
     {
-      'dayTime':'2020-03-19 07:00',
-      'value': 13
-    },{
-      'dayTime':'2020-03-19 07:30',
-      'value': 23
-    },{
-      'dayTime':'2020-03-19 08:00',
-      'value': 16
-    },{
-      'dayTime':'2020-03-19 08:30',
-      'value': 29
-    },{
-      'dayTime':'2020-03-19 09:00',
-      'value': 55
-    },{
-      'dayTime':'2020-03-19 09:30',
-      'value': 33
-    },{
-      'dayTime':'2020-03-19 10:00',
-      'value': 40
-    }]
+      dayTime: '2020-03-19 07:00',
+      value: 13
+    },
+    {
+      dayTime: '2020-03-19 07:30',
+      value: 23
+    },
+    {
+      dayTime: '2020-03-19 08:00',
+      value: 16
+    },
+    {
+      dayTime: '2020-03-19 08:30',
+      value: 29
+    },
+    {
+      dayTime: '2020-03-19 09:00',
+      value: 55
+    },
+    {
+      dayTime: '2020-03-19 09:30',
+      value: 33
+    },
+    {
+      dayTime: '2020-03-19 10:00',
+      value: 40
+    }
+  ]
   return builder(
     {
       code: 0,
@@ -344,138 +351,104 @@ const getRainfallTrendDataForOneMac = options => {
 }
 Mock.mock(/\/@test\/getRainfallTrendDataForOneMac/, 'get', getRainfallTrendDataForOneMac)
 
+const getAllWatchPlaceData = options => {
+  console.log('getAllWatchPlaceData options', options)
+  const queryParameters = getQueryParameters(options)
+  console.log('getAllWatchPlaceData query', queryParameters)
+  let data = [
+    {
+      name: '河道',
+      id: 'hedao'
+    },
+    {
+      name: '积水点',
+      id: 'jishui'
+    },
+    {
+      name: '污水液位',
+      id: 'wushui'
+    },
+    {
+      name: '雨水液位',
+      id: 'yushui'
+    }
+  ]
+  return builder(
+    {
+      code: 0,
+      data: data,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/getAllWatchPlaceData/, 'get', getAllWatchPlaceData)
+
 const getAllWaterLevelMacTreeData = options => {
   console.log('getAllWaterLevelMacTreeData options', options)
   const queryParameters = getQueryParameters(options)
   console.log('getAllWaterLevelMacTreeData query', queryParameters)
-  let data = [
-    {
-      id: 'jianche1',
-      isLeaf: false,
-      name: '监测点1名称',
-      children: [
-        {
-          id: '33092104001320015992',
-          name: '设备0001',
-          isLeaf: true,
-          online: false,
-          x: '30.247886',
-          y: '122.202261'
-        },
-        {
-          id: '33092104001320010677',
-          name: '设备0002',
-          isLeaf: true,
-          online: true,
-          x: '30.247886',
-          y: '122.202261'
-        },
-        {
-          id: '33092104001320010678',
-          name: '设备0003',
-          isLeaf: true,
-          online: false,
-          x: '30.265587',
-          y: '122.218019'
-        },
-        {
-          id: '33092104001320010679',
-          name: '设备0004',
-          isLeaf: true,
-          online: false,
-          x: '30.265587',
-          y: '122.218019'
-        }
-      ]
-    },
-    {
-      id: 'jiance2',
-      isLeaf: false,
-      name: '监测点2名称',
-      children: [
-        {
-          id: '33092104001320011640',
-          name: '设备0001',
-          isLeaf: true,
-          online: false,
-          x: '30.245140',
-          y: '122.208213'
-        },
-        {
-          id: '33092104001320011641',
-          name: '设备0002',
-          isLeaf: true,
-          online: false,
-          x: '30.245140',
-          y: '122.208213'
-        },
-        {
-          id: '33092104001320011642',
-          name: '设备0003',
-          isLeaf: true,
-          online: true,
-          x: '30.252779',
-          y: '122.220688'
-        },
-        {
-          id: '33092104001320011643',
-          name: '设备0004',
-          isLeaf: true,
-          online: false,
-          x: '30.252779',
-          y: '122.220688'
-        },
-        {
-          id: '33092104001320011644',
-          name: '设备0005',
-          isLeaf: true,
-          online: true,
-          x: '30.245192',
-          y: '122.206967'
-        },
-        {
-          id: '33092104001320011645',
-          name: '设备0006',
-          isLeaf: true,
-          online: false,
-          x: '30.240435',
-          y: '122.203112'
-        },
-        {
-          id: '33092104001320011646',
-          name: '设备0007',
-          isLeaf: true,
-          online: true,
-          x: '30.247607',
-          y: '122.202172'
-        },
-        {
-          id: '33092104001320011647',
-          name: '设备0008',
-          isLeaf: true,
-          online: true,
-          x: '30.252497',
-          y: '122.201541'
-        },
-        {
-          id: '33092104001320011648',
-          name: '设备0009',
-          isLeaf: true,
-          online: false,
-          x: '30.252497',
-          y: '122.201541'
-        },
-        {
-          id: '33092104001320011649',
-          name: '设备0010',
-          isLeaf: true,
-          online: false,
-          x: '30.252497',
-          y: '122.201541'
-        }
-      ]
-    }
-  ]
+  let data = {
+    treeData: [
+      {
+        id: 'jianche1',
+        isLeaf: false,
+        name: '监测点1名称',
+        children: [
+          {
+            id: '33092104001320015992',
+            name: '设备0001',
+            isLeaf: true,
+            online: false,
+            value: 1.5,
+            unit: 'm',
+            y: '30.247886',
+            x: '122.202261'
+          }
+        ]
+      },
+      {
+        id: 'jiance2',
+        isLeaf: false,
+        name: '监测点2名称',
+        children: [
+          {
+            id: '33092104001320011647',
+            name: '设备0001',
+            isLeaf: true,
+            online: true,
+            value: 2.1,
+            unit: 'm',
+            y: '30.252497',
+            x: '122.201541'
+          },
+          {
+            id: '33092104001320011648',
+            name: '设备0002',
+            isLeaf: true,
+            online: false,
+            value: 1.5,
+            unit: 'm',
+            y: '30.252497',
+            x: '122.201541'
+          },
+          {
+            id: '33092104001320011649',
+            name: '设备0010',
+            isLeaf: true,
+            online: false,
+            value: 2.6,
+            unit: 'm',
+            y: '30.252497',
+            x: '122.201541'
+          }
+        ]
+      }
+    ],
+    total: 4
+  }
 
   return builder(
     {
@@ -495,25 +468,8 @@ const getOneWaterLevelMacData = options => {
   const queryParameters = getQueryParameters(options)
   console.log('getOneWaterLevelMacData query', queryParameters)
   let data = {
-    detailMessage: {
-      name: '监测点1-设备001',
-      value: 15,
-      unit: 'm',
-      yty: '-6',
-      mtm: '+2'
-    },
-    chartData: [
-      [
-        '2020-03-19 07:00',
-        '2020-03-19 07:30',
-        '2020-03-19 08:00',
-        '2020-03-19 08:30',
-        '2020-03-19 09:00',
-        '2020-03-19 09:30',
-        '2020-03-29 10:00'
-      ],
-      [13, 23, 16, 29, 55, 33, 40]
-    ]
+    yty: -6,
+    mtm: 2
   }
 
   return builder(
@@ -529,82 +485,132 @@ const getOneWaterLevelMacData = options => {
 }
 Mock.mock(/\/@test\/getOneWaterLevelMacData/, 'get', getOneWaterLevelMacData)
 
-const getDeviceDataList = options => {
-  console.log('getDeviceDataList options', options)
+const getWaterLevelTrendDataForOneMac = options => {
+  console.log('getWaterLevelTrendDataForOneMac options', options)
   const queryParameters = getQueryParameters(options)
-  console.log('getDeviceDataList query', queryParameters)
+  console.log('getWaterLevelTrendDataForOneMac query', queryParameters)
   let data = [
     {
-      id: '33092104001320015991',
-      name: '井盖0001',
-      statusId: 0,
-      statusName: '正常',
-      area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      dayTime: '2020-03-19 07:00',
+      value: 13
     },
     {
-      id: '33092104001320015992',
-      name: '井盖0002',
-      statusId: 0,
-      statusName: '正常',
-      area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      dayTime: '2020-03-19 07:30',
+      value: 23
     },
     {
-      id: '33092104001320015993',
-      name: '井盖0003',
-      statusId: 0,
-      statusName: '正常',
-      area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      dayTime: '2020-03-19 08:00',
+      value: 16
     },
     {
-      id: '33092104001320015994',
-      name: '井盖0004',
-      statusId: 1,
-      statusName: '警告',
-      area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      dayTime: '2020-03-19 08:30',
+      value: 29
     },
     {
-      id: '33092104001320015995',
-      name: '井盖0005',
-      statusId: 0,
-      statusName: '正常',
-      area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      dayTime: '2020-03-19 09:00',
+      value: 55
     },
     {
-      id: '33092104001320015996',
-      name: '井盖0006',
-      statusId: 2,
-      statusName: '离线',
-      area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      dayTime: '2020-03-19 09:30',
+      value: 33
     },
     {
-      id: '33092104001320015997',
-      name: '井盖0007',
-      statusId: 0,
-      statusName: '正常',
-      area: '六安市-裕安区',
-      address: 'xxxxxxxxxxxx',
-      x: '30.247886',
-      y: '122.202261'
+      dayTime: '2020-03-19 10:00',
+      value: 40
     }
   ]
+  return builder(
+    {
+      code: 0,
+      data: data,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/getWaterLevelTrendDataForOneMac/, 'get', getWaterLevelTrendDataForOneMac)
+
+const getAllManholeMacData = options => {
+  console.log('getAllManholeMacData options', options)
+  const queryParameters = getQueryParameters(options)
+  console.log('getAllManholeMacData query', queryParameters)
+  let data = {
+    list: [
+      {
+        id: '33092104001320015991',
+        name: '井盖0001',
+        statusId: 0,
+        statusName: '正常',
+        area: '六安市-裕安区',
+        address: 'xxxxxxxxxxxx',
+        x: '30.247886',
+        y: '122.202261'
+      },
+      {
+        id: '33092104001320015992',
+        name: '井盖0002',
+        statusId: 0,
+        statusName: '正常',
+        area: '六安市-裕安区',
+        address: 'xxxxxxxxxxxx',
+        x: '30.247886',
+        y: '122.202261'
+      },
+      {
+        id: '33092104001320015993',
+        name: '井盖0003',
+        statusId: 0,
+        statusName: '正常',
+        area: '六安市-裕安区',
+        address: 'xxxxxxxxxxxx',
+        x: '30.247886',
+        y: '122.202261'
+      },
+      {
+        id: '33092104001320015994',
+        name: '井盖0004',
+        statusId: 1,
+        statusName: '警告',
+        area: '六安市-裕安区',
+        address: 'xxxxxxxxxxxx',
+        x: '30.247886',
+        y: '122.202261'
+      },
+      {
+        id: '33092104001320015995',
+        name: '井盖0005',
+        statusId: 0,
+        statusName: '正常',
+        area: '六安市-裕安区',
+        address: 'xxxxxxxxxxxx',
+        x: '30.247886',
+        y: '122.202261'
+      },
+      {
+        id: '33092104001320015996',
+        name: '井盖0006',
+        statusId: 2,
+        statusName: '离线',
+        area: '六安市-裕安区',
+        address: 'xxxxxxxxxxxx',
+        x: '30.247886',
+        y: '122.202261'
+      },
+      {
+        id: '33092104001320015997',
+        name: '井盖0007',
+        statusId: 0,
+        statusName: '正常',
+        area: '六安市-裕安区',
+        address: 'xxxxxxxxxxxx',
+        x: '30.247886',
+        y: '122.202261'
+      }
+    ],
+    total: 7
+  }
 
   return builder(
     {
@@ -617,4 +623,4 @@ const getDeviceDataList = options => {
     { 'Custom-Header': Mock.mock('@id') }
   )
 }
-Mock.mock(/\/@test\/getDeviceDataList/, 'get', getDeviceDataList)
+Mock.mock(/\/@test\/getAllManholeMacData/, 'get', getAllManholeMacData)
