@@ -22,15 +22,27 @@
           </div>
         </div>
         <div class="detail-right" flex="dir:left cross:bottom" v-if="info.type === 'water' || info.type === 'gas'">
-          <span
-            >日同比&nbsp;&nbsp;{{ info.detailMessage.yty }}{{ info.detailMessage.unit }}
-            <a-icon v-if="info.detailMessage.yty.indexOf('+') === 0" style="color: #50cf3f" type="arrow-down" />
-            <a-icon v-else style="color: #f07171" type="arrow-up" />
+          <span v-if="info.detailMessage.yty>0">
+            日同比&nbsp;+{{ info.detailMessage.yty }}{{ info.detailMessage.unit }}
+            <a-icon style="color: #50cf3f" type="arrow-up" />
           </span>
-          <span
-            >日环比&nbsp;&nbsp;{{ info.detailMessage.mtm }}{{ info.detailMessage.unit }}
-            <a-icon v-if="info.detailMessage.mtm.indexOf('+') === 0" style="color: #50cf3f" type="arrow-down" />
-            <a-icon v-else style="color: #f07171" type="arrow-up" />
+          <span v-else-if="info.detailMessage.yty === 0">
+            日同比&nbsp;+{{ info.detailMessage.yty }}{{ info.detailMessage.unit }}
+          </span>
+          <span v-else>
+            日同比&nbsp;{{ info.detailMessage.yty }}{{ info.detailMessage.unit }}
+            <a-icon style="color: #f07171" type="arrow-down" />
+          </span>
+          <span v-if="info.detailMessage.mtm>0">
+            日环比&nbsp;+{{ info.detailMessage.mtm }}{{ info.detailMessage.unit }}
+            <a-icon style="color: #50cf3f" type="arrow-up" />
+          </span>
+          <span v-else-if="info.detailMessage.mtm === 0">
+            日环比&nbsp;+{{ info.detailMessage.mtm }}{{ info.detailMessage.unit }}
+          </span>
+          <span v-else>
+            日环比&nbsp;{{ info.detailMessage.mtm }}{{ info.detailMessage.unit }}
+            <a-icon style="color: #f07171" type="arrow-down" />
           </span>
         </div>
         <div class="detail-right" flex="dir:left cross:center" v-if="info.type === 'light'">

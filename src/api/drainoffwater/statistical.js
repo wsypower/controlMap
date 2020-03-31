@@ -17,9 +17,9 @@ import request from '@/plugins/axios/axios'
  */
 
 export function getStatusAnalysisData(data) {
-  console.log('api:getStatusAnalysisData', data)
+  console.log('api:getRainfallMacStatusAnalysisData', data)
   return request({
-    url: '@test/getStatusAnalysisData?_t=' + new Date().getTime(),
+    url: '@test/getRainfallMacStatusAnalysisData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -40,7 +40,7 @@ export function getStatusAnalysisData(data) {
 export function getRainTrendData(data) {
   console.log('api:getRainTrendData', data)
   return request({
-    url: '@test/getRainTrendData?_t=' + new Date().getTime(),
+    url: '@test/getRainfallTrendData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

@@ -6,7 +6,7 @@
     <div class="panel-content">
       <div class="time-range" flex="dir:top cross:center">
         <div class="status-choose-panel">
-          <a-radio-group @change="onChange" v-model="timeMethod">
+          <a-radio-group v-model="timeMethod" @change="changeTimeMethod">
             <a-radio value="day">今日</a-radio>
             <a-radio value="week">本周</a-radio>
             <a-radio value="month">本月</a-radio>
@@ -23,167 +23,166 @@ import moment from 'moment';
 import { getSelectDateRange } from '@/utils/util.tool.js'
 import { mapActions } from 'vuex'
 export default {
-    name: 'RainTrend',
-    data(){
-        return {
-          dateFormat: 'YYYY-MM-DD',
-          timeMethod: 'week',
-        }
+  name: 'RainTrend',
+  data(){
+    return {
+      dateFormat: 'YYYY-MM-DD',
+      timeMethod: 'week',
+      dayRange: []
+    }
+  },
+  mounted(){
+    let dayRangeArr = getSelectDateRange(this.timeMethod);
+    this.dayRange = [moment(dayRangeArr[0], this.dateFormat), moment(dayRangeArr[1], this.dateFormat)];
+    this.getChartData();
+  },
+  watch:{
+    'dayRange': function(){
+      this.getChartData();
+    }
+  },
+  methods:{
+    ...mapActions('drainoffwater/statistical', ['getRainTrendData']),
+    moment,
+    //获取全部数据
+    getChartData(){
+      console.log('dayRange',this.dayRange);
+      this.getRainTrendData().then(res=>{
+        console.log('getRainTrendData',res);
+        let xArr = [];
+        let yArr = [];
+        res.data.forEach(item => {
+          xArr.push(item.dayTime);
+          yArr.push(item.num);
+        })
+        let chartData = [xArr,yArr];
+        console.log('chartData',chartData);
+        this.chartInit(chartData);
+      })
     },
-    computed:{
-      dayRange: function(){
-        let dayRangeArr = getSelectDateRange(this.timeMethod);
-        // if(this.timeMethod==='week'){
-        //   this.getSelectDateRange(this.timeMethod)
-        // }
-        // if(this.timeMethod==='week'){
-        //
-        // }
-        // if(this.timeMethod==='week'){
-        //
-        // }
-        return [moment(dayRangeArr[0], this.dateFormat), moment(dayRangeArr[1], this.dateFormat)]
-      }
+    //选择年月日触发
+    changeTimeMethod(){
+      let dayRangeArr = getSelectDateRange(this.timeMethod);
+      this.dayRange = [moment(dayRangeArr[0], this.dateFormat), moment(dayRangeArr[1], this.dateFormat)];
     },
-    mounted(){
-        this.getChartData();
+    onChange() {
+      console.log( 'changeDayRange',this.dayRange);
     },
-    methods:{
-        ...mapActions('drainoffwater/statistical', ['getRainTrendData']),
-        moment,
-        //获取全部数据
-        getChartData(){
-            this.getRainTrendData().then(res=>{
-                console.log('getRainTrendData',res);
-                let xArr = [];
-                let yArr = [];
-              res.data.forEach(item => {
-                xArr.push(item.day);
-                yArr.push(item.num);
-              })
-              let chartData = [xArr,yArr];
-              console.log('chartData',chartData);
-              this.chartInit(chartData);
-            })
+    //初始化图表
+    chartInit(data){
+      const ChartColumnar = this.$echarts.init(this.$refs.trendLineChart);
+      ChartColumnar.setOption({
+        grid: {
+          top: 10,
+          left: 30,
+          right: 30,
+          bottom: 50,
+          containLabel: true
         },
-      onChange(date, dateString) {
-        console.log(date, dateString);
-      },
-      //初始化图表
-      chartInit(data){
-        const ChartColumnar = this.$echarts.init(this.$refs.trendLineChart);
-        ChartColumnar.setOption({
-          grid: {
-            top: 10,
-            left: 30,
-            right: 30,
-            bottom: 50,
-            containLabel: true
+        tooltip: {
+          show: true,
+          trigger: 'axis',
+          axisPointer: {
+            lineStyle:{
+              color: '#dddddd',
+              opacity: 0.5
+            }
           },
-          tooltip: {
+          formatter: function(params){
+            let text = params[0].seriesName + '：' + params[0].value + 'm';
+            return text + "<br/>" + params[0].name
+          }
+        },
+        xAxis: [{
+          type: 'category',
+          data: data[0],
+          axisLabel: {
             show: true,
-            trigger: 'axis',
-            axisPointer: {
-              lineStyle:{
-                color: '#dddddd',
-                opacity: 0.5
-              }
-            },
-            formatter: function(params){
-              let text = params[0].seriesName + '：' + params[0].value + 'm';
-              return text + "<br/>" + params[0].name
-            }
-          },
-          xAxis: [{
-            type: 'category',
-            data: data[0],
-            axisLabel: {
-              show: true,
-              textStyle:{
-                fontSize: 13,
-                color: '#333333'
-              },
-              formatter: function(val){
-                return val.substring(11)
-              }
-            },
-            axisLine: {
-              show: true,
-              lineStyle:{
-                color: '#dddddd'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            splitLine: {
-              show: false
-            }
-          }],
-          yAxis: {
-            min: 0,
-            axisLabel: {
+            textStyle:{
               fontSize: 13,
               color: '#333333'
             },
-            axisLine: {
-              show: false
-            },
-            axisTick: {
-              show: false
-            },
-            splitLine: {
-              show: true,
-              lineStyle:{
-                type: 'dashed',
-                color: '#dddddd'
-              }
+            formatter: function(val){
+              return val.substring(11)
             }
           },
-          dataZoom: [ {
-            type: 'slider',
+          axisLine: {
             show: true,
-            xAxisIndex: [0],
-            height: 20,
-            bottom: 10,
-            start: 10,
-            end: 35,
-            handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-            handleSize: '110%',
-            handleStyle:{
-              color:"#d3dee5",
-            },
-            textStyle:{
-              color:"#000"
-            },
-            borderColor: 'rgba(144,151,156,0.5)',
-            areaStyle:{
-              color: 'rgba(0,0,0,0.5)'
-            }
-          },{
-            type: "inside",
-            xAxisIndex: [0],
-            start: 1,
-            end: 35
-          }],
-          series: [{
-            name: '降雨量',
-            type: 'line',
-            smooth: false,
-            symbol: 'circle',
-            itemStyle:{
-              borderWidth: 2,
-              borderColor: '#2c90f3',
-              color: '#2c90f3',
-            },
             lineStyle:{
-              color: '#2c90f3'
-            },
-            data: data[1]
-          }]
-        });
-      }
+              color: '#dddddd'
+            }
+          },
+          axisTick: {
+            show: false
+          },
+          splitLine: {
+            show: false
+          }
+        }],
+        yAxis: {
+          min: 0,
+          axisLabel: {
+            fontSize: 13,
+            color: '#333333'
+          },
+          axisLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          },
+          splitLine: {
+            show: true,
+            lineStyle:{
+              type: 'dashed',
+              color: '#dddddd'
+            }
+          }
+        },
+        dataZoom: [ {
+          type: 'slider',
+          show: true,
+          xAxisIndex: [0],
+          height: 20,
+          bottom: 10,
+          start: 10,
+          end: 35,
+          handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+          handleSize: '110%',
+          handleStyle:{
+            color:"#d3dee5",
+          },
+          textStyle:{
+            color:"#000"
+          },
+          borderColor: 'rgba(144,151,156,0.5)',
+          areaStyle:{
+            color: 'rgba(0,0,0,0.5)'
+          }
+        },{
+          type: "inside",
+          xAxisIndex: [0],
+          start: 1,
+          end: 35
+        }],
+        series: [{
+          name: '降雨量',
+          type: 'line',
+          smooth: false,
+          symbol: 'circle',
+          itemStyle:{
+            borderWidth: 2,
+            borderColor: '#2c90f3',
+            color: '#2c90f3',
+          },
+          lineStyle:{
+            color: '#2c90f3'
+          },
+          data: data[1]
+        }]
+      });
     }
+  }
 }
 </script>
 <style lang="scss" scoped>

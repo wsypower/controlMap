@@ -1,8 +1,10 @@
 import {
+  getCountyList,
   getAllCameraTreeData,
   getCameraUrl,
   getAllRainMacTreeData,
   getOneRainMacData,
+  getRainfallTrendDataForOneMac,
   getAllWaterLevelMacTreeData,
   getOneWaterLevelMacData,
   getDeviceDataList
@@ -11,6 +13,19 @@ import {
 export default {
   namespaced: true,
   actions: {
+    getCountyList(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getCountyList(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
     getAllCameraTreeData(state, data) {
       console.log('store', data)
       return new Promise((resolve, reject) => {
@@ -54,6 +69,19 @@ export default {
       console.log('store', data)
       return new Promise((resolve, reject) => {
         getOneRainMacData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getRainfallTrendDataForOneMac(state, data) {
+      console.log('store', data)
+      return new Promise((resolve, reject) => {
+        getRainfallTrendDataForOneMac(data)
           .then(res => {
             resolve(res)
           })

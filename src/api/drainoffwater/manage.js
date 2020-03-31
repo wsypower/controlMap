@@ -5,6 +5,26 @@
 
 import request from '@/plugins/axios/axios'
 
+
+/**
+ * @description 获取所有市区数据
+ * @author moxuejuan
+ * @date 2020-03-31 10:22
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+
+export function getCountyList(data) {
+  console.log('api:getCountyList', data)
+  return request({
+    url: '@test/getCountyList?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
 /**
  * @description 获取所有摄像头(树形结构)
  * @author moxuejuan
@@ -62,14 +82,14 @@ export function getCameraUrl(data) {
 export function getAllRainMacTreeData(data) {
   console.log('api:getAllRainMacTreeData', data)
   return request({
-    url: '@test/getAllRainMacTreeData?_t=' + new Date().getTime(),
+    url: '@test/getAllRainfallMacTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
 }
 
 /**
- * @description 获取某一个雨量监测点的某一个监测设备具体数据
+ * @description 获取某一个雨量监测点的某一个监测设备具体数据(日同比、日环比)
  * @author moxuejuan
  * @date 2020-03-18 16:44
  * @param {String} macId 设备Id
@@ -82,7 +102,27 @@ export function getAllRainMacTreeData(data) {
 export function getOneRainMacData(data) {
   console.log('api:getOneRainMacData', data)
   return request({
-    url: '@test/getOneRainMacData?_t=' + new Date().getTime(),
+    url: '@test/getOneRainfallMacData?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * @description 获取某一个雨量监测点的某一个监测设备近3个小时的监测雨量趋势
+ * @author moxuejuan
+ * @date 2020-03-31 10:44
+ * @param {String} macId 设备Id
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+
+export function getRainfallTrendDataForOneMac(data) {
+  console.log('api:getRainfallTrendDataForOneMac', data)
+  return request({
+    url: '@test/getRainfallTrendDataForOneMac?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
