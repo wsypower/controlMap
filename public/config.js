@@ -1,5 +1,5 @@
 const TIMER = {
-  time: 60000
+  time: 65000
 }
 
 const URL_CONFIG = {
