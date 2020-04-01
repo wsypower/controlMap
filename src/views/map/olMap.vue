@@ -188,13 +188,6 @@ export default {
         });
         this.setPageLayers([]);
         this.map.un('click',this.clickHandler);
-        console.log(this.yuanOverlay);
-        this.map.removeOverlay(this.yuanOverlay);
-        //管控的地图清除
-        this.map.removeOverlay(this.map.getOverlayById('carPositionOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));
         // 清除图层
         const layers=this.map.getLayers().array_;
         const cloneLayer=[...layers];
