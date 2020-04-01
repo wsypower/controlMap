@@ -64,6 +64,16 @@ export default {
       mapManager = new MapManager(this.map)
       // 将mapManager状态存至vuex
       this.setMapManager(mapManager)
+      //鼠标样式
+        const _this=this;
+        this.map.on('pointermove', function({ pixel, coordinate }) {
+          const feature = _this.map.forEachFeatureAtPixel(pixel, feature => feature);
+          if (feature) {
+              _this.map.getTargetElement().style.cursor = "pointer";
+          } else {
+              _this.map.getTargetElement().style.cursor = "default";
+          }
+      });
     },
     getBaseLayers() {
       /**
@@ -185,6 +195,7 @@ export default {
         this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
         this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
         this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));
+        // 清除图层
         const layers=this.map.getLayers().array_;
         const cloneLayer=[...layers];
         cloneLayer.forEach((l)=>{
@@ -193,12 +204,22 @@ export default {
                 this.map.removeLayer(l);
             }
         });
+        // 清除弹框
         const overlays=this.map.getOverlays().array_;
         const cloneOverlays=[...overlays];
         cloneOverlays.forEach((o)=>{
             // l.setVisible(false);
             this.map.removeOverlay(o);
-      });
+        });
+        // 清除交互
+        const inters=this.map.getInteractions().array_;
+        const cloneInters=[...inters];
+        cloneInters.forEach((o)=>{
+            // l.setVisible(false);
+            if(o.get('featureType')) {
+                this.map.removeInteraction(o);
+            }
+        });
     }
   },
   computed:{
