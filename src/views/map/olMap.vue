@@ -193,6 +193,12 @@ export default {
                 this.map.removeLayer(l);
             }
         });
+        const overlays=this.map.getOverlays().array_;
+        const cloneOverlays=[...overlays];
+        cloneOverlays.forEach((o)=>{
+            // l.setVisible(false);
+            this.map.removeOverlay(o);
+      });
     }
   },
   computed:{
