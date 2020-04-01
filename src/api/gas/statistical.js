@@ -19,7 +19,7 @@ import request from '@/plugins/axios/axios'
 export function getStatusAnalysisData(data) {
   console.log('api:getStatusAnalysisData', data)
   return request({
-    url: '@test/getStatusAnalysisData?_t=' + new Date().getTime(),
+    url: '@test/getGasMacStatusAnalysisData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

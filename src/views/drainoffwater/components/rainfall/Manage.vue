@@ -50,6 +50,7 @@ export default {
         type: 'water',
         detailMessage:{
           name: '',
+          flagName: '降雨量',
           value: 0,
           unit: '',
           yty: 0,
@@ -182,12 +183,12 @@ export default {
             this.detailInfoData.detailMessage.mtm = res.data.mtm;
           });
           this.getRainfallTrendDataForOneMac({}).then(res=>{
-            let needData = res.data.reduce((acc,item) => {
+            let chartData = res.data.reduce((acc,item) => {
               acc[0].push(item.dayTime);
               acc[1].push(item.value);
               return acc
             },[[],[]]);
-            this.detailInfoData.chartData = needData;
+            this.detailInfoData.chartData = chartData;
           });
         }
       }

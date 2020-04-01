@@ -45,3 +45,23 @@ export function getOneGasMacData(data) {
     params: data
   })
 }
+
+/**
+ * @description 获取某一个燃气监测点的某一个监测设备近3个小时的监测趋势
+ * @author moxuejuan
+ * @date 2020-04-01 09:12
+ * @param {String} macId 设备Id
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+
+export function getGasTrendDataForOneMac(data) {
+  console.log('api:getGasTrendDataForOneMac', data)
+  return request({
+    url: '@test/getGasTrendDataForOneMac?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}

@@ -14,7 +14,6 @@ export default {
         return {
             totalNum: 0,
             totalArr: [],
-
         }
     },
     mounted(){

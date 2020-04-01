@@ -60,6 +60,7 @@ export default {
         type: 'water',
         detailMessage:{
           name: '',
+          flagName: '水位',
           value: 0,
           unit: '',
           yty: 0,

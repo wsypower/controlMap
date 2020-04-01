@@ -1,6 +1,7 @@
 import {
   getAllGasMacTreeData,
-  getOneGasMacData
+  getOneGasMacData,
+  getGasTrendDataForOneMac
 } from '@/api/gas/manage.js'
 
 export default {
@@ -21,6 +22,18 @@ export default {
     getOneGasMacData(state, data) {
       return new Promise((resolve, reject) => {
         getOneGasMacData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+    getGasTrendDataForOneMac(state, data) {
+      return new Promise((resolve, reject) => {
+        getGasTrendDataForOneMac(data)
           .then(res => {
             resolve(res)
           })
