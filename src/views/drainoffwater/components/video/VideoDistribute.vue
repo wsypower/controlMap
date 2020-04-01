@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="player-panel active">
-      <my-video-player :videoSrc.sync="videoSrc" :videoName.sync="videoName" :multiple="true"></my-video-player>
+      <my-video-player :videoSrc.sync="videoSrc" :videoName.sync="videoName" :videoId.sync="videoId" :multiple="true"></my-video-player>
     </div>
   </div>
 </template>

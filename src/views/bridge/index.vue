@@ -10,7 +10,7 @@
         <a-input placeholder="输入桥梁名称" v-model="bridgeName" style="flex:1" />
       </div>
       <a-button type="primary" style="width: 100%;margin-bottom:5px;" @click="onSearch">查询</a-button>
-      <div>共计{{ resultCount }}个查询结果</div>
+      <div>共计{{ totalSize }}个查询结果</div>
     </div>
     <div class="yuan_dialog_body">
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
@@ -27,35 +27,34 @@
       </div>
     </div>
     <div class="player-panel active">
-      <my-video-player :videoSrc.sync="videoSrc" :multiple="true"></my-video-player>
+      <my-video-player :videoSrc.sync="videoSrc" :videoName.sync="videoName" :videoId.sync="videoId" :multiple="true"></my-video-player>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import { mapState,mapActions } from 'vuex'
 import util from '@/utils/util';
+import {mixins} from '@/mixins/index'
 import MyVideoPlayer from "./MyVideoPlayer.vue";
 import {videoPointStyle} from '@/utils/util.map.style'
 const userId = util.cookies.get('userId');
 export default {
   name: 'BridgeVideo',
+  mixins: [mixins],
   components:{
     MyVideoPlayer
   },
   data(){
     return {
-      //选择的城市---数组形式
-      selectedCity: [],
       //桥梁名称
       bridgeName: '',
-      //展示数据的过渡效果
-      showLoading: false,
-      //后台传过来的数据
-      sourceData: [],
-      //查询结果个数
-      resultCount: 0,
+      //摄像头唯一标识
+      videoId: '',
+      //摄像头名称
+      videoName: '',
       //视频流URL
       videoSrc: '',
+
       //地图相关
       bridgeFeatures: [],
       bridgeLayer: null,
@@ -69,7 +68,6 @@ export default {
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
       this.bridgeFeatures=[];
-      this.resultCount = 0;
       this.changeTreeData(data,'');
       this.isLoadData=!this.isLoadData;
       return data;
@@ -96,12 +94,13 @@ export default {
     this.map.on('click', this.videoMapClickHandler);
     //入参：地址、桥梁名称
     this.getAllCameraTreeDataForBridge({userId:userId}).then(res=>{
-      this.sourceData = res.data;
+      this.sourceData = res.data.treeData;
+      this.totalSize = res.data.total;
       this.showLoading = false;
     });
   },
   methods:{
-    ...mapActions('bridge/manage', ['getAllCameraTreeDataForBridge','getCameraUrl']),
+    ...mapActions('bridge/manage', ['getAllCameraTreeDataForBridge']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
@@ -112,12 +111,11 @@ export default {
       arr.forEach(item=>{
         item.scopedSlots = { title: 'title' };
         if(item.isLeaf){
-          item.title = item.mpname;
-          item.key = item.mpid;
+          item.title = item.name;
+          item.key = item.id;
           item.dept = deptName;
           item.slots = {icon: 'camera'};
           item.class = 'itemClass';
-          this.resultCount++;
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
@@ -131,14 +129,16 @@ export default {
           item.title = item.name;
           item.key = 'dept_' + item.id;
           item.slots = {icon: 'dept'};
-          this.changeTreeData(item.children, item.mpname);
+          this.changeTreeData(item.children, item.name);
         }
       })
     },
     onSearch(){
+      this.showLoading = true;
       //入参：城市范围、桥梁名称，用户ID
       this.getAllCameraTreeDataForBridge({userId:userId}).then(res=>{
-        this.sourceData = res.data;
+        this.sourceData = res.data.treeData;
+        this.totalSize = res.data.total;
         this.showLoading = false;
       });
     },
@@ -146,10 +146,13 @@ export default {
     //点击树中某个节点（某个人员）时触发
     onSelect(selectedKeys, e){
       console.log(selectedKeys, e);
-      if(selectedKeys[0].indexOf('dept_')<0){
-        let needData = e.selectedNodes[0].data.props;
-        let mpid = needData.mpid;
-        this.playVideo(mpid);
+      if(selectedKeys.length>0){
+        if(selectedKeys[0].indexOf('dept_')<0){
+          let needData = e.selectedNodes[0].data.props;
+          this.videoId = needData.id;
+          this.videoName = needData.name;
+          this.videoSrc = needData.videoUrl;
+        }
       }
     },
     videoMapClickHandler({ pixel, coordinate }) {
@@ -159,15 +162,9 @@ export default {
         // const coordinates=clickFeature.getGeometry().getCoordinates();
         if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
           const videoInfoData = clickFeature.get('props');
-          this.playVideo(videoInfoData.mpid);
+
         }
       }
-    },
-    playVideo(mpid){
-      //打开摄像头播放
-      this.getCameraUrl({userId: userId, mpId: mpid}).then(res => {
-        this.videoSrc = res.data;
-      });
     }
   }
 }

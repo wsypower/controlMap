@@ -74,8 +74,8 @@ export default {
       ChartColumnar.setOption({
         grid: {
           top: 10,
-          left: 30,
-          right: 30,
+          left: 10,
+          right: 10,
           bottom: 50,
           containLabel: true
         },
