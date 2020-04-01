@@ -10,7 +10,21 @@ export const mixins = {
       //后台传过来的数据
       sourceData: [],
       //查询结果个数
-      totalSize: 0
+      totalSize: 0,
+      //详情tip需要的所有数据
+      detailInfoData: {
+        type: '',
+        detailMessage:{
+          name: '',
+          online: false,
+          flagName: '',
+          value: 0,
+          unit: '',
+          yty: 0,
+          mtm: 0
+        },
+        chartData: []
+      }
     }
   },
   methods: {

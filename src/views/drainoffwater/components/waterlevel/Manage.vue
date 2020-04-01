@@ -55,19 +55,6 @@ export default {
       watchPlaceList: [],
       //监测场景key
       watchPlaceId: 'all',
-      //详情需要的所有数据
-      detailInfoData: {
-        type: 'water',
-        detailMessage:{
-          name: '',
-          flagName: '水位',
-          value: 0,
-          unit: '',
-          yty: 0,
-          mtm: 0
-        },
-        chartData: []
-      },
       //地图相关
       levelFeatures: [],
       levelLayer: null,
@@ -187,6 +174,7 @@ export default {
           this.detailInfoData.detailMessage.name = needData.dept + '-' +needData.name;
           this.detailInfoData.detailMessage.value = needData.value;
           this.detailInfoData.detailMessage.unit = needData.unit;
+          this.detailInfoData.detailMessage.flagName = '水位';
           this.detailInfoData.type = 'water';
           console.log('macId: ' + needData.id, 'userId: ' + userId);
           this.getOneWaterLevelMacData({}).then(res=>{

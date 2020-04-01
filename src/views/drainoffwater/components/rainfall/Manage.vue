@@ -44,20 +44,6 @@ export default {
   },
   data(){
     return {
-
-      //详情tip需要的所有数据
-      detailInfoData: {
-        type: 'water',
-        detailMessage:{
-          name: '',
-          flagName: '降雨量',
-          value: 0,
-          unit: '',
-          yty: 0,
-          mtm: 0
-        },
-        chartData: []
-      },
       //地图相关
       watchFeatures: [],
       watchLayer: null,
@@ -176,6 +162,7 @@ export default {
           this.detailInfoData.detailMessage.name = needData.dept + '-' +needData.name;
           this.detailInfoData.detailMessage.value = needData.value;
           this.detailInfoData.detailMessage.unit = needData.unit;
+          this.detailInfoData.detailMessage.flagName = '降雨量';
           this.detailInfoData.type = 'water';
           console.log('macId: ' + needData.id, 'userId: ' + userId);
           this.getOneRainMacData({}).then(res=>{

@@ -79,15 +79,7 @@ export default {
 
       //目前激活的路灯序号
       activeIndex: null,
-      detailInfoData:{
-        type: 'light',
-        detailMessage:{
-          online: false,
-          flagName: '耗电量',
-          unit: ''
-        },
-        chartData: []
-      },
+
       lightLayer: null,
       lightOverlay:null
     }
@@ -178,11 +170,12 @@ export default {
       this.mapManager.locateTo([parseFloat(item.x),parseFloat(item.y)]);
       this.activeIndex = index;
       //detailInfoData
-      console.log('macId: '+ item.id);
       this.detailInfoData.type = 'light';
       this.detailInfoData.detailMessage.name = item.name;
       this.detailInfoData.detailMessage.online = item.online;
       this.detailInfoData.detailMessage.unit = '度';
+      this.detailInfoData.detailMessage.flagName = '耗电量';
+      console.log('macId: '+ item.id);
       this.getOneLightMacData().then( res =>{
         let chartData = res.data.reduce((acc,item) => {
           acc[0].push(item.dayTime);

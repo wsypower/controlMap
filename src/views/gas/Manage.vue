@@ -44,20 +44,6 @@ export default {
   },
   data(){
     return {
-      //详情需要的所有数据
-      detailInfoData: {
-        type: 'gas',
-        detailMessage:{
-          name: '',
-          flagName: '甲烷含量',
-          value: 0,
-          unit: '',
-          yty: 0,
-          mtm: 0
-        },
-        chartData: []
-      },
-
       //地图相关
       gasFeatures: [],
       gasLayer: null,
@@ -170,6 +156,7 @@ export default {
       this.detailInfoData.detailMessage.name = needData.dept + '-' +needData.name;
       this.detailInfoData.detailMessage.value = needData.value;
       this.detailInfoData.detailMessage.unit = needData.unit;
+      this.detailInfoData.detailMessage.flagName = '甲烷含量';
       this.detailInfoData.type = 'gas';
       console.log('macId: ' + needData.id);
       this.getOneGasMacData({userId:userId}).then(res=>{
