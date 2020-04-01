@@ -6,7 +6,7 @@
     <div class="panel-content">
       <div class="time-range" flex="dir:top cross:center">
         <div class="status-choose-panel">
-          <a-radio-group @change="onChange" v-model="timeMethod">
+          <a-radio-group @change="changeTimeMethod" v-model="timeMethod">
             <a-radio value="day">今日</a-radio>
             <a-radio value="week">本周</a-radio>
             <a-radio value="month">本月</a-radio>
@@ -28,34 +28,42 @@
       return {
         dateFormat: 'YYYY-MM-DD',
         timeMethod: 'week',
-      }
-    },
-    computed:{
-      dayRange: function(){
-        let dayRangeArr = getSelectDateRange(this.timeMethod);
-        return [moment(dayRangeArr[0], this.dateFormat), moment(dayRangeArr[1], this.dateFormat)]
+        dayRange: []
       }
     },
     mounted(){
+      let dayRangeArr = getSelectDateRange(this.timeMethod);
+      this.dayRange = [moment(dayRangeArr[0], this.dateFormat), moment(dayRangeArr[1], this.dateFormat)];
       this.getChartData();
+    },
+    watch:{
+      'dayRange': function(){
+        this.getChartData();
+      }
     },
     methods:{
       ...mapActions('streetlight/statistical', ['getPowerConsumptionTrendData']),
       moment,
       //获取全部数据
       getChartData(){
+        console.log('dayRange',this.dayRange);
         this.getPowerConsumptionTrendData().then(res=>{
           console.log('getPowerConsumptionTrendData',res);
           let xArr = [];
           let yArr = [];
           res.data.forEach(item => {
-            xArr.push(item.day);
+            xArr.push(item.dayTime);
             yArr.push(item.num);
           })
           let chartData = [xArr,yArr];
           console.log('chartData',chartData);
           this.chartInit(chartData);
         })
+      },
+      //选择年月日触发
+      changeTimeMethod(){
+        let dayRangeArr = getSelectDateRange(this.timeMethod);
+        this.dayRange = [moment(dayRangeArr[0], this.dateFormat), moment(dayRangeArr[1], this.dateFormat)];
       },
       onChange(date, dateString) {
         console.log(date, dateString);
@@ -66,8 +74,8 @@
         ChartColumnar.setOption({
           grid: {
             top: 10,
-            left: 30,
-            right: 30,
+            left: 10,
+            right: 10,
             bottom: 50,
             containLabel: true
           },
@@ -90,6 +98,7 @@
             data: data[0],
             axisLabel: {
               show: true,
+              interval: 0,
               textStyle:{
                 fontSize: 13,
                 color: '#333333'
@@ -138,7 +147,7 @@
             height: 20,
             bottom: 10,
             start: 10,
-            end: 35,
+            end: 16,
             handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
             handleSize: '110%',
             handleStyle:{

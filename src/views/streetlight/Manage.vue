@@ -4,7 +4,7 @@
       <my-address @getAddressData="getAddressData"></my-address>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
         <label>路灯搜索：</label>
-        <a-input placeholder="输入路灯编号" v-model="query.code" style="flex:1" />
+        <a-input placeholder="输入路灯名称" v-model="query.lightName" style="flex:1" />
       </div>
       <a-button type="primary" style="width: 100%;margin-bottom: 10px;" @click="onSearch">查询</a-button>
       <div>共计{{ totalSize }}个查询结果</div>
@@ -13,9 +13,9 @@
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
         <a-spin tip="数据加载中..."></a-spin>
       </div>
-      <cg-container scroll v-if="!showLoading && dataArr.length > 0">
+      <cg-container scroll v-if="!showLoading && sourceData.length > 0">
         <div
-          v-for="(item, index) in dataArr"
+          v-for="(item, index) in sourceData"
           :key="index"
           class="item"
           :class="{ active: activeIndex === index, outline: !item.online }"
@@ -32,7 +32,7 @@
           </div>
         </div>
       </cg-container>
-      <div v-if="!showLoading && dataArr.length == 0" class="nodata-panel" flex="main:center cross:center">
+      <div v-if="!showLoading && sourceData.length == 0" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
@@ -52,40 +52,38 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapState, mapActions, mapMutations } from 'vuex'
+import util from '@/utils/util';
+import {mixins} from '@/mixins/index'
 import DetailInfo from '../common/DetailInfo.vue'
 import { getTypeEquip } from '@/api/map/service'
 import { emergencyEquipStyle } from '@/utils/util.map.style'
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
+const userId = util.cookies.get('userId');
 export default {
   name: 'manage',
+  mixins: [mixins],
   components:{ DetailInfo },
   data(){
     return {
-      //选择的城市---数组形式
-      selectedCity: [],
       //查询条件
       query: {
         deviceType: 3,
         //选择的城市---数组形式
-        selectedCity: [],
-        //路灯编号
-        code: '',
+        area: [],
+        //路灯名称
+        lightName: '',
         pageNo: 1,
         pageSize: 50
       },
-      //展示数据的过渡效果
-      showLoading: false,
-      //后台传过来的数据
-      dataArr: [],
-      //查询结果个数
-      totalSize: 0,
+
       //目前激活的路灯序号
       activeIndex: null,
       detailInfoData:{
         type: 'light',
         detailMessage:{
           online: false,
+          flagName: '耗电量',
           unit: ''
         },
         chartData: []
@@ -116,7 +114,7 @@ export default {
     ...mapMutations('map', ['pushPageLayers','setClickHandler','setOverlay']),
     getAddressData(val){
       console.log('selected city data',val);
-      this.selectedCity = val;
+      this.query.area = val;
     },
     manholeClickHandler({ pixel, coordinate }) {
         const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
@@ -132,8 +130,8 @@ export default {
     getDataList() {
       this.showLoading = true
       this.getAllLightListData(this.query).then(res => {
-        this.dataArr = res.data
-        this.totalSize = res.data.length
+        this.sourceData = res.data.list;
+        this.totalSize = res.data.total
         this.showLoading = false
       })
     },
@@ -180,9 +178,18 @@ export default {
       this.mapManager.locateTo([parseFloat(item.x),parseFloat(item.y)]);
       this.activeIndex = index;
       //detailInfoData
+      console.log('macId: '+ item.id);
+      this.detailInfoData.type = 'light';
+      this.detailInfoData.detailMessage.name = item.name;
+      this.detailInfoData.detailMessage.online = item.online;
+      this.detailInfoData.detailMessage.unit = '度';
       this.getOneLightMacData().then( res =>{
-        this.detailInfoData = res.data;
-        this.detailInfoData.type = 'light';
+        let chartData = res.data.reduce((acc,item) => {
+          acc[0].push(item.dayTime);
+          acc[1].push(item.value);
+          return acc
+        },[[],[]]);
+        this.detailInfoData.chartData = chartData;
       })
     },
     closeTip(){

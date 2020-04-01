@@ -22,7 +22,7 @@ import request from '@/plugins/axios/axios'
 export function getAllLightListData(data) {
   console.log('api:getAllLightListData', data)
   return request({
-    url: '@test/getAllLightListData?_t=' + new Date().getTime(),
+    url: '@test/getAllLightMacData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -42,7 +42,7 @@ export function getAllLightListData(data) {
 export function getOneLightMacData(data) {
   console.log('api:getOneLightMacData', data)
   return request({
-    url: '@test/getOneLightMacData?_t=' + new Date().getTime(),
+    url: '@test/getPowerCoTrendDataForOneMac?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
