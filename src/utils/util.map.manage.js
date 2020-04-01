@@ -125,6 +125,7 @@ export class MapManager {
         style: getClusterStyle
     });
     this.map.addInteraction(selectCluster);
+    selectCluster.set('featureType','add');
     function getClusterStyle(feature, resolution) {
         let styleCache = {};
         if (!feature.get('features')) {

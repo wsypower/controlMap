@@ -117,7 +117,6 @@ export default {
         const data=this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
         this.videoLayer = data[0];
         const selectCluster = data[1];
-          selectCluster.set('featureType','videoDistribute');
         const _this=this;
         selectCluster.getFeatures().on(['add'], function(e) {
               const c = e.element.get('features');
