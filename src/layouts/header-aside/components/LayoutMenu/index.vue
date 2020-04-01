@@ -24,6 +24,18 @@ export default {
   components: {
     menuItem
   },
+  mounted(){
+    setTimeout(() => {
+      let hash = this.getUrlHash();
+      //streetlight  // bridge
+      if(hash === 'streetlight'){
+        this.menuItemClick(3,this.aside[3]);
+      }
+      if(hash === 'bridge'){
+        this.menuItemClick(4,this.aside[4]);
+      }
+    },500);
+  },
   computed: {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
     ...mapState('cgadmin/page', ['current'])
@@ -66,6 +78,12 @@ export default {
           this.asideCollapseSet(true), resolve()
         }
       })
+    },
+    getUrlHash() {
+      let hash = window.location.hash;
+
+      console.log('URL#/：',hash.substring(2));
+      return hash.substring(2)
     }
   }
 }
