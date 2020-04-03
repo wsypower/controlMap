@@ -123,8 +123,9 @@ export default {
               if (!c) {
                   return;
               }
-              if (c.length == 1) {
-              } else if(c.length <6){
+              // if (c.length == 1) {
+              // } else
+              if(c.length <6){
                   _this.videoInfoData.videoList=[];
                   for(let i=0;i<c.length;i++){
                       const props=c[i].get('props');
@@ -147,7 +148,7 @@ export default {
   mounted(){
     this.showLoading = true;
     this.map = this.mapManager.getMap();
-    this.map.on('click', this.videoMapClickHandler);
+    // this.map.on('click', this.videoMapClickHandler);
     this.selectOverlay = this.mapManager.addOverlay({
         id:'selectVideoOverlay',
         offset:[0,-20],
