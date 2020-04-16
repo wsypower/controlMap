@@ -10,7 +10,7 @@
     <div class="tip-body">
       <div class="detail" flex="dir:left main:justify">
         <div class="item" v-for="(item, index) in info.detailMessage" :key="index" flex="dir:top cross:center">
-          <div class="item-header">{{item.name}}当前监测值</div>
+          <div class="item-header">{{titleArr[index]}}当前监测值</div>
           <div class="item-value">{{item.value}}</div>
           <div v-if="item.yty>0">日同比&nbsp;&nbsp;+{{ item.yty }}{{ item.unit }}
             <a-icon style="color: #50cf3f" type="arrow-up" />

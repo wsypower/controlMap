@@ -8,6 +8,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
+import util from '@/utils/util';
+const userId = util.cookies.get('userId');
 export default {
     name: 'StatusAnalysis',
     data(){
@@ -23,12 +25,12 @@ export default {
         ...mapActions('drainoffwater/statistical', ['getWaterStatusAnalysisData']),
         //获取全部数据
         getChartData(){
-            this.getWaterStatusAnalysisData().then(res=>{
+            this.getWaterStatusAnalysisData({userId: userId}).then(res=>{
                 console.log('getWaterStatusAnalysisData',res);
-                res.data.forEach(item=>{
+                res.forEach(item=>{
                   this.totalNum += item.num;
                 });
-                res.data.forEach(item=>{
+                res.forEach(item=>{
                     let allTemp = {
                         name: item.name + '_' + item.num+ '个' + '_' + (item.num*100/this.totalNum).toFixed(2) + '%',
                         value: item.num

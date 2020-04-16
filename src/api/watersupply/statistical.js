@@ -19,7 +19,7 @@ import request from '@/plugins/axios/axios'
 export function getStatusAnalysisData(data) {
   console.log('api:getStatusAnalysisData', data)
   return request({
-    url: '@test/getWaterQualityMacStatusAnalysisData?_t=' + new Date().getTime(),
+    url: 'municipal/getWaterQualityMacStatusAnalysisData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -30,8 +30,8 @@ export function getStatusAnalysisData(data) {
  * @author moxuejuan
  * @date 2020-03-18 16:44
  * @param {String} waterFlag 水质检测项名称
- * @param {String} startDay 开始日期
- * @param {String} endDay 结束日期
+ * @param {String} startTime 开始日期时间戳
+ * @param {String} endTime 结束日期时间戳
  * @method：GET
  * @response：{
  *
@@ -41,7 +41,7 @@ export function getStatusAnalysisData(data) {
 export function getWaterQualityTrendData(data) {
   console.log('api:getWaterQualityTrendData', data)
   return request({
-    url: '@test/getWaterQualityTrendData?_t=' + new Date().getTime(),
+    url: 'municipal/getWaterQualityTrendData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

@@ -8,6 +8,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
+import util from '@/utils/util';
+const userId = util.cookies.get('userId');
 export default {
     name: 'StatusAnalysis',
     data(){
@@ -24,12 +26,12 @@ export default {
         ...mapActions('streetlight/statistical', ['getStatusAnalysisData']),
         //获取全部数据
         getChartData(){
-            this.getStatusAnalysisData().then(res=>{
+            this.getStatusAnalysisData({userId: userId}).then(res=>{
                 console.log('getStatusAnalysisData',res);
-                res.data.forEach(item=>{
+                res.forEach(item=>{
                   this.totalNum += item.num;
                 });
-                res.data.forEach(item=>{
+                res.forEach(item=>{
                     let allTemp = {
                         name: item.name + '_' + item.num+ '个' + '_' + (item.num*100/this.totalNum).toFixed(2) + '%',
                         value: item.num
@@ -104,7 +106,7 @@ export default {
                     type: "pie",
                     center: ["30%", "50%"],
                     radius: ["55%", "70%"],
-                    color: [ "#50cf3f", "#cccccc"],
+                    color: [ "#50cf3f", "#cccccc", "#ccc74c"],
                     startAngle: 135,
                     label: {
                         show: false

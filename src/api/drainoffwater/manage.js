@@ -19,7 +19,7 @@ import request from '@/plugins/axios/axios'
 export function getCountyList(data) {
   console.log('api:getCountyList', data)
   return request({
-    url: '@test/getCountyList?_t=' + new Date().getTime(),
+    url: 'municipal/getCountryList?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -40,7 +40,7 @@ export function getCountyList(data) {
 export function getAllCameraTreeData(data) {
   console.log('api:getAllCameraTreeData', data)
   return request({
-    url: '@test/getAllCameraTreeData?_t=' + new Date().getTime(),
+    url: 'municipal/getAllCameraTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -82,7 +82,7 @@ export function getCameraUrl(data) {
 export function getAllRainMacTreeData(data) {
   console.log('api:getAllRainMacTreeData', data)
   return request({
-    url: '@test/getAllRainfallMacTreeData?_t=' + new Date().getTime(),
+    url: 'municipal/getAllRainfallMacTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -102,7 +102,7 @@ export function getAllRainMacTreeData(data) {
 export function getOneRainMacData(data) {
   console.log('api:getOneRainMacData', data)
   return request({
-    url: '@test/getOneRainfallMacData?_t=' + new Date().getTime(),
+    url: 'municipal/getOneRainfallMacData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -122,7 +122,7 @@ export function getOneRainMacData(data) {
 export function getRainfallTrendDataForOneMac(data) {
   console.log('api:getRainfallTrendDataForOneMac', data)
   return request({
-    url: '@test/getRainfallTrendDataForOneMac?_t=' + new Date().getTime(),
+    url: 'municipal/getRainfallTrendDataForOneMac?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -141,7 +141,7 @@ export function getRainfallTrendDataForOneMac(data) {
 export function getAllWatchPlaceData(data) {
   console.log('api:getAllWatchPlaceData', data)
   return request({
-    url: '@test/getAllWatchPlaceData?_t=' + new Date().getTime(),
+    url: 'municipal/getAllWatchPlaceData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -163,7 +163,7 @@ export function getAllWatchPlaceData(data) {
 export function getAllWaterLevelMacTreeData(data) {
   console.log('api:getAllWaterLevelMacTreeData', data)
   return request({
-    url: '@test/getAllWaterLevelMacTreeData?_t=' + new Date().getTime(),
+    url: 'municipal/getAllWaterLevelMacTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -183,7 +183,7 @@ export function getAllWaterLevelMacTreeData(data) {
 export function getOneWaterLevelMacData(data) {
   console.log('api:getOneWaterLevelMacData', data)
   return request({
-    url: '@test/getOneWaterLevelMacData?_t=' + new Date().getTime(),
+    url: 'municipal/getOneWaterLevelMacData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -203,7 +203,7 @@ export function getOneWaterLevelMacData(data) {
 export function getWaterLevelTrendDataForOneMac(data) {
   console.log('api:getWaterLevelTrendDataForOneMac', data)
   return request({
-    url: '@test/getWaterLevelTrendDataForOneMac?_t=' + new Date().getTime(),
+    url: 'municipal/getWaterLevelTrendDataForOneMac?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -227,7 +227,7 @@ export function getWaterLevelTrendDataForOneMac(data) {
 export function getAllManholeMacData(data) {
   console.log('api:getAllManholeMacData', data)
   return request({
-    url: '@test/getAllManholeMacData?_t=' + new Date().getTime(),
+    url: 'municipal/getAllManholeMacData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

@@ -19,7 +19,7 @@ import request from '@/plugins/axios/axios'
 export function getStatusAnalysisData(data) {
   console.log('api:getStatusAnalysisData', data)
   return request({
-    url: '@test/getGasMacStatusAnalysisData?_t=' + new Date().getTime(),
+    url: 'municipal/getGasMacStatusAnalysisData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -29,8 +29,8 @@ export function getStatusAnalysisData(data) {
  * @description 获取甲烷含量趋势图
  * @author moxuejuan
  * @date 2020-03-23 15:00
- * @param {String} startDay 开始日期
- * @param {String} endDay 结束日期
+ * @param {String} startTime 开始日期时间戳
+ * @param {String} endTime 结束日期时间戳
  * @method：GET
  * @response：{
  *
@@ -40,7 +40,7 @@ export function getStatusAnalysisData(data) {
 export function getGasTrendData(data) {
   console.log('api:getGasTrendData', data)
   return request({
-    url: '@test/getGasTrendData?_t=' + new Date().getTime(),
+    url: 'municipal/getGasTrendData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

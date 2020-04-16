@@ -20,7 +20,7 @@ import request from '@/plugins/axios/axios'
 export function getAllGasMacTreeData(data) {
   console.log('api:getAllGasMacTreeData', data)
   return request({
-    url: '@test/getAllGasMacTreeData?_t=' + new Date().getTime(),
+    url: 'municipal/getAllGasMacTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -40,7 +40,7 @@ export function getAllGasMacTreeData(data) {
 export function getOneGasMacData(data) {
   console.log('api:getOneGasMacData', data)
   return request({
-    url: '@test/getOneGasMacData?_t=' + new Date().getTime(),
+    url: 'municipal/getOneGasMacData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -60,7 +60,7 @@ export function getOneGasMacData(data) {
 export function getGasTrendDataForOneMac(data) {
   console.log('api:getGasTrendDataForOneMac', data)
   return request({
-    url: '@test/getGasTrendDataForOneMac?_t=' + new Date().getTime(),
+    url: 'municipal/getGasTrendDataForOneMac?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

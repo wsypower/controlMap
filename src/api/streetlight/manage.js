@@ -9,8 +9,8 @@ import request from '@/plugins/axios/axios'
  * @description 获取所有路灯信息
  * @author moxuejuan
  * @date 2020-03-24 10:38
- * @param {String} address 选择的地址
- * @param {String} code 路灯名称（模糊搜索）
+ * @param {String} area 选择的市区
+ * @param {String} lightName 路灯名称（模糊搜索）
  * @param {Number} pageNo 当页页码
  * @param {Number} pageSize 一页显示的条数
  * @method：GET
@@ -22,7 +22,7 @@ import request from '@/plugins/axios/axios'
 export function getAllLightListData(data) {
   console.log('api:getAllLightListData', data)
   return request({
-    url: '@test/getAllLightMacData?_t=' + new Date().getTime(),
+    url: 'municipal/getAllLightMacData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -42,7 +42,7 @@ export function getAllLightListData(data) {
 export function getOneLightMacData(data) {
   console.log('api:getOneLightMacData', data)
   return request({
-    url: '@test/getPowerCoTrendDataForOneMac?_t=' + new Date().getTime(),
+    url: 'municipal/getPowerCoTrendDataForOneMac?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

@@ -21,6 +21,8 @@
 import moment from 'moment';
 import { getSelectDateRange } from '@/utils/util.tool.js'
 import { mapActions } from 'vuex'
+import util from '@/utils/util';
+const userId = util.cookies.get('userId');
 const FLAGARR = {
   'ph': 'PH',
   'zd': '浊度',
@@ -52,13 +54,13 @@ export default {
         moment,
         //获取全部数据
         getChartData(){
-            this.getWaterQualityTrendData().then(res=>{
+            this.getWaterQualityTrendData({userId: userId}).then(res=>{
                 console.log('getWaterQualityTrendData',res);
                 let xArr = [];
                 let yPHArr = [];
                 let yTurbidityArr = [];
                 let yRCArr = [];
-              res.data.forEach(item => {
+              res.forEach(item => {
                 xArr.push(item.dayTime);
                 yPHArr.push(item.phValue);
                 yTurbidityArr.push(item.turbidityValue);

@@ -69,8 +69,9 @@ export default {
       //查询条件
       query: {
         deviceType: 3,
-        //选择的城市---数组形式
-        area: [],
+        userId: userId,
+        //选择的城市
+        area: '',
         //路灯名称
         lightName: '',
         pageNo: 1,
@@ -88,7 +89,6 @@ export default {
     ...mapState('map', ['mapManager']),
   },
   mounted() {
-    this.getDataList();
     this.getEquipPoints();
     this.map = this.mapManager.getMap()
     this.map.on('click', this.manholeClickHandler);
@@ -99,6 +99,7 @@ export default {
         positioning: 'bottom-center',
       element: this.$refs.detailInfo.$el
     });
+    this.getDataList();
   },
   watch: {},
   methods: {
@@ -122,8 +123,8 @@ export default {
     getDataList() {
       this.showLoading = true
       this.getAllLightListData(this.query).then(res => {
-        this.sourceData = res.data.list;
-        this.totalSize = res.data.total
+        this.sourceData = res.list;
+        this.totalSize = res.total
         this.showLoading = false
       })
     },
@@ -151,8 +152,7 @@ export default {
       })
     },
     //搜索关键字查询
-    onSearch(val) {
-      this.query.searchContent = val
+    onSearch() {
       this.getDataList()
     },
 
@@ -176,8 +176,8 @@ export default {
       this.detailInfoData.detailMessage.unit = '度';
       this.detailInfoData.detailMessage.flagName = '耗电量';
       console.log('macId: '+ item.id);
-      this.getOneLightMacData().then( res =>{
-        let chartData = res.data.reduce((acc,item) => {
+      this.getOneLightMacData({userId: userId, macId: item.id}).then( res =>{
+        let chartData = res.reduce((acc,item) => {
           acc[0].push(item.dayTime);
           acc[1].push(item.value);
           return acc

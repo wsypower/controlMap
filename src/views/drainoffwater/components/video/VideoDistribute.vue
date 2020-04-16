@@ -85,22 +85,32 @@ export default {
     }
   },
   mounted(){
-    this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
-    //入参：地址、监测点名称
-    this.getAllCameraTreeData({userId:userId}).then(res=>{
-      console.log('getAllCameraTreeData',res);
-      this.sourceData = res.data.treeData;
-      this.totalSize = res.data.total;
-      this.showLoading = false;
-    });
+    this.getAllCamera();
   },
   methods:{
     ...mapActions('drainoffwater/manage', ['getAllCameraTreeData']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
+    },
+    //获取所有摄像头数据
+    getAllCamera(){
+      this.showLoading = true;
+      //入参：地址、监测点名称
+      console.log('area: ',this.selectedCity,'watchPointName: ' + this.watchPointName, 'userId: ' + userId);
+      let params = {
+        userId: userId,
+        area: this.selectedCity,
+        watchPointName: this.watchPointName
+      }
+      this.getAllCameraTreeData(params).then(res=>{
+        console.log('getAllCameraTreeData',res);
+        this.sourceData = res.treeData;
+        this.totalSize = res.total;
+        this.showLoading = false;
+      });
     },
     //给后端的数据增加一些前端展示与判断需要的属性
     changeTreeData(arr,deptName){
@@ -134,13 +144,7 @@ export default {
     onSearch(){
       //入参：城市范围、监测点名称，用户ID
       console.log('area: ',this.selectedCity,'watchPointName: ' + this.watchPointName, 'userId: ' + userId);
-      this.showLoading = true;
-      this.getAllCameraTreeData({userId:userId}).then(res=>{
-        console.log('getAllCameraTreeData',res);
-        this.sourceData = res.data.treeData;
-        this.totalSize = res.data.total;
-        this.showLoading = false;
-      });
+      this.getAllCamera();
     },
 
     //点击树中某个节点（某个人员）时触发

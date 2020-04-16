@@ -20,7 +20,7 @@ import request from '@/plugins/axios/axios'
 export function getAllWaterQMMacTreeData(data) {
   console.log('api:getAllWaterQMMacTreeData', data)
   return request({
-    url: '@test/getAllWaterQualityMacTreeData?_t=' + new Date().getTime(),
+    url: 'municipal/getAllWaterQualityMacTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -40,7 +40,7 @@ export function getAllWaterQMMacTreeData(data) {
 export function getOneWaterQMMacData(data) {
   console.log('api:getOneWaterQMMacData', data)
   return request({
-    url: '@test/getOneWaterQualityMacData?_t=' + new Date().getTime(),
+    url: 'municipal/getOneWaterQualityMacData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -60,7 +60,7 @@ export function getOneWaterQMMacData(data) {
 export function getWaterQualityTrendDataForOneMac(data) {
   console.log('api:getWaterQualityTrendDataForOneMac', data)
   return request({
-    url: '@test/getWaterQualityTrendDataForOneMac?_t=' + new Date().getTime(),
+    url: 'municipal/getWaterQualityTrendDataForOneMac?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

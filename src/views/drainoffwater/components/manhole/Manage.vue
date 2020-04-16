@@ -95,7 +95,7 @@ export default {
         deviceType: 3,
         userId: userId,
         //选择的城市---数组形式
-        area: [],
+        area: '',
         //井盖状态
         statusId: 'all',
         //井盖地址
@@ -129,7 +129,7 @@ export default {
     ...mapState('map', ['mapManager']),
   },
   mounted() {
-    this.getDataList();
+
     this.getEquipPoints();
     this.map = this.mapManager.getMap()
     this.map.on('click', this.manholeClickHandler);
@@ -141,6 +141,7 @@ export default {
       element: this.$refs.manholeOverlay.$el
     });
     this.setOverlay(this.manholeOverlay);
+    this.getDataList();
   },
   watch: {},
   methods: {
@@ -149,6 +150,7 @@ export default {
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
+      this.query.area = val;
     },
     manholeClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
@@ -161,9 +163,9 @@ export default {
     getDataList() {
       this.showLoading = true
       this.getAllManholeMacData(this.query).then(res => {
-        console.log(res)
-        this.sourceData = res.data.list;
-        this.totalSize = res.data.total;
+        console.log('getAllManholeMacData',res)
+        this.sourceData = res.list;
+        this.totalSize = res.total;
         this.showLoading = false
       })
     },
@@ -189,7 +191,6 @@ export default {
     },
     //搜索关键字查询
     onSearch(val) {
-      this.query.searchContent = val
       this.getDataList()
     },
 

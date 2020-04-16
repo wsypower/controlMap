@@ -85,7 +85,6 @@ export default {
     }
   },
   mounted(){
-    this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
     // 地图弹框初始化
@@ -95,18 +94,29 @@ export default {
         positioning: 'bottom-center',
         element: this.$refs.detailInfo.$el
     });
-    this.getAllWaterQMMacTreeData({userId:userId}).then(res=>{
-      console.log('getAllWaterQMMacTreeData',res);
-      this.sourceData = res.data.treeData;
-      this.totalSize = res.data.total;
-      this.showLoading = false;
-    });
+    this.getAllWaterQMMac();
   },
   methods:{
     ...mapActions('watersupply/manage', ['getAllWaterQMMacTreeData','getOneWaterQMMacData','getWaterQualityTrendDataForOneMac']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
+    },
+    // 获取所有水质监测设备
+    getAllWaterQMMac(){
+      this.showLoading = true;
+      //入参：城市范围、监测点名称，用户ID
+      let params = {
+        userId: userId,
+        area: this.selectedCity,
+        watchPointName: this.watchPointName
+      }
+      this.getAllWaterQMMacTreeData(params).then(res=>{
+        console.log('getAllWaterQMMacTreeData',res);
+        this.sourceData = res.treeData;
+        this.totalSize = res.total;
+        this.showLoading = false;
+      });
     },
     //给后端的数据增加一些前端展示与判断需要的属性
     changeTreeData(arr,deptName){
@@ -142,14 +152,7 @@ export default {
       })
     },
     onSearch(){
-      this.showLoading = true;
-      //入参：城市范围、监测点名称，用户ID
-      this.getAllWaterQMMacTreeData({userId:userId}).then(res=>{
-        console.log('getAllWaterQMMacTreeData',res);
-        this.sourceData = res.data.treeData;
-        this.totalSize = res.data.total;
-        this.showLoading = false;
-      });
+      this.getAllWaterQMMac();
     },
 
     //点击树中某个节点（某个人员）时触发
@@ -164,8 +167,8 @@ export default {
           // 获取详情数据
           this.detailInfoData.name = needData.dept + '-' + needData.name;
           console.log('macId: ' + needData.id, 'userId: ' + userId);
-          this.getOneWaterQMMacData({}).then(res=>{
-            let tempList = res.data;
+          this.getOneWaterQMMacData({userId: userId, macId: needData.id}).then(res=>{
+            let tempList = res;
             tempList[0].value = needData.phValue;
             tempList[0].unit = needData.phUnit;
             tempList[1].value = needData.turbidityValue;
@@ -175,8 +178,8 @@ export default {
             this.detailInfoData.detailMessage = tempList;
           });
 
-          this.getWaterQualityTrendDataForOneMac({}).then(res=>{
-            let needData = res.data.reduce((acc,item) => {
+          this.getWaterQualityTrendDataForOneMac({userId: userId, macId: needData.id}).then(res=>{
+            let needData = res.reduce((acc,item) => {
               acc[0].push(item.dayTime);
               acc[1].push(item.phValue);
               acc[2].push(item.turbidityValue);

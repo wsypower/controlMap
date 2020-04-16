@@ -90,32 +90,43 @@ export default {
     }
   },
   mounted(){
-    this.getAllWatchPlaceData().then(res => {
-      this.watchPlaceList = res.data;
+    this.getAllWatchPlaceData({userId: userId}).then(res => {
+      this.watchPlaceList = res;
     });
-    this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
-    //入参：城市范围、监测场景、监测点名称，用户ID
-    this.getAllWaterLevelMacTreeData({}).then(res=>{
-      console.log('getAllWaterLevelMacTreeData',res);
-      this.sourceData = res.data.treeData;
-      this.totalSize = res.data.total;
-      this.showLoading = false;
+    // 地图弹框初始化
+    this.levelOverlay = this.mapManager.addOverlay({
+        id:'waterLevelOverlay',
+        offset:[0,-20],
+        positioning: 'bottom-center',
+        element: this.$refs.detailInfo.$el
     });
-      // 地图弹框初始化
-      this.levelOverlay = this.mapManager.addOverlay({
-          id:'waterLevelOverlay',
-          offset:[0,-20],
-          positioning: 'bottom-center',
-          element: this.$refs.detailInfo.$el
-      });
+    this.getAllWaterLevelMac();
   },
   methods:{
     ...mapActions('drainoffwater/manage', ['getAllWatchPlaceData', 'getAllWaterLevelMacTreeData','getOneWaterLevelMacData','getWaterLevelTrendDataForOneMac']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
+    },
+    // 获取水位监测设备
+    getAllWaterLevelMac(){
+      this.showLoading = true;
+      //入参：城市范围(area)、监测场景(watchPlaceId)、监测点名称(watchPointName)，用户ID(userId)
+      console.log('area: ',this.selectedCity,'watchPlaceId:' + this.watchPlaceId,'watchPointName: ' + this.watchPointName, 'userId: ' + userId);
+      let params = {
+        userId: userId,
+        area: this.selectedCity,
+        watchPlaceId: this.watchPlaceId,
+        watchPointName: this.watchPointName
+      }
+      this.getAllWaterLevelMacTreeData(params).then(res=>{
+        console.log('getAllWaterLevelMacTreeData',res);
+        this.sourceData = res.treeData;
+        this.totalSize = res.total;
+        this.showLoading = false;
+      });
     },
     //给后端的数据增加一些前端展示与判断需要的属性
     changeTreeData(arr,deptName){
@@ -151,14 +162,7 @@ export default {
       })
     },
     onSearch(){
-      this.showLoading = true;
-      //入参：城市范围(area)、监测场景(watchPlaceId)、监测点名称(watchPointName)，用户ID(userId)
-      this.getAllWaterLevelMacTreeData({}).then(res=>{
-        console.log('getAllWaterLevelMacTreeData',res);
-        this.sourceData = res.data.treeData;
-        this.totalSize = res.data.total;
-        this.showLoading = false;
-      });
+      this.getAllWaterLevelMac();
     },
 
     //点击树中某个节点（某个人员）时触发
@@ -177,12 +181,12 @@ export default {
           this.detailInfoData.detailMessage.flagName = '水位';
           this.detailInfoData.type = 'water';
           console.log('macId: ' + needData.id, 'userId: ' + userId);
-          this.getOneWaterLevelMacData({}).then(res=>{
-            this.detailInfoData.detailMessage.yty = res.data.yty;
-            this.detailInfoData.detailMessage.mtm = res.data.mtm;
+          this.getOneWaterLevelMacData({userId: userId,macId: needData.id}).then(res=>{
+            this.detailInfoData.detailMessage.yty = res.yty;
+            this.detailInfoData.detailMessage.mtm = res.mtm;
           });
-          this.getWaterLevelTrendDataForOneMac({}).then(res=>{
-            let needData = res.data.reduce((acc,item) => {
+          this.getWaterLevelTrendDataForOneMac({userId: userId,macId: needData.id}).then(res=>{
+            let needData = res.reduce((acc,item) => {
               acc[0].push(item.dayTime);
               acc[1].push(item.value);
               return acc

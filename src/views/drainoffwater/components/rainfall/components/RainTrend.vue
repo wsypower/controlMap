@@ -22,6 +22,8 @@
 import moment from 'moment';
 import { getSelectDateRange } from '@/utils/util.tool.js'
 import { mapActions } from 'vuex'
+import util from '@/utils/util';
+const userId = util.cookies.get('userId');
 export default {
   name: 'RainTrend',
   data(){
@@ -34,7 +36,6 @@ export default {
   mounted(){
     let dayRangeArr = getSelectDateRange(this.timeMethod);
     this.dayRange = [moment(dayRangeArr[0], this.dateFormat), moment(dayRangeArr[1], this.dateFormat)];
-    this.getChartData();
   },
   watch:{
     'dayRange': function(){
@@ -46,14 +47,19 @@ export default {
     moment,
     //获取全部数据
     getChartData(){
-      console.log('dayRange',this.dayRange);
-      this.getRainTrendData().then(res=>{
+      console.log('getChartData dayRange',this.dayRange);
+      let params = {
+        userId:userId,
+        startTime: new Date(this.dayRange[0]._i).getTime(),
+        endTime: new Date(this.dayRange[1]._i).getTime()
+      }
+      this.getRainTrendData(params).then(res=>{
         console.log('getRainTrendData',res);
         let xArr = [];
         let yArr = [];
-        res.data.forEach(item => {
+        res.forEach(item => {
           xArr.push(item.dayTime);
-          yArr.push(item.num);
+          yArr.push(item.value);
         })
         let chartData = [xArr,yArr];
         console.log('chartData',chartData);

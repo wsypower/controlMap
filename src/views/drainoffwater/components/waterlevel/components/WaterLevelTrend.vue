@@ -19,6 +19,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
+import util from '@/utils/util';
+const userId = util.cookies.get('userId');
 export default {
     name: 'WaterTrend',
     data(){
@@ -29,8 +31,8 @@ export default {
     },
     computed:{},
     mounted(){
-      this.getAllWatchPlaceData().then( res => {
-        this.watchPlaceList = res.data;
+      this.getAllWatchPlaceData({userId:userId}).then( res => {
+        this.watchPlaceList = res;
       });
       this.getChartData();
     },
@@ -39,13 +41,13 @@ export default {
       ...mapActions('drainoffwater/statistical', ['getWaterLevelTrendData']),
       //获取全部数据
       getChartData(){
-          this.getWaterLevelTrendData().then(res=>{
+          this.getWaterLevelTrendData({userId: userId, watchPlaceId: this.watchPlaceId}).then(res=>{
               console.log('getWaterLevelTrendData',res);
               let xArr = [];
               let yArr = [];
-            res.data.forEach(item => {
+            res.forEach(item => {
               xArr.push(item.dayTime);
-              yArr.push(item.num);
+              yArr.push(item.value);
             })
             let chartData = [xArr,yArr];
             console.log('chartData',chartData);

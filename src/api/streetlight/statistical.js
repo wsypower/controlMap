@@ -19,7 +19,7 @@ import request from '@/plugins/axios/axios'
 export function getStatusAnalysisData(data) {
   console.log('api:getStatusAnalysisData', data)
   return request({
-    url: '@test/getLightMacStatusAnalysisData?_t=' + new Date().getTime(),
+    url: 'municipal/getLightMacStatusAnalysisData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -40,7 +40,7 @@ export function getStatusAnalysisData(data) {
 export function getPowerConsumptionTrendData(data) {
   console.log('api:getPowerConsumptionTrendData', data)
   return request({
-    url: '@test/getPowerCoTrendData?_t=' + new Date().getTime(),
+    url: 'municipal/getPowerCoTrendData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

@@ -19,7 +19,7 @@ import request from '@/plugins/axios/axios'
 export function getStatusAnalysisData(data) {
   console.log('api:getRainfallMacStatusAnalysisData', data)
   return request({
-    url: '@test/getRainfallMacStatusAnalysisData?_t=' + new Date().getTime(),
+    url: 'municipal/getRainfallMacStatusAnalysisData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -29,8 +29,8 @@ export function getStatusAnalysisData(data) {
  * @description 获取雨量趋势图
  * @author moxuejuan
  * @date 2020-03-18 16:44
- * @param {String} startDay 开始日期
- * @param {String} endDay 结束日期
+ * @param {Number} startTime 开始日期时间戳
+ * @param {Number} endTime 结束日期时间戳
  * @method：GET
  * @response：{
  *
@@ -39,7 +39,7 @@ export function getStatusAnalysisData(data) {
 
 export function getRainTrendData(data) {
   return request({
-    url: '@test/getRainfallTrendData?_t=' + new Date().getTime(),
+    url: 'municipal/getRainfallTrendData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -59,7 +59,7 @@ export function getRainTrendData(data) {
 export function getWaterStatusAnalysisData(data) {
   console.log('api:getWaterStatusAnalysisData', data)
   return request({
-    url: '@test/getWaterLevelMacStatusAnalysisData?_t=' + new Date().getTime(),
+    url: 'municipal/getWaterLevelMacStatusAnalysisData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -80,7 +80,7 @@ export function getWaterStatusAnalysisData(data) {
 
 export function getWaterLevelTrendData(data) {
   return request({
-    url: '@test/getWaterLevelTrendData?_t=' + new Date().getTime(),
+    url: 'municipal/getWaterLevelTrendData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -100,7 +100,7 @@ export function getWaterLevelTrendData(data) {
 export function getManholeStatusAnalysisData(data) {
   console.log('api:getManholeStatusAnalysisData', data)
   return request({
-    url: '@test/getManholeMacStatusAnalysisData?_t=' + new Date().getTime(),
+    url: 'municipal/getManholeMacStatusAnalysisData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

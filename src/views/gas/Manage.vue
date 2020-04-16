@@ -79,15 +79,8 @@ export default {
     }
   },
   mounted(){
-    this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
-    this.getAllGasMacTreeData({userId:userId}).then(res=>{
-      console.log('getAllGasMacTreeData',res);
-      this.sourceData = res.data.treeData;
-      this.totalSize = res.data.total;
-      this.showLoading = false;
-    });
     // 地图弹框初始化
     this.gasOverlay = this.mapManager.addOverlay({
         id:'gasOverlay',
@@ -95,12 +88,29 @@ export default {
         positioning: 'bottom-center',
         element: this.$refs.detailInfo.$el
     });
+    this.getAllGasMac();
   },
   methods:{
     ...mapActions('gas/manage', ['getAllGasMacTreeData','getOneGasMacData','getGasTrendDataForOneMac']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
+    },
+    // 获取所有燃气监测设备
+    getAllGasMac(){
+      //入参：城市范围、监测点名称，用户ID
+      let params = {
+        userId:userId,
+        area: this.selectedCity,
+        watchPointName: this.watchPointName
+      }
+      this.showLoading = true;
+      this.getAllGasMacTreeData(params).then(res=>{
+        console.log('getAllGasMacTreeData',res);
+        this.sourceData = res.treeData;
+        this.totalSize = res.total;
+        this.showLoading = false;
+      });
     },
     //给后端的数据增加一些前端展示与判断需要的属性
     changeTreeData(arr,deptName){
@@ -136,13 +146,7 @@ export default {
       })
     },
     onSearch(){
-      //入参：城市范围、监测点名称，用户ID
-      this.getAllGasMacTreeData({userId:userId}).then(res=>{
-        console.log('getAllGasMacTreeData',res);
-        this.sourceData = res.data.treeData;
-        this.totalSize = res.data.total;
-        this.showLoading = false;
-      });
+      this.getAllGasMac();
     },
 
     //点击树中某个节点（某个人员）时触发
@@ -159,12 +163,12 @@ export default {
       this.detailInfoData.detailMessage.flagName = '甲烷含量';
       this.detailInfoData.type = 'gas';
       console.log('macId: ' + needData.id);
-      this.getOneGasMacData({userId:userId}).then(res=>{
-        this.detailInfoData.detailMessage.yty = res.data.yty;
-        this.detailInfoData.detailMessage.mtm = res.data.mtm;
+      this.getOneGasMacData({userId:userId, macId: needData.id}).then(res=>{
+        this.detailInfoData.detailMessage.yty = res.yty;
+        this.detailInfoData.detailMessage.mtm = res.mtm;
       });
-      this.getGasTrendDataForOneMac({}).then(res=>{
-        let chartData = res.data.reduce((acc,item) => {
+      this.getGasTrendDataForOneMac({userId:userId, macId: needData.id}).then(res=>{
+        let chartData = res.reduce((acc,item) => {
           acc[0].push(item.dayTime);
           acc[1].push(item.value);
           return acc

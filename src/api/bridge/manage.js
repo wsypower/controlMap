@@ -9,7 +9,7 @@ import request from '@/plugins/axios/axios'
  * @description 获取所有桥梁相关的摄像头(树形结构)
  * @author moxuejuan
  * @date 2020-03-18 16:44
- * @param {String} address 选择的地址
+ * @param {String} area 选择的地址
  * @param {String} bridgeName 桥梁名称（模糊搜索）
  * @method：GET
  * @response：{
@@ -20,7 +20,7 @@ import request from '@/plugins/axios/axios'
 export function getAllCameraTreeDataForBridge(data) {
   console.log('api:getAllCameraTreeDataForBridge', data)
   return request({
-    url: '@test/getAllCameraTreeDataForBridge?_t=' + new Date().getTime(),
+    url: 'municipal/getAllCameraTreeDataForBridge?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

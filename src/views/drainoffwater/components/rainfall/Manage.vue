@@ -79,15 +79,8 @@ export default {
     }
   },
   mounted(){
-    this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
-    this.getAllRainMacTreeData({userId:userId}).then(res=>{
-      console.log('getAllRainMacTreeData',res);
-      this.sourceData = res.data.treeData;
-      this.totalSize = res.data.total;
-      this.showLoading = false;
-    });
     // 地图弹框初始化
     this.watchOverlay = this.mapManager.addOverlay({
         id:'rainWatchOverlay',
@@ -95,6 +88,7 @@ export default {
         positioning: 'bottom-center',
         element: this.$refs.detailInfo.$el
     });
+    this.getAllRainMac();
   },
   methods:{
     ...mapActions('drainoffwater/manage', ['getAllRainMacTreeData','getOneRainMacData','getRainfallTrendDataForOneMac']),
@@ -102,6 +96,22 @@ export default {
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
+    },
+    getAllRainMac(){
+      this.showLoading = true;
+      //入参：城市范围、监测点名称，用户ID
+      console.log('area: ',this.selectedCity,'watchPointName: ' + this.watchPointName, 'userId: ' + userId);
+      let params = {
+        userId: userId,
+        area: this.selectedCity,
+        watchPointName: this.watchPointName
+      }
+      this.getAllRainMacTreeData(params).then(res=>{
+        console.log('getAllRainMacTreeData',res);
+        this.sourceData = res.treeData;
+        this.totalSize = res.total;
+        this.showLoading = false;
+      });
     },
     //递归调用-给后端的数据增加一些前端展示与判断需要的属性
     changeTreeData(arr,deptName){
@@ -138,15 +148,7 @@ export default {
       })
     },
     onSearch(){
-      //入参：城市范围、监测点名称，用户ID
-      console.log('area: ',this.selectedCity,'watchPointName: ' + this.watchPointName, 'userId: ' + userId);
-      this.showLoading = true;
-      this.getAllRainMacTreeData({userId:userId}).then(res=>{
-        console.log('getAllRainMacTreeData',res);
-        this.sourceData = res.data.treeData;
-        this.totalSize = res.data.total;
-        this.showLoading = false;
-      });
+      this.getAllRainMac();
     },
 
     //点击树中某个节点（某个人员）时触发
@@ -165,12 +167,12 @@ export default {
           this.detailInfoData.detailMessage.flagName = '降雨量';
           this.detailInfoData.type = 'water';
           console.log('macId: ' + needData.id, 'userId: ' + userId);
-          this.getOneRainMacData({}).then(res=>{
-            this.detailInfoData.detailMessage.yty = res.data.yty;
-            this.detailInfoData.detailMessage.mtm = res.data.mtm;
+          this.getOneRainMacData({userId: userId, macId:needData.id}).then(res=>{
+            this.detailInfoData.detailMessage.yty = res.yty;
+            this.detailInfoData.detailMessage.mtm = res.mtm;
           });
-          this.getRainfallTrendDataForOneMac({}).then(res=>{
-            let chartData = res.data.reduce((acc,item) => {
+          this.getRainfallTrendDataForOneMac({userId: userId, macId:needData.id}).then(res=>{
+            let chartData = res.reduce((acc,item) => {
               acc[0].push(item.dayTime);
               acc[1].push(item.value);
               return acc

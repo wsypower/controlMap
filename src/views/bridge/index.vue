@@ -89,21 +89,30 @@ export default {
     }
   },
   mounted(){
-    this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
-    //入参：地址、桥梁名称
-    this.getAllCameraTreeDataForBridge({userId:userId}).then(res=>{
-      this.sourceData = res.data.treeData;
-      this.totalSize = res.data.total;
-      this.showLoading = false;
-    });
+    this.getAllCameraForBridge();
   },
   methods:{
     ...mapActions('bridge/manage', ['getAllCameraTreeDataForBridge']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
+    },
+    // 获取所有桥梁监控
+    getAllCameraForBridge(){
+      this.showLoading = true;
+      //入参：城市范围、桥梁名称，用户ID
+      let params = {
+        userId: userId,
+        area: this.selectedCity,
+        bridgeName: this.bridgeName
+      }
+      this.getAllCameraTreeDataForBridge(params).then(res=>{
+        this.sourceData = res.treeData;
+        this.totalSize = res.total;
+        this.showLoading = false;
+      });
     },
     //给后端的数据增加一些前端展示与判断需要的属性
     changeTreeData(arr,deptName){
@@ -134,13 +143,7 @@ export default {
       })
     },
     onSearch(){
-      this.showLoading = true;
-      //入参：城市范围、桥梁名称，用户ID
-      this.getAllCameraTreeDataForBridge({userId:userId}).then(res=>{
-        this.sourceData = res.data.treeData;
-        this.totalSize = res.data.total;
-        this.showLoading = false;
-      });
+      this.getAllCameraForBridge();
     },
 
     //点击树中某个节点（某个人员）时触发
