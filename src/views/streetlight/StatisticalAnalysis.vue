@@ -21,6 +21,6 @@ export default{
 <style lang="scss" scoped>
 .statistical {
   width: 100%;
-  padding: 20px;
+  padding: 0px 20px 20px 20px;
 }
 </style>
