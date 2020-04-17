@@ -30,8 +30,8 @@ export default {
                       turbidityUnit: 'NTU',
                       rcValue: 2.3,
                       rcUnit: 'mg/L',
-                      x: '122.202261',
-                      y: '30.247886'
+                      x: '116.49',
+                      y: '31.87'
                     },
                     {
                       id: '33092104001320010677',
@@ -44,8 +44,8 @@ export default {
                       turbidityUnit: 'NTU',
                       rcValue: 2.0,
                       rcUnit: 'mg/L',
-                      x: '30.247886',
-                      y: '122.202261'
+                      x: '116.48',
+                      y: '31.85'
                     }
                   ]
                 },
@@ -65,8 +65,8 @@ export default {
                       turbidityUnit: 'NTU',
                       rcValue: 3.3,
                       rcUnit: 'mg/L',
-                      x: '30.245140',
-                      y: '122.208213'
+                      x: '116.39',
+                      y: '31.81'
                     },
                     {
                       id: '33092104001320011641',
@@ -79,8 +79,8 @@ export default {
                       turbidityUnit: 'NTU',
                       rcValue: 2.3,
                       rcUnit: 'mg/L',
-                      x: '30.245140',
-                      y: '122.208213'
+                      x: '116.45',
+                      y: '31.78'
                     },
                     {
                       id: '33092104001320011642',
@@ -93,8 +93,8 @@ export default {
                       turbidityUnit: 'NTU',
                       rcValue: 2.8,
                       rcUnit: 'mg/L',
-                      x: '30.252779',
-                      y: '122.220688'
+                      x: '116.50',
+                      y: '31.75'
                     },
                     {
                       id: '33092104001320011643',
@@ -107,8 +107,8 @@ export default {
                       turbidityUnit: 'NTU',
                       rcValue: 4.3,
                       rcUnit: 'mg/L',
-                      x: '30.252779',
-                      y: '122.220688'
+                      x: '116.51',
+                      y: '31.73'
                     },
                     {
                       id: '33092104001320011644',
@@ -121,8 +121,8 @@ export default {
                       turbidityUnit: 'NTU',
                       rcValue: 2.9,
                       rcUnit: 'mg/L',
-                      x: '30.245192',
-                      y: '122.206967'
+                      x: '116.61',
+                      y: '31.76'
                     },
                     {
                       id: '33092104001320011645',
@@ -135,8 +135,8 @@ export default {
                       turbidityUnit: 'NTU',
                       rcValue: 2.3,
                       rcUnit: 'mg/L',
-                      x: '30.240435',
-                      y: '122.203112'
+                      x: '116.55',
+                      y: '31.66'
                     },
                     {
                       id: '33092104001320011646',
@@ -149,8 +149,8 @@ export default {
                       turbidityUnit: 'NTU',
                       rcValue: 6.3,
                       rcUnit: 'mg/L',
-                      x: '30.247607',
-                      y: '122.202172'
+                      x: '116.56',
+                      y: '31.49'
                     }
                   ]
                 }

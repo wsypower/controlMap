@@ -260,7 +260,7 @@ export default{
           height: 72px;
         }
         .mes {
-          padding: 0px 20px;
+          padding: 0px 15px;
           span {
             font-family: PingFang-SC-Heavy;
             font-size: 36px;
