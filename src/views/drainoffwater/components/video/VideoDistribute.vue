@@ -34,6 +34,7 @@ import util from '@/utils/util';
 import {mixins} from '@/mixins/index'
 import MyVideoPlayer from "./MyVideoPlayer.vue";
 import {videoPointStyle} from '@/utils/util.map.style'
+import {pointToFeature} from '@/utils/util.map.manage'
 const userId = util.cookies.get('userId');
 export default {
   name: 'VideoDistribute',
@@ -55,7 +56,8 @@ export default {
       //地图相关
       videoLayer: null,
       isLoadData: false,
-      clusterLayer:null
+      clusterLayer:null,
+      selectLayer:null
     }
   },
   computed:{
@@ -71,10 +73,10 @@ export default {
   },
   watch:{
     isLoadData:function() {
-      if(this.videoFeatures.length>0){
+      if(this.videoFeatures&&this.videoFeatures.length>0){
         if(this.videoLayer){
-            this.videoLayer.getSource().clear();
-            this.videoLayer.getSource().addFeatures(this.carFeatures);
+            this.videoLayer.getSource().getSource().clear();
+            this.videoLayer.getSource().getSource().addFeatures(this.videoFeatures);
         }else{
             this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
             this.videoLayer.set('featureType','videoDistribute');
@@ -107,6 +109,7 @@ export default {
       }
       this.getAllCameraTreeData(params).then(res=>{
         console.log('getAllCameraTreeData',res);
+        this.selectLayer && this.selectLayer.getSource().clear();
         this.sourceData = res.treeData;
         this.totalSize = res.total;
         this.showLoading = false;
@@ -153,12 +156,31 @@ export default {
       if(selectedKeys.length>0){
         if(selectedKeys[0].indexOf('dept_')<0){
           let needData = e.selectedNodes[0].data.props;
-          this.videoId = needData.id;
-          this.videoName = needData.name;
-          this.videoSrc = needData.videoUrl;
+          this.showVideo(needData);
+          this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
         }
       }
     },
+      // 展示视频播放
+      showVideo(info){
+          this.videoId = info.id;
+          this.videoName = info.name;
+          this.videoSrc = info.videoUrl;
+          this.selectLayer && this.selectLayer.getSource().clear();
+          if(!info.x||!info.y){
+              this.$message.warning('当前视频无点位信息！！！');
+          }else{
+              const feature = pointToFeature(info,'big_video');
+              if(this.selectLayer) {
+                  this.selectLayer.getSource().addFeatures([feature]);
+              }else{
+                  this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),4);
+                  this.selectLayer.set('featureType','videoDistribute');
+              }
+              // this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
+          }
+      },
+      // 点击地图坐标点位处理器
     videoMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
       if(feature.get('features')) {
@@ -166,6 +188,7 @@ export default {
         // const coordinates=clickFeature.getGeometry().getCoordinates();
         if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
           const videoInfoData = clickFeature.get('props');
+          this.showVideo(videoInfoData);
         }
       }
     }

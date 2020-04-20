@@ -129,8 +129,6 @@ export default {
     ...mapState('map', ['mapManager']),
   },
   mounted() {
-
-    this.getEquipPoints();
     this.map = this.mapManager.getMap()
     this.map.on('click', this.manholeClickHandler);
     this.setClickHandler(this.manholeClickHandler);
@@ -162,11 +160,24 @@ export default {
     //获取预案数据
     getDataList() {
       this.showLoading = true
+      const _this=this;
       this.getAllManholeMacData(this.query).then(res => {
         console.log('getAllManholeMacData',res)
         this.sourceData = res.list;
         this.totalSize = res.total;
-        this.showLoading = false
+        this.showLoading = false;
+        const data = res.list.map(r => {
+            if (r.x.length > 0 && r.y.length > 0){
+                const feature = new Feature({
+                    geometry: new Point([parseFloat(r.x), parseFloat(r.y)])
+                });
+                // feature.set('type',r.deviceType);
+                return feature;
+            }
+        });
+        _this.manholeLayer = _this.mapManager.addVectorLayerByFeatures(data, emergencyEquipStyle('3'), 3);
+        _this.manholeLayer.set('featureType','manhole');
+        _this.map.getView().fit(_this.manholeLayer.getSource().getExtent());
       })
     },
     //获取井盖设备点位
@@ -215,7 +226,7 @@ export default {
       this.modalTitle = data.imei
       this.tipComponentId = ManholeInfo
       this.infoData = data;
-      const xy=[parseFloat(data.longitudeGps84Y), parseFloat(data.latitudeGps84X)];
+      const xy=[parseFloat(data.x), parseFloat(data.y)];
       this.mapManager.locateTo(xy);
       this.manholeOverlay.setPosition(xy);
       console.log('infoData', data);

@@ -241,14 +241,17 @@ export function emergencyEquipStyle(type) {
   return function(feature) {
     let iconOptions = {}
     const state = feature.get('state');
-    if (state=='1') {
-      iconOptions = {
-        src: require('@/assets/mapImage/物联设备-' + type + '-normal.png')
-      }
-    } else {
-      iconOptions = {
-        src: require('@/assets/mapImage/物联设备-' + type + '-alarm.png')
-      }
+    // if (state=='1') {
+    //   iconOptions = {
+    //     src: require('@/assets/mapImage/物联设备-' + type + '-normal.png')
+    //   }
+    // } else {
+    //   iconOptions = {
+    //     src: require('@/assets/mapImage/物联设备-' + type + '-alarm.png')
+    //   }
+    // }
+    iconOptions = {
+      src: require('@/assets/mapImage/物联设备-' + type + '-normal.png')
     }
     let style = new Style({
       image: new Icon(iconOptions),

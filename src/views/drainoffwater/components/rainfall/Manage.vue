@@ -67,8 +67,8 @@ export default {
     isLoadData:function() {
       if(this.watchFeatures.length>0){
         if(this.watchLayer){
-            this.watchLayer.getSource().clear();
-            this.watchLayer.getSource().addFeatures(this.watchFeatures);
+            this.watchLayer.getSource().getSource().clear();
+            this.watchLayer.getSource().getSource().addFeatures(this.watchFeatures);
         }else{
             this.watchLayer = this.mapManager.addClusterLayerByFeatures(this.watchFeatures);
             this.watchLayer.set('featureType','rainWatch');
@@ -157,9 +157,6 @@ export default {
       if(selectedKeys.length>0){
         if(selectedKeys[0].indexOf('dept_')<0){
           let needData = e.selectedNodes[0].data.props;
-          this.watchOverlay.setPosition([parseFloat(needData.x),parseFloat(needData.y)]);
-          this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
-          //地图上的点位放大居中显示
           // 获取详情数据
           this.detailInfoData.detailMessage.name = needData.dept + '-' +needData.name;
           this.detailInfoData.detailMessage.value = needData.value;
@@ -179,6 +176,9 @@ export default {
             },[[],[]]);
             this.detailInfoData.chartData = chartData;
           });
+          //地图上的点位放大居中显示
+          this.watchOverlay.setPosition([parseFloat(needData.x),parseFloat(needData.y)]);
+          this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
         }
       }
     },

@@ -416,3 +416,17 @@ export function listToFeatures(list, type) {
   }
   return features.filter(Boolean)
 }
+/**
+ * 生成点位
+ * @return {[type]}  [description]
+ */
+export function pointToFeature(item, icon) {
+  if (item.x && item.x.length > 0 && item.y && item.y.length > 0) {
+    const feature = new Feature({
+      geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+    })
+    feature.set('icon', icon)
+    feature.set('props', item)
+    return feature
+  }
+}

@@ -49,6 +49,9 @@ export default {
       console.log(val)
       const layers = this.map.getLayers().array_
       const overlays = this.map.getOverlays().array_
+      overlays.forEach(o => {
+        o.setPosition(undefined);
+      })
       console.log('弹框', overlays)
       //切换时清除地图上的一些操作
       layers.forEach(l => {

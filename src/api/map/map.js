@@ -104,7 +104,7 @@ export function getResourceListApi(type) {
  */
 export function getEquipListApi(type) {
   return request({
-    url: URL_CONFIG.baseURL + '/iot/device/list?deviceType=' + type,
+    url: URL_CONFIG.baseURL + 'iot/device/list?deviceType=' + type,
     method: 'post'
   });
 }

@@ -37,6 +37,7 @@ import util from '@/utils/util';
 import {mixins} from '@/mixins/index'
 import MyVideoPlayer from "./MyVideoPlayer.vue";
 import {videoPointStyle} from '@/utils/util.map.style'
+import {pointToFeature} from '@/utils/util.map.manage'
 const userId = util.cookies.get('userId');
 export default {
   name: 'BridgeVideo',
@@ -59,7 +60,8 @@ export default {
       bridgeFeatures: [],
       bridgeLayer: null,
       isLoadData: false,
-      clusterLayer:null
+      clusterLayer:null,
+      selectLayer: null
     }
   },
   computed:{
@@ -77,8 +79,8 @@ export default {
     isLoadData:function() {
       if(this.bridgeFeatures.length>0){
         if(this.bridgeLayer){
-          this.bridgeLayer.getSource().clear();
-          this.bridgeLayer.getSource().addFeatures(this.carFeatures);
+          this.bridgeLayer.getSource().getSource().clear();
+          this.bridgeLayer.getSource().getSource().addFeatures(this.bridgeFeatures);
         } else {
           this.bridgeLayer = this.mapManager.addClusterLayerByFeatures(this.bridgeFeatures);
           this.bridgeLayer.set('featureType','bridge');
@@ -152,20 +154,38 @@ export default {
       if(selectedKeys.length>0){
         if(selectedKeys[0].indexOf('dept_')<0){
           let needData = e.selectedNodes[0].data.props;
-          this.videoId = needData.id;
-          this.videoName = needData.name;
-          this.videoSrc = needData.videoUrl;
+          this.showVideo(needData);
+          this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
         }
       }
+    },
+    // 展示视频播放
+    showVideo(info){
+        this.videoId = info.id;
+        this.videoName = info.name;
+        this.videoSrc = info.videoUrl;
+        this.selectLayer && this.selectLayer.getSource().clear();
+        if(!info.x||!info.y){
+            this.$message.warning('当前视频无点位信息！！！');
+        }else{
+            const feature = pointToFeature(info,'big_video');
+            if(this.selectLayer) {
+                this.selectLayer.getSource().addFeatures([feature]);
+            }else{
+                this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),4);
+                this.selectLayer.set('featureType','light');
+            }
+            // this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
+        }
     },
     videoMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
       if(feature.get('features')) {
         const clickFeature = feature.get('features')[0];
         // const coordinates=clickFeature.getGeometry().getCoordinates();
-        if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
+        if (clickFeature && clickFeature.get('type') == 'light') {
           const videoInfoData = clickFeature.get('props');
-
+          this.showVideo(videoInfoData);
         }
       }
     }

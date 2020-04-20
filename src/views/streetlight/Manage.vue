@@ -89,7 +89,6 @@ export default {
     ...mapState('map', ['mapManager']),
   },
   mounted() {
-    this.getEquipPoints();
     this.map = this.mapManager.getMap()
     this.map.on('click', this.manholeClickHandler);
     this.setClickHandler(this.manholeClickHandler);
@@ -122,10 +121,22 @@ export default {
     //获取预案数据
     getDataList() {
       this.showLoading = true
+      const _this=this;
       this.getAllLightListData(this.query).then(res => {
         this.sourceData = res.list;
         this.totalSize = res.total
-        this.showLoading = false
+        this.showLoading = false;
+        const data = res.list.map(r => {
+            if (r.x.length > 0 && r.y.length > 0){
+                const feature = new Feature({
+                    geometry: new Point([parseFloat(r.x), parseFloat(r.y)])
+                });
+                return feature;
+            }
+        });
+        _this.lightLayer = _this.mapManager.addVectorLayerByFeatures(data, emergencyEquipStyle('3'), 3);
+        _this.lightLayer.set('featureType','light');
+        _this.map.getView().fit(_this.lightLayer.getSource().getExtent());
       })
     },
     //获取井盖设备点位

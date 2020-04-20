@@ -6,7 +6,9 @@
         <label>监测场景：</label>
         <a-select v-model="watchPlaceId" style="flex:1">
           <a-select-option value="all">全部</a-select-option>
-          <a-select-option v-for="(item, index) in watchPlaceList" :value="item.id" :key="index">{{item.name}}</a-select-option>
+          <a-select-option v-for="(item, index) in watchPlaceList" :value="item.id" :key="index">{{
+            item.name
+          }}</a-select-option>
         </a-select>
       </div>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
@@ -78,8 +80,8 @@ export default {
     isLoadData:function() {
       if(this.levelFeatures.length>0){
         if(this.levelLayer){
-            this.levelLayer.getSource().clear();
-            this.levelLayer.getSource().addFeatures(this.carFeatures);
+            this.levelLayer.getSource().getSource().clear();
+            this.levelLayer.getSource().getSource().addFeatures(this.levelFeatures);
         }else{
             this.levelLayer = this.mapManager.addClusterLayerByFeatures(this.levelFeatures);
             this.levelLayer.set('featureType','waterLevel');
@@ -171,8 +173,6 @@ export default {
       if(selectedKeys.length>0){
         if(selectedKeys[0].indexOf('dept_')<0){
           let needData = e.selectedNodes[0].data.props;
-          this.levelOverlay.setPosition([parseFloat(needData.x),parseFloat(needData.y)]);
-          this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
           //地图上的点位放大居中显示
           // 获取详情数据
           this.detailInfoData.detailMessage.name = needData.dept + '-' +needData.name;
@@ -193,6 +193,12 @@ export default {
             },[[],[]]);
             this.detailInfoData.chartData = needData;
           });
+          if(!needData.x||!needData.y){
+              this.$message.warning('当前视频无点位信息！！！');
+          }else{
+              this.levelOverlay.setPosition([parseFloat(needData.x),parseFloat(needData.y)]);
+              this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
+          }
         }
       }
     },
