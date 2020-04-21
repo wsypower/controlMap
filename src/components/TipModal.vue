@@ -16,7 +16,7 @@
     <div class="tip-body" :style="padding">
       <component v-if="Object.keys(componentId).length>0" :is="componentId" :info="info"></component>
     </div>
-    <!--<div class="tooltip__arrow"></div>-->
+    <div class="tooltip__arrow"></div>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -183,7 +183,7 @@ export default{
       height: 20px;
       background: white;
       transform: translateX(-50%) translateY(-50%) rotate(45deg);
-      top: 0;
+      top: -4px;
       left: 50%;
       box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.12);
       /*box-shadow: -1px 0px 4px 0px rgba(0, 0, 0, 0.12);*/
