@@ -127,6 +127,7 @@ export default {
           item.dept = deptName;
           item.slots = {icon: 'camera'};
           item.class = 'itemClass';
+
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature=_this.mapManager.xyToFeature(item.x,item.y);

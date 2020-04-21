@@ -134,10 +134,16 @@ export default {
             item.slots = {icon: 'equipment-outline'};
           }
           item.class = 'itemClass';
+          let img;
+          if(item.online){
+              img = 'waterSupply';
+          }else{
+              img = 'waterSupply-lx';
+          }
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
-            feature.set('icon','waterSupply');
+            feature.set('icon',img);
             feature.set('props',item);
             feature.set('type','waterSupply');
             _this.waterFeatures.push(feature);

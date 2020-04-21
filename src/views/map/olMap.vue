@@ -181,14 +181,16 @@ export default {
       // this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'))
       // this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'))
       const layers = this.map.getLayers().array_
-      layers.forEach(l => {
+      const _this = this
+      const cloneLayer = [...layers]
+      cloneLayer.forEach(l => {
         if (l.get('featureType')) {
-          this.map.removeLayer(l)
+          _this.map.removeLayer(l)
         }
       })
       const overlays = this.map.getOverlays().array_
       overlays.forEach(o => {
-        this.map.removeOverlay(o)
+        _this.map.removeOverlay(o)
       })
     }
   },

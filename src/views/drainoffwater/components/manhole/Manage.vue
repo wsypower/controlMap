@@ -153,7 +153,7 @@ export default {
     manholeClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
       if(feature){
-        this.clickDataItem(feature.get('info'),null)
+        this.clickDataItem(feature.get('props'),null)
         this.manholeOverlay.setPosition(coordinate);
       }
     },
@@ -171,36 +171,23 @@ export default {
                 const feature = new Feature({
                     geometry: new Point([parseFloat(r.x), parseFloat(r.y)])
                 });
-                feature.set('icon','carmera_online');
+                let img;
+                if(r.online){
+                    img = 'manhole';
+                }else{
+                    img = 'manhole-lx';
+                }
+                feature.set('icon',img);
                 feature.set('type','manhole');
                 feature.set('props',r);
                 // feature.set('type',r.deviceType);
                 return feature;
             }
         });
-        _this.manholeLayer = _this.mapManager.addVectorLayerByFeatures(data, emergencyEquipStyle('3'), 3);
+        // _this.manholeLayer = _this.mapManager.addVectorLayerByFeatures(data, emergencyEquipStyle('3'), 3);
+        _this.manholeLayer = _this.mapManager.addClusterLayerByFeatures(data);
         _this.manholeLayer.set('featureType','manhole');
         _this.map.getView().fit(_this.manholeLayer.getSource().getExtent());
-      })
-    },
-    //获取井盖设备点位
-    getEquipPoints() {
-      getTypeEquip('3').then(res => {
-        console.log('===物联信息-3', res)
-        const features = res.map(p => {
-          const point = new Feature({
-            geometry: new Point(p.position)
-          });
-          point.set('id', p.id);
-          point.set('info',p.info);
-          point.set('state',p.info.alarmState);
-          point.set('type','manhole')
-          return point;
-        });
-        this.manholeLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
-        this.manholeLayer.set('featureType','manhole');
-        this.map.getView().fit(this.manholeLayer.getSource().getExtent());
-        // this.pushPageLayers(this.manholeLayer);
       })
     },
     //搜索关键字查询

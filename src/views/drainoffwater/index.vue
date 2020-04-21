@@ -66,7 +66,7 @@ export default {
             }
           } else if (val == '1') {
             // 雨量监测
-            if (l.get('featureType') == 'rainWatch') {
+            if (l.get('featureType') == 'rainfall') {
               l.setVisible(true)
               this.map.getView().fit(l.getSource().getExtent())
             } else {

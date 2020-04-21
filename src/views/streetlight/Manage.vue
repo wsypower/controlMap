@@ -121,7 +121,13 @@ export default {
                 const feature = new Feature({
                     geometry: new Point([parseFloat(r.x), parseFloat(r.y)])
                 });
-                feature.set('icon','streetlight');
+                let img;
+                if(r.online){
+                    img = 'streetlight';
+                }else{
+                    img = 'streetlight-lx';
+                }
+                feature.set('icon',img);
                 feature.set('type','light');
                 feature.set('props',r);
                 return feature;

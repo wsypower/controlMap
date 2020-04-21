@@ -65,13 +65,14 @@ export default {
   },
   watch:{
     isLoadData:function() {
+      debugger;
       if(this.watchFeatures.length>0){
         if(this.watchLayer){
             this.watchLayer.getSource().getSource().clear();
             this.watchLayer.getSource().getSource().addFeatures(this.watchFeatures);
         }else{
             this.watchLayer = this.mapManager.addClusterLayerByFeatures(this.watchFeatures);
-            this.watchLayer.set('featureType','rainWatch');
+            this.watchLayer.set('featureType','rainfall');
         }
         const extent=this.watchLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
@@ -103,8 +104,8 @@ export default {
       console.log('area: ',this.selectedCity,'watchPointName: ' + this.watchPointName, 'userId: ' + userId);
       let params = {
         userId: userId,
-        area: this.selectedCity,
-        watchPointName: this.watchPointName
+            area: this.selectedCity,
+            watchPointName: this.watchPointName
       }
       this.getAllRainMacTreeData(params).then(res=>{
         console.log('getAllRainMacTreeData',res);
@@ -129,14 +130,19 @@ export default {
             item.slots = {icon: 'equipment-outline'};
           }
           item.class = 'itemClass';
+          let img;
+          if(item.online){
+              img='rainfall'
+          }else{
+              img='rainfall-lx'
+          }
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
-            feature.set('icon','rainfall');
+            feature.set('icon',img);
             feature.set('props',item);
             feature.set('type','rainfall');
             _this.watchFeatures.push(feature);
-            console.log('test');
           }
         }
         else{
