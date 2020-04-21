@@ -131,7 +131,7 @@ export default {
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
-            feature.set('icon','carmera_online');
+            feature.set('icon','gas');
             feature.set('props',item);
             feature.set('type','gas');
             _this.gasFeatures.push(feature);
@@ -153,35 +153,46 @@ export default {
     onSelect(selectedKeys, e){
       console.log(selectedKeys, e);
       const needData = e.selectedNodes[0].data.props;
-      this.gasOverlay.setPosition([parseFloat(needData.x),parseFloat(needData.y)]);
+      this.showInfo(needData);
       this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
+
+    },
+    // 地图上弹框显示事件
+    showInfo(info){
       //地图上的点位放大居中
       // 获取详情数据
-      this.detailInfoData.detailMessage.name = needData.dept + '-' +needData.name;
-      this.detailInfoData.detailMessage.value = needData.value;
-      this.detailInfoData.detailMessage.unit = needData.unit;
+      this.detailInfoData.detailMessage.name = info.dept + '-' +info.name;
+      this.detailInfoData.detailMessage.value = info.value;
+      this.detailInfoData.detailMessage.unit = info.unit;
       this.detailInfoData.detailMessage.flagName = '甲烷含量';
       this.detailInfoData.type = 'gas';
-      console.log('macId: ' + needData.id);
-      this.getOneGasMacData({userId:userId, macId: needData.id}).then(res=>{
-        this.detailInfoData.detailMessage.yty = res.yty;
-        this.detailInfoData.detailMessage.mtm = res.mtm;
+      console.log('macId: ' + info.id);
+      this.getOneGasMacData({userId:userId, macId: info.id}).then(res=>{
+          this.detailInfoData.detailMessage.yty = res.yty;
+          this.detailInfoData.detailMessage.mtm = res.mtm;
       });
-      this.getGasTrendDataForOneMac({userId:userId, macId: needData.id}).then(res=>{
-        let chartData = res.reduce((acc,item) => {
-          acc[0].push(item.dayTime);
-          acc[1].push(item.value);
-          return acc
-        },[[],[]]);
-        this.detailInfoData.chartData = chartData;
+      this.getGasTrendDataForOneMac({userId:userId, macId: info.id}).then(res=>{
+          let chartData = res.reduce((acc,item) => {
+              acc[0].push(item.dayTime);
+              acc[1].push(item.value);
+              return acc
+          },[[],[]]);
+          this.detailInfoData.chartData = chartData;
       });
+      //地图上的点位放大居中显示
+      if(!info.x||!info.y){
+          this.$message.warning('当前视频无点位信息！！！');
+      }else{
+          this.gasOverlay.setPosition([parseFloat(info.x),parseFloat(info.y)]);
+      }
     },
     videoMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
       if(feature.get('features')) {
         const clickFeature = feature.get('features')[0];
         if (clickFeature && clickFeature.get('type') == 'gas') {
-          this.gasOverlay.setPosition(coordinate);
+            this.showInfo(clickFeature.get('props'));
+            this.gasOverlay.setPosition(coordinate);
         }
       }
     },

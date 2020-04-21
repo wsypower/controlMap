@@ -137,7 +137,7 @@ export default {
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
-            feature.set('icon','carmera_online');
+            feature.set('icon','waterSupply');
             feature.set('props',item);
             feature.set('type','waterSupply');
             _this.waterFeatures.push(feature);
@@ -161,35 +161,42 @@ export default {
       if(selectedKeys.length>0){
         if(selectedKeys[0].indexOf('dept_')<0){
           let needData = e.selectedNodes[0].data.props;
-          this.waterOverlay.setPosition([parseFloat(needData.x),parseFloat(needData.y)]);
+          this.showInfo(needData);
           this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
-          //地图上的点位放大居中显示
-          // 获取详情数据
-          this.detailInfoData.name = needData.dept + '-' + needData.name;
-          console.log('macId: ' + needData.id, 'userId: ' + userId);
-          this.getOneWaterQMMacData({userId: userId, macId: needData.id}).then(res=>{
-            let tempList = res;
-            tempList[0].value = needData.phValue;
-            tempList[0].unit = needData.phUnit;
-            tempList[1].value = needData.turbidityValue;
-            tempList[1].unit = needData.turbidityUnit;
-            tempList[2].value = needData.rcValue;
-            tempList[2].unit = needData.rcUnit;
-            this.detailInfoData.detailMessage = tempList;
-          });
-
-          this.getWaterQualityTrendDataForOneMac({userId: userId, macId: needData.id}).then(res=>{
-            let needData = res.reduce((acc,item) => {
-              acc[0].push(item.dayTime);
-              acc[1].push(item.phValue);
-              acc[2].push(item.turbidityValue);
-              acc[3].push(item.rcValue);
-              return acc
-            },[[],[],[],[]]);
-            this.detailInfoData.chartData = needData;
-          });
         }
       }
+    },
+    // 地图上弹框显示事件
+    showInfo(info){
+        // 获取详情数据
+        this.detailInfoData.name = info.dept + '-' + info.name;
+        console.log('macId: ' + info.id, 'userId: ' + userId);
+        this.getOneWaterQMMacData({userId: userId, macId: info.id}).then(res=>{
+            let tempList = res;
+            tempList[0].value = info.phValue;
+            tempList[0].unit = info.phUnit;
+            tempList[1].value = info.turbidityValue;
+            tempList[1].unit = info.turbidityUnit;
+            tempList[2].value = info.rcValue;
+            tempList[2].unit = info.rcUnit;
+            this.detailInfoData.detailMessage = tempList;
+        });
+        this.getWaterQualityTrendDataForOneMac({userId: userId, macId: info.id}).then(res=>{
+            let needData = res.reduce((acc,item) => {
+                acc[0].push(item.dayTime);
+                acc[1].push(item.phValue);
+                acc[2].push(item.turbidityValue);
+                acc[3].push(item.rcValue);
+                return acc
+            },[[],[],[],[]]);
+            this.detailInfoData.chartData = needData;
+        });
+        //地图上的点位放大居中显示
+        if(!info.x||!info.y){
+            this.$message.warning('当前视频无点位信息！！！');
+        }else{
+            this.waterOverlay.setPosition([parseFloat(info.x),parseFloat(info.y)]);
+        }
     },
     videoMapClickHandler({ pixel, coordinate }) {
         const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
@@ -197,6 +204,7 @@ export default {
             const clickFeature = feature.get('features')[0];
             // const coordinates=clickFeature.getGeometry().getCoordinates();
             if (clickFeature && clickFeature.get('type') == 'waterSupply') {
+                this.showInfo(clickFeature.get('props'));
                 this.waterOverlay.setPosition( coordinate );
                 // const videoInfoData = clickFeature.get('props');
             }

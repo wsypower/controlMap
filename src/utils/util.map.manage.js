@@ -182,7 +182,7 @@ export class MapManager {
   locateTo(coord) {
     this.map.getView().animate({
       center: coord,
-      zoom: 17,
+      zoom: 18,
       duration: 500
     })
   }

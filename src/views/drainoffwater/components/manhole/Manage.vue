@@ -171,6 +171,9 @@ export default {
                 const feature = new Feature({
                     geometry: new Point([parseFloat(r.x), parseFloat(r.y)])
                 });
+                feature.set('icon','carmera_online');
+                feature.set('type','manhole');
+                feature.set('props',r);
                 // feature.set('type',r.deviceType);
                 return feature;
             }

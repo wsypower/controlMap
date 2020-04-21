@@ -108,16 +108,6 @@ export default {
       console.log('selected city data',val);
       this.query.area = val;
     },
-    manholeClickHandler({ pixel, coordinate }) {
-        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-        if(feature.get('features')) {
-            const clickFeature = feature.get('features')[0];
-            // const coordinates=clickFeature.getGeometry().getCoordinates();
-            if (clickFeature && clickFeature.get('type') == 'light') {
-                this.lightOverlay.setPosition(coordinate);
-            }
-        }
-    },
     //获取预案数据
     getDataList() {
       this.showLoading = true
@@ -131,42 +121,30 @@ export default {
                 const feature = new Feature({
                     geometry: new Point([parseFloat(r.x), parseFloat(r.y)])
                 });
+                feature.set('icon','streetlight');
+                feature.set('type','light');
+                feature.set('props',r);
                 return feature;
             }
         });
-        _this.lightLayer = _this.mapManager.addVectorLayerByFeatures(data, emergencyEquipStyle('3'), 3);
-        _this.lightLayer.set('featureType','light');
-        _this.map.getView().fit(_this.lightLayer.getSource().getExtent());
-      })
-    },
-    //获取井盖设备点位
-    getEquipPoints() {
-      getTypeEquip('3').then(res => {
-        console.log('===物联信息-3', res)
-        const features = res.map(p => {
-          const point = new Feature({
-            geometry: new Point(p.position)
-          });
-          point.set('id', p.id);
-          point.set('info',p.info);
-          point.set('state',p.info.alarmState);
-          point.set('type','light');
-          point.set('icon','carmera_online');
-          return point;
-        });
-        // this.lightLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
-        this.lightLayer = this.mapManager.addClusterLayerByFeatures(features);
-        this.lightLayer.set('featureType','light');
-        const extent=this.lightLayer.getSource().getSource().getExtent();
-        this.mapManager.getMap().getView().fit(extent);
-        // this.pushPageLayers(this.lightLayer);
+        if(_this.lightLayer){
+            _this.lightLayer.getSource().getSource().clear();
+            _this.lightLayer.getSource().getSource().addFeatures(data);
+        }else{
+            _this.lightLayer = _this.mapManager.addClusterLayerByFeatures(data);
+            _this.lightLayer.set('featureType','waterLevel');
+        }
+        const extent=_this.lightLayer.getSource().getSource().getExtent();
+        _this.mapManager.getMap().getView().fit(extent);
+        // _this.lightLayer = _this.mapManager.addVectorLayerByFeatures(data, emergencyEquipStyle('3'), 3);
+        // _this.lightLayer.set('featureType','light');
+        // _this.map.getView().fit(_this.lightLayer.getSource().getExtent());
       })
     },
     //搜索关键字查询
     onSearch() {
       this.getDataList()
     },
-
     //翻页
     changePagination(pageNo, pageSize) {
       console.log('changePagination', pageNo, pageSize)
@@ -177,24 +155,40 @@ export default {
     //选择某个路灯
     clickDataItem(item, index) {
       console.log('clickDataItem', item);
+      this.activeIndex = index;
+      this.showInfo(item);
       this.lightOverlay.setPosition([parseFloat(item.x),parseFloat(item.y)]);
       this.mapManager.locateTo([parseFloat(item.x),parseFloat(item.y)]);
-      this.activeIndex = index;
-      //detailInfoData
-      this.detailInfoData.type = 'light';
-      this.detailInfoData.detailMessage.name = item.name;
-      this.detailInfoData.detailMessage.online = item.online;
-      this.detailInfoData.detailMessage.unit = '度';
-      this.detailInfoData.detailMessage.flagName = '耗电量';
-      console.log('macId: '+ item.id);
-      this.getOneLightMacData({userId: userId, macId: item.id}).then( res =>{
-        let chartData = res.reduce((acc,item) => {
-          acc[0].push(item.dayTime);
-          acc[1].push(item.value);
-          return acc
-        },[[],[]]);
-        this.detailInfoData.chartData = chartData;
-      })
+    },
+    // 地图上弹框显示事件
+    showInfo(info){
+        //detailInfoData
+        this.detailInfoData.type = 'light';
+        this.detailInfoData.detailMessage.name = info.name;
+        this.detailInfoData.detailMessage.online = info.online;
+        this.detailInfoData.detailMessage.unit = '度';
+        this.detailInfoData.detailMessage.flagName = '耗电量';
+        console.log('macId: '+ info.id);
+        this.getOneLightMacData({userId: userId, macId: info.id}).then( res =>{
+            let chartData = res.reduce((acc,item) => {
+                acc[0].push(item.dayTime);
+                acc[1].push(item.value);
+                return acc
+            },[[],[]]);
+            this.detailInfoData.chartData = chartData;
+        })
+    },
+    // 井盖图标点击处理器
+    manholeClickHandler({ pixel, coordinate }) {
+        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+        if(feature.get('features')) {
+            const clickFeature = feature.get('features')[0];
+            // const coordinates=clickFeature.getGeometry().getCoordinates();
+            if (clickFeature && clickFeature.get('type') == 'light') {
+                this.showInfo(clickFeature.get('props'));
+                this.lightOverlay.setPosition(coordinate);
+            }
+        }
     },
     closeTip(){
         this.lightOverlay.setPosition(undefined);

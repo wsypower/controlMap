@@ -149,7 +149,7 @@ export default {
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
-            feature.set('icon','carmera_online');
+            feature.set('icon','waterlevel');
             feature.set('props',item);
             feature.set('type','waterLevel');
             _this.levelFeatures.push(feature);
@@ -173,33 +173,37 @@ export default {
       if(selectedKeys.length>0){
         if(selectedKeys[0].indexOf('dept_')<0){
           let needData = e.selectedNodes[0].data.props;
-          //地图上的点位放大居中显示
-          // 获取详情数据
-          this.detailInfoData.detailMessage.name = needData.dept + '-' +needData.name;
-          this.detailInfoData.detailMessage.value = needData.value;
-          this.detailInfoData.detailMessage.unit = needData.unit;
-          this.detailInfoData.detailMessage.flagName = '水位';
-          this.detailInfoData.type = 'water';
-          console.log('macId: ' + needData.id, 'userId: ' + userId);
-          this.getOneWaterLevelMacData({userId: userId,macId: needData.id}).then(res=>{
-            this.detailInfoData.detailMessage.yty = res.yty;
-            this.detailInfoData.detailMessage.mtm = res.mtm;
-          });
-          this.getWaterLevelTrendDataForOneMac({userId: userId,macId: needData.id}).then(res=>{
-            let needData = res.reduce((acc,item) => {
+          this.showInfo(needData);
+          this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
+        }
+      }
+    },
+    // 地图上弹框显示事件
+    showInfo(info){
+      //地图上的点位放大居中显示
+      // 获取详情数据
+      this.detailInfoData.detailMessage.name = info.dept + '-' +info.name;
+      this.detailInfoData.detailMessage.value = info.value;
+      this.detailInfoData.detailMessage.unit = info.unit;
+      this.detailInfoData.detailMessage.flagName = '水位';
+      this.detailInfoData.type = 'water';
+      console.log('macId: ' + info.id, 'userId: ' + userId);
+      this.getOneWaterLevelMacData({userId: userId,macId: info.id}).then(res=>{
+          this.detailInfoData.detailMessage.yty = res.yty;
+          this.detailInfoData.detailMessage.mtm = res.mtm;
+      });
+      this.getWaterLevelTrendDataForOneMac({userId: userId,macId: info.id}).then(res=>{
+          let needData = res.reduce((acc,item) => {
               acc[0].push(item.dayTime);
               acc[1].push(item.value);
               return acc
-            },[[],[]]);
-            this.detailInfoData.chartData = needData;
-          });
-          if(!needData.x||!needData.y){
-              this.$message.warning('当前视频无点位信息！！！');
-          }else{
-              this.levelOverlay.setPosition([parseFloat(needData.x),parseFloat(needData.y)]);
-              this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
-          }
-        }
+          },[[],[]]);
+          this.detailInfoData.chartData = needData;
+      });
+      if(!info.x||!info.y){
+          this.$message.warning('当前视频无点位信息！！！');
+      }else{
+          this.levelOverlay.setPosition([parseFloat(info.x),parseFloat(info.y)]);
       }
     },
     videoMapClickHandler({ pixel, coordinate }) {
@@ -208,6 +212,7 @@ export default {
           const clickFeature = feature.get('features')[0];
           // const coordinates=clickFeature.getGeometry().getCoordinates();
           if (clickFeature && clickFeature.get('type') == 'waterLevel') {
+              this.showInfo(clickFeature.get('props'));
               this.levelOverlay.setPosition(coordinate);
           }
       }
