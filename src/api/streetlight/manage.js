@@ -3,7 +3,7 @@
  * @Date: 2019-12-02 09:12:20
  */
 
-import request from '@/plugins/axios/axios'
+import request from '@/plugins/axios/axios2'
 
 /**
  * @description 获取所有路灯信息

@@ -58,7 +58,7 @@ export default {
                     subtext: "总数",
                     itemGap: 5,
                     top: 60,
-                    left: 90,
+                    left: 75,
                     textAlign:"center",
                     textStyle: {
                         color: "#333333",
@@ -104,7 +104,7 @@ export default {
                 },
                 series: [{
                     type: "pie",
-                    center: ["30%", "50%"],
+                    center: ["25%", "50%"],
                     radius: ["55%", "70%"],
                     color: [ "#50cf3f", "#cccccc", "#ccc74c"],
                     startAngle: 135,

@@ -3,7 +3,7 @@
  * @Date: 2019-09-06 14:53:20
  */
 
-import request from '@/plugins/axios/axios'
+import request from '@/plugins/axios/axios2'
 
 /**
  * @description 获取路灯设备状态分析数据

@@ -24,7 +24,7 @@
         >
           <div class="item_left">
             <cg-icon-svg name="zhld" class="svg_icon"></cg-icon-svg>
-            <span>{{ item.name }}</span>
+            <span :title="item.name">{{ item.name }}</span>
           </div>
           <div class="item_right">
             <span>{{ item.online ? '在线' : '离线' }}</span>
@@ -38,9 +38,9 @@
     </div>
     <div class="pagination-panel">
       <a-pagination
+        size="small"
         :total="totalSize"
-        :showTotal="total => `共 ${total} 条`"
-        :pageSize="50"
+        :pageSize="query.pageSize"
         :defaultCurrent="1"
         @change="changePagination"
       />
@@ -75,7 +75,7 @@ export default {
         //路灯名称
         lightName: '',
         pageNo: 1,
-        pageSize: 50
+        pageSize: 100
       },
 
       //目前激活的路灯序号
@@ -99,6 +99,7 @@ export default {
       element: this.$refs.detailInfo.$el
     });
     this.getDataList();
+    this.getAllMapLightData();
   },
   watch: {},
   methods: {
@@ -108,43 +109,45 @@ export default {
       console.log('selected city data',val);
       this.query.area = val;
     },
-    //获取预案数据
+    //获取路灯分页数据
     getDataList() {
       this.showLoading = true
-      const _this=this;
       this.getAllLightListData(this.query).then(res => {
         this.sourceData = res.list;
         this.totalSize = res.total
         this.showLoading = false;
+      })
+    },
+    //获取路灯全部地图数据
+    getAllMapLightData() {
+      const _this=this;
+      this.getAllLightListData({userId:userId,area:this.query.area,lightName:'', pageNo:1,pageSize:100000}).then(res => {
         const data = res.list.map(r => {
-            if (r.x.length > 0 && r.y.length > 0){
-                const feature = new Feature({
-                    geometry: new Point([parseFloat(r.x), parseFloat(r.y)])
-                });
-                let img;
-                if(r.online){
-                    img = 'streetlight';
-                }else{
-                    img = 'streetlight-lx';
-                }
-                feature.set('icon',img);
-                feature.set('type','light');
-                feature.set('props',r);
-                return feature;
+          if (r.x.length > 0 && r.y.length > 0){
+            const feature = new Feature({
+              geometry: new Point([parseFloat(r.x), parseFloat(r.y)])
+            });
+            let img;
+            if(r.online){
+              img = 'streetlight';
+            }else{
+              img = 'streetlight-lx';
             }
+            feature.set('icon',img);
+            feature.set('type','light');
+            feature.set('props',r);
+            return feature;
+          }
         });
         if(_this.lightLayer){
-            _this.lightLayer.getSource().getSource().clear();
-            _this.lightLayer.getSource().getSource().addFeatures(data);
+          _this.lightLayer.getSource().getSource().clear();
+          _this.lightLayer.getSource().getSource().addFeatures(data);
         }else{
-            _this.lightLayer = _this.mapManager.addClusterLayerByFeatures(data);
-            _this.lightLayer.set('featureType','waterLevel');
+          _this.lightLayer = _this.mapManager.addClusterLayerByFeatures(data);
+          _this.lightLayer.set('featureType','waterLevel');
         }
         const extent=_this.lightLayer.getSource().getSource().getExtent();
         _this.mapManager.getMap().getView().fit(extent);
-        // _this.lightLayer = _this.mapManager.addVectorLayerByFeatures(data, emergencyEquipStyle('3'), 3);
-        // _this.lightLayer.set('featureType','light');
-        // _this.map.getView().fit(_this.lightLayer.getSource().getExtent());
       })
     },
     //搜索关键字查询
@@ -253,7 +256,7 @@ export default {
         }
         span {
           display: inline-block;
-          max-width: 150px;
+          max-width: 210px;
           margin-left: 5px;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -285,7 +288,7 @@ export default {
   }
   .pagination-panel {
     text-align: right;
-    padding: 20px 0px 10px 0px;
+    padding-top: 10px;
   }
 }
 </style>
