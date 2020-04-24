@@ -82,6 +82,9 @@
         </template>
       </tip-modal>
     </div>
+    <div hidden>
+      <video-info ref="videoInfo" :info="videoInfoData" @closeTip="closeTip" @openVideoPlayer="openVideoPlayer"></video-info>
+    </div>
     <iframe width=0 height=0 id="camera"></iframe>
   </div>
 </template>
@@ -101,7 +104,7 @@ import EventYuAnForm from './components/EventYuAnForm.vue'
 import YuAnForm from './components/YuAnForm.vue'
 import CarInfo from './components/CarInfo.vue'
 import GPSInfo from './components/GPSInfo.vue'
-import PeopleInfo from './components/PeopleInfo.vue'
+import VideoInfo from './components/VideoInfo.vue'
 import { getAllEmergencyArea, postEmergencyArea } from '@/api/map/service'
 import { emergencyAreaStyle, emergencyCenterStyle,emergencyPeopleStyle } from '@/utils/util.map.style'
 import { stampConvertToTime } from '@/utils/util.tool'
@@ -203,6 +206,14 @@ export default {
           key: '皮划艇',
           icon: 'pihuating'
       }],
+      //摄像头播放效果
+      playerMethod: 'tool', //browser：flash播放  tool：C端播放
+      //视频流URL
+      videoSrc: '',
+      videoInfoData:{
+        addressName: '视频列表',
+        videoList: []
+      },
     }
   },
   components: {
@@ -218,7 +229,8 @@ export default {
     EventYuAnForm,
     CarInfo,
     GPSInfo,
-    PeopleInfo
+    PeopleInfo,
+    VideoInfo
   },
   computed: {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
@@ -304,7 +316,7 @@ export default {
           const type=feature.get('key');
           console.log(info);
           console.log(type);
-          if(type==='car'){
+          if(type==='hwcl'){
               this.tipComponentId = CarInfo;
               this.infoData = info;
             console.log('carInfo',info);
@@ -314,7 +326,7 @@ export default {
               this.showOperatePanel = false;
               this.yuAnOverlay.setPosition(coordinate)
           }
-          if(type==='terminal'){
+          if(type==='gps'){
               this.tipComponentId = PeopleInfo;
               this.infoData = info;
               this.iconName = '';
@@ -375,7 +387,7 @@ export default {
                     let PalyType = "PlayReal";
                     let SvrPort = "443";
                     let httpsflag = "1";
-                    let data = response.data;
+                    let data = response.data.data;
                     let SvrIp = data.SvrIp;
                     let appkey = data.appkey;
                     let appSecret = data.appSecret;
@@ -399,6 +411,38 @@ export default {
             .catch(function (error) {
                 console.log(error);
             });
+    },
+
+    //从预览过来打开摄像头
+    openVideoPlayer(videoList){
+      console.log('openVideoPlayer',videoList);
+      //打开C端工具播放
+      axios.get('http://61.153.37.214:81/api/sp/getSecretApi').then(resultConfig => {
+        if (resultConfig) {
+          var PalyType = "PlayReal";
+          var SvrPort = "443";
+          var httpsflag = "1";
+          var data = resultConfig.data.data;
+          var SvrIp = data.SvrIp;
+          var appkey = data.appkey;
+          var appSecret = data.appSecret;
+          var time = data.time;
+          var timeSecret = data.timeSecret;
+          for(let i=0;i<videoList.length;i++){
+            var CamList = videoList[i];
+            //主要是添加了'hikvideoclient://' 和 'VersionTag:artemis'2段字符串
+            var param = 'hikvideoclient://ReqType:' + PalyType + ';' + 'VersionTag:artemis' + ';' + 'SvrIp:' + SvrIp + ';' + 'SvrPort:' + SvrPort + ';' + 'Appkey:' + appkey + ';' + 'AppSecret:' + appSecret + ';' + 'time:' + time + ';' + 'timesecret:' + timeSecret + ';' + 'httpsflag:' + httpsflag + ';' + 'CamList:' + CamList + ';';
+            document.getElementById("url").src = param;
+          }
+        }
+      }).catch(err => {
+        console.log("错误信息---------->" + err);
+      });
+    },
+    //关闭视频列表弹窗
+    closeTip(){
+
+      this.videoInfoData.videoList=[];
     },
     //关闭地图弹框
     closeOverlay() {

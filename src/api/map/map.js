@@ -92,7 +92,7 @@ const apiMapping = {
  */
 export function getResourceListApi(type) {
   return request({
-    url: URL_CONFIG.baseURL + 'point/' + apiMapping[type],
+    url: URL_CONFIG.baseURL + '/point/' + apiMapping[type],
     method: 'post'
   });
 }
