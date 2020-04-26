@@ -105,6 +105,7 @@ import YuAnForm from './components/YuAnForm.vue'
 import CarInfo from './components/CarInfo.vue'
 import GPSInfo from './components/GPSInfo.vue'
 import VideoInfo from './components/VideoInfo.vue'
+import PeopleInfo from './components/PeopleInfo.vue'
 import { getAllEmergencyArea, postEmergencyArea } from '@/api/map/service'
 import { emergencyAreaStyle, emergencyCenterStyle,emergencyPeopleStyle } from '@/utils/util.map.style'
 import { stampConvertToTime } from '@/utils/util.tool'
@@ -244,6 +245,8 @@ export default {
           this.showYuAnList = true;
       }, 400);
     this.yuAnOverlay = this.mapManager.addOverlay({
+        offset:[0,-20],
+        positioning: 'bottom-center',
       element: this.$refs.yuAnOverlay.$el
     });
     this.setOverlay(this.yuAnOverlay);

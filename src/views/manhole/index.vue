@@ -118,6 +118,8 @@ export default {
     this.map.on('click', this.manholeClickHandler);
     this.setClickHandler(this.manholeClickHandler);
     this.manholeOverlay = this.mapManager.addOverlay({
+        offset:[0,-20],
+        positioning: 'bottom-center',
       element: this.$refs.manholeOverlay.$el
     });
     this.setOverlay(this.manholeOverlay);

@@ -120,6 +120,8 @@ export default {
       this.map.on('click', this.dustbinClickHandler);
       this.setClickHandler(this.dustbinClickHandler);
       this.dustbinOverlay = this.mapManager.addOverlay({
+          offset:[0,-20],
+          positioning: 'bottom-center',
         element: this.$refs.dustbinOverlay.$el
       });
       this.setOverlay(this.dustbinOverlay);

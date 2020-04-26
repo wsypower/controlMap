@@ -118,6 +118,8 @@ export default {
     this.map.on('click', this.waterClickHandler);
     this.setClickHandler(this.waterClickHandler);
     this.waterOverlay = this.mapManager.addOverlay({
+        offset:[0,-20],
+        positioning: 'bottom-center',
       element: this.$refs.waterOverlay.$el
     });
     this.setOverlay(this.waterOverlay);
