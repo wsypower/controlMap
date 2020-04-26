@@ -38,7 +38,7 @@
             }
             span:last-child{
                 display:inline-block;
-                max-width: 200px;
+                width: 200px;
                 &.red{
                     color: #e03131;
                 }

@@ -31,7 +31,7 @@
             }
             span:last-child{
                 display:inline-block;
-                max-width: 200px;
+                width: 100px;
             }
         }
     }
