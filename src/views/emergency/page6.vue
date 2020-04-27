@@ -430,7 +430,7 @@ export default {
                     var CamList = videoList[i];
                     //主要是添加了'hikvideoclient://' 和 'VersionTag:artemis'2段字符串
                     var param = 'hikvideoclient://ReqType:' + PalyType + ';' + 'VersionTag:artemis' + ';' + 'SvrIp:' + SvrIp + ';' + 'SvrPort:' + SvrPort + ';' + 'Appkey:' + appkey + ';' + 'AppSecret:' + appSecret + ';' + 'time:' + time + ';' + 'timesecret:' + timeSecret + ';' + 'httpsflag:' + httpsflag + ';' + 'CamList:' + CamList + ';';
-                    document.getElementById("url").src = param;
+                    document.getElementById("camera").src = param;
                 }
             }
         }).catch(err => {
