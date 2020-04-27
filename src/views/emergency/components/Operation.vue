@@ -400,10 +400,10 @@ export default {
                   }
                   if(features.length>0) {
                     // this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
-                      const data=this.mapManager.addClusterLayerByFeatures(features);
+                      const data=this.mapManager.addClusterLayerByFeatures2(features);
                       this.emergencyResourceLayer =data[0];
-                      const selectCluster = data[1];
-                      const _this=this;
+                      // const selectCluster = data[1];
+                      // const _this=this;
                       // selectCluster.getFeatures().on(['add'], function(e) {
                       //     const c = e.element.get('features');
                       //     if (!c) {

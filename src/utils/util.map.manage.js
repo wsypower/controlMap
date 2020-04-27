@@ -196,6 +196,102 @@ export class MapManager {
     clusterSource.getSource().addFeatures(features);
     return [clusterLayer,selectCluster];
   }
+
+    /**
+     * @description: 通过features数组添加聚类图层
+     * @param {Array} features
+     */
+    addClusterLayerByFeatures2(features){
+        const clusterSource = new Cluster({
+            distance: 40,
+            source: new VectorSource()
+        });
+        const clusterLayer = new AnimatedCluster({
+            name: 'Cluster',
+            source: clusterSource,
+            zIndex:99,
+            animationDuration: 700,
+            style: getClusterStyle
+        });
+        this.map.addLayer(clusterLayer);
+        // const selectCluster = new SelectCluster({
+        //     pointRadius: 7,
+        //     animate: true,
+        //     featureStyle: getSingleStyle,
+        //     style: getClusterStyle
+        // });
+        // this.map.addInteraction(selectCluster);
+        // selectCluster.set('featureType','add');
+        function getClusterStyle(feature, resolution) {
+            let styleCache = {};
+            if (!feature.get('features')) {
+                return;
+            }
+            let size = feature.get('features').length;
+
+            let style = styleCache[size];
+            if (!style) {
+                if (size == 1) {
+                    const styleFeature=feature.get('features')[0];
+                    style = styleCache[size] = new Style({
+                        image:  new Icon({
+                            src: require('@/assets/mapImage/'+styleFeature.get('icon')+'.png'),
+                            anchor: [0.5, 0.5],
+                            size: [30, 39],
+                            opacity: 1
+                        }),
+                    });
+                } else {
+                    const color = size>25 ? '192, 0, 0' : size>8 ? '255, 128, 0' : '0, 128, 0';
+                    const radius = Math.max(8, Math.min(size * 0.75, 20));
+                    style = styleCache[size] = new Style({
+                        image: new Circle({
+                            radius: radius,
+                            stroke: new Stroke({
+                                color: 'rgba(' + color + ', 0.5)',
+                                width: 15
+                            }),
+                            fill: new Fill({
+                                color:'rgba(' + color + ', 1)'
+                            })
+                        }),
+                        text: new Text({
+                            text: size.toString(),
+                            fill: new Fill({
+                                color: '#fff'
+                            })
+                        })
+                    });
+                }
+            }
+            return [style];
+        }
+        function getSingleStyle(feature) {
+            if (!feature.get('features')) {
+                return;
+            }
+            const style = new Style({
+                image:  new Icon({
+                    src: require('@/assets/mapImage/'+feature.get('features')[0].get('icon')+'.png'),
+                    anchor: [0.5, 0.5],
+                    size: [30, 39],
+                    opacity: 1
+                }),
+            });
+            if (feature.get('features')) {
+                if (feature.get('features').length == 1) {
+                    return style;
+                } else {
+                    return [ style ];
+                }
+            } else {
+                return style;
+            }
+        }
+        clusterSource.getSource().addFeatures(features);
+        return [clusterLayer,null];
+    }
+
   /**
    * @description: 添加弹框
    * @param {[type]} options [description]
