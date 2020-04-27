@@ -114,6 +114,7 @@ export class MapManager {
     const clusterLayer = new AnimatedCluster({
         name: 'Cluster',
         source: clusterSource,
+        zIndex:99,
         animationDuration: 700,
         style: getClusterStyle
     });
