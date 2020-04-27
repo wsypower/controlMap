@@ -215,6 +215,7 @@ export default {
         addressName: '视频列表',
         videoList: []
       },
+      yuananData:{},
     }
   },
   components: {
@@ -245,9 +246,15 @@ export default {
           this.showYuAnList = true;
       }, 400);
     this.yuAnOverlay = this.mapManager.addOverlay({
+      offset:[0,-20],
+      positioning: 'bottom-center',
+      element: this.$refs.yuAnOverlay.$el
+    });
+    this.selectOverlay = this.mapManager.addOverlay({
+        id:'selectVideoOverlay',
         offset:[0,-20],
         positioning: 'bottom-center',
-      element: this.$refs.yuAnOverlay.$el
+        element: this.$refs.videoInfo.$el
     });
     this.setOverlay(this.yuAnOverlay);
     map = this.mapManager.getMap()
@@ -276,6 +283,7 @@ export default {
       const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
         console.log('videofeature',feature);
       if (feature && feature.get('pointType')) {
+          console.log('infoData',this.infoData);
         if(feature.get('pointType')=='people'){
           //人员弹框
           console.log(feature.get('userid'));
@@ -289,7 +297,9 @@ export default {
               this.infoData = res;
               this.tipComponentId = UserInfo;
               this.showOperatePanel = false;
-              this.yuAnOverlay.setPosition(coordinate)
+              setTimeout(()=>{
+                  this.yuAnOverlay.setPosition(coordinate);
+              },100);
           })
         }
         else if(feature.get('pointType')=='resource'){
@@ -311,7 +321,9 @@ export default {
           this.infoData = info;
           this.tipComponentId = ResourceInfo;
           this.showOperatePanel = false;
-          this.yuAnOverlay.setPosition(coordinate);
+          setTimeout(()=>{
+              this.yuAnOverlay.setPosition(coordinate);
+          },100);
         }
         else if(feature.get('pointType')=='bestResource'){
           //最优资源弹框
@@ -327,7 +339,6 @@ export default {
               this.modalTitle = '市政环卫车辆';
               this.subTitle = '';
               this.showOperatePanel = false;
-              this.yuAnOverlay.setPosition(coordinate)
           }
           if(type==='gps'){
               this.tipComponentId = PeopleInfo;
@@ -335,8 +346,7 @@ export default {
               this.iconName = '';
               this.modalTitle = '执法终端';
               this.subTitle = '';
-            this.showOperatePanel = false;
-              this.yuAnOverlay.setPosition(coordinate)
+              this.showOperatePanel = false;
           }
           if(type==='manager'){
               this.tipComponentId = PeopleInfo;
@@ -344,21 +354,24 @@ export default {
               this.iconName = '';
               this.modalTitle = '管理人员';
               this.subTitle = '';
-            this.showOperatePanel = false;
-              this.yuAnOverlay.setPosition(coordinate)
+              this.showOperatePanel = false;
           }
+          setTimeout(()=>{
+              this.yuAnOverlay.setPosition(coordinate);
+          },100);
         }
         else if(feature.get('pointType')=='video'){
           //视频弹框
-          console.log('video code',feature.get('id'));
-          this.openCameraDevice(feature.get('id'));
+          // console.log('video code',feature.get('id'));
+          // this.openCameraDevice(feature.get('id'));
         }
-        else{
+        else if(feature.get('pointType')=='center'){
           //预案点击弹框
           // this.$refs.yuAnOverlay.$el.style.width='482px';
           // this.$refs.yuAnOverlay.$el.style.height='254px';
           this.tipComponentId = YuAnInfo;
           this.iconName = 'menu-special';
+          this.infoData=this.yuananData;
           this.modalTitle = this.infoData.name;
           let startTime = ''
           if(this.infoData.startDay && this.infoData.startDay.length > 0){
@@ -376,10 +389,58 @@ export default {
           else{
             this.showOperatePanel = false;
           }
-
-          this.yuAnOverlay.setPosition(coordinate)
+          setTimeout(()=>{
+              this.yuAnOverlay.setPosition(coordinate);
+          },100);
         }
       }
+      else if(feature && feature.get('features').length>0){
+          console.log('video',feature.get('features'));
+          const c = feature.get('features');
+          if(c.length <6){
+              this.videoInfoData.videoList=[];
+              for(let i=0;i<c.length;i++){
+                  this.videoInfoData.videoList.push({
+                      label:c[i].get('name'),
+                      value:c[i].get('id')
+                  })
+              }
+              const coor = c[0].get('geometry').getCoordinates();
+              this.selectOverlay.setPosition(coor);
+              console.log('selectCluster',c);
+          }
+      }
+    },
+    //从预览过来打开摄像头
+    openVideoPlayer(videoList){
+        console.log('openVideoPlayer',videoList);
+        //打开C端工具播放
+        axios.get('http://61.153.37.214:81/api/sp/getSecretApi').then(resultConfig => {
+            if (resultConfig) {
+                var PalyType = "PlayReal";
+                var SvrPort = "443";
+                var httpsflag = "1";
+                var data = resultConfig.data.data;
+                var SvrIp = data.SvrIp;
+                var appkey = data.appkey;
+                var appSecret = data.appSecret;
+                var time = data.time;
+                var timeSecret = data.timeSecret;
+                for(let i=0;i<videoList.length;i++){
+                    var CamList = videoList[i];
+                    //主要是添加了'hikvideoclient://' 和 'VersionTag:artemis'2段字符串
+                    var param = 'hikvideoclient://ReqType:' + PalyType + ';' + 'VersionTag:artemis' + ';' + 'SvrIp:' + SvrIp + ';' + 'SvrPort:' + SvrPort + ';' + 'Appkey:' + appkey + ';' + 'AppSecret:' + appSecret + ';' + 'time:' + time + ';' + 'timesecret:' + timeSecret + ';' + 'httpsflag:' + httpsflag + ';' + 'CamList:' + CamList + ';';
+                    document.getElementById("url").src = param;
+                }
+            }
+        }).catch(err => {
+            console.log("错误信息---------->" + err);
+        });
+    },
+    //关闭视频列表弹窗
+    closeTip(){
+        this.videoInfoData.videoList=[];
+        this.selectOverlay.setPosition(undefined);
     },
 
     //打开摄像头第三方插件
@@ -415,41 +476,9 @@ export default {
                 console.log(error);
             });
     },
-
-    //从预览过来打开摄像头
-    openVideoPlayer(videoList){
-      console.log('openVideoPlayer',videoList);
-      //打开C端工具播放
-      axios.get('http://61.153.37.214:81/api/sp/getSecretApi').then(resultConfig => {
-        if (resultConfig) {
-          var PalyType = "PlayReal";
-          var SvrPort = "443";
-          var httpsflag = "1";
-          var data = resultConfig.data.data;
-          var SvrIp = data.SvrIp;
-          var appkey = data.appkey;
-          var appSecret = data.appSecret;
-          var time = data.time;
-          var timeSecret = data.timeSecret;
-          for(let i=0;i<videoList.length;i++){
-            var CamList = videoList[i];
-            //主要是添加了'hikvideoclient://' 和 'VersionTag:artemis'2段字符串
-            var param = 'hikvideoclient://ReqType:' + PalyType + ';' + 'VersionTag:artemis' + ';' + 'SvrIp:' + SvrIp + ';' + 'SvrPort:' + SvrPort + ';' + 'Appkey:' + appkey + ';' + 'AppSecret:' + appSecret + ';' + 'time:' + time + ';' + 'timesecret:' + timeSecret + ';' + 'httpsflag:' + httpsflag + ';' + 'CamList:' + CamList + ';';
-            document.getElementById("url").src = param;
-          }
-        }
-      }).catch(err => {
-        console.log("错误信息---------->" + err);
-      });
-    },
-    //关闭视频列表弹窗
-    closeTip(){
-
-      this.videoInfoData.videoList=[];
-    },
     //关闭地图弹框
     closeOverlay() {
-      this.yuAnOverlay.setPosition(undefined);
+       this.yuAnOverlay.setPosition(undefined);
     },
     //获取事件预案数据
     getDataList() {
@@ -571,14 +600,15 @@ export default {
       this.activeIndex = index;
       this.eventId = this.dataArr[index].id;
       const data = this.dataArr[index]
-      this.infoData = data;
+      // this.infoData = data;
+        this.yuananData=data;
       if(data.mapId){
         //过滤当前选择的预案区域
         const feature = this.emergencyAreas.filter(p => p.get('id') == data.mapId);
         //当前选中要素保存到vuex
         this.setSelectEmergencyFeature(feature);
         //预案区域图层
-        this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature, emergencyAreaStyle(), 2);
+        this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature, emergencyAreaStyle());
         this.pushPageLayers(this.emergencyLayer);
         const point = new Feature({
           geometry: new Point([parseFloat(data.positionX), parseFloat(data.positionY)])
@@ -618,40 +648,40 @@ export default {
       this.bodyPadding = [0, 10, 10, 10];
       this.dialogVisible = true;
     },
-      //启动事件预案
-      startYuAn(e){
-          if(this.activeIndex===null||this.dataArr[this.activeIndex].statusId!=='1'){
-              e.preventDefault();
-              // this.$notification['warning']({
-              //     message: '只能启动状态为未开始的预案',
-              //     description: '请重新选择',
-              //     style: {
-              //         width: '350px',
-              //         marginLeft: `50px`,
-              //         fontSize: '14px'
-              //     }
-              // });
-          }
-          else{
-              this.dialogTitle = '启动预案';
-              this.closeCallBack = ()=>{
-                this.getDataList();
-                setTimeout(()=>{
-                  this.clickDataItem(this.activeIndex);
-                },1000)
-              };
-              this.sourceData = {
-                id: this.dataArr[this.activeIndex].id,
-                activeStage: '消息阶段',
-                sourceType: 0
-              };
-              this.dialogComponentId = EventYuAnForm;
-              this.dWidth = 1200;
-              this.dHeight = 644;
-              this.bodyPadding = [0, 10, 10, 10];
-              this.dialogVisible = true;
-          }
-      },
+    //启动事件预案
+    startYuAn(e){
+        if(this.activeIndex===null||this.dataArr[this.activeIndex].statusId!=='1'){
+            e.preventDefault();
+            // this.$notification['warning']({
+            //     message: '只能启动状态为未开始的预案',
+            //     description: '请重新选择',
+            //     style: {
+            //         width: '350px',
+            //         marginLeft: `50px`,
+            //         fontSize: '14px'
+            //     }
+            // });
+        }
+        else{
+            this.dialogTitle = '启动预案';
+            this.closeCallBack = ()=>{
+              this.getDataList();
+              setTimeout(()=>{
+                this.clickDataItem(this.activeIndex);
+              },1000)
+            };
+            this.sourceData = {
+              id: this.dataArr[this.activeIndex].id,
+              activeStage: '消息阶段',
+              sourceType: 0
+            };
+            this.dialogComponentId = EventYuAnForm;
+            this.dWidth = 1200;
+            this.dHeight = 644;
+            this.bodyPadding = [0, 10, 10, 10];
+            this.dialogVisible = true;
+        }
+    },
     //远程呼叫
     ychjOperation() {
       if (this.activeIndex === null) {
@@ -701,32 +731,32 @@ export default {
       this.dialogVisible = true
     },
 
-      //应急预案组件的各个对外操作
-      listOperate(data){
-        switch(data.type){
-            case 'add':
-                this.dialogTitle = '新增预案';
-                this.closeCallBack = this.refreshYuAnList;
-                this.sourceData = '';
-                break;
-            case 'edit':
-                this.dialogTitle = '编辑预案';
-                this.closeCallBack = this.refreshYuAnList;
-                this.sourceData = data.id;
-                break;
-            case 'info':
-                break;
-            default:
-                console.log('no operate')
-        }
-          this.dialogComponentId = YuAnForm;
-          this.dWidth = 1200;
-          this.dHeight = 644;
-          this.bodyPadding = [0, 10, 10, 10];
-          this.dialogVisible = true;
-      },
+    //应急预案组件的各个对外操作
+    listOperate(data){
+      switch(data.type){
+          case 'add':
+              this.dialogTitle = '新增预案';
+              this.closeCallBack = this.refreshYuAnList;
+              this.sourceData = '';
+              break;
+          case 'edit':
+              this.dialogTitle = '编辑预案';
+              this.closeCallBack = this.refreshYuAnList;
+              this.sourceData = data.id;
+              break;
+          case 'info':
+              break;
+          default:
+              console.log('no operate')
+      }
+        this.dialogComponentId = YuAnForm;
+        this.dWidth = 1200;
+        this.dHeight = 644;
+        this.bodyPadding = [0, 10, 10, 10];
+        this.dialogVisible = true;
+    },
 
-      refreshYuAnList(){
+    refreshYuAnList(){
         console.log('go to refreshYuAnList');
         this.$refs.yuAnList.getYuAnList();
       }

@@ -70,6 +70,7 @@ export async function getAreaVideo() {
       return {
         id: r.id,
         position: r.position,
+        name:r.address,
       }
     }
   });

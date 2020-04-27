@@ -1,55 +1,60 @@
 <template>
-  <div class="top-operate-panel">
-      <a-button class="op-btn yacz-btn" @click="addEvent">
-        <i class="icon_yacz">
-            <cg-icon-svg name="anjianhuizong" class="svg_icon_anjianhuizong"></cg-icon-svg>
-        </i>
-        <span class="memu-title-text">新增事件</span>
-      </a-button>
-    <!--<a-button class="op-btn ychj-btn" @click="clickYCHJBtn">-->
-      <!--<i class="icon_ychj">-->
-        <!--<cg-icon-svg name="shipin" class="svg_icon_shipin"></cg-icon-svg>-->
-      <!--</i>-->
-      <!--<span class="memu-title-text">远程呼叫</span>-->
-      <!--<a-icon type="right" style="font-size: 12px;" />-->
-    <!--</a-button>-->
-    <a-dropdown v-model="visible" @visibleChange="visibleChange">
-        <a-button class="op-btn yjzy-btn">
-            <i class="icon_yjzy">
-                <cg-icon-svg name="dianchi" class="svg_icon_yinjiguanli"></cg-icon-svg>
-            </i>
-            <span class="memu-title-text">周边物资</span>
-            <a-icon type="down" />
-        </a-button>
-        <a-menu slot="overlay" multiple :openKeys.sync="openKeys">
-            <template v-for="(item, index) in sourceType">
-                <a-menu-item :key="item.key" @click="clickShowPoints(item,index)">
-                    <a-checkbox :checked="item.checked" class="checkbox_d"></a-checkbox>
-                    <cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>
-                    {{item.name}}
-                </a-menu-item>
-            </template>
-      </a-menu>
-    </a-dropdown>
-      <a-dropdown v-model="bestVisible">
-          <a-button class="op-btn best-btn">
-              <i class="icon_best">
-                  <cg-icon-svg name="wulianwang" class="svg_icon_best"></cg-icon-svg>
-              </i>
-              <span class="memu-title-text">周边最优资源</span>
-              <a-icon type="down" />
-          </a-button>
-          <a-menu slot="overlay" multiple >
-              <template v-for="(item, index) in selectType">
-                  <a-menu-item :key="item.key" @click="clickShowBestPoints(item,index)">
-                      <a-checkbox :checked="item.checked" class="checkbox_d"></a-checkbox>
-                      <cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>
-                      {{item.name}}
-                  </a-menu-item>
-              </template>
-          </a-menu>
-      </a-dropdown>
-  </div>
+    <div>
+        <div class="top-operate-panel">
+            <a-button class="op-btn yacz-btn" @click="addEvent">
+                <i class="icon_yacz">
+                    <cg-icon-svg name="anjianhuizong" class="svg_icon_anjianhuizong"></cg-icon-svg>
+                </i>
+                <span class="memu-title-text">新增事件</span>
+            </a-button>
+            <!--<a-button class="op-btn ychj-btn" @click="clickYCHJBtn">-->
+            <!--<i class="icon_ychj">-->
+            <!--<cg-icon-svg name="shipin" class="svg_icon_shipin"></cg-icon-svg>-->
+            <!--</i>-->
+            <!--<span class="memu-title-text">远程呼叫</span>-->
+            <!--<a-icon type="right" style="font-size: 12px;" />-->
+            <!--</a-button>-->
+            <a-dropdown v-model="visible" @visibleChange="visibleChange">
+                <a-button class="op-btn yjzy-btn">
+                    <i class="icon_yjzy">
+                        <cg-icon-svg name="dianchi" class="svg_icon_yinjiguanli"></cg-icon-svg>
+                    </i>
+                    <span class="memu-title-text">周边物资</span>
+                    <a-icon type="down" />
+                </a-button>
+                <a-menu slot="overlay" multiple :openKeys.sync="openKeys">
+                    <template v-for="(item, index) in sourceType">
+                        <a-menu-item :key="item.key" @click="clickShowPoints(item,index)">
+                            <a-checkbox :checked="item.checked" class="checkbox_d"></a-checkbox>
+                            <cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>
+                            {{item.name}}
+                        </a-menu-item>
+                    </template>
+                </a-menu>
+            </a-dropdown>
+            <a-dropdown v-model="bestVisible">
+                <a-button class="op-btn best-btn">
+                    <i class="icon_best">
+                        <cg-icon-svg name="wulianwang" class="svg_icon_best"></cg-icon-svg>
+                    </i>
+                    <span class="memu-title-text">周边最优资源</span>
+                    <a-icon type="down" />
+                </a-button>
+                <a-menu slot="overlay" multiple >
+                    <template v-for="(item, index) in selectType">
+                        <a-menu-item :key="item.key" @click="clickShowBestPoints(item,index)">
+                            <a-checkbox :checked="item.checked" class="checkbox_d"></a-checkbox>
+                            <cg-icon-svg :name="item.icon" class="svg_icon_common"></cg-icon-svg>
+                            {{item.name}}
+                        </a-menu-item>
+                    </template>
+                </a-menu>
+            </a-dropdown>
+        </div>
+        <!--<div hidden>-->
+            <!--<video-info ref="videoInfo" :info="videoInfoData" @closeTip="closeTip" @openVideoPlayer="openVideoPlayer"></video-info>-->
+        <!--</div>-->
+    </div>
 </template>
 <script type="text/ecmascript-6">
 import { mapState, mapActions, mapMutations } from 'vuex'
@@ -139,7 +144,12 @@ export default {
                 }],
 
           emergencyResourceLayer:null,
-          resourceLayer:[]
+          resourceLayer:[],
+            selectOverlay:null,
+            videoInfoData:{
+                addressName: '视频列表',
+                videoList: []
+            },
         }
     },
     props:{
@@ -213,6 +223,12 @@ export default {
         }
     },
     mounted(){
+        // this.selectOverlay = this.mapManager.addOverlay({
+        //     id:'selectVideoOverlay',
+        //     offset:[0,-20],
+        //     positioning: 'bottom-center',
+        //     element: this.$refs.videoInfo.$el
+        // });
     },
     methods:{
         ...mapActions('emergency/yuan', ['getResourceDataList','getMapInfoByEventIdAndRTypeId']),
@@ -328,7 +344,7 @@ export default {
                 });
             }
           if(this.selectType[0].checked){
-            this.emergencyResourceLayer.getSource().clear();
+            this.emergencyResourceLayer.getSource().getSource().clear();
             getAreaVideo().then(res => {
               let points;
               if (this.selectEmergencyFeature) {
@@ -336,16 +352,19 @@ export default {
               } else {
                 points = res;
               }
-              const features = points.map(p => {
+            const features = points.map(p => {
                 const point = new Feature({
-                  geometry: new Point(p.position)
+                    geometry: new Point(p.position)
                 });
+                point.set('icon','zbsp')
                 point.set('id', p.id);
-                point.set('pointType','video');
+                point.set('name',p.name);
                 return point;
-              });
-              this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
-              this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getExtent());
+            });
+            this.emergencyResourceLayer.getSource().getSource().addFeatures(features);
+            this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getSource().getExtent());
+              // this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
+              // this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getExtent());
             })
           }
         },
@@ -370,16 +389,46 @@ export default {
                     const point = new Feature({
                       geometry: new Point(p.position)
                     });
+                    point.set('icon','zbsp')
                     point.set('id', p.id);
-                    point.set('pointType','video');
+                    point.set('name',p.name);
+                    // point.set('pointType','video');
                     return point;
                   });
                   if (this.emergencyResourceLayer) {
-                    this.emergencyResourceLayer.getSource().clear();
+                    this.emergencyResourceLayer.getSource().getSource().clear();
                   }
                   if(features.length>0) {
-                    this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
-                    this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getExtent());
+                    // this.emergencyResourceLayer = this.mapManager.addVectorLayerByFeatures(features, videoStyle(), 3);
+                      const data=this.mapManager.addClusterLayerByFeatures(features);
+                      this.emergencyResourceLayer =data[0];
+                      const selectCluster = data[1];
+                      const _this=this;
+                      // selectCluster.getFeatures().on(['add'], function(e) {
+                      //     const c = e.element.get('features');
+                      //     if (!c) {
+                      //         return;
+                      //     }
+                      //     // if (c.length == 1) {
+                      //     // } else
+                      //     if(c.length <6){
+                      //         _this.videoInfoData.videoList=[];
+                      //         for(let i=0;i<c.length;i++){
+                      //             _this.videoInfoData.videoList.push({
+                      //                 label:c[i].get('name'),
+                      //                 value:c[i].get('id')
+                      //             })
+                      //         }
+                      //         const coor = e.element.get('geometry').getCoordinates();
+                      //         _this.selectOverlay.setPosition(coor);
+                      //         console.log('selectCluster',c);
+                      //     }
+                      // });
+                      this.emergencyResourceLayer.set('featureType','videoDistribute');
+                      const extent = this.emergencyResourceLayer.getSource().getSource().getExtent();
+                      this.mapManager.getMap().getView().fit(extent);
+                    // this.emergencyResourceLayer = this.mapManager.addClusterLayerByFeatures(features);
+                    // this.mapManager.getMap().getView().fit(this.emergencyResourceLayer.getSource().getExtent());
                   }
                 })
               }
@@ -411,7 +460,7 @@ export default {
           }
           else{
             if(this.selectType[index].name == '摄像头'){
-              this.emergencyResourceLayer.getSource().clear();
+              this.emergencyResourceLayer.getSource().getSource().clear();
             }
             else{
               this.selectType[index].layer.getSource().clear();
