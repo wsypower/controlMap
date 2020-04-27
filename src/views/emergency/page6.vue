@@ -608,14 +608,14 @@ export default {
         //当前选中要素保存到vuex
         this.setSelectEmergencyFeature(feature);
         //预案区域图层
-        this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature, emergencyAreaStyle());
+        this.emergencyLayer = this.mapManager.addVectorLayerByFeatures(feature, emergencyAreaStyle(),2);
         this.pushPageLayers(this.emergencyLayer);
         const point = new Feature({
           geometry: new Point([parseFloat(data.positionX), parseFloat(data.positionY)])
         });
         point.set('pointType', 'center');
         //预案中心点图标图层
-        this.emergencyCenterLayer = this.mapManager.addVectorLayerByFeatures([point], emergencyCenterStyle(), 3);
+        this.emergencyCenterLayer = this.mapManager.addVectorLayerByFeatures([point], emergencyCenterStyle(), 99);
         this.pushPageLayers(this.emergencyCenterLayer);
         this.mapManager.getMap().getView().fit(this.emergencyLayer.getSource().getExtent());
         // this.mapManager.locateTo([parseFloat(data.positionX), parseFloat(data.positionY)])
