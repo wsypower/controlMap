@@ -1,5 +1,6 @@
 <template>
-  <div id="map"></div>
+  <div id="map">
+  </div>
 </template>
 <script>
 import { mapMutations, mapState } from 'vuex'

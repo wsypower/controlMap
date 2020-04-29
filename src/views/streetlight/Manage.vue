@@ -104,7 +104,7 @@ export default {
   watch: {},
   methods: {
     ...mapActions('streetlight/manage', ['getAllLightListData','getOneLightMacData']),
-    ...mapMutations('map', ['pushPageLayers','setClickHandler','setOverlay']),
+    ...mapMutations('map', ['pushPageLayers','setClickHandler','setOverlay','setSpin']),
     getAddressData(val){
       console.log('selected city data',val);
       this.query.area = val;
@@ -120,6 +120,7 @@ export default {
     },
     //获取路灯全部地图数据
     getAllMapLightData() {
+      this.setSpin(true);
       const _this=this;
       this.getAllLightListData({userId:userId,area:this.query.area,lightName:'', pageNo:1,pageSize:100000}).then(res => {
         const data = res.list.map(r => {
@@ -148,6 +149,7 @@ export default {
         }
         const extent=_this.lightLayer.getSource().getSource().getExtent();
         _this.mapManager.getMap().getView().fit(extent);
+        this.setSpin(false);
       })
     },
     //搜索关键字查询

@@ -12,24 +12,24 @@
           <!-- 主体 左侧边栏 -->
           <layout-menu />
           <!-- 主体 右侧上按钮栏 -->
-           <!--<div class="container__aside&#45;&#45;top">-->
-             <!---->
-            <!--<div v-if="showSelect">-->
-              <!--<LayersSwitch @show="showSelect"></LayersSwitch>-->
-            <!--</div>-->
-            <!--<a-button class="container__aside__item" @click="showLayerSwitch">-->
-              <!--<img src="@/assets/mapImage/layer.png" alt="" class="icon">-->
-            <!--</a-button>-->
-            <!--<a-button class="container__aside__item">2</a-button>-->
-            <!--<a-button class="container__aside__item">3</a-button>-->
-            <!--<a-button class="container__aside__item">4</a-button>-->
+          <!--<div class="container__aside&#45;&#45;top">-->
+          <!---->
+          <!--<div v-if="showSelect">-->
+          <!--<LayersSwitch @show="showSelect"></LayersSwitch>-->
+          <!--</div>-->
+          <!--<a-button class="container__aside__item" @click="showLayerSwitch">-->
+          <!--<img src="@/assets/mapImage/layer.png" alt="" class="icon">-->
+          <!--</a-button>-->
+          <!--<a-button class="container__aside__item">2</a-button>-->
+          <!--<a-button class="container__aside__item">3</a-button>-->
+          <!--<a-button class="container__aside__item">4</a-button>-->
           <!--</div>-->
           <!-- 主体 右侧下按钮栏 -->
           <!--<div class="container__aside&#45;&#45;bottom" flex="dir:top cross:top">-->
-            <!--<a-button class="container__aside__item">1</a-button>-->
-            <!--<a-button class="container__aside__item">2</a-button>-->
-            <!--<a-button class="container__aside__item">3</a-button>-->
-            <!--<a-button class="container__aside__item">4</a-button>-->
+          <!--<a-button class="container__aside__item">1</a-button>-->
+          <!--<a-button class="container__aside__item">2</a-button>-->
+          <!--<a-button class="container__aside__item">3</a-button>-->
+          <!--<a-button class="container__aside__item">4</a-button>-->
           <!--</div>-->
           <!-- 主体 -->
           <div class="container__main">
@@ -40,7 +40,10 @@
               </keep-alive>
             </layout-drawer>
             <!-- 地图控件注入地址 -->
-            <LayoutMap ref="olMap"></LayoutMap>
+            <a-spin :spinning="showSpin" size="large">
+              <LayoutMap ref="olMap"></LayoutMap>
+            </a-spin>
+            <!--<a-spin size="large" />-->
           </div>
         </div>
       </loading>
@@ -49,8 +52,8 @@
 </template>
 
 <script>
-import { LayoutMenu, LayoutDrawer, LayoutHeader, Loading } from './components/index';
-import LayoutMap from '@/views/map/olMap.vue';
+import { LayoutMenu, LayoutDrawer, LayoutHeader, Loading } from './components/index'
+import LayoutMap from '@/views/map/olMap.vue'
 import LayersSwitch from '@/layouts/menu-right/LayersSwitch.vue'
 import { mapState } from 'vuex'
 export default {
@@ -65,19 +68,21 @@ export default {
   },
   data() {
     return {
-        showSelect : false
+      showSelect: false,
+      spinning: false
     }
   },
   computed: {
     ...mapState('cgadmin', {
       //缓存页面 ====> keep-alive
       keepAlive: state => state.page.keepAlive
-    })
+    }),
+    ...mapState('map', ['showSpin'])
   },
   methods: {
-      showLayerSwitch(){
-          this.showSelect=!this.showSelect;
-      }
+    showLayerSwitch() {
+      this.showSelect = !this.showSelect
+    }
   }
 }
 </script>
@@ -119,12 +124,12 @@ export default {
 .container__aside--bottom,
 .container__aside--top {
   .container__aside__item {
-    z-index:99;
-    padding:0;
+    z-index: 99;
+    padding: 0;
     :nth-last-child() {
       margin-bottom: 0;
     }
-    .icon{
+    .icon {
       width: 20px;
       height: 20px;
     }

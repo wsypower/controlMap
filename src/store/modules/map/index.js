@@ -10,37 +10,37 @@ export default {
     mapManager: null,
     emergencyAllArea: null,
     selectEmergencyFeature: null, //当前选中应急预案的要素
-    pageLayers:[],
-    clickHandler:null,
-    yuanOverlay:null
+    pageLayers: [],
+    clickHandler: null,
+    yuanOverlay: null,
+    showSpin: false
   },
   mutations: {
     setMapManager(state, mapManager) {
-      state.mapManager = mapManager;
+      state.mapManager = mapManager
     },
     setEmergencyAllArea(state, emergencyAllArea) {
-      state.emergencyAllArea = emergencyAllArea;
+      state.emergencyAllArea = emergencyAllArea
     },
     setSelectEmergencyFeature(state, selectEmergencyFeature) {
-      state.selectEmergencyFeature = selectEmergencyFeature;
+      state.selectEmergencyFeature = selectEmergencyFeature
     },
-    pushPageLayers(state, pageLayer){
-      state.pageLayers.push(pageLayer);
+    pushPageLayers(state, pageLayer) {
+      state.pageLayers.push(pageLayer)
     },
-    setPageLayers(state, pageLayers){
-      state.pageLayers = pageLayers;
+    setPageLayers(state, pageLayers) {
+      state.pageLayers = pageLayers
     },
-    setClickHandler(state, clickHandler){
-      state.clickHandler = clickHandler;
+    setClickHandler(state, clickHandler) {
+      state.clickHandler = clickHandler
     },
-    setOverlay(state, yuanOverlay){
-      state.yuanOverlay = yuanOverlay;
+    setOverlay(state, yuanOverlay) {
+      state.yuanOverlay = yuanOverlay
     },
+    setSpin(state, showSpin) {
+      state.showSpin = showSpin
+    }
   },
-  actions: {
-
-  },
-  getters: {
-
-  }
+  actions: {},
+  getters: {}
 }
