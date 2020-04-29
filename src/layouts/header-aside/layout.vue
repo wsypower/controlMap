@@ -40,7 +40,7 @@
               </keep-alive>
             </layout-drawer>
             <!-- 地图控件注入地址 -->
-            <a-spin :spinning="showSpin" size="large">
+            <a-spin :spinning="showSpin" size="large" wrapperClassName="wrapper_spin">
               <LayoutMap ref="olMap"></LayoutMap>
             </a-spin>
             <!--<a-spin size="large" />-->
@@ -147,4 +147,12 @@ export default {
   height: 100%;
   background: rgb(244, 244, 245);
 }
+</style>
+<style lang="scss">
+  .wrapper_spin{
+    & > div > .ant-spin .ant-spin-dot{
+      top: 50% !important;
+      left: 50% !important;
+    }
+  }
 </style>

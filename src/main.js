@@ -61,8 +61,8 @@ new Vue({
           const role = 'admin';
           const hash = window.location.hash.substring(2);
         //根据hash来得到对应的菜单
-        // const menu = menuAside.filter(v => v.role.includes(role)&&v.hash.includes(hash))
-        const menu = menuAside.filter(v => v.role.includes(role))
+        const menu = menuAside.filter(v => v.role.includes(role)&&v.hash.includes(hash))
+        // const menu = menuAside.filter(v => v.role.includes(role))
         this.$store.commit('cgadmin/menu/asideSet', menu)
       })
       .catch(err => {

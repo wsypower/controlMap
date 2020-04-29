@@ -26,7 +26,7 @@ export default {
     menuItem
   },
   mounted(){
-    /** 根据hash来打开对应的页面
+    // 根据hash来打开对应的页面
     setTimeout(() => {
       let hash = this.getUrlHash();
       //streetlight  // bridge
@@ -34,7 +34,6 @@ export default {
         this.menuItemClick(0,this.aside[0]);
       }
     },500);
-     **/
   },
   computed: {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),

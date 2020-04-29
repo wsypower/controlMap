@@ -49,7 +49,10 @@
           <span class="status-c">{{info.detailMessage.online ? '在线' : '离线' }}</span>
         </div>
       </div>
-      <div class="line-chart" ref="lineChart"></div>
+      <div v-if="info.chartData[0].length>0" class="line-chart" ref="lineChart"></div>
+      <div v-else class="nodata-panel">
+        <span class="nodata">暂无数据</span>
+      </div>
     </div>
     <div class="tooltip__arrow"></div>
   </div>
@@ -90,7 +93,9 @@ export default{
   watch: {
     'info.chartData': function(val){
       console.log('watch info.chartData',val);
-      this.chartInit(val);
+      if(val[0].length>0){
+        this.chartInit(val);
+      }
     }
   },
   methods:{
@@ -299,10 +304,18 @@ export default{
         }
       }
     }
-    .line-chart {
+    .line-chart,.nodata-panel{
       width: 100%;
       height: 193px;
       background-color: #ffffff;
+    }
+    .nodata-panel{
+      line-height: 193px;
+      text-align: center;
+      .nodata{
+        font-size: 16px;
+        color: #999999;
+      }
     }
   }
 
