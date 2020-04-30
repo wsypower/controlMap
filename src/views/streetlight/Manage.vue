@@ -228,7 +228,7 @@ export default {
       font-size: 14px;
       color: #333333;
       cursor: pointer;
-      &.active {
+      &.active, &:hover {
         background-color: #e9f6ff;
       }
       &.warning {
