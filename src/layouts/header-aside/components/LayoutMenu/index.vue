@@ -25,19 +25,21 @@ export default {
   components: {
     menuItem
   },
-  mounted(){
-    // 根据hash来打开对应的页面
-    setTimeout(() => {
-      let hash = this.getUrlHash();
-      //streetlight  // bridge
-      if(hash === 'streetlight' || hash === 'bridge'){
-        this.menuItemClick(0,this.aside[0]);
-      }
-    },500);
-  },
+  mounted(){},
   computed: {
     ...mapState('cgadmin/menu', ['aside', 'asideCollapse']),
     ...mapState('cgadmin/page', ['current'])
+  },
+  watch:{
+    aside: function(newValue){
+      console.log('menu watcher');
+      // 根据hash来打开对应的页面
+      let hash = this.getUrlHash();
+      //streetlight  // bridge
+      if(hash === 'streetlight' || hash === 'bridge'){
+        this.menuItemClick(0,newValue[0]);
+      }
+    }
   },
   methods: {
     ...mapActions('cgadmin/menu', ['asideCollapseSet', 'asideSetItemActive']),

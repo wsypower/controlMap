@@ -78,7 +78,7 @@ export default{
             yty: 0,
             mtm: 0
           },
-          chartData: []
+          chartData: [[],[]]
         }
       }
     },
@@ -94,7 +94,9 @@ export default{
     'info.chartData': function(val){
       console.log('watch info.chartData',val);
       if(val[0].length>0){
-        this.chartInit(val);
+        setTimeout(()=>{
+          this.chartInit(val);
+        },300)
       }
     }
   },

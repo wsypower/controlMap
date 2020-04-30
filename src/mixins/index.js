@@ -23,7 +23,7 @@ export const mixins = {
           yty: 0,
           mtm: 0
         },
-        chartData: []
+        chartData: [[],[]]
       }
     }
   },

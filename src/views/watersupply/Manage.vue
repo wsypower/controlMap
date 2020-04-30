@@ -48,7 +48,7 @@ export default {
       detailInfoData: {
         name: '',
         detailMessage:[],
-        chartData: []
+        chartData: [[],[]]
       },
       //地图相关
       waterFeatures: [],
