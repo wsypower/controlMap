@@ -270,9 +270,13 @@ export function emergencyEquipStyle(type) {
       iconOptions = {
         src: require('@/assets/mapImage/物联设备-' + type + '-normal.png')
       }
-    } else {
+    } else if(state=='2') {
       iconOptions = {
         src: require('@/assets/mapImage/物联设备-' + type + '-alarm.png')
+      }
+    }else if(state=='3') {
+      iconOptions = {
+        src: require('@/assets/mapImage/物联设备-' + type + '-lowalarm.png')
       }
     }
     let style = new Style({

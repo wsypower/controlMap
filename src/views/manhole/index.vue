@@ -155,7 +155,16 @@ export default {
           });
           point.set('id', p.id);
           point.set('info',p.info);
-          point.set('state',p.info.alarmState);
+          if(p.info.alarmState=='2'){
+              if(p.info.alarmReason.indexOf('低电压')===0){
+                  point.set('state','3');
+              }
+              else{
+                  point.set('state',p.info.alarmState);
+              }
+          }else{
+              point.set('state',p.info.alarmState);
+          }
           return point;
         });
         this.manholeLayer = this.mapManager.addVectorLayerByFeatures(features, emergencyEquipStyle('3'), 3);
