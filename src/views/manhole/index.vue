@@ -16,7 +16,7 @@
             v-for="(item, index) in dataArr"
             :key="index"
             class="item"
-            :class="{ active: activeIndex === index, warning: item.alarmState === '2' }"
+            :class="{ active: activeIndex === index, warning: item.alarmState === '2', yellow: item.alarmState === '2'&&item.alarmReason.indexOf('低电压')===0 }"
             flex="cross:center main:justify"
             @click="clickDataItem(item, index)"
           >
@@ -182,8 +182,15 @@ export default {
       this.activeIndex = index
       const data = item;
       if (data.alarmState === '2') {
-        this.$refs.manholeOverlay.$el.style.backgroundImage =
-          'linear-gradient(90deg, #f76a63 0%, #f77f6e 50%, #f79378 100%)'
+        if(data.alarmReason.indexOf('低电压')===0){
+          this.$refs.manholeOverlay.$el.style.backgroundImage =
+            'linear-gradient(90deg, #f0c31c 0%, #f0c31c 50%, #f0c31c 100%)'
+        }
+        else{
+          this.$refs.manholeOverlay.$el.style.backgroundImage =
+            'linear-gradient(90deg, #f76a63 0%, #f77f6e 50%, #f79378 100%)'
+        }
+
       } else {
         this.$refs.manholeOverlay.$el.style.backgroundImage = 'linear-gradient(90deg, #0065ea 0%, #00a5ff 100%)'
       }
@@ -254,6 +261,14 @@ export default {
           .item_left {
             .svg_icon {
               color: #f07171;
+            }
+          }
+        }
+        &.yellow{
+          color: #f0c31c;
+          .item_left {
+            .svg_icon {
+              color: #f0c31c;
             }
           }
         }

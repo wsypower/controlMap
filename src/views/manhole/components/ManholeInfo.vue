@@ -9,6 +9,7 @@
         <div><span>管理人员：</span>{{info.managerName}}</div>
         <div><span>联系电话：</span>{{info.managerPhone}}</div>
         <div><span>是否告警：</span>{{info.alarmState === '2' ? '是' : '否' }}</div>
+        <div v-if="info.alarmState === '2'"><span>告警类型：</span>{{info.alarmReason}}</div>
     </div>
 </template>
 <script type="text/ecmascript-6">
