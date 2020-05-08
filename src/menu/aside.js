@@ -74,5 +74,13 @@ export default [
     active: false,
     role: ['admin', 'super_editor'],
     module: ['jm','zf']
+  },
+  {
+    path: '/kshsystem',
+    title: '可视化对讲调度系统',
+    icon: 'menu-ddy',
+    active: false,
+    role: ['admin', 'super_editor'],
+    module: ['jm','sz','hw']
   }
 ]

@@ -41,15 +41,20 @@ export default {
     menuItemClick(index, item) {
       //当前元素设置active设为true，其他设为false
       console.log('111111',item);
-      this.asideSetItemActive(item).then(isCollapse => {
-        //TODO:(貌似search更快一点，实际再测试)判断点击页是否是当前页或当前页子页面
-        const isPath = this.current.includes(item.path)
-        if (!isPath)
-          this.menuItemCange(item).then(() => {
-            this.$router.replace(item.path)
-          })
-        else this.asideCollapseSet(isCollapse)
-      })
+      if(item.path==='/kshsystem'){
+        window.open('http://114.215.169.197:8000/Login.aspx');
+      }
+      else{
+        this.asideSetItemActive(item).then(isCollapse => {
+          //TODO:(貌似search更快一点，实际再测试)判断点击页是否是当前页或当前页子页面
+          const isPath = this.current.includes(item.path)
+          if (!isPath)
+            this.menuItemCange(item).then(() => {
+              this.$router.replace(item.path)
+            })
+          else this.asideCollapseSet(isCollapse)
+        })
+      }
     },
     /**
      * @description 切换不同页面时menu做一个关闭再打开的动画（表示切换）
