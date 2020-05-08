@@ -276,7 +276,7 @@ export function emergencyEquipStyle(type) {
       }
     }else if(state=='3') {
       iconOptions = {
-        src: require('@/assets/mapImage/物联设备-' + type + '-lowalarm.png')
+        src: require('@/assets/mapImage/物联设备-' + type + '-low.png')
       }
     }
     let style = new Style({
