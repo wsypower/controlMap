@@ -16,7 +16,7 @@
             v-for="(item, index) in dataArr"
             :key="index"
             class="item"
-            :class="{ active: activeIndex === index, warning: item.alarmState === '2', yellow: item.alarmState === '2'&&item.alarmReason.indexOf('低电压')===0 }"
+            :class="{ active: activeIndex === index, warning: item.alarmState === '2', yellow: item.alarmState === '2'&&item.alarmReason.indexOf('低电压')>=0 }"
             flex="cross:center main:justify"
             @click="clickDataItem(item, index)"
           >
@@ -156,7 +156,7 @@ export default {
           point.set('id', p.id);
           point.set('info',p.info);
           if(p.info.alarmState=='2'){
-              if(p.info.alarmReason.indexOf('低电压')===0){
+              if(p.info.alarmReason.indexOf('低电压')>=0){
                   point.set('state','3');
               }
               else{
@@ -191,7 +191,7 @@ export default {
       this.activeIndex = index
       const data = item;
       if (data.alarmState === '2') {
-        if(data.alarmReason.indexOf('低电压')===0){
+        if(data.alarmReason.indexOf('低电压')>=0){
           this.$refs.manholeOverlay.$el.style.backgroundImage =
             'linear-gradient(90deg, #f0c31c 0%, #f0c31c 50%, #f0c31c 100%)'
         }
