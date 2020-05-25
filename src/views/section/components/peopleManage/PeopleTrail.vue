@@ -151,8 +151,8 @@ export default {
         infoId:function(val){
             if(val) {
                 console.log('infoId',val);
-                let temp = this.peopleDataList.find(item => item.id === val );
-                this.query.userId = val;
+                let temp = this.peopleDataList.find(item => item.id === val.split('_')[0]);
+                this.query.userId = val.split('_')[0];
                 this.query.userDisplayId = temp.userDisplayId;
             }
             let day = moment(new Date()).format('YYYY-MM-DD');
