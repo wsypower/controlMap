@@ -156,7 +156,7 @@ export default {
           _this.peopleDataList = [];
           _this.changeTreeDataMore(_this.treeData, idArr);
         });
-      },TIMER.time)
+      },TIMER_CAR.time)
     },
     beforeDestroy(){
       clearInterval(this.timer)

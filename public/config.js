@@ -1,5 +1,8 @@
-const TIMER = {
+const TIMER_PEOPLE = {
   time: 65000
+}
+const TIMER_CAR = {
+  time: 20000
 }
 
 const URL_CONFIG = {
