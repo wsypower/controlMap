@@ -233,14 +233,14 @@ export default {
       width: 100%;
       height: 100%;
     }
-    /deep/.ant-tree.ant-tree-show-line li:not(:last-child):before {
+    ::v-deep.ant-tree.ant-tree-show-line li:not(:last-child):before {
       border-left: 1px dashed rgba(0, 164, 254, 0.8);
     }
-    /deep/.ant-tree.ant-tree-show-line li span.ant-tree-switcher {
+    ::v-deep.ant-tree.ant-tree-show-line li span.ant-tree-switcher {
       background-color: #f5f5f5;
       color: rgba(43, 144, 243, 0.8);
     }
-    /deep/.itemClass {
+    ::v-deep.itemClass {
       &::before {
         opacity: 0;
       }

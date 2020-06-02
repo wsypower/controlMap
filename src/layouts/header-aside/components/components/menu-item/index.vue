@@ -45,10 +45,10 @@ export default {
     color: $color-menu-item;
   }
 }
-  /*/deep/.ant-tooltip-placement-right .ant-tooltip-arrow{*/
+  /*::v-deep.ant-tooltip-placement-right .ant-tooltip-arrow{*/
     /*border-right-color: rgb(0, 116, 237);*/
   /*}*/
-  /*/deep/.ant-tooltip-inner{*/
+  /*::v-deep.ant-tooltip-inner{*/
     /*background-color: rgb(0, 104, 233);*/
   /*}*/
 </style>

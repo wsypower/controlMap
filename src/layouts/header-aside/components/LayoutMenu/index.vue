@@ -103,7 +103,7 @@ export default {
     position: absolute;
     height: 100%;
     width: 60px;
-    /deep/.cg-container-full-bs__body-wrapper-inner {
+    ::v-deep.cg-container-full-bs__body-wrapper-inner {
       padding-top: 50px;
       padding-bottom: 50px;
     }
