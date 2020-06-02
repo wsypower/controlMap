@@ -198,7 +198,7 @@ export default {
       }
     },
     toReportProblem(){
-      window.open("http://61.190.177.254:91/web/index/slxt?from=sp&address=&longitude="+ this.videoInfo.x +"&latitude="+ this.videoInfo.y);
+      window.open(URL_CONFIG.winOpenUrl + "/index/slxt?from=sp&address=&longitude="+ this.videoInfo.x +"&latitude="+ this.videoInfo.y);
     }
   }
 }
@@ -264,9 +264,6 @@ export default {
     display: none;
     &.active {
       display: block;
-      .body-video-panel{
-        right: 60px;
-      }
     }
   }
   .camera-panel{

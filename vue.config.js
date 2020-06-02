@@ -7,7 +7,7 @@
 /* eslint-disable no-unused-vars */
 
 //使用uglify-js进行js文件的压缩。
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+// const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 // 拼接路径
 const resolve = dir => require('path').join(__dirname, dir)
@@ -68,19 +68,19 @@ module.exports = {
       )
       // 非开发环境
       .when(process.env.NODE_ENV !== 'development', config => {
-        config.optimization.minimizer([
-          new UglifyJsPlugin({
-            uglifyOptions: {
-              // 移除 console
-              // 其它优化选项 https://segmentfault.com/a/1190000010874406
-              compress: {
-                drop_console: true,
-                drop_debugger: true,
-                pure_funcs: ['console.log']
-              }
-            }
-          })
-        ])
+        // config.optimization.minimizer([
+        //   new UglifyJsPlugin({
+        //     uglifyOptions: {
+        //       // 移除 console
+        //       // 其它优化选项 https://segmentfault.com/a/1190000010874406
+        //       compress: {
+        //         drop_console: true,
+        //         drop_debugger: true,
+        //         pure_funcs: ['console.log']
+        //       }
+        //     }
+        //   })
+        // ])
       })
     // svg自动
     const svgRule = config.module.rule('svg')
