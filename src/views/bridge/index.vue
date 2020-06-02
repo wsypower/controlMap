@@ -29,6 +29,9 @@
     <div class="player-panel active">
       <my-video-player :videoSrc.sync="videoSrc" :videoName.sync="videoName" :videoId.sync="videoId" :multiple="true"></my-video-player>
     </div>
+    <div class="camera-panel" @click="toReportProblem">
+      <cg-icon-svg name="camera" class="camera__icon"></cg-icon-svg>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -61,7 +64,10 @@ export default {
       bridgeLayer: null,
       isLoadData: false,
       clusterLayer:null,
-      selectLayer: null
+      selectLayer: null,
+
+      //跳转案卷上报用
+      videoInfo: null
     }
   },
   computed:{
@@ -186,9 +192,13 @@ export default {
         // const coordinates=clickFeature.getGeometry().getCoordinates();
         if (clickFeature && clickFeature.get('type') == 'bridge') {
           const videoInfoData = clickFeature.get('props');
+          this.videoInfo = videoInfoData;
           this.showVideo(videoInfoData);
         }
       }
+    },
+    toReportProblem(){
+      window.open("http://61.190.177.254:91/web/index/slxt?from=sp&address=&longitude="+ this.videoInfo.x +"&latitude="+ this.videoInfo.y);
     }
   }
 }
@@ -254,6 +264,25 @@ export default {
     display: none;
     &.active {
       display: block;
+      .body-video-panel{
+        right: 60px;
+      }
+    }
+  }
+  .camera-panel{
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding-top: 10px;
+    .camera__icon{
+      width: 20px;
+      height: 20px;
+      color: #00a4fe;
     }
   }
 }
