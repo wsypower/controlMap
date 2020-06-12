@@ -159,7 +159,7 @@ export default{
     padding: 10px 20px;
     font-size: 13px;
     color: #333333;
-    /deep/.ant-checkbox-wrapper{
+    ::v-deep.ant-checkbox-wrapper{
       margin: 5px 5px 5px 0px !important;
       .ant-checkbox-wrapper + span, .ant-checkbox + span{
         padding-right: 0px;

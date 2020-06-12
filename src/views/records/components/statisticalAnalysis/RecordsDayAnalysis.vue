@@ -201,7 +201,7 @@ export default {
   .panel-content {
     height: 272px;
     width: 317px;
-    /deep/.happy-scroll-container {
+    ::v-deep.happy-scroll-container {
       height: 272px !important;
       width: 317px !important;
     }

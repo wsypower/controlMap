@@ -280,7 +280,7 @@ export default {
     label {
       font-size: 13px;
     }
-    /deep/.ant-input {
+    ::v-deep.ant-input {
       font-size: 13px;
     }
   }

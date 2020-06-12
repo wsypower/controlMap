@@ -311,7 +311,7 @@ export default {
       width: 100%;
       background-color: #f5f5f5;
       position: relative;
-      /deep/.swiper-container {
+      ::v-deep.swiper-container {
         height: 100%;
         margin: 0px 15px;
         .swiper-slide {

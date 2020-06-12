@@ -20,7 +20,7 @@
 import { mapActions,mapState } from 'vuex'
 import PeoplePosition from './peopleManage/PeoplePosition'
 import PeopleTrail from './peopleManage/PeopleTrail'
-import ViolateRules from './peopleManage/ViolateRules'
+// import ViolateRules from './peopleManage/ViolateRules'
 import PeopleWorkTime from './peopleManage/PeopleWorkTime'
 import util from '@/utils/util'
 export default {
@@ -35,7 +35,7 @@ export default {
     components:{
         PeoplePosition,
         PeopleTrail,
-        ViolateRules,
+        // ViolateRules,
         PeopleWorkTime
     },
     computed:{
@@ -112,10 +112,10 @@ export default {
 }
 .content_tab {
   height: 100%;
-  /deep/.ant-tabs-nav-scroll {
+  ::v-deep.ant-tabs-nav-scroll {
     height: 44px;
   }
-  /deep/.ant-tabs-nav {
+  ::v-deep.ant-tabs-nav {
     border: 1px solid #dddddd;
     .ant-tabs-tab {
       padding: 10px;
@@ -133,7 +133,7 @@ export default {
       top: 0px;
     }
   }
-  /deep/.ant-tabs-bar {
+  ::v-deep.ant-tabs-bar {
     background-color: #f5f7f8 !important;
     margin-bottom: 0px !important;
     padding: 0px !important;
@@ -146,7 +146,7 @@ export default {
       }
     }
   }
-  /deep/.ant-tabs-content {
+  ::v-deep.ant-tabs-content {
     height: calc(100% - 45px) !important;
     .ant-tabs-tabpane {
       position: relative;

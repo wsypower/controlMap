@@ -121,7 +121,7 @@ export default{
       position: relative;
       width: 100%;
       height: 100%;
-        /deep/.custom-slick-arrow{
+        ::v-deep.custom-slick-arrow{
             width: 20px;
             height: 34px;
             background-color: #eeeeee;

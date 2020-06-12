@@ -214,13 +214,13 @@
                     height: 100%;
                     padding: 20px 20px;
                 }
-                /deep/.ant-checkbox-group{
+                ::v-deep.ant-checkbox-group{
                     width: 100%;
                 }
-                /deep/.ant-collapse-item {
+                ::v-deep.ant-collapse-item {
                     border-bottom-width: 0px;
                 }
-                /deep/.ant-col-4 {
+                ::v-deep.ant-col-4 {
                     margin-bottom: 8px;
                 }
             }

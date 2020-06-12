@@ -289,7 +289,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #ffffff;
-  /deep/.happy-scroll-content{
+  ::v-deep.happy-scroll-content{
     width: 100%;
   }
   .liucheng-panel {
@@ -403,9 +403,9 @@ export default {
     width: 100%;
     height: 60px;
   }
-  /deep/.ant-table-thead > tr > th,
-  /deep/.ant-table-tbody > tr > td,
-  /deep/.ant-table-footer {
+  ::v-deep.ant-table-thead > tr > th,
+  ::v-deep.ant-table-tbody > tr > td,
+  ::v-deep.ant-table-footer {
     padding: 6px;
   }
 }

@@ -142,7 +142,7 @@ export default {
   .container__aside__item {
     z-index:1;
     padding:0;
-    :nth-last-child() {
+    :last-child {
       margin-bottom: 0;
     }
     .icon{

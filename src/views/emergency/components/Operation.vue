@@ -555,23 +555,23 @@ export default {
         }
     }
 }
-/deep/.svg_icon_common {
+::v-deep.svg_icon_common {
   color: #999999;
   margin-right: 8px;
 }
-/deep/.ant-dropdown-menu-item:hover {
+::v-deep.ant-dropdown-menu-item:hover {
   background-color: #eaf1fa;
   color: #2b8ff3;
   .svg_icon_common {
     color: #2b8ff3;
   }
 }
-/deep/.ant-dropdown-menu-item-selected{
+::v-deep.ant-dropdown-menu-item-selected{
     .svg_icon_common {
         color: #2b8ff3;
     }
 }
-/deep/.ant-dropdown-menu-submenu-title:hover {
+::v-deep.ant-dropdown-menu-submenu-title:hover {
   background-color: #eaf1fa;
   color: #2b8ff3;
   .svg_icon_common {

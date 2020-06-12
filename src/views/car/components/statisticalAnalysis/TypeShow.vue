@@ -62,7 +62,7 @@ export default {
     width: 100%;
     padding: 7px 15px;
     background-color: #f5f5f5;
-    /deep/.ant-radio-wrapper {
+    ::v-deep.ant-radio-wrapper {
       width: 140px;
       margin: 8px 0px;
     }
