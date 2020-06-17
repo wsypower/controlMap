@@ -37,6 +37,14 @@ export default [
     hash: ['streetlight']
   },
   {
+    path: '/sso',
+    title: 'sso',
+    icon: 'menu-streetlight',
+    active: false,
+    role: ['admin'],
+    hash: ['streetlight']
+  },
+  {
     path: '/bridge',
     title: '桥梁监控',
     icon: 'menu-bridge',

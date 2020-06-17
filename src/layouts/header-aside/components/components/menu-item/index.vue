@@ -4,7 +4,8 @@
       <!--<span>{{title}}</span>-->
     <!--</template>-->
     <div class="menu__item" flex="main:center cross:center" @click="$emit('handlerClick')">
-      <cg-icon-svg :name="icon" class="menu__item__icon"></cg-icon-svg>
+      <div v-if="title==='sso'" class="sso"></div>
+      <cg-icon-svg v-else :name="icon" class="menu__item__icon"></cg-icon-svg>
     </div>
   <!--</a-tooltip>-->
 </template>
@@ -43,6 +44,12 @@ export default {
   &__icon {
     font-size: $fs-menu-item-icon;
     color: $color-menu-item;
+  }
+  .sso{
+    width: 40px;
+    height: 40px;
+    background: url('~@/assets/images/sso_logo.png') no-repeat;
+    background-size: 100% 100%;
   }
 }
   /*::v-deep.ant-tooltip-placement-right .ant-tooltip-arrow{*/

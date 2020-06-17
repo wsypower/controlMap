@@ -51,6 +51,10 @@ export default {
      * @param {Object} item
      */
     menuItemClick(index, item) {
+      if(item.title==='sso'){
+        window.open('http://luan.fitbright.cn/index.php/FitbrightSso/zhcg_login?username=luanzhihuichengguan&password=luanzhihuichg123');
+        return
+      }
       //当前元素设置active设为true，其他设为false
       this.asideSetItemActive(item).then(isCollapse => {
         //TODO:(貌似search更快一点，实际再测试)判断点击页是否是当前页或当前页子页面
