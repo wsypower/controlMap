@@ -77,6 +77,24 @@ const frameIn = [
         },
         component: _import('bridge/index.vue')
       },
+      {
+        path: '/site',
+        name: 'site',
+        meta: {
+          title: '工地监控',
+          role: ['admin']
+        },
+        component: _import('site/index.vue')
+      },
+      {
+        path: '/car',
+        name: 'car',
+        meta: {
+          title: '工地车监控',
+          role: ['admin']
+        },
+        component: _import('car/index.vue')
+      },
       // 刷新页面 必须保留
       {
         path: 'refresh',

@@ -22,6 +22,7 @@ import watersupply from './modules/watersupply'
 import gas from './modules/gas'
 import streetlight from './modules/streetlight'
 import bridge from './modules/bridge'
+import site from './modules/site'
 
 Vue.use(Vuex)
 /* eslint-disable no-new */
@@ -45,7 +46,8 @@ const store = new Vuex.Store({
     watersupply,
     gas,
     streetlight,
-    bridge
+    bridge,
+    site
   }
 })
 

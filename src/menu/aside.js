@@ -51,5 +51,21 @@ export default [
     active: false,
     role: ['admin'],
     hash: ['bridge']
+  },
+  {
+    path: '/site',
+    title: '工地监控',
+    icon: 'menu-site',
+    active: false,
+    role: ['admin'],
+    hash: ['site']
+  },
+  {
+    path: '/car',
+    title: '车辆监控',
+    icon: 'menu-car',
+    active: false,
+    role: ['admin'],
+    hash: ['site']
   }
 ]
