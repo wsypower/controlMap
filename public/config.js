@@ -15,3 +15,7 @@ const GIS_CONFIG = {
   // featurePrefix:"hescgis",//正式工作空间名称
   featurePrefix: 'haining' //测试工作空间名称
 }
+
+const TIME = {
+  car_timer: 60000
+}

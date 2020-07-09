@@ -134,9 +134,9 @@ export default {
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature=_this.mapManager.xyToFeature(item.x,item.y);
-            feature.set('icon','bridge');
+            feature.set('icon','carmera_online');
             feature.set('props',item);
-            feature.set('type','bridge');
+            feature.set('type','VideoDistribute');
             _this.bridgeFeatures.push(feature);
           }
         }
@@ -179,7 +179,7 @@ export default {
                 this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),4);
                 this.selectLayer.set('featureType','bridge');
             }
-            // this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
+            this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
         }
     },
     videoMapClickHandler({ pixel, coordinate }) {
@@ -187,7 +187,7 @@ export default {
       if(feature.get('features')) {
         const clickFeature = feature.get('features')[0];
         // const coordinates=clickFeature.getGeometry().getCoordinates();
-        if (clickFeature && clickFeature.get('type') == 'bridge') {
+        if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
           const videoInfoData = clickFeature.get('props');
           this.videoInfo = videoInfoData;
           this.showVideo(videoInfoData);
