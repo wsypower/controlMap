@@ -382,9 +382,9 @@
     }
 </script>
 <style lang="scss" scoped>
-    /deep/.ant-modal-content {
+    ::v-deep.ant-modal-content {
         height: 100%;
-        /deep/.ant-modal-body {
+        ::v-deep.ant-modal-body {
             height: 100%;
         }
     }

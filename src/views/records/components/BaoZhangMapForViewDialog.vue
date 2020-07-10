@@ -276,13 +276,13 @@
       padding: 10px;
       position: relative;
       background-color: #fff;
-      /deep/.ant-form-item {
+      ::v-deep.ant-form-item {
         margin-bottom: 6px;
       }
-      /deep/.ant-form-item-label{
+      ::v-deep.ant-form-item-label{
         line-height: 24px;
       }
-      /deep/.ant-form-item-control{
+      ::v-deep.ant-form-item-control{
         line-height: 24px;
       }
     }

@@ -399,7 +399,7 @@
     height: 100%;
     background-color: #f4f4f5;
     padding: 70px 10px 10px 10px;
-    /deep/.ant-select-selection {
+    ::v-deep.ant-select-selection {
       width: 120px;
     }
   }
@@ -438,7 +438,7 @@
         .templateBtn {
           color: #40a9ff;
           border-color: #40a9ff;
-          /deep/.anticon-alert {
+          ::v-deep.anticon-alert {
             font-size: 16px;
             color: #40a9ff;
           }
@@ -461,7 +461,7 @@
         .ant-badge {
           margin-left: 0;
         }
-        /deep/.anticon-bell {
+        ::v-deep.anticon-bell {
           font-size: 14px;
         }
       }
@@ -470,7 +470,7 @@
         border: none;
         font-weight: 600;
         background-image: linear-gradient(90deg, #f79378 0%, #f77f6e 50%, #f76a63 100%);
-        /deep/.anticon-plus-circle {
+        ::v-deep.anticon-plus-circle {
           padding-top: 2px;
           font-size: 16px;
         }
@@ -732,7 +732,7 @@
       // box-shadow: 1px 0px 8px 3px rgba(4, 39, 77, 0.06);
       z-index: 5;
     }
-    /deep/.ant-badge-count {
+    ::v-deep.ant-badge-count {
       top: -15px;
     }
   }

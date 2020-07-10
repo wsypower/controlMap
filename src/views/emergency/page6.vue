@@ -435,7 +435,7 @@ export default {
       margin-bottom: 10px;
     }
   }
-  /deep/.ant-checkbox-wrapper {
+  ::v-deep.ant-checkbox-wrapper {
     border-right: 1px solid #dddddd;
     margin-left: 10px;
     @include last(1) {
@@ -482,11 +482,11 @@ export default {
       // i {
       //   font-size: 16px;
       // }
-      // /deep/.anticon {
+      // ::v-deep.anticon {
       //   font-size: 16px;
       // }
     }
-    /deep/.funtion__drawer {
+    ::v-deep.funtion__drawer {
       position: relative;
       transition: all 0.4s;
       width: auto;

@@ -633,7 +633,7 @@
       width: 100%;
       padding: 10px;
       position: relative;
-      /deep/.ant-form-item {
+      ::v-deep.ant-form-item {
         margin-bottom: 6px;
       }
     }

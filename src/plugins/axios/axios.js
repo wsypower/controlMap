@@ -67,10 +67,9 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 let base_url= '';
 //http://192.168.71.33:81/api/
 if (process.env.NODE_ENV === 'development') {
-  base_url = 'http://192.168.71.154:8080/api/'
-}
-else{
-  base_url = 'http://60.191.224.129:83/api/'
+  base_url = URL_CONFIG.baseURL
+} else {
+  base_url = URL_CONFIG.baseURL
 }
 //axios config配置
 let config = {
