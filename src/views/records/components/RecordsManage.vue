@@ -42,7 +42,7 @@
           :key="index"
           class="item"
           flex
-          @click="clickDataItem(index)"
+          @click="clickDataItem(itemData,index)"
           :class="{ active: activeIndex === index }"
         >
           <div class="item-left">
@@ -75,13 +75,16 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
-    <record-info ref="recordInfo" style="position:fixed; top: 100px;right:100px;" :code="code" @closeTip="closeTip"></record-info>
+    <div hidden>
+      <record-info ref="recordInfo" :code="code" @closeTip="closeTip"></record-info>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
+import { mapActions,mapState } from 'vuex'
 import Pin from '../../emergency/components/Position.vue';
 import RecordInfo from './RecordInfo.vue';
+import { pointByCoord } from '@/utils/util.map.manage';
 export default {
   name: 'recordsManage',
   components:{
@@ -109,14 +112,27 @@ export default {
       //目前激活的告警
       activeIndex: 0,
       //案卷编码
-      code: ''
+      code: '',
+      eventLayer:null
     }
+  },
+  computed:{
+      ...mapState('map', ['mapManager']),
   },
   mounted(){
     this.getAllAddressData().then(res=>{
       this.addressData = res.data;
     });
     this.getDataList();
+    this.map = this.mapManager.getMap();
+    this.map.on('click', this.eventMapClickHandler);
+    this.eventOverlay = this.mapManager.addOverlay({
+        id:'eventPositionOverlay',
+        offset:[0,-20],
+        positioning: 'bottom-center',
+        element: this.$refs.recordInfo.$el
+    });
+
   },
   methods:{
     ...mapActions('records/manage', ['getAllAddressData','getAllRecordsDataList']),
@@ -133,6 +149,7 @@ export default {
         this.showLoading = false;
         this.dataList = res.data.list;
         this.totalSize = res.data.total;
+        this.eventPointHandler(this.dataList);
       });
     },
     //查询(默认显示当天，当前登入的用户)
@@ -146,16 +163,59 @@ export default {
       this.query.pageNo = pageNo;
       this.getDataList()
     },
-    clickDataItem(index){
+    clickDataItem(item,index){
       this.activeIndex = index;
-      this.code = this.dataList[index].code.toString();
+      this.code = item.code.toString();
+      if(item.x&&item.y){
+          const coordinate=[parseFloat(item.x),parseFloat(item.y)];
+          this.eventOverlay.setPosition(coordinate);
+          this.mapManager.locateTo(coordinate);
+      }else{
+          this.eventOverlay.setPosition(undefined);
+          this.$message.warning('当前案卷无点位信息！！！');
+      }
     },
     playVideo(videoSrc){
       this.videoSrc = videoSrc;
     },
     //关闭地图上的弹窗
     closeTip(){
-
+        this.eventOverlay.setPosition(undefined);
+    },
+    //地图点击事件
+    eventMapClickHandler({ pixel, coordinate }){
+        const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+        if(feature.get('features')) {
+            const clickFeature = feature.get('features')[0];
+            // const coordinates = clickFeature.getGeometry().getCoordinates();
+            if (clickFeature && clickFeature.get('type') == 'eventPosition') {
+                this.code = clickFeature.get('props').code;
+                this.eventOverlay.setPosition(coordinate);
+            }
+        }
+    },
+    // 事件点位处理
+    eventPointHandler(list){
+        const features=[];
+        list.forEach((item)=>{
+            if(item.x&&item.x.length>0&&item.y&&item.y.length>0){
+                const feature=pointByCoord([parseFloat(item.x),parseFloat(item.y)]);
+                feature.set('icon','event');
+                feature.set('props',item);
+                feature.set('type','eventPosition');
+                features.push(feature);
+            }
+        })
+        //加载聚类车辆图层
+        if(this.eventLayer){
+            this.eventLayer.getSource().clear();
+            this.eventLayer.getSource().addFeatures(features);
+        }else{
+            this.eventLayer = this.mapManager.addClusterLayerByFeatures(features);
+            this.eventLayer.set('featureType','eventPosition');
+        }
+        const extent=this.eventLayer.getSource().getSource().getExtent();
+        this.mapManager.getMap().getView().fit(extent);
     }
   }
 }
