@@ -29,13 +29,6 @@ export default [
   },
   // {
   //   path: '/special',
-  //   title: '视频',
-  //   icon: 'menu-video',
-  //   active: false,
-  //   role: ['admin']
-  // },
-  // {
-  //   path: '/video',
   //   title: '专题服务',
   //   icon: 'menu-special',
   //   active: false,
@@ -48,5 +41,12 @@ export default [
     icon: 'menu-emergency',
     active: false,
     role: ['admin', 'super_editor']
-  }
+  },
+  {
+    path: '/video',
+    title: '视频',
+    icon: 'menu-video',
+    active: false,
+    role: ['admin']
+  },
 ]

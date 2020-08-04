@@ -84,7 +84,16 @@ const frameIn = [
         },
         component: _import('records/page3.vue')
       },
-      //测试 => page4
+      {
+        path: '/video',
+        name: 'videopage',
+        meta: {
+          title: '专题服务',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('video/index.vue')
+      },
+      //测试 => page5
       {
         path: '/special',
         name: 'special',
@@ -93,16 +102,6 @@ const frameIn = [
           role: ['admin', 'super_editor']
         },
         component: _import('special/page4.vue')
-      },
-      //测试 => page5
-      {
-        path: '/video',
-        name: 'video',
-        meta: {
-          title: '专题服务',
-          role: ['admin', 'super_editor']
-        },
-        component: _import('video/page5.vue')
       },
       //测试 => page6
       {
