@@ -1344,7 +1344,7 @@ var Component = function () {
    * 1. It will also bind `myComponent` as the context of `myFunc`.
    * > NOTE: If you remove the element from the DOM that has used `on` you need to
    *         clean up references using: `myComponent.trigger(el, 'dispose')`
-   *         This will also allow the browser to garbage collect it. In special
+   *         This will also allow the browser to garbage collect it. In address
    *         cases such as with `window` and `document`, which are both permanent,
    *         this is not necessary.
    *
@@ -5448,7 +5448,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 /**
- * A special menu item for turning of a specific type of text track
+ * A address menu item for turning of a specific type of text track
  *
  * @extends TextTrackMenuItem
  */
@@ -25916,7 +25916,7 @@ if (!window.VTTCue) {
           case "CUETEXT":
             var hasSubstring = line.indexOf("-->") !== -1;
             // 34 - If we have an empty line then report the cue.
-            // 35 - If we have the special substring '-->' then report the cue,
+            // 35 - If we have the address substring '-->' then report the cue,
             // but do not collect the line as we need to process the current
             // one as a new cue.
             if (!line || hasSubstring && (alreadyCollectedLine = true)) {
@@ -26648,7 +26648,7 @@ function _createXHR(options) {
         return callback(evt, failureResponse)
     }
 
-    // will load the data & process the response in a special response object
+    // will load the data & process the response in a address response object
     function loadFunc() {
         if (aborted) return
         var status

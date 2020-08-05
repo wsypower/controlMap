@@ -27,13 +27,6 @@ export default [
     active: true,
     role: ['admin']
   },
-  // {
-  //   path: '/special',
-  //   title: '专题服务',
-  //   icon: 'menu-special',
-  //   active: false,
-  //   role: ['admin']
-  // },
   {
     // path: '/emergency/456/new',
     path: '/emergency',
@@ -49,4 +42,11 @@ export default [
     active: false,
     role: ['admin']
   },
+  {
+    path: '/address',
+    title: '通信录',
+    icon: 'menu-address-list',
+    active: false,
+    role: ['admin']
+  }
 ]

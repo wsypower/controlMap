@@ -24,6 +24,15 @@ import setting from '@/setting.js'
 import vueFiltersDate from '@/filters/moment/main'
 Vue.use(vueFiltersDate)
 
+import vuescroll from 'vuescroll';
+Vue.use(vuescroll, {
+  ops: {
+    bar: {
+      background: '#cecece'
+    }
+  }, // 在这里设置全局默认配置
+  name: 'myScroll' // 在这里自定义组件名字，默认是vueScroll
+});
 //mock => 生产环境(上线前请注释！！！)
 import '@/mock'
 

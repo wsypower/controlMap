@@ -95,13 +95,13 @@ const frameIn = [
       },
       //测试 => page5
       {
-        path: '/special',
-        name: 'special',
+        path: '/address',
+        name: 'addresslist',
         meta: {
           title: '视频',
           role: ['admin', 'super_editor']
         },
-        component: _import('special/page4.vue')
+        component: _import('address/index.vue')
       },
       //测试 => page6
       {

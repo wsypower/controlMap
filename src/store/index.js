@@ -18,6 +18,7 @@ import Vuex from 'vuex'
 import cgadmin from './modules/cgadmin'
 import emergency from './modules/emergency'
 import video from './modules/video'
+import address from './modules/address'
 Vue.use(Vuex)
 /* eslint-disable no-new */
 const store = new Vuex.Store({
@@ -36,7 +37,8 @@ const store = new Vuex.Store({
   modules: {
     cgadmin,
     emergency,
-    video
+    video,
+    address
   }
 })
 
