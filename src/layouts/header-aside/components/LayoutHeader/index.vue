@@ -19,7 +19,8 @@
       </div>
       <!-- 系统名称 -->
       <div class="header__title" flex="cross:center">
-        <cg-icon-svg name="title" class="header__title__icon"></cg-icon-svg>
+        <span>指挥调度平台</span>
+<!--        <cg-icon-svg name="title" class="header__title__icon"></cg-icon-svg>-->
       </div>
     </div>
   </div>
@@ -113,6 +114,13 @@ export default {
     &__icon {
       font-size: $fs-header-title;
       color: #fff;
+    }
+    span{
+      font-family: SourceHanSansCN-Bold;
+      font-size: 26px;
+      letter-spacing: 5px;
+      color: #ffffff;
+      font-weight: 600;
     }
   }
 }

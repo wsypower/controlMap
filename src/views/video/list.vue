@@ -1,7 +1,7 @@
 <template>
     <div class="view-panel">
         <div class="view-content-header" flex="cross:center">
-            <span class="title">视频列表</span>
+            <span class="title">视频监控列表</span>
         </div>
         <div class="search-panel">
             <a-input-search placeholder="输入关键词搜索" @search="onSearch" enterButton="搜 索"></a-input-search>
