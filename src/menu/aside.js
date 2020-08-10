@@ -21,30 +21,30 @@ export default [
   //   role: ['admin']
   // },
   {
-    path: '/records',
+    path: '/event',
     title: '案卷',
     icon: 'menu-records',
     active: true,
     role: ['admin']
   },
-  {
-    // path: '/emergency/456/new',
-    path: '/emergency',
-    title: '应急指挥',
-    icon: 'menu-emergency',
-    active: false,
-    role: ['admin', 'super_editor']
-  },
+  // {
+  //   // path: '/emergency/456/new',
+  //   path: '/emergency',
+  //   title: '应急指挥',
+  //   icon: 'menu-emergency',
+  //   active: false,
+  //   role: ['admin', 'super_editor']
+  // },
   {
     path: '/video',
-    title: '视频',
+    title: '视频管理',
     icon: 'menu-video',
     active: false,
     role: ['admin']
   },
   {
     path: '/address',
-    title: '通信录',
+    title: '通信录管理',
     icon: 'menu-address-list',
     active: false,
     role: ['admin']

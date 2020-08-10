@@ -85,10 +85,19 @@ const frameIn = [
         component: _import('records/page3.vue')
       },
       {
+        path: '/event',
+        name: 'event',
+        meta: {
+          title: '事件管理',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('event/index.vue')
+      },
+      {
         path: '/video',
         name: 'videopage',
         meta: {
-          title: '专题服务',
+          title: '视频管理',
           role: ['admin', 'super_editor']
         },
         component: _import('video/index.vue')
@@ -98,7 +107,7 @@ const frameIn = [
         path: '/address',
         name: 'addresslist',
         meta: {
-          title: '视频',
+          title: '通信录管理',
           role: ['admin', 'super_editor']
         },
         component: _import('address/index.vue')
