@@ -200,3 +200,50 @@ const getPeopleDataList = (options) => {
   )
 }
 Mock.mock(/\/@test\/getPeopleDataList/, 'get', getPeopleDataList);
+
+//
+const getLogDataByEventId = (options) => {
+  console.log('getLogDataByEventId options',options);
+  const queryParameters = getQueryParameters(options);
+  console.log('getLogDataByEventId query',queryParameters);
+  let data = [{
+    id: '004',
+    time: 1597216858000,
+    user: '尼莫',
+    dept: '局领导',
+    step: '已驳回',
+    content: '工作任务划分不清晰'
+  },{
+    id: '003',
+    time: 1597108818000,
+    user: '采集员001',
+    dept: '信息指挥中心',
+    step: '已确认',
+    content: '已确认中队信息，提交给领导审核'
+  },{
+    id: '002',
+    time: 1597034418000,
+    user: '阿尔法01',
+    dept: 'xx中队',
+    step: '提交审核',
+    content: '已录入完成，提交审核'
+  },{
+    id: '001',
+    time: 1597017618000,
+    user: '采集员001',
+    dept: '信息指挥中心',
+    step: '发起流程',
+    content: '请各个中队输入各自信息'
+  }];
+  return builder(
+    {
+      code: 0,
+      data:data,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/getLogDataByEventId/, 'get', getLogDataByEventId);

@@ -86,7 +86,7 @@
                       v-model="query.pageNo"/>
       </div>
     </div>
-    <add-edit-dialog :visible.sync="addEventDialogVisible" :dialogTitle="dialogTitle" :eventId="eventId" @refreshList=""></add-edit-dialog>
+    <add-edit-look-dialog :visible.sync="addEventDialogVisible" :dialogTitle="dialogTitle" :eventId="eventId" @refreshList=""></add-edit-look-dialog>
 <!--    <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible" :yuAnId="yuAnId" @refreshList="()=>{getTuAnDataList();getToCheckCount();}"></yu-an-info-and-review-dialog>-->
   </div>
 </template>
@@ -94,14 +94,14 @@
 <script type="text/ecmascript-6">
   import dayjs from 'dayjs'
   import util from '@/utils/util'
-  import AddEditDialog from './components/AddEditDialog'
+  import AddEditLookDialog from './components/AddEditLookDialog'
   import YuAnInfoAndReviewDialog from './components/YuAnInfoAndReviewDialog'
   import { mapActions } from 'vuex'
 
   export default {
     name: 'index',
     components:{
-      AddEditDialog,
+      AddEditLookDialog,
       YuAnInfoAndReviewDialog
     },
     data() {

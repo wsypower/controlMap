@@ -2,19 +2,21 @@
     <div class="group-team-panel">
         <div class="group-team-panel-header">{{title}}小组：</div>
         <div class="group-team-panel-method">
-            <div class="" flex="dir:left cross:center">
+            <div flex="dir:left cross:center">
                 <label>{{title}}定位方式：</label>
-                <a-radio-group name="radioGroup" v-model="groupData.leaderPosition">
+                <a-radio-group v-if="nowOptType"  name="radioGroup" v-model="groupData.leaderPosition">
                     <a-radio :value="1">单兵设备</a-radio>
                     <a-radio :value="2">手机</a-radio>
                 </a-radio-group>
+                <span v-else>{{leaderPositionName}}</span>
             </div>
         </div>
         <a-table :columns="columns" :dataSource="groupTeam" :pagination="false" bordered>
-            <template slot="leader" slot-scope="text, record, index">
-                <div key="leader">
+            <template slot="leaderId" slot-scope="text, record, index">
+                <div key="leaderId">
                      <a-select
-                        show-search
+                         v-if="nowOptType"
+                         show-search
                         placeholder="请选择"
                         option-filter-prop="children"
                         style="width: 200px"
@@ -24,20 +26,27 @@
                             {{people.name}}
                         </a-select-option>
                     </a-select>
+                    <span v-else>{{groupTeam.leaderName}}</span>
                 </div>
             </template>
             <span slot="team" slot-scope="text, record, index">
-                  <a-tag
-                          v-for="person in record.teamList"
-                          color="blue"
-                          :key="person.id"
-                          closable
-                          @close="($event) => closeTag(person, index,$event)"
-                  >{{ person.name }}</a-tag
-                  >
+                <div v-if="nowOptType">
+                    <a-tag
+                            v-for="person in record.teamList"
+                            color="blue"
+                            :key="person.id"
+                            closable
+                            @close="($event) => closeTag(person, index,$event)"
+                    >{{ person.name }}</a-tag>
                   <a-button type="primary" size="small" @click="openTeamDialog(index)">中队选择</a-button>
+                </div>
+                <a-tag
+                    v-for="person in record.teamList"
+                    color="blue"
+                    :key="person.id"
+                >{{ person.name }}</a-tag>
                 </span>
-            <span v-if="groupData.groupName!=='zongzhihui'" slot="action" slot-scope="text, record, index">
+            <span v-if="nowOptType&&groupData.groupName!=='zongzhihui'" slot="action" slot-scope="text, record, index">
                   <a-popconfirm
                           v-if="groupTeam.length > 1"
                           theme="filled"
@@ -67,9 +76,9 @@
     import ChooseTeamDialog from './ChooseTeamDialog'
     const groupColumns = [{
       title: '总指挥',
-      dataIndex: 'leader',
-      key: 'leader',
-      scopedSlots: { customRender: 'leader' },
+      dataIndex: 'leaderId',
+      key: 'leaderId',
+      scopedSlots: { customRender: 'leaderId' },
       width: '280px'
       }, {
       title: '管辖中队',
@@ -89,6 +98,10 @@
        ChooseTeamDialog
      },
      props:{
+       optType:{
+         type: String,
+         default: 'add' //add\edit\look
+       },
        peopleList:{
          type: Array,
          default(){
@@ -103,7 +116,7 @@
              leaderPosition: 1,
              groupTeam:[{
                  key: 'jhhjsddsdds',
-                 leader: '',
+                 leaderId: '',
                  teamList: [],
                  teamKeyList: []
              }]
@@ -113,10 +126,8 @@
      },
      data(){
        return {
-         positionMethod: '1',
          columns: groupColumns,
          groupTeam: [],
-
          chooseTeamDialogVisible: false,
          rowIndex: 0,
          defaultCheckedTeamIds: [],
@@ -126,10 +137,23 @@
        title: function(){
          return this.groupData.groupName==='zongzhihui'?'总指挥':'副指挥'
        },
+       nowOptType:function(){
+         let userType = this.$store.getters['cgadmin/user/type'];
+         return userType==='cjy'&&this.optType!=='look'
+       },
+       leaderPositionName: function(){
+         return this.groupData.leaderPosition === 1 ? '单兵设备':'手机'
+       },
      },
      mounted() {
        this.columns[0].title = this.title;
        this.groupTeam = JSON.parse(JSON.stringify(this.groupData.groupTeam));
+       if(this.optType==='look'){
+         this.groupTeam.map(item => {
+           let personTemp = this.peopleList.find(person => person.id === item.id);
+           item.leaderName = personTemp.name;
+         });
+       }
      },
      methods:{
        filterOption(input, option) {
@@ -168,6 +192,9 @@
          console.log(person,index);
          let i = this.groupTeam[index].teamList.indexOf(person);
          this.groupTeam[index].teamList.splice(i,1);
+       },
+       getGroupTeamData(){
+         this.$emit('getGroupTeamData',this.groupTeam);
        }
      }
    }

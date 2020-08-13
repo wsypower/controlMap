@@ -1,6 +1,6 @@
 <template>
   <a-modal :title="dialogTitle"
-           v-model="addEditDialogVisible"
+           v-model="addEditLookDialogVisible"
            wrapClassName="addmodelwrap"
            class="add-edit-dialog"
            width="100%"
@@ -10,20 +10,25 @@
            :maskClosable="false"
            :destroyOnClose="true"
            @cancel="handleCancel">
-    <div class="template-panel">
-      <label>
-        <a-icon type="snippets" theme="twoTone" style="marginRight:5px" />选择模板创建：
-      </label>
-      <a-select v-model="templateId" placeholder="请选择模板" style="width: 180px;" @change="handleUserTemplate">
-        <a-select-option v-for="(item, index) in templateList" :value="item.id" :key="index">{{item.name }}</a-select-option>
-      </a-select>
-    </div>
-   
     <div class="event_dialog_body">
-      <div v-show="dataLoading" class="loading" flex="main:center cross:center">
-        <a-spin tip="数据加载中..."></a-spin>
-      </div>
-      <my-scroll style="border-top:1px solid #eeeeee;">
+      <my-scroll>
+        <log v-if="optType!=='add'||(optType==='add'&&userType==='zybm')"></log>
+        <div v-if="optType!=='add'||(optType==='add'&&userType==='zybm')" class="subtitle-panel" flex="dir:left cross:center main:justify">
+          <span>处置事件</span>
+          <a-button type="primary" size="small">事件简报下载</a-button>
+        </div>
+        <div v-if="optType==='add'&&userType==='cjy'" class="template-panel">
+          <label>
+            <a-icon type="snippets" theme="twoTone" style="marginRight:5px" />选择模板创建：
+          </label>
+          <a-select v-model="templateId" placeholder="请选择模板" style="width: 180px;" @change="handleUserTemplate">
+            <a-select-option v-for="(item, index) in templateList" :value="item.id" :key="index">{{item.name }}</a-select-option>
+          </a-select>
+        </div>
+        <div class="event_dialog_body_content">
+          <div v-show="dataLoading" class="loading" flex="main:center cross:center">
+            <a-spin tip="数据加载中..."></a-spin>
+          </div>
           <a-collapse v-model="activeKey">
             <a-collapse-panel key="1">
               <template slot="header">
@@ -31,7 +36,7 @@
                   <a-icon type="reconciliation" theme="twoTone" />基本信息
                 </div>
               </template>
-              <base-info :optType="optType" :baseData="baseInfo"></base-info>
+              <base-info ref="baseinfo" :optType="optType" :baseData="baseInfo" :getBaseInfoData="getBaseInfoData"></base-info>
             </a-collapse-panel>
             <a-collapse-panel key="2">
               <template slot="header">
@@ -39,10 +44,11 @@
                   <a-icon type="save" theme="twoTone" />人员安排
                 </div>
               </template>
-              <group-team :peopleList="peopleList" :groupData="zongZhiHuiData"></group-team>
-              <group-team :peopleList="peopleList" :groupData="fuZhiHuiData"></group-team>
-              <group-people :peopleList="peopleList" :groupData="jiDongXunChaData"></group-people>
-              <group-people :peopleList="peopleList" :groupData="houQinBaoZhangData"></group-people>
+              <group-team ref="zongzhihui" :peopleList="peopleList" :groupData="zongZhiHuiData" :getGroupTeamData="getGroupTeamData"></group-team>
+              <group-team ref="fuzhihui" :peopleList="peopleList" :groupData="fuZhiHuiData" :getGroupTeamData="getGroupTeamData"></group-team>
+              <team-people :peopleList="peopleList"></team-people>
+              <group-people ref="jidongxuncha" :peopleList="peopleList" :groupData="jiDongXunChaData"></group-people>
+              <group-people ref="houqinbaozhang" :peopleList="peopleList" :groupData="houQinBaoZhangData"></group-people>
             </a-collapse-panel>
             <a-collapse-panel key="3">
               <template slot="header">
@@ -53,12 +59,21 @@
               <a-button type="primary" @click="openBaoZhangMapDialog">保障视图</a-button>
             </a-collapse-panel>
           </a-collapse>
+        </div>
       </my-scroll>
     </div>
     <template slot="footer">
-      <a-button type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
-      <a-button type="primary" :loading="loading" @click="openChooseReviewPersonDialog">提交审核</a-button>
-<!--      <a-button v-if="submitForm.statusId=='03'" type="primary" :loading="lastLoading" @click="completeCheck">结束审核</a-button>-->
+      <a-button type="primary" :loading="saveLoading" @click="">预览</a-button>
+      <!-- 信息指挥中心视角 保存草稿只有在新建的时候才有 -->
+      <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
+      <!-- 发起流程只有在新建的时候才有 -->
+      <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="loading" @click="">发起流程</a-button>
+      <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
+      <a-button v-if="userType!=='jld'&&optType==='edit'" type="primary" :loading="loading" @click="">提交审核</a-button>
+      <!-- 领导视角 -->
+      <a-button v-if="userType==='jld'" type="primary" :loading="loading" @click="">确认</a-button>
+      <!-- 领导视角 -->
+      <a-button v-if="userType==='jld'" type="primary" :loading="loading" @click="">驳回</a-button>
     </template>
     <bao-zhang-map-dialog
       :visible.sync="mapDialogVisible"
@@ -72,8 +87,10 @@
 import { mapActions } from 'vuex'
 import moment from 'moment';
 import util from '@/utils/util'
+import Log from './components/Log'
 import BaseInfo  from './components/BaseInfo'
 import GroupTeam from './components/GroupTeam'
+import TeamPeople from './components/TeamPeople'
 import GroupPeople from './components/GroupPeople'
 import ChoosePeopleDialog from './ChoosePeopleDialog'
 import BaoZhangMapDialog from './BaoZhangMapDialog'
@@ -82,8 +99,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
   export default {
     name: 'addEditDialog',
     components:{
+      Log,
       BaseInfo,
       GroupTeam,
+      TeamPeople,
       GroupPeople,
       ChoosePeopleDialog,
       BaoZhangMapDialog
@@ -95,16 +114,20 @@ import {postEmergencyFeatures} from '@/api/map/service'
       },
       dialogTitle:{
         type: String,
-        default: '新增预案'
+        default: '新增事件'
       },
       eventId:{
         type: String,
         default: ''
-      }
+      },
+      optType:{
+        type: String,
+        default: 'add'
+      },
     },
     data(){
       return{
-        addEditDialogVisible: false,
+        addEditLookDialogVisible: false,
         templateList: [],
         templateId: '',
         dataLoading: false,
@@ -114,6 +137,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         baseInfo:{
           name: '',
           typeId: '',
+          typeName: '',
           startDayTime: '',
           endDayTime: '',
           description: '',
@@ -183,11 +207,15 @@ import {postEmergencyFeatures} from '@/api/map/service'
         chooseReViewPersonDialogVisible: false,
       }
     },
-    computed:{},
+    computed:{
+      userType:function(){
+        return this.$store.getters['cgadmin/user/type']
+      }
+    },
     created(){},
     mounted(){},
     watch:{
-      addEditDialogVisible:function(val){
+      addEditLookDialogVisible:function(val){
         if(val){
           this.init();
         }
@@ -197,7 +225,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       },
       visible:function(val){
         if(val){
-          this.addEditDialogVisible = true;
+          this.addEditLookDialogVisible = true;
         }
       }
     },
@@ -211,6 +239,18 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.getPeopleDataList().then(res => {
           this.peopleList = res.data;
         })
+        this.baseInfo = {
+          name: '文明创城行动02',
+          typeId: '001',
+          typeName: '日常事件',
+          startDayTime: 1597109712000,
+          endDayTime: 1597363218000,
+          description: 'msjkdlsahkjdfksd',
+          jobGoal: 'jegjwegjhqwe',
+          jobAssignment: 'jgsjhdgjhsagdf',
+          jobContent: 'lkkuutwuyetqu3687236g',
+          jobRequirements: 'bnvjhduwqteuw'
+        }
       },
       handleUserTemplate(val){
         console.log('handleUserTemplate',val);
@@ -290,9 +330,17 @@ import {postEmergencyFeatures} from '@/api/map/service'
         }];
         this.baoZhangData = [];
       },
+      getBaseInfoData(data){
+        console.log('getBaseInfoData', data);
+        Object.keys(this.baseInfo).forEach(key => {
+          this.baseInfo[key] = data[key];
+        });
+      },
+      getGroupTeamData(data){
+        if(data.groupName===''){
 
-
-
+        }
+      },
       choosePeople(data){
         console.log('choosePeople',data);
         data.forEach((item)=>{
@@ -413,59 +461,39 @@ import {postEmergencyFeatures} from '@/api/map/service'
           }
           this.reset();
           this.$emit('refreshList');
-          this.addEditDialogVisible = false;
+          this.addEditLookDialogVisible = false;
         });
       },
       //保存草稿
       saveDraft(e){
         e.preventDefault();
         //调取接口保存的预案状态为未提交
-        this.submitForm.statusId = '01';
-        this.saveLoading = true;
-        this.form.validateFields((err, values) => {
-          if (!err) {
-            console.log('form: value', values);
-            this.submitForm.name = values.name;
-            this.submitForm.typeId = values.typeId;
-            this.submitForm.startDayTime = values.dayRange[0]._d.getTime();
-            this.submitForm.endDayTime = values.dayRange[1]._d.getTime();
-            this.saveData('save');
-          }
-          else{
-            this.saveLoading = false;
-          }
-        });
-      },
-      /*************************选择审核人员弹窗 start*******************************/
-      openChooseReviewPersonDialog(){
-        this.loading = true;
-        this.form.validateFields((err, values) => {
-          if (!err) {
-            console.log('form: value', values);
-            this.submitForm.name = values.name;
-            this.submitForm.typeId = values.typeId;
-            this.submitForm.startDayTime = values.dayRange[0]._d.getTime();
-            this.submitForm.endDayTime = values.dayRange[1]._d.getTime();
-            if(!this.checkParams()){
-              this.loading = false;
-              return
-            }
-            this.loading = false;
-            this.chooseReViewPersonDialogVisible = true;
-          }
-          else {
-            this.loading = false;
-          }
-        });
+        // this.submitForm.statusId = '01';
+        // this.saveLoading = true;
+        this.$refs.baseinfo.getResultData();
+        // if(data){
+        //   console.log('121',data);
+        // }
+        // else{
+        //   this.saveLoading = false;
+        // }
+        // this.$refs.zongzhihui.getGroupTeamData();
+        console.log('baseInfo', this.baseInfo);
+        // this.form.validateFields((err, values) => {
+        //   if (!err) {
+        //     console.log('form: value', values);
+        //     this.submitForm.name = values.name;
+        //     this.submitForm.typeId = values.typeId;
+        //     this.submitForm.startDayTime = values.dayRange[0]._d.getTime();
+        //     this.submitForm.endDayTime = values.dayRange[1]._d.getTime();
+        //     this.saveData('save');
+        //   }
+        //   else{
+        //     this.saveLoading = false;
+        //   }
+        // });
       },
 
-      choosePerson(data){
-        console.log('审核人员选择输出',data);
-        this.submitForm.reviewUserId = data;
-        this.submitForm.statusId = '02';
-        this.saveData('submit');
-      },
-      /*************************选择审核人员弹窗 end*******************************/
 
       checkParams(){
         if(new Date().getTime()>this.submitForm.startDayTime){
@@ -506,20 +534,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
         }
         return true
       },
-      //点击结束审核按钮触发
-      completeCheck(){
-        //调取接口改变预案的状态（已同意->未开始）
-        this.setEmergencyeventToFinishReview({id:this.submitForm.id}).then((res)=>{
-          console.log('completeCheck',res);
-          this.$emit('refreshList');
-          this.reset();
-          this.addEditDialogVisible = false;
-        });
-      },
-
       handleCancel(){
         this.reset();
-        this.addEditDialogVisible = false;
+        this.addEditLookDialogVisible = false;
       }
     }
   }
@@ -535,6 +552,17 @@ import {postEmergencyFeatures} from '@/api/map/service'
 .add-edit-dialog {
   width: 100%;
   height: 100%;
+  .event_dialog_body{
+    width: 100%;
+    height: 100%;
+  }
+  .subtitle-panel{
+    font-size: 14px;
+    height: 40px;
+    margin-bottom: 10px;
+    color: #028efc;
+    border-botton: 1px solid #d9d9d9;
+  }
   .template-panel{
     margin-bottom: 10px;
     font-size: 14px;
@@ -549,7 +577,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
     background-color: #FDE2E2;
     color: #F76B6B;
   }
-  .event_dialog_body {
+  .event_dialog_body_content {
     height: calc(100% - 60px);
     position: relative;
     .loading{

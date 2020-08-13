@@ -1,6 +1,7 @@
 import { getCountForHandle,
   getEventList,
-  getTemplateEventDataList} from '@/api/event/index.js'
+  getTemplateEventDataList,
+  getLogDataByEventId} from '@/api/event/index.js'
 
 export default {
     namespaced: true,
@@ -135,18 +136,18 @@ export default {
             })
         })
       },
-      // getRunningYuAnList(state,data){
-      //   console.log('store',data);
-      //   return new Promise((resolve, reject) => {
-      //     getRunningYuAnList(data)
-      //       .then(res => {
-      //         resolve(res)
-      //       })
-      //       .catch(err => {
-      //         console.log(err)
-      //         reject(err)
-      //       })
-      //   })
-      // }
+      getLogDataByEventId(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          getLogDataByEventId(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      }
     }
 }
