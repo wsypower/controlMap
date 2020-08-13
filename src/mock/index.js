@@ -12,6 +12,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('./services/common')
   require('./services/emergencyDataList')
   require('./services/video')
+  require('./services/event')
   Mock.setup({
     timeout: 800 // setter delay time
   })

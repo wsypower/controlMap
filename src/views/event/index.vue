@@ -14,13 +14,13 @@
 <!--            <a-select-option v-for="(item,index) in statusList" :value="item.id" :key="index">{{item.name}}</a-select-option>-->
 <!--          </a-select>-->
           <a-input-search v-model="query.searchContent" placeholder="请输入关键字" @search="searchDataByContent"/>
-          <a-button type="primary" icon="user" @click="searchEventData('myYuAn_true')" flex="cross:center">我的预案</a-button>
+          <a-button type="primary" icon="user" @click="searchEventData('myEvent_true')" flex="cross:center">我的事件</a-button>
           <a-button type="primary" icon="file-sync" class="review" @click="searchEventData('myStatus_02')">
-            <a-badge :count="countForMyToCheck">
-              <span class="text">待审核</span>
+            <a-badge :count="countForMyToHandle">
+              <span class="text">待处理</span>
             </a-badge>
           </a-button>
-          <a-button class="addfiles" icon="plus-circle" @click="addNewEvent" flex="cross:center">新增预案</a-button>
+          <a-button class="addfiles" icon="plus-circle" @click="addNewEvent" flex="cross:center">新增事件</a-button>
         </div>
       </div>
       <div class="loading event_list_content" v-if="dataLoading" flex="main:center cross:center">
@@ -28,30 +28,35 @@
       </div>
       <div class="event_list_content" v-if="!dataLoading&&eventDataList.length>0" flex="dir:top">
           <div class="event_list_content-operate" flex="dir:left cross:center main:right">
-              <a-button class="btn_opt btn_delete"><a-icon type="delete" />批量删除</a-button>
-              <a-button class="btn_opt btn_export"><a-icon type="export" />批量导出</a-button>
+              <a-button class="btn_opt btn_delete"><a-icon type="delete" @click="deleteEvents"/>批量删除</a-button>
+              <a-button class="btn_opt btn_export"><a-icon type="export" @click="exportEvents('part')"/>批量导出</a-button>
+              <a-button class="btn_opt btn_export"><a-icon type="export" @click="exportEvents('all')"/>全部导出</a-button>
           </div>
           <div class="main-table-panel">
               <ul class="main-table-header">
                   <li flex="cross:center">
-                      <span><a-checkbox @change=""></a-checkbox></span>
+                      <span><a-checkbox :checked="checkedAll" @change="checkAll"></a-checkbox></span>
                       <span>事件名称</span>
                       <span>事件类型</span>
                       <span>保障时间</span>
                       <span>审核进度</span>
                       <span>处理状态</span>
                       <span>操作</span>
-                      <span v-if="true">是否设置为模版</span>
+                      <span v-if="userType!=='zybm'">是否设置为模版</span>
                       <span v-else>是否为模版</span>
                   </li>
               </ul>
               <ul class="main-table-tbody">
                   <my-scroll>
                       <li v-for="item in eventDataList" :key="item.id" flex="cross:center">
-                          <span><a-checkbox @change="" :id="item.id"></a-checkbox></span>
+                          <span><a-checkbox :checked="item.checked" @change="checkHandle(item)"></a-checkbox></span>
                           <span>{{item.name}}</span>
                           <span>{{item.typeName}}</span>
-                          <span>{{item.startTime}}~{{item.endTime}}</span>
+                          <span>
+                              {{new Date(item.startDayTime)|date_format('YYYY-MM-DD HH:mm:ss')}}
+                              ~
+                              {{new Date(item.endDayTime)|date_format('YYYY-MM-DD HH:mm:ss')}}
+                          </span>
                           <span>{{item.processName}}</span>
                           <span>{{item.statusName}}</span>
                           <span>
@@ -59,10 +64,11 @@
                               <i class="btn_mini btn_handle">处置</i>
                           </span>
                           <span>
-                              <a-icon type="star" v-if="item.isTemplate===0"/>
-                              <a-icon type="star" theme="filled" style="color: #ffb94c;" v-else/>
+                              <a-icon v-if="!item.isTemplate" type="star" @click="setTemplate(item)"/>
+                              <a-icon v-else type="star" theme="filled" style="color: #ffb94c;" @click="setTemplate(item)"/>
                           </span>
                       </li>
+                      <li v-if="needFixedRowNum>0" v-for="i in needFixedRowNum" :key="i"></li>
                   </my-scroll>
               </ul>
           </div>
@@ -71,16 +77,16 @@
         <img src="~@img/zanwuyuan.png" />
       </div>
 
-      <div class="pagination" flex="cross:center main:right" style="paddingRight:17px">
+      <div class="pagination" flex="cross:center main:justify">
+        <div style="color:#ff0000bd;">备注：表头上复选框全选代表当前页的全选</div>
         <a-pagination :showTotal="total => `总共 ${total} 条`"
                       :pageSize.sync="query.pageSize"
-                      @showSizeChange="onShowSizeChange"
                       @change="onPageNoChange"
                       :total="totalSize"
                       v-model="query.pageNo"/>
       </div>
     </div>
-<!--    <add-edit-dialog :visible.sync="addYuAnDialogVisible" :dialogTitle="dialogTitle" :yuAnId="yuAnId" @refreshList="getTuAnDataList"></add-edit-dialog>-->
+    <add-edit-dialog :visible.sync="addEventDialogVisible" :dialogTitle="dialogTitle" :eventId="eventId" @refreshList=""></add-edit-dialog>
 <!--    <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible" :yuAnId="yuAnId" @refreshList="()=>{getTuAnDataList();getToCheckCount();}"></yu-an-info-and-review-dialog>-->
   </div>
 </template>
@@ -101,29 +107,35 @@
     data() {
       return {
         statusList:[],
-        countForMyToCheck: 0,
+        countForMyToHandle: 0,
         dataLoading: false,
         query:{
           typeId:'',
           statusId: '',
-          isTemplate: '0',
-          isMyYuAn: false,
+          isTemplate: false,
+          isMyEvent: false,
           searchContent: '',
           pageNo: 1,
           pageSize: 12
         },
         eventDataList:[],
         totalSize: 0,
-
-        addYuAnDialogVisible: false,
-        dialogTitle: '新增预案',
-        yuAnId: '',
+        //需要补齐的剩余行
+        needFixedRowNum: 0,
+        //全选
+        checkedAll: false,
+        addEventDialogVisible: false,
+        dialogTitle: '新增事件',
+        eventId: '',
         yuAnInfoDialogVisible: false,
       }
     },
     computed:{
       userId(){
         return util.cookies.get('userId');
+      },
+      userType(){
+        return this.$store.getters['cgadmin/user/type']
       }
     },
     created(){},
@@ -137,7 +149,7 @@
       //   console.log('getStatusDataList',res);
       //   this.statusList = res;
       // });
-      // this.getToCheckCount();
+      this.getToHandleCount();
       this.getEventDataList();
 
     },
@@ -145,9 +157,8 @@
 
     },
     methods: {
-      ...mapActions('emergency/common', ['getStatusDataList']),
-      ...mapActions('emergency/emergency', ['getCountForMyToCheck',
-        'getEmergencyeventDataList','deleteEmergencyYuAn','setEmergencyYuAnToTemplate']),
+      ...mapActions('event/common', ['getStatusDataList']),
+      ...mapActions('event/event', ['getToHandleCountData','getEventList']),
       /***************************事件查询区 start****************************/
       resetQuery(){
         let pageSize = this.query.pageSize;
@@ -159,40 +170,29 @@
       getEventDataList(){
         this.dataLoading = true;
         console.log('this.query',this.query);
-        // this.getEmergencyeventDataList(this.query).then((res)=>{
-        //   this.eventDataList = res.list;
-        //   this.totalSize = res.total;
-        //   if(this.query.pageNo == Math.ceil(this.totalSize/this.query.pageSize)){
-        //     let n = this.eventDataList.length%this.countOneRow;
-        //     this.buWeiNum = n==0? 0 : this.countOneRow - n;
-        //   }
-        //
-        // })
-        let temp = {
-          id: '001',
-          name: '文明创城行动',
-          typeName: '日常事件',
-          typeId: 0,
-          startTime: 1234567890,
-          endTime: 1234567890,
-          processName: '中队未上报',
-          processId: 1,
-          statusName: '本部门未处理',
-          statusId: 0,
-          isTemplate: 1
-        }
-        for(let i=0;i<12;i++){
-          temp.id = temp.id + i;
-          temp.name = temp.name + i;
-          this.eventDataList.push(temp);
-        }
-        this.totalSize = 12;
+        this.getEventList(this.query).then((res)=>{
+          this.dataLoading = false;
+          res.data.list.map(item => {
+            item.checked = false;
+            return item
+          });
+          this.eventDataList = res.data.list;
+          this.totalSize = res.data.total;
+          if(res.data.list.length<12){
+            this.needFixedRowNum = this.query.pageSize - res.data.list.length;
+          }
+        })
 
-        this.dataLoading = false;
       },
-      getToCheckCount(){
-        this.getCountForMyToCheck({userId: this.userId}).then((res)=>{
-          this.countForMyToCheck = res;
+      getToHandleCount(){
+        let params = {
+          userId: this.userId,
+          isMyEvent: true,
+          statusId: 1
+        }
+        this.getToHandleCountData(params).then((res)=>{
+          console.log('view ToHandleCount', res);
+          this.countForMyToHandle = res.data;
         });
       },
       searchEventData(param){
@@ -232,20 +232,80 @@
         let param = 'search_' + val;
         this.searchEventData(param);
       },
-      onShowSizeChange(pageNO,pageSize){
-        console.log('onShowSizeChange',pageNO,pageSize);
-        this.getTuAnDataList();
-      },
       onPageNoChange(pageNO,pageSize){
         console.log('onPageNoChange',pageNO,pageSize);
-        this.getTuAnDataList();
+        this.query.pageNo = pageNO;
+        this.getEventDataList();
+      },
+
+      checkAll(){
+        this.checkedAll = !this.checkedAll;
+        this.eventDataList.map(item => {
+          item.checked = this.checkedAll;
+        });
+      },
+      checkHandle(item){
+        console.log('checkHandle',item);
+        item.checked = !item.checked;
+        if(!item.checked){
+          this.checkedAll = false;
+        }
+        else{
+          let checkedNum = this.eventDataList.reduce((acc, item)=>{
+            if(item.checked){
+              acc = acc + 1;
+            }
+            return acc
+          },0);
+          if(checkedNum===this.eventDataList.length){
+            this.checkedAll = true;
+          }
+          else{
+            this.checkedAll = false;
+          }
+        }
+      },
+      //删除选中的事件
+      deleteEvents(){
+        let checkedIds = this.eventDataList.reduce((acc, item)=>{
+          if(item.checked){
+            acc.push(item.id);
+          }
+          return acc
+        },[]);
+        console.log('需要删除的事件有：' , checkedIds);
+        if(checkedIds.length === 0){
+          this.$message.warning('请选择需要删除的事件');
+        }
+      },
+      //导出事件
+      exportEvents(type){
+        if(type === 'part'){
+          let checkedIds = this.eventDataList.reduce((acc, item)=>{
+            if(item.checked){
+              acc.push(item.id);
+            }
+            return acc
+          },[]);
+          console.log('需要导出的事件有：' , checkedIds);
+          if(checkedIds.length === 0){
+            this.$message.warning('请选择需要导出的事件');
+          }
+        }
+        else{
+          console.log('导出全部事件');
+        }
+      },
+      //设置某个事件是否为模版
+      setTemplate(item){
+        item.isTemplate = !item.isTemplate;
       },
       /***************************事件查询区 end****************************/
       addNewEvent(){
         console.log('addNewEvent click');
-        this.yuAnId = '';
-        this.dialogTitle = '新增预案';
-        this.addYuAnDialogVisible = true;
+        this.eventId = '';
+        this.dialogTitle = '新增事件';
+        this.addEventDialogVisible = true;
       },
 
       /***************************对已有预案的操作 start****************************/
@@ -267,35 +327,35 @@
         });
       },
 
-      deleteYuAn(id,index){
-        let _this = this;
-        this.$confirm({
-          title: '確定删除这个预案吗?',
-          content: '删除后不可恢复',
-          okText: '确定',
-          okType: 'danger',
-          cancelText: '取消',
-          onOk() {
-            _this.deleteEmergencyYuAn({id: id}).then((res)=>{
-              _this.getTuAnDataList();
-            });
-
-          },
-          onCancel() {
-
-          },
-        });
-      },
-      toMonitorPage(item){
-        this.$router.push(
-          {
-            path:'/emergency',
-            query:{
-              yuAnId: item.id
-            }
-          }
-        )
-      },
+      // deleteYuAn(id,index){
+      //   let _this = this;
+      //   this.$confirm({
+      //     title: '確定删除这个预案吗?',
+      //     content: '删除后不可恢复',
+      //     okText: '确定',
+      //     okType: 'danger',
+      //     cancelText: '取消',
+      //     onOk() {
+      //       _this.deleteEmergencyYuAn({id: id}).then((res)=>{
+      //         _this.getTuAnDataList();
+      //       });
+      //
+      //     },
+      //     onCancel() {
+      //
+      //     },
+      //   });
+      // },
+      // toMonitorPage(item){
+      //   this.$router.push(
+      //     {
+      //       path:'/emergency',
+      //       query:{
+      //         yuAnId: item.id
+      //       }
+      //     }
+      //   )
+      // },
       /*******************查看详情+审核 start*************************/
       openInfoDialog(item){
         console.log('openInfoDialog',item);
@@ -447,7 +507,7 @@
                         }
 
                         &:nth-child(4) {
-                            width: 200px;
+                            width: 400px;
                         }
 
                         &:nth-child(5) {
@@ -464,6 +524,9 @@
 
                         &:nth-child(8) {
                             width: 140px;
+                            i{
+                                cursor: pointer;
+                            }
                         }
                     }
                 }
@@ -513,11 +576,9 @@
     .pagination {
       height: 60px;
       width: 100%;
-      text-align: right;
       background-color: #fff;
-      // border-radius: 5px;
-      // box-shadow: 1px 0px 8px 3px rgba(4, 39, 77, 0.06);
       z-index: 5;
+      padding: 0px 17px;
     }
     ::v-deep.ant-badge-count {
       top: -15px;

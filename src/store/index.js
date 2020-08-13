@@ -19,6 +19,7 @@ import cgadmin from './modules/cgadmin'
 import emergency from './modules/emergency'
 import video from './modules/video'
 import address from './modules/address'
+import event from './modules/event'
 Vue.use(Vuex)
 /* eslint-disable no-new */
 const store = new Vuex.Store({
@@ -38,7 +39,8 @@ const store = new Vuex.Store({
     cgadmin,
     emergency,
     video,
-    address
+    address,
+    event
   }
 })
 

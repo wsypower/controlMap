@@ -10,7 +10,7 @@
            :maskClosable="false"
            :destroyOnClose="true"
            @cancel="handleCancel">
-    <div class="template-panel">
+    <div v-if="operateType == 'add'" class="template-panel">
       <label>
         <a-icon type="snippets" theme="twoTone" style="marginRight:5px" />选择模板创建：
       </label>
@@ -18,12 +18,18 @@
         <a-select-option v-for="(item, index) in templateList" :value="item.id" :key="index">{{item.name }}</a-select-option>
       </a-select>
     </div>
-   
-    <div class="event_dialog_body">
+    <div v-if="submitForm.statusId == '04'" class="template-panel turnDown">
+      <span>
+        <a-icon type="close-circle" theme="twoTone" twoToneColor="#F76B6B" style="marginRight:5px"  />驳回原因：
+      </span>
+      <span style="color:#F76B6B">{{submitForm.backReason}}</span>
+    </div>
+    <div class="yuan_dialog_body">
       <div v-show="dataLoading" class="loading" flex="main:center cross:center">
         <a-spin tip="数据加载中..."></a-spin>
       </div>
-      <my-scroll style="border-top:1px solid #eeeeee;">
+      <cg-container scroll>
+        <a-form :form="form" layout="horizontal">
           <a-collapse v-model="activeKey">
             <a-collapse-panel key="1">
               <template slot="header">
@@ -31,7 +37,7 @@
                   <a-icon type="reconciliation" theme="twoTone" />基本信息
                 </div>
               </template>
-              <base-info :optType="optType" :baseData="baseInfo"></base-info>
+
             </a-collapse-panel>
             <a-collapse-panel key="2">
               <template slot="header">
@@ -39,10 +45,39 @@
                   <a-icon type="save" theme="twoTone" />人员安排
                 </div>
               </template>
-              <group-team :peopleList="peopleList" :groupData="zongZhiHuiData"></group-team>
-              <group-team :peopleList="peopleList" :groupData="fuZhiHuiData"></group-team>
-              <group-people :peopleList="peopleList" :groupData="jiDongXunChaData"></group-people>
-              <group-people :peopleList="peopleList" :groupData="houQinBaoZhangData"></group-people>
+              <a-table :columns="columns" :dataSource="groupData" :pagination="false" bordered>
+                <template slot="groupName" slot-scope="text, record, index">
+                  <div key="groupName">
+                    <a-input :value="text" @change="e => changeGroupName(e.target.value, record.key, 'groupName')" />
+                  </div>
+                </template>
+                <span slot="person" slot-scope="text, record, index">
+                  <a-tag
+                    v-for="person in record.checkedPeopleList"
+                    color="blue"
+                    :key="person.id"
+                    closable
+                    @close="($event) => closeTag(person.id, index,$event)"
+                    >{{ person.name }}</a-tag
+                  >
+                  <a-button type="primary" size="small" @click="openPeopleDialog(index)">人员选择</a-button>
+                </span>
+                <span slot="action" slot-scope="text, record, index">
+                  <a-popconfirm
+                    v-if="groupData.length > 1"
+                    title="确定删除这个组吗？"
+                    @confirm="() => deleteGroup(index)"
+                  >
+                    <a-icon type="minus-circle" class="icon_delete" />
+                  </a-popconfirm>
+                  <a-icon
+                    v-if="index === groupData.length - 1"
+                    type="plus-circle"
+                    class="icon_add"
+                    @click="addGroup(record, index)"
+                  />
+                </span>
+              </a-table>
             </a-collapse-panel>
             <a-collapse-panel key="3">
               <template slot="header">
@@ -53,39 +88,61 @@
               <a-button type="primary" @click="openBaoZhangMapDialog">保障视图</a-button>
             </a-collapse-panel>
           </a-collapse>
-      </my-scroll>
+        </a-form>
+      </cg-container>
     </div>
     <template slot="footer">
       <a-button type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
       <a-button type="primary" :loading="loading" @click="openChooseReviewPersonDialog">提交审核</a-button>
-<!--      <a-button v-if="submitForm.statusId=='03'" type="primary" :loading="lastLoading" @click="completeCheck">结束审核</a-button>-->
+      <a-button v-if="submitForm.statusId=='03'" type="primary" :loading="lastLoading" @click="completeCheck">结束审核</a-button>
     </template>
-    <bao-zhang-map-dialog
+    <choose-people-dialog
+      :visible.sync="choosePeopleDialogVisible"
+      :disablePeopleKey="disablePeopleKey"
+      @choosePeople="choosePeople"
+    ></choose-people-dialog><bao-zhang-map-dialog
       :visible.sync="mapDialogVisible"
       :sourcePeopleList="sourcePeopleList"
       :baoZhangData="baoZhangData"
       @saveDrawData="saveDraw"
     ></bao-zhang-map-dialog>
+    <choose-review-person-dialog
+      :visible.sync="chooseReViewPersonDialogVisible"
+      @choosePerson="choosePerson"
+    ></choose-review-person-dialog>
   </a-modal>
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
 import moment from 'moment';
 import util from '@/utils/util'
-import BaseInfo  from './components/BaseInfo'
-import GroupTeam from './components/GroupTeam'
-import GroupPeople from './components/GroupPeople'
 import ChoosePeopleDialog from './ChoosePeopleDialog'
+import ChooseReviewPersonDialog from './ChooseReviewPersonDialog'
 import BaoZhangMapDialog from './BaoZhangMapDialog'
 import {postEmergencyFeatures} from '@/api/map/service'
-
+const groupColumns = [{
+  title: '组名称',
+  dataIndex: 'groupName',
+  key: 'groupName',
+  scopedSlots: { customRender: 'groupName' },
+  width: '280px'
+}, {
+  title: '人员',
+  dataIndex: 'checkedPeopleList',
+  key: 'checkedPeopleList',
+  scopedSlots: { customRender: 'person' }
+}, {
+  title: '操作',
+  key: 'action',
+  dataIndex: 'action',
+  scopedSlots: { customRender: 'action' },
+  width: '100px'
+}];
   export default {
     name: 'addEditDialog',
     components:{
-      BaseInfo,
-      GroupTeam,
-      GroupPeople,
       ChoosePeopleDialog,
+      ChooseReviewPersonDialog,
       BaoZhangMapDialog
     },
     props:{
@@ -97,7 +154,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         type: String,
         default: '新增预案'
       },
-      eventId:{
+      yuAnId:{
         type: String,
         default: ''
       }
@@ -108,65 +165,33 @@ import {postEmergencyFeatures} from '@/api/map/service'
         templateList: [],
         templateId: '',
         dataLoading: false,
-        optType: 'add',
         activeKey: '1',
-        peopleList: [],
-        baseInfo:{
+        form: null,
+        yuAnTypeList: [],
+        columns: groupColumns,
+        rowIndex: null,
+        submitForm:{
           name: '',
           typeId: '',
+          statusId: '01',
           startDayTime: '',
           endDayTime: '',
           description: '',
           jobGoal: '',
           jobAssignment: '',
           jobContent: '',
-          jobRequirements: ''
+          jobRequirements: '',
+          groupDataStr: '',
+          baoZhangDataStr: '',
+          reviewUserId: '',
+          isTemplate: '0'
         },
-        zongZhiHuiData:{
-          groupName: 'zongzhihui',
-          leaderPosition: 1,
-          groupTeam:[{
-            key: 'jhhjsddsdds',
-            leader: '',
-            teamList: [],
-            teamKeyList: []
-          }]
-        },
-        fuZhiHuiData:{
-          groupName: 'fuzhihui',
-          leaderPosition: 1,
-          groupTeam:[{
-            key: 'jhhjsddsdds',
-            leader: '',
-            teamList: [],
-            teamKeyList: []
-          }]
-        },
-        jiDongXunChaData:{
-          groupName: 'jidongxuncha',
-          leaderPosition: 1,
-          personPosition: 1,
-          groupPerson:[{
-            key: 'jhhjsddsdds',
-            leaderId: '',
-            personList: [],
-            personKeyList: []
-          }]
-        },
-        houQinBaoZhangData:{
-          groupName: 'houqinbaozhang',
-          leaderPosition: 1,
-          personPosition: 1,
-          groupPerson:[{
-            key: 'jhhjsddsdds',
-            leaderId: '',
-            personList: [],
-            personKeyList: []
-          }]
-        },
-        // groupDataStr: '',
-        // baoZhangDataStr: '',
-        // reviewUserId: '',
+        groupData: [{
+          key: 'jhhjsddsdds',
+          groupName: '',
+          checkedPeopleList: [],
+          peopleKeyList: []
+        }],
         baoZhangData: [],
 
         saveLoading: false,
@@ -183,8 +208,14 @@ import {postEmergencyFeatures} from '@/api/map/service'
         chooseReViewPersonDialogVisible: false,
       }
     },
-    computed:{},
-    created(){},
+    computed:{
+      operateType(){
+        return this.yuAnId==''?'add':'edit';
+      }
+    },
+    created(){
+      this.form = this.$form.createForm(this);
+    },
     mounted(){},
     watch:{
       addEditDialogVisible:function(val){
@@ -202,26 +233,31 @@ import {postEmergencyFeatures} from '@/api/map/service'
       }
     },
     methods:{
-      ...mapActions('event/event', ['getTemplateEventDataList']),
-      ...mapActions('event/common', ['getPeopleDataList']),
+      ...mapActions('emergency/emergency', ['addNewEmergencyYuAn','getEmergencyYuAnById','setEmergencyYuAnToFinishReview','getTemplateYuAnDataList']),
+      ...mapActions('emergency/common', ['getYuAnTypeDataList']),
       init(){
-        this.getTemplateEventDataList().then((res)=>{
-          this.templateList = res.data;
+        this.getYuAnTypeDataList().then((r)=>{
+          this.yuAnTypeList = r;
+          if(this.operateType=='edit'){
+            this.getYuAnInfoById(this.yuAnId);
+          }
+          else{
+            this.getTemplateYuAnDataList().then((res)=>{
+              this.templateList = res;
+            });
+          }
         });
-        this.getPeopleDataList().then(res => {
-          this.peopleList = res.data;
-        })
       },
       handleUserTemplate(val){
         console.log('handleUserTemplate',val);
-        this.geteventInfoById(val);
+        this.getYuAnInfoById(val);
       },
-      geteventInfoById(id){
+      getYuAnInfoById(id){
         this.dataLoading = true;
         this.groupData = [];
         this.baoZhangData = [];
-        this.getEmergencyeventById({id:id}).then((result)=>{
-          console.log('getEmergencyeventById',result);
+        this.getEmergencyYuAnById({id:id}).then((result)=>{
+          console.log('getEmergencyYuAnById',result);
           this.groupData = result.groupData.reduce((res,item)=>{
             let temp={
               key: item.id,
@@ -290,9 +326,56 @@ import {postEmergencyFeatures} from '@/api/map/service'
         }];
         this.baoZhangData = [];
       },
-
-
-
+      addGroup(item, index){
+        console.log('addGroup',item, index)
+        let additem = {
+          key: index.toString(),
+          groupName: '',
+          checkedPeopleList: [],
+          peopleKeyList: []
+        }
+        this.groupData.push(additem);
+      },
+      changeGroupName(val,key,colName){
+        //console.log('changeGroupName',val,key,colName);
+        const newData = [...this.groupData];
+        const target = newData.filter(item => key === item.key)[0];
+        if (target) {
+          target[colName] = val;
+          this.groupData = newData;
+        }
+      },
+      closeTag (person,index,e) {
+        console.log(person,index);
+        let arr = this.getPeolpleListInBaoZhangData();
+        let flag = arr.some((item)=>{
+          return item === person
+        });
+        if(flag){
+          e.preventDefault();
+          this.$notification['warning']({
+            message: '不可删除此成员',
+            description: '该成员在保障点位中存在，请先从保障点位中删除',
+            style:{
+              width: '400px',
+              marginLeft: `0px`,
+              fontSize: '14px'
+            }
+          });
+          return
+        }
+        const personIds = this.groupData[index].peopleKeyList.filter(item => item !== person);
+        const persons = this.groupData[index].checkedPeopleList.filter(item => item.id !== person);
+        let i = this.disablePeopleKey.indexOf(person);
+        this.disablePeopleKey.splice(i,1);
+        console.log(persons);
+        this.groupData[index].peopleKeyList = personIds;
+        this.groupData[index].checkedPeopleList = persons;
+      },
+      openPeopleDialog(index){
+        this.rowIndex = index;
+        this.choosePeopleDialogVisible = true;
+      },
       choosePeople(data){
         console.log('choosePeople',data);
         data.forEach((item)=>{
@@ -302,7 +385,36 @@ import {postEmergencyFeatures} from '@/api/map/service'
         })
         console.log('choosePeople groupData',this.groupData);
       },
+      deleteGroup(index){
+        //console.log('deleteGroup',index)
 
+        let list = this.groupData[index].peopleKeyList;
+        let arr = this.getPeolpleListInBaoZhangData();
+        for(let i=0;i<list.length;i++){
+          let flag = arr.some((item)=>{
+            return item === list[i]
+          });
+          if(flag){
+            this.$notification['warning']({
+              message: '不可删除此组',
+              description: '该组成员在保障点位中存在，请先从保障点位中删除人员',
+              style:{
+                width: '400px',
+                marginLeft: `0px`,
+                fontSize: '14px'
+              }
+            });
+            return
+          }
+        }
+
+        list.forEach((key)=>{
+          let i = this.disablePeopleKey.indexOf(key);
+          this.disablePeopleKey.splice(i,1);
+        })
+
+        this.groupData.splice(index,1);
+      },
       //开启保障视图弹窗
       openBaoZhangMapDialog(){
         this.sourcePeopleList = this.getSourcePeolpleList();
@@ -385,8 +497,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
           });
         }
 
-        this.addNewEmergencyevent(this.submitForm).then((res)=>{
-          console.log('addNewEmergencyevent',res);
+        this.addNewEmergencyYuAn(this.submitForm).then((res)=>{
+          console.log('addNewEmergencyYuAn',res);
           if(type=='save'){
             this.saveLoading = false;
             this.$notification['success']({
@@ -509,7 +621,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //点击结束审核按钮触发
       completeCheck(){
         //调取接口改变预案的状态（已同意->未开始）
-        this.setEmergencyeventToFinishReview({id:this.submitForm.id}).then((res)=>{
+        this.setEmergencyYuAnToFinishReview({id:this.submitForm.id}).then((res)=>{
           console.log('completeCheck',res);
           this.$emit('refreshList');
           this.reset();
@@ -549,7 +661,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
     background-color: #FDE2E2;
     color: #F76B6B;
   }
-  .event_dialog_body {
+  .yuan_dialog_body {
     height: calc(100% - 60px);
     position: relative;
     .loading{

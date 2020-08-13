@@ -13,6 +13,9 @@ export default {
   getters: {
     role: state => {
       return state.info.name && state.info.name.role
+    },
+    type: state => {
+      return state.info.type||'gld'
     }
   },
   actions: {
