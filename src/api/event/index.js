@@ -93,20 +93,20 @@ export function addNewEmergencyYuAn(data){
 }
 
 /**
- * @description 删除某个预案
+ * @description 批量删除事件
  * @author moxuejuan
  * @date 2019-07-12 10:53:20
- * @param {Number} id 预案的唯一标识Id
+ * @param {Number} ids 事件ids
  * @method：POST
  * @response：{
  *     msg:'操作成功;
  * }
  */
 
-export function deleteEmergencyYuAn(data){
-    console.log('api:deleteEmergencyYuAn',data);
+export function deleteEventByIds(data){
+    console.log('api:deleteEventByIds',data);
     return request({
-        url: 'plan/deleteEmergencyYuAn',
+        url: '@test/deleteEventByIds',
         method: 'post',
         data
     })
@@ -116,10 +116,10 @@ export function deleteEmergencyYuAn(data){
 
 
 /**
- * @description 根据Id获取某个预案详细信息
+ * @description 根据Id获取某个事件详细信息
  * @author moxuejuan
  * @date 2019-07-12 10:53:20
- * @param {String} Id 预案Id
+ * @param {String} Id 事件Id
  * @method：GET
  * @response：{
  *     data:[{
@@ -128,10 +128,10 @@ export function deleteEmergencyYuAn(data){
  * }
  */
 
-export function getEmergencyYuAnById(data){
-    console.log('api:getEmergencyYuAnById',data);
+export function getMessageByEventId(data){
+    console.log('api:getMessageByEventId',data);
     return request({
-        url: 'plan/getEmergencyYuAnById?_t='+ new Date().getTime(),
+        url: '@test/getMessageByEventId?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
@@ -185,10 +185,11 @@ export function setEmergencyYuAnToBack(data){
 }
 
 /**
- * @description 设置某条预案为结束审核
+ * @description 设置某个事件为模板
  * @author moxuejuan
- * @date 2019-08-12 10:53:20
- * @param {String} Id 预案Id
+ * @date 2020-08-14 10:53:20
+ * @param {String} Id 事件Id
+ * @param {Boolean} isTemplate 是否我饿模版
  * @method：POST
  * @response：{
  *     data:[{
@@ -197,32 +198,10 @@ export function setEmergencyYuAnToBack(data){
  * }
  */
 
-export function setEmergencyYuAnToFinishReview(data){
-  console.log('api:setEmergencyYuAnToFinishReview',data);
+export function setEventToTemplate(data){
+  console.log('api:setEventToTemplate',data);
   return request({
-    url: 'plan/setEmergencyYuAnToFinishReview',
-    method: 'post',
-    data
-  })
-}
-
-/**
- * @description 设置某个预案为模板预案
- * @author moxuejuan
- * @date 2019-08-12 10:53:20
- * @param {String} Id 预案Id
- * @method：POST
- * @response：{
- *     data:[{
- *
- *     }]
- * }
- */
-
-export function setEmergencyYuAnToTemplate(data){
-  console.log('api:setEmergencyYuAnToTemplate',data);
-  return request({
-    url: 'plan/setEmergencyYuAnToTemplate',
+    url: '@test/setEventToTemplate',
     method: 'post',
     data
   })

@@ -247,3 +247,180 @@ const getLogDataByEventId = (options) => {
   )
 }
 Mock.mock(/\/@test\/getLogDataByEventId/, 'get', getLogDataByEventId);
+
+const setEventToTemplate = (options) => {
+  console.log('setEventToTemplate options',options);
+  const body = getBody(options);
+  console.log('setEventToTemplate body',body);
+  return builder(
+    {
+      code: 0,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/setEventToTemplate/, 'post', setEventToTemplate);
+
+const deleteEventByIds = (options) => {
+  console.log('deleteEventByIds options',options);
+  const body = getBody(options);
+  console.log('deleteEventByIds body',body);
+  return builder(
+    {
+      code: 0,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/deleteEventByIds/, 'post', deleteEventByIds);
+
+const getMessageByEventId = (options) => {
+  console.log('getMessageByEventId options',options);
+  const queryParameters = getQueryParameters(options);
+  console.log('getMessageByEventId query',queryParameters);
+  let baseInfo = {
+    id: '002',
+    name: '文明创城行动02',
+    templateId: '',
+    templateName: '',
+    typeId: '001',
+    typeName: '日常事件',
+    processId: '',
+    processName: '',
+    startDayTime: 1597109712000,
+    endDayTime: 1597363218000,
+    description: 'msjkdlsahkjdfksd',
+    jobGoal: 'jegjwegjhqwe',
+    jobAssignment: 'jgsjhdgjhsagdf',
+    jobContent: 'lkkuutwuyetqu3687236g',
+    jobRequirements: 'bnvjhduwqteuw'
+  }
+  let zongTeamList = [{id:'002',name:'机动中队'},
+    {id:'004',name:'秋滨中队'}];
+  let zongZhiHuiData = {
+    groupName: 'zongzhihui',
+    leaderPosition: 1,
+    groupTeam:[{
+      key: 'jhhjsddsdds',
+      leaderId: '003',
+      teamList: zongTeamList
+    }]
+  };
+
+  let fuTeamList1 = [
+    {'id':'006','name':'江南中队'}];
+  let fuTeamList2 = [
+    {'id':'007','name':'西关中队'}];
+  let fuTeamList3 = [
+    {'id':'001','name':'汤溪中队'},
+    {'id':'009','name':'罗埠中队'}];
+  let fuZhiHuiData = {
+    groupName: 'fuzhihui',
+    leaderPosition: 1,
+    groupTeam:[{
+      key: '300001',
+      leaderId: '005',
+      teamList: fuTeamList1
+    },{
+      key: '300002',
+      leaderId: '002',
+      teamList: fuTeamList2
+    },{
+      key: '300003',
+      leaderId: '004',
+      teamList: fuTeamList3
+    }]
+  };
+  let teamPersonData1 = [
+    {
+      key: '000000003',
+      loadName: 'xxx',
+      position: 'yyy',
+      leaderId: '004',
+      personList: ['003','008'],
+      baoZhangId: 'bz00001',
+      mapId: '',
+      mapType: '',
+      remark: '',
+    }
+  ];
+  let teamPersonData2 = [
+    {
+      key: '000000004',
+      loadName: 'aaaxxx',
+      position: 'aaayyy',
+      leaderId: '007',
+      personList: ['003','008'],
+      baoZhangId: 'bz00002',
+      mapId: '',
+      mapType: '',
+      remark: '',
+    }
+  ];
+  let teamPersonList = [
+    {teamId: '001',teamName: '汤溪中队',checkStatusId: '001',checkStatusName: '未上报',teamPersonData:teamPersonData1},
+    {teamId: '009',teamName: '罗埠中队',checkStatusId: '003',checkStatusName: '已确认',teamPersonData:teamPersonData2}]
+  let dunDianQuanDaoData = {
+    groupName: 'dundianquandao',
+    leaderPosition: 1,
+    personPosition: 1,
+    teamPersonList: teamPersonList
+  };
+  let jiDongXunChaData = {
+    groupName: 'jidongxuncha',
+    leaderPosition: 1,
+    personPosition: 1,
+    groupPerson:[{
+      key: 'xc000001',
+      leaderId: '003',
+      personList: ['001','002']
+    },
+    {
+      key: 'xc000002',
+      leaderId: '005',
+      personList: ['003','004']
+    }]
+  };
+  let houQinBaoZhangData = {
+    groupName: 'houqinbaozhang',
+    leaderPosition: 1,
+    personPosition: 1,
+    groupPerson:[{
+      key: 'hq00001',
+      leaderId: '007',
+      personList: ['003','005']
+    },
+    {
+      key: 'hq00002',
+      leaderId: '006',
+      personList: ['004','009']
+    }]
+  };
+  let data = {
+    baseInfo: baseInfo,
+    groupData: {
+      zongZhiHuiData,
+      fuZhiHuiData,
+      dunDianQuanDaoData,
+      jiDongXunChaData,
+      houQinBaoZhangData
+    }
+  }
+  return builder(
+    {
+      code: 0,
+      data: data,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/getMessageByEventId/, 'get', getMessageByEventId);

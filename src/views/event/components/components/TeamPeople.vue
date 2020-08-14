@@ -2,7 +2,7 @@
     <div class="team-people-panel">
         <div class="team-people-panel-header" flex="cross:center main:justify">
             <span>蹲点劝导组：</span>
-            <div class="team-people-panel-header-right">
+            <div v-if="nowOptType==='add'" class="team-people-panel-header-right">
                 <a-tag
                         v-for="person in teamList"
                         color="blue"
@@ -16,17 +16,19 @@
         <div class="team-people-panel-method" flex="dir:left cross:center">
             <div class="" flex="dir:left cross:center">
                 <label>负责人定位方式：</label>
-                <a-radio-group name="radioGroup" v-model="groupData.leaderPosition">
+                <a-radio-group v-if="nowOptType!=='look'" name="radioGroup" v-model="groupData.leaderPosition">
                     <a-radio :value="1">单兵设备</a-radio>
                     <a-radio :value="2">手机</a-radio>
                 </a-radio-group>
+                <span v-else>{{leaderPositionName}}</span>
             </div>
             <div class="" flex="dir:left cross:center">
                 <label>执勤人定位方式：</label>
-                <a-radio-group name="radioGroup" v-model="groupData.leaderPosition">
+                <a-radio-group v-if="nowOptType!=='look'" name="radioGroup" v-model="groupData.personPosition">
                     <a-radio :value="1">单兵设备</a-radio>
                     <a-radio :value="2">手机</a-radio>
                 </a-radio-group>
+                <span v-else>{{personPositionName}}</span>
             </div>
         </div>
         <a-table v-if="nowOptType==='add'" :columns="columns" :dataSource="[]" :pagination="false" bordered>
@@ -74,9 +76,9 @@
                 </span>
         </a-table>
         <div v-else>
-            <div class="team-people-panel-item">
+            <div class="team-people-panel-item" v-for="(team, teamIndex) in teamPersonList" :key="team.teamId">
                 <div class="team-item-header" flex="dir:left cross:center main:justify">
-                    <span class="team-item-header-left">关西中队</span>
+                    <span class="team-item-header-left">{{team.teamName}}</span>
                     <div class="team-item-header-right">
                         <span v-if="nowOptType==='look'" class="team-item_status"></span>
                         <span v-if="nowOptType==='edit'" class="btn_review" @click="">预览</span>
@@ -85,10 +87,24 @@
                         <a-icon type="up" />
                     </div>
                 </div>
-                <a-table :columns="columns" :dataSource="groupPerson" :pagination="false" bordered>
+                <a-table :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
+                    <template slot="loadName" slot-scope="text, record, index">
+                        <div key="loadName">
+                            <span v-if="nowOptType==='look'">{{record.loadName}}</span>
+                            <a-input v-else :value="text" @change="e => changeInputText(teamIndex, e.target.value, record.key, 'loadName')" />
+                        </div>
+                    </template>
+                    <template slot="position" slot-scope="text, record, index">
+                        <div key="position">
+                            <span v-if="nowOptType==='look'">{{record.position}}</span>
+                            <a-input v-else :value="text" @change="e => changeInputText(teamIndex, e.target.value, record.key, 'loadName')" />
+                        </div>
+                    </template>
                     <template slot="leaderId" slot-scope="text, record, index">
                         <div key="leaderId">
+                            <span v-if="nowOptType==='look'">{{groupTeam.leaderName}}</span>
                             <a-select
+                                    v-else
                                     show-search
                                     placeholder="请选择"
                                     option-filter-prop="children"
@@ -99,33 +115,39 @@
                                     {{people.name}}
                                 </a-select-option>
                             </a-select>
+
                         </div>
                     </template>
                     <span slot="team" slot-scope="text, record, index">
-                  <a-tag
-                          v-for="person in record.personList"
-                          color="blue"
-                          :key="person.id"
-                          closable
-                          @close="($event) => closeTag(person, index,$event)"
-                  >{{ person.name }}</a-tag>
-                  <a-button type="primary" size="small" @click="openPeopleDialog(index)">人员选择</a-button>
-                </span>
+                        <a-tag v-if="nowOptType==='look'"
+                                v-for="person in record.personList"
+                                color="blue"
+                                :key="person.id"
+                        >{{ person.name }}</a-tag>
+                        <a-tag v-if="nowOptType!=='look'"
+                               v-for="person in record.personList"
+                                  color="blue"
+                                  :key="person.id"
+                                  closable
+                                  @close="($event) => closeTag(person, index,$event)"
+                          >{{ person.name }}</a-tag>
+                          <a-button v-if="nowOptType!=='look'" type="primary" size="small" @click="openPeopleDialog(index)">人员选择</a-button>
+                        </span>
                     <span slot="action" slot-scope="text, record, index">
                   <a-popconfirm
-                          v-if="groupPerson.length > 1"
+                          v-if="team.teamPersonData.length > 1"
                           theme="filled"
                           title="确定删除这个组吗？"
-                          @confirm="() => deleteGroup(index)"
+                          @confirm="() => deleteGroup(teamIndex,index)"
                   >
                     <a-icon type="minus-circle" class="icon_delete" />
                   </a-popconfirm>
                   <a-icon
-                          v-if="index === groupPerson.length - 1"
+                          v-if="index === team.teamPersonData.length - 1"
                           theme="filled"
                           type="plus-circle"
                           class="icon_add"
-                          @click="addGroup(record, index)"
+                          @click="addGroup(record, index,teamIndex)"
                   />
                 </span>
                 </a-table>
@@ -148,39 +170,44 @@
 
 <script type="text/ecmascript-6">
   import ChooseTeamDialog from './ChooseTeamDialog'
-    import ChoosePeopleDialog from './ChoosePeopleDialog'
-    const groupColumns = [{
+  import ChoosePeopleDialog from './ChoosePeopleDialog'
+  const groupColumns = [
+    {
       title: '道路',
       dataIndex: 'loadName',
       key: 'loadName',
       scopedSlots: { customRender: 'loadName' },
       width: '280px'
-      }, {
+    },
+    {
       title: '具体路段',
       dataIndex: 'position',
       key: 'position',
       scopedSlots: { customRender: 'position' },
       width: '280px'
-      }, {
+    },
+    {
       title: '负责人',
       dataIndex: 'leaderId',
       key: 'leaderId',
       scopedSlots: { customRender: 'leaderId' },
       width: '180px'
-      }, {
+    },
+    {
       title: '执勤人',
       dataIndex: 'personList',
       key: 'personList',
       scopedSlots: { customRender: 'personList' }
-      }, {
+    },
+    {
       title: '操作',
       key: 'action',
       dataIndex: 'action',
       scopedSlots: { customRender: 'action' },
       width: '100px'
-      }];
+    }];
    export default {
-     name: 'groupPeople',
+     name: 'teamPeople',
      components:{
        ChooseTeamDialog,
        ChoosePeopleDialog
@@ -200,15 +227,10 @@
          type: Object,
          default(){
            return{
-             groupName: 'jidongxuncha',
+             groupName: 'dundianquandao',
              leaderPosition: 1,
              personPosition: 1,
-             groupPerson:[{
-                 key: 'jhhjsddsdds',
-                 leaderId: '',
-                 personList: [],
-                 personKeyList: []
-             }]
+             teamPersonList:[]
            }
          }
        }
@@ -216,7 +238,7 @@
      data(){
        return {
          columns: groupColumns,
-         groupPerson: [],
+         teamPersonList: [],
          teamList: [],
 
          chooseTeamDialogVisible: false,
@@ -243,10 +265,16 @@
            type = 'edit';
          }
          return type
+       },
+       leaderPositionName:function(){
+         return this.groupData.leaderPosition===1 ? '单兵设备' : '手机'
+       },
+       personPositionName:function(){
+        return this.groupData.personPosition===1 ? '单兵设备' : '手机'
        }
      },
      mounted() {
-       this.groupPerson = JSON.parse(JSON.stringify(this.groupData.groupPerson));
+       this.teamPersonList = JSON.parse(JSON.stringify(this.groupData.teamPersonList));
      },
      methods:{
        openTeamDialog(){
@@ -267,24 +295,35 @@
          let i = this.groupTeam[index].teamList.indexOf(person);
          this.teamList.splice(i,1);
        },
-
+       changeInputText(teamIndex, val,key,colName){
+         //console.log('changeGroupName',val,key,colName);
+         let arr = this.teamPersonList[teamIndex].teamPersonData;
+         const newData = [...arr];
+         const target = newData.filter(item => key === item.key)[0];
+         if (target) {
+           target[colName] = val;
+           this.teamPersonList[teamIndex].teamPersonData = newData;
+         }
+       },
        filterOption(input, option) {
          return (
            option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
          );
        },
-       addGroup(item, index){
-         console.log('addGroup',item, index)
+       addGroup(item, index,teamIndex){
+         console.log('addGroup',item, index, teamIndex)
          let additem = {
            key: index.toString(),
+           loadName: '',
+           position: '',
            leaderId: '',
            personList: [],
            personKeyList: []
          }
-         this.groupPerson.push(additem);
+         this.teamPersonList[teamIndex].teamPersonData.push(additem);
        },
-       deleteGroup(index){
-         this.groupPerson.splice(index,1);
+       deleteGroup(index,teamIndex){
+         this.teamPersonList[teamIndex].teamPersonData.splice(index,1);
        },
 
        openPeopleDialog(index){

@@ -1,7 +1,10 @@
 import { getCountForHandle,
   getEventList,
+  setEventToTemplate,
+  deleteEventByIds,
   getTemplateEventDataList,
-  getLogDataByEventId} from '@/api/event/index.js'
+  getLogDataByEventId,
+  getMessageByEventId} from '@/api/event/index.js'
 
 export default {
     namespaced: true,
@@ -45,19 +48,19 @@ export default {
       //       })
       //   })
       // },
-      // getEmergencyYuAnById(state,data){
-      //   console.log('store',data);
-      //   return new Promise((resolve, reject) => {
-      //     getEmergencyYuAnById(data)
-      //       .then(res => {
-      //         resolve(res)
-      //       })
-      //       .catch(err => {
-      //         console.log(err)
-      //         reject(err)
-      //       })
-      //   })
-      // },
+      getMessageByEventId(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          getMessageByEventId(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
       // setEmergencyYuAnToPass(state,data){
       //   console.log('store',data);
       //   return new Promise((resolve, reject) => {
@@ -84,32 +87,32 @@ export default {
       //       })
       //   })
       // },
-      // deleteEmergencyYuAn(state,data){
-      //   console.log('store',data);
-      //   return new Promise((resolve, reject) => {
-      //     deleteEmergencyYuAn(data)
-      //       .then(res => {
-      //         resolve(res)
-      //       })
-      //       .catch(err => {
-      //         console.log(err)
-      //         reject(err)
-      //       })
-      //   })
-      // },
-      // setEmergencyYuAnToTemplate(state,data){
-      //   console.log('store',data);
-      //   return new Promise((resolve, reject) => {
-      //     setEmergencyYuAnToTemplate(data)
-      //       .then(res => {
-      //         resolve(res)
-      //       })
-      //       .catch(err => {
-      //         console.log(err)
-      //         reject(err)
-      //       })
-      //   })
-      // },
+      deleteEventByIds(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          deleteEventByIds(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
+      setEventToTemplate(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          setEventToTemplate(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
       // setEmergencyYuAnToFinishReview(state,data){
       //   console.log('store',data);
       //   return new Promise((resolve, reject) => {

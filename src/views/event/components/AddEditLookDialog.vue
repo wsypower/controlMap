@@ -12,18 +12,24 @@
            @cancel="handleCancel">
     <div class="event_dialog_body">
       <my-scroll>
-        <log v-if="optType!=='add'||(optType==='add'&&userType==='zybm')"></log>
-        <div v-if="optType!=='add'||(optType==='add'&&userType==='zybm')" class="subtitle-panel" flex="dir:left cross:center main:justify">
+        <log v-if="optType!=='add'" :eventId="eventId"></log>
+        <div v-if="optType!=='add'" class="subtitle-panel" flex="dir:left cross:center main:justify">
           <span>处置事件</span>
           <a-button type="primary" size="small">事件简报下载</a-button>
         </div>
-        <div v-if="optType==='add'&&userType==='cjy'" class="template-panel">
+        <div v-if="optType==='add'" class="template-panel">
           <label>
             <a-icon type="snippets" theme="twoTone" style="marginRight:5px" />选择模板创建：
           </label>
           <a-select v-model="templateId" placeholder="请选择模板" style="width: 180px;" @change="handleUserTemplate">
             <a-select-option v-for="(item, index) in templateList" :value="item.id" :key="index">{{item.name }}</a-select-option>
           </a-select>
+        </div>
+        <div v-else class="template-panel">
+          <label>
+            <a-icon type="snippets" theme="twoTone" style="marginRight:5px" />选择模板创建：
+          </label>
+          <span>{{baseInfo.templateName===''?'未使用模版':baseInfo.templateName}}</span>
         </div>
         <div class="event_dialog_body_content">
           <div v-show="dataLoading" class="loading" flex="main:center cross:center">
@@ -36,7 +42,7 @@
                   <a-icon type="reconciliation" theme="twoTone" />基本信息
                 </div>
               </template>
-              <base-info ref="baseinfo" :optType="optType" :baseData="baseInfo" :getBaseInfoData="getBaseInfoData"></base-info>
+              <base-info :optType="optType" :baseData="baseInfo" @getResult="getBaseInfoResultData"></base-info>
             </a-collapse-panel>
             <a-collapse-panel key="2">
               <template slot="header">
@@ -44,11 +50,11 @@
                   <a-icon type="save" theme="twoTone" />人员安排
                 </div>
               </template>
-              <group-team ref="zongzhihui" :peopleList="peopleList" :groupData="zongZhiHuiData" :getGroupTeamData="getGroupTeamData"></group-team>
-              <group-team ref="fuzhihui" :peopleList="peopleList" :groupData="fuZhiHuiData" :getGroupTeamData="getGroupTeamData"></group-team>
-              <team-people :peopleList="peopleList"></team-people>
-              <group-people ref="jidongxuncha" :peopleList="peopleList" :groupData="jiDongXunChaData"></group-people>
-              <group-people ref="houqinbaozhang" :peopleList="peopleList" :groupData="houQinBaoZhangData"></group-people>
+              <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData"></group-team>
+              <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData"></group-team>
+              <team-people :peopleList="peopleList" :groupData="dunDianQuanDaoData"></team-people>
+              <group-people :peopleList="peopleList" :groupData="jiDongXunChaData"></group-people>
+              <group-people :peopleList="peopleList" :groupData="houQinBaoZhangData"></group-people>
             </a-collapse-panel>
             <a-collapse-panel key="3">
               <template slot="header">
@@ -64,8 +70,9 @@
     </div>
     <template slot="footer">
       <a-button type="primary" :loading="saveLoading" @click="">预览</a-button>
-      <!-- 信息指挥中心视角 保存草稿只有在新建的时候才有 -->
+      <!-- 信息指挥中心视角 保存只有在新建的时候才有 -->
       <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
+      <a-button v-if="userType==='cjy'&&optType==='edit'" type="primary" :loading="saveLoading" @click="saveDraft">保存</a-button>
       <!-- 发起流程只有在新建的时候才有 -->
       <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="loading" @click="">发起流程</a-button>
       <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
@@ -120,6 +127,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         type: String,
         default: ''
       },
+      //add/edit/look
       optType:{
         type: String,
         default: 'add'
@@ -131,13 +139,17 @@ import {postEmergencyFeatures} from '@/api/map/service'
         templateList: [],
         templateId: '',
         dataLoading: false,
-        optType: 'add',
         activeKey: '1',
         peopleList: [],
         baseInfo:{
+          id: '',
           name: '',
           typeId: '',
           typeName: '',
+          templateId: '',
+          templateName: '',
+          processId: '',
+          processName: '',
           startDayTime: '',
           endDayTime: '',
           description: '',
@@ -165,6 +177,12 @@ import {postEmergencyFeatures} from '@/api/map/service'
             teamList: [],
             teamKeyList: []
           }]
+        },
+        dunDianQuanDaoData:{
+          groupName: 'dundianquandao',
+          leaderPosition: 1,
+          personPosition: 1,
+          teamPersonList: []
         },
         jiDongXunChaData:{
           groupName: 'jidongxuncha',
@@ -197,14 +215,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
         loading: false,
         lastLoading: false,
 
-        choosePeopleDialogVisible: false,
-        checkedPeopleKey: [],
-        disablePeopleKey: [],
-
         mapDialogVisible: false,
         sourcePeopleList: [],
         drawFeatures: [],
-        chooseReViewPersonDialogVisible: false,
       }
     },
     computed:{
@@ -230,7 +243,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       }
     },
     methods:{
-      ...mapActions('event/event', ['getTemplateEventDataList']),
+      ...mapActions('event/event', ['getTemplateEventDataList','getMessageByEventId']),
       ...mapActions('event/common', ['getPeopleDataList']),
       init(){
         this.getTemplateEventDataList().then((res)=>{
@@ -238,117 +251,49 @@ import {postEmergencyFeatures} from '@/api/map/service'
         });
         this.getPeopleDataList().then(res => {
           this.peopleList = res.data;
-        })
-        this.baseInfo = {
-          name: '文明创城行动02',
-          typeId: '001',
-          typeName: '日常事件',
-          startDayTime: 1597109712000,
-          endDayTime: 1597363218000,
-          description: 'msjkdlsahkjdfksd',
-          jobGoal: 'jegjwegjhqwe',
-          jobAssignment: 'jgsjhdgjhsagdf',
-          jobContent: 'lkkuutwuyetqu3687236g',
-          jobRequirements: 'bnvjhduwqteuw'
+        });
+        if(this.optType!=='add'){
+          this.templateId = this.baseInfo.templateId;
+          this.getEventInfoById(this.eventId);
         }
       },
       handleUserTemplate(val){
         console.log('handleUserTemplate',val);
-        this.geteventInfoById(val);
+        let _this = this;
+        this.$confirm({
+          title: '确定要改变模版吗?',
+          content: '模版改变后，之前的数据将会清除，不可还原',
+          onOk() {
+            _this.getEventInfoById(val);
+          },
+          onCancel() {},
+        });
+
       },
-      geteventInfoById(id){
+      //选择模版
+      getEventInfoById(id){
         this.dataLoading = true;
-        this.groupData = [];
-        this.baoZhangData = [];
-        this.getEmergencyeventById({id:id}).then((result)=>{
-          console.log('getEmergencyeventById',result);
-          this.groupData = result.groupData.reduce((res,item)=>{
-            let temp={
-              key: item.id,
-              groupName: item.groupName,
-              checkedPeopleList: item.personList,
-              peopleKeyList: []
-            }
-            temp.peopleKeyList = item.personList.reduce((r,i)=>{
-              r.push(i.id)
-              this.disablePeopleKey.push(i.id);
-              return r
-            },[])
-            res.push(temp)
-            return res
-          },[])
-          this.sourcePeopleList = this.getSourcePeolpleList();
-          this.baoZhangData = result.baoZhangData.reduce((res,item)=>{
-            let temp = {
-              id: item.id,
-              mapId: item.mapId,
-              name: item.name,
-              mapType: item.mapType,
-              personList: [],
-              remark: item.remark
-            }
-            temp.personList = item.peopleList.reduce((r,i)=>{
-              r.push(i.id)
-              return r
-            },[]);
-            res.push(temp)
-            return res
-          },[]);
-          delete result.groupData
-          delete result.baoZhangData
-          this.submitForm = Object.assign(this.$options.data()['submitForm'],result)
-          console.log('edit init:submitForm groupData baoZhangData',this.submitForm,this.groupData,this.baoZhangData);
-          // let startTime = util.formatDate(this.submitForm.startDayTime);
-
-
-          let startTime  = moment(this.submitForm.startDayTime).format('YYYY-MM-DD HH:mm:ss');
-          let endTime  = moment(this.submitForm.endDayTime).format('YYYY-MM-DD HH:mm:ss');
-          console.log('startTime endTime',startTime,endTime);
-          this.form.setFieldsValue({
-            typeId: this.submitForm.typeId,
-            name: this.submitForm.name,
-            dayRange: [moment(startTime,'YYYY-MM-DD HH:mm:ss'),moment(endTime,'YYYY-MM-DD HH:mm:ss')]
-          });
+        this.getMessageByEventId().then(res => {
+          this.baseInfo = res.data.baseInfo;
+          this.zongZhiHuiData = res.data.groupData.zongZhiHuiData;
+          this.fuZhiHuiData = res.data.groupData.fuZhiHuiData;
+          this.dunDianQuanDaoData = res.data.groupData.dunDianQuanDaoData;
+          this.jiDongXunChaData = res.data.groupData.jiDongXunChaData;
+          this.houQinBaoZhangData = res.data.groupData.houQinBaoZhangData;
           this.dataLoading = false;
         });
       },
+
+
       reset(){
         this.drawFeatures=null;
         this.activeKey = '1';
-        this.form.setFieldsValue({
-          typeId: '',
-          name: '',
-          dayRange: undefined
-        });
-        this.submitForm = Object.assign({},this.$options.data()['submitForm']);
-        this.disablePeopleKey = [];
-        this.groupData = [{
-          key: 'jhhjsddsdds',
-          groupName: '',
-          checkedPeopleList: [],
-          peopleKeyList: []
-        }];
-        this.baoZhangData = [];
-      },
-      getBaseInfoData(data){
-        console.log('getBaseInfoData', data);
-        Object.keys(this.baseInfo).forEach(key => {
-          this.baseInfo[key] = data[key];
-        });
-      },
-      getGroupTeamData(data){
-        if(data.groupName===''){
-
-        }
-      },
-      choosePeople(data){
-        console.log('choosePeople',data);
-        data.forEach((item)=>{
-          this.disablePeopleKey.push(item.id);
-          this.groupData[this.rowIndex].checkedPeopleList.push(item);
-          this.groupData[this.rowIndex].peopleKeyList.push(item.id);
-        })
-        console.log('choosePeople groupData',this.groupData);
+        this.baseInfo = Object.assign({},this.$options.data()['baseInfo']);
+        this.zongZhiHuiData = Object.assign({},this.$options.data()['zongZhiHuiData']);
+        this.fuZhiHuiData = Object.assign({},this.$options.data()['fuZhiHuiData']);
+        this.dunDianQuanDaoData = Object.assign({},this.$options.data()['dunDianQuanDaoData']);
+        this.jiDongXunChaData = Object.assign({},this.$options.data()['jiDongXunChaData']);
+        this.houQinBaoZhangData = Object.assign({},this.$options.data()['houQinBaoZhangData']);
       },
 
       //开启保障视图弹窗
@@ -393,6 +338,12 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.baoZhangData = data.allBaoZhangData;
       },
 
+      //获取事件基本信息
+      getBaseInfoResultData(data){
+        Object.keys(this.baseInfo).forEach(key => {
+          this.baseInfo[key] = data[key];
+        });
+      },
       saveData(type){
         if(type=='save'){
           this.saveLoading = false;

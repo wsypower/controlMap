@@ -11,11 +11,11 @@
                 <span v-else>{{leaderPositionName}}</span>
             </div>
         </div>
-        <a-table :columns="columns" :dataSource="groupTeam" :pagination="false" bordered>
+        <a-table v-if="nowOptType" :columns="columns" :dataSource="groupTeam" :pagination="false" bordered>
             <template slot="leaderId" slot-scope="text, record, index">
                 <div key="leaderId">
                      <a-select
-                         v-if="nowOptType"
+                             v-model="record.leaderId"
                          show-search
                         placeholder="请选择"
                         option-filter-prop="children"
@@ -26,35 +26,27 @@
                             {{people.name}}
                         </a-select-option>
                     </a-select>
-                    <span v-else>{{groupTeam.leaderName}}</span>
                 </div>
             </template>
             <span slot="team" slot-scope="text, record, index">
-                <div v-if="nowOptType">
-                    <a-tag
-                            v-for="person in record.teamList"
-                            color="blue"
-                            :key="person.id"
-                            closable
-                            @close="($event) => closeTag(person, index,$event)"
-                    >{{ person.name }}</a-tag>
-                  <a-button type="primary" size="small" @click="openTeamDialog(index)">中队选择</a-button>
-                </div>
                 <a-tag
-                    v-for="person in record.teamList"
-                    color="blue"
-                    :key="person.id"
+                        v-for="person in record.teamList"
+                        color="blue"
+                        :key="person.id"
+                        closable
+                        @close="($event) => closeTag(person, index,$event)"
                 >{{ person.name }}</a-tag>
-                </span>
-            <span v-if="nowOptType&&groupData.groupName!=='zongzhihui'" slot="action" slot-scope="text, record, index">
-                  <a-popconfirm
-                          v-if="groupTeam.length > 1"
-                          theme="filled"
-                          title="确定删除这个组吗？"
-                          @confirm="() => deleteGroup(index)"
-                  >
-                    <a-icon type="minus-circle" class="icon_delete" />
-                  </a-popconfirm>
+                <a-button type="primary" size="small" @click="openTeamDialog(index)">中队选择</a-button>
+            </span>
+            <span v-if="groupData.groupName!=='zongzhihui'" slot="action" slot-scope="text, record, index">
+              <a-popconfirm
+                      v-if="groupTeam.length > 1"
+                      theme="filled"
+                      title="确定删除这个组吗？"
+                      @confirm="() => deleteGroup(index)"
+              >
+                <a-icon type="minus-circle" class="icon_delete" />
+              </a-popconfirm>
                   <a-icon
                           v-if="index === groupTeam.length - 1"
                           theme="filled"
@@ -62,7 +54,22 @@
                           class="icon_add"
                           @click="addGroup(record, index)"
                   />
-                </span>
+            </span>
+        </a-table>
+        <a-table v-else :columns="columns" :dataSource="groupTeam" :pagination="false" bordered>
+            <template slot="leaderId" slot-scope="text, record, index">
+                <div key="leaderId">
+                    <span>{{record.leaderName}}</span>
+                </div>
+            </template>
+            <span slot="team" slot-scope="text, record, index">
+                <a-tag v-for="person in record.teamList"
+                       color="blue"
+                       :key="person.id"
+                >{{ person.name }}</a-tag>
+            </span>
+            <span slot="action" slot-scope="text, record, index">
+            </span>
         </a-table>
         <choose-team-dialog
                 :visible.sync="chooseTeamDialogVisible"
@@ -117,8 +124,7 @@
              groupTeam:[{
                  key: 'jhhjsddsdds',
                  leaderId: '',
-                 teamList: [],
-                 teamKeyList: []
+                 teamList: []
              }]
            }
          }
@@ -150,10 +156,11 @@
        this.groupTeam = JSON.parse(JSON.stringify(this.groupData.groupTeam));
        if(this.optType==='look'){
          this.groupTeam.map(item => {
-           let personTemp = this.peopleList.find(person => person.id === item.id);
+           let personTemp = this.peopleList.find(person => person.id === item.leaderId);
            item.leaderName = personTemp.name;
          });
        }
+       console.log('222222',this.groupTeam);
      },
      methods:{
        filterOption(input, option) {
@@ -165,9 +172,8 @@
          console.log('addGroup',item, index)
          let additem = {
            key: index.toString(),
-           leader: '',
-           teamList: [],
-           teamKeyList: []
+           leaderId: '',
+           teamList: []
          }
          this.groupTeam.push(additem);
        },
@@ -192,9 +198,6 @@
          console.log(person,index);
          let i = this.groupTeam[index].teamList.indexOf(person);
          this.groupTeam[index].teamList.splice(i,1);
-       },
-       getGroupTeamData(){
-         this.$emit('getGroupTeamData',this.groupTeam);
        }
      }
    }

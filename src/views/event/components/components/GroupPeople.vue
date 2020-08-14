@@ -4,20 +4,36 @@
         <div class="group-people-panel-method" flex="dir:left cross:center">
             <div class="" flex="dir:left cross:center">
                 <label>负责人定位方式：</label>
-                <a-radio-group name="radioGroup" v-model="groupData.leaderPosition">
+                <span v-if="nowOptType==='look'">{{leaderPositionName}}</span>
+                <a-radio-group v-else name="radioGroup" v-model="groupData.leaderPosition">
                     <a-radio :value="1">单兵设备</a-radio>
                     <a-radio :value="2">手机</a-radio>
                 </a-radio-group>
             </div>
             <div class="" flex="dir:left cross:center">
                 <label>执勤人定位方式：</label>
-                <a-radio-group name="radioGroup" v-model="groupData.leaderPosition">
+                <span v-if="nowOptType==='look'">{{leaderPositionName}}</span>
+                <a-radio-group v-else name="radioGroup" v-model="groupData.leaderPosition">
                     <a-radio :value="1">单兵设备</a-radio>
                     <a-radio :value="2">手机</a-radio>
                 </a-radio-group>
             </div>
         </div>
-        <a-table :columns="columns" :dataSource="groupPerson" :pagination="false" bordered>
+        <a-table v-if="nowOptType==='look'" :columns="columns" :dataSource="groupPerson" :pagination="false" bordered>
+            <template slot="leaderId" slot-scope="text, record, index">
+                <div key="leaderId">{{record.leaderId}}</div>
+            </template>
+            <span slot="team" slot-scope="text, record, index">
+                <a-tag
+                        v-for="person in record.personList"
+                        color="blue"
+                        :key="person.id"
+                >{{ person.name }}</a-tag>
+            </span>
+            <span slot="action" slot-scope="text, record, index">
+            </span>
+        </a-table>
+        <a-table v-else :columns="columns" :dataSource="groupPerson" :pagination="false" bordered>
             <template slot="leaderId" slot-scope="text, record, index">
                 <div key="leaderId">
                      <a-select
@@ -95,6 +111,10 @@
        ChoosePeopleDialog
      },
      props:{
+       optType:{
+         type: String,
+         default: ''
+       },
        peopleList:{
          type: Array,
          default(){
@@ -133,6 +153,23 @@
        title: function(){
          return this.groupData.groupName==='jidongxuncha'?'机动巡查应急组':'后勤保障组'
        },
+       userType: function(){
+         return this.$store.getters['cgadmin/user/type'];
+       },
+       nowOptType: function(){
+         if(this.userType!=='cjy'){
+           return 'look'
+         }
+         else {
+           return this.optType
+         }
+       },
+       leaderPositionName:function(){
+         return this.groupData.leaderPosition===1 ? '单兵设备' : '手机'
+       },
+       personPositionName:function(){
+         return this.groupData.personPosition===1 ? '单兵设备' : '手机'
+       }
      },
      mounted() {
        this.groupPerson = JSON.parse(JSON.stringify(this.groupData.groupPerson));

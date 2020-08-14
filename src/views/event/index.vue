@@ -20,7 +20,7 @@
               <span class="text">待处理</span>
             </a-badge>
           </a-button>
-          <a-button class="addfiles" icon="plus-circle" @click="addNewEvent" flex="cross:center">新增事件</a-button>
+          <a-button v-if="userType==='cjy'" class="addfiles" icon="plus-circle" @click="addNewEvent" flex="cross:center">新增事件</a-button>
         </div>
       </div>
       <div class="loading event_list_content" v-if="dataLoading" flex="main:center cross:center">
@@ -28,7 +28,7 @@
       </div>
       <div class="event_list_content" v-if="!dataLoading&&eventDataList.length>0" flex="dir:top">
           <div class="event_list_content-operate" flex="dir:left cross:center main:right">
-              <a-button class="btn_opt btn_delete"><a-icon type="delete" @click="deleteEvents"/>批量删除</a-button>
+              <a-button v-if="userType!=='zybm'" class="btn_opt btn_delete"><a-icon type="delete" @click="deleteEvents"/>批量删除</a-button>
               <a-button class="btn_opt btn_export"><a-icon type="export" @click="exportEvents('part')"/>批量导出</a-button>
               <a-button class="btn_opt btn_export"><a-icon type="export" @click="exportEvents('all')"/>全部导出</a-button>
           </div>
@@ -60,12 +60,15 @@
                           <span>{{item.processName}}</span>
                           <span>{{item.statusName}}</span>
                           <span>
-                              <i class="btn_mini btn_look">查看</i>
-                              <i class="btn_mini btn_handle">处置</i>
+                              <i class="btn_mini btn_look" @click="lookEvent(item.id)">查看</i>
+                              <i class="btn_mini btn_handle" @click="editEvent(item.id)">处置</i>
                           </span>
-                          <span>
-                              <a-icon v-if="!item.isTemplate" type="star" @click="setTemplate(item)"/>
-                              <a-icon v-else type="star" theme="filled" style="color: #ffb94c;" @click="setTemplate(item)"/>
+                          <span v-if="userType!=='zybm'">
+                              <a-icon v-if="item.processId==='008'&&!item.isTemplate" type="star" @click="setTemplate(item)"/>
+                              <a-icon v-if="item.processId==='008'&&item.isTemplate" type="star" theme="filled" style="color: #ffb94c;" @click="setTemplate(item)"/>
+                          </span>
+                          <span v-else>
+                              <a-icon v-if="item.isTemplate" type="star" theme="filled" style="color: #ffb94c;"/>
                           </span>
                       </li>
                       <li v-if="needFixedRowNum>0" v-for="i in needFixedRowNum" :key="i"></li>
@@ -86,23 +89,23 @@
                       v-model="query.pageNo"/>
       </div>
     </div>
-    <add-edit-look-dialog :visible.sync="addEventDialogVisible" :dialogTitle="dialogTitle" :eventId="eventId" @refreshList=""></add-edit-look-dialog>
-<!--    <yu-an-info-and-review-dialog :visible.sync="yuAnInfoDialogVisible" :yuAnId="yuAnId" @refreshList="()=>{getTuAnDataList();getToCheckCount();}"></yu-an-info-and-review-dialog>-->
+    <add-edit-look-dialog :visible.sync="addEventDialogVisible"
+                          :dialogTitle="dialogTitle"
+                          :eventId="eventId"
+                          :optType="optType"
+                          @refreshList=""></add-edit-look-dialog>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import dayjs from 'dayjs'
   import util from '@/utils/util'
   import AddEditLookDialog from './components/AddEditLookDialog'
-  import YuAnInfoAndReviewDialog from './components/YuAnInfoAndReviewDialog'
   import { mapActions } from 'vuex'
 
   export default {
     name: 'index',
     components:{
-      AddEditLookDialog,
-      YuAnInfoAndReviewDialog
+      AddEditLookDialog
     },
     data() {
       return {
@@ -127,7 +130,6 @@
         addEventDialogVisible: false,
         dialogTitle: '新增事件',
         eventId: '',
-        yuAnInfoDialogVisible: false,
       }
     },
     computed:{
@@ -158,15 +160,15 @@
     },
     methods: {
       ...mapActions('event/common', ['getStatusDataList']),
-      ...mapActions('event/event', ['getToHandleCountData','getEventList']),
-      /***************************事件查询区 start****************************/
+      ...mapActions('event/event', ['getToHandleCountData','getEventList','setEventToTemplate','deleteEventByIds']),
+      //重置搜素条件
       resetQuery(){
         let pageSize = this.query.pageSize;
         this.query = Object.assign({}, this.$options.data().query);
         this.query.pageSize = pageSize;
         console.log('resetQuery',this.query);
       },
-
+      //获取事件数据
       getEventDataList(){
         this.dataLoading = true;
         console.log('this.query',this.query);
@@ -184,6 +186,7 @@
         })
 
       },
+      //获取待处理的事件总数
       getToHandleCount(){
         let params = {
           userId: this.userId,
@@ -224,26 +227,29 @@
         }
         this.getEventDataList();
       },
-      handleSelectChange(val){
-        let param = 'status_' + val;
-        this.searchEventData(param);
-      },
+      // handleSelectChange(val){
+      //   let param = 'status_' + val;
+      //   this.searchEventData(param);
+      // },
+      //查询内容触发
       searchDataByContent(val,e){
         let param = 'search_' + val;
         this.searchEventData(param);
       },
+      //换页触发
       onPageNoChange(pageNO,pageSize){
         console.log('onPageNoChange',pageNO,pageSize);
         this.query.pageNo = pageNO;
         this.getEventDataList();
       },
-
+      //全选按钮触发
       checkAll(){
         this.checkedAll = !this.checkedAll;
         this.eventDataList.map(item => {
           item.checked = this.checkedAll;
         });
       },
+      //点击某一行的复选框触发--实现与表头全选的联动
       checkHandle(item){
         console.log('checkHandle',item);
         item.checked = !item.checked;
@@ -274,8 +280,32 @@
           return acc
         },[]);
         console.log('需要删除的事件有：' , checkedIds);
+        let _this = this;
         if(checkedIds.length === 0){
           this.$message.warning('请选择需要删除的事件');
+        }
+        else{
+            this.$confirm({
+              title: '確定删除这些事件吗?',
+              content: '删除后不可恢复',
+              okText: '确定',
+              okType: 'danger',
+              cancelText: '取消',
+              onOk() {
+                _this.deleteEventByIds({ids:checkedIds}).then(res =>{
+                  if(res.code === 0){
+                    _this.$message.success('删除成功');
+                    _this.getEventDataList();
+                  }
+                  else{
+                    _this.$message.error(res.errmsg);
+                  }
+                });
+              },
+              onCancel() {
+
+              },
+            });
         }
       },
       //导出事件
@@ -291,79 +321,49 @@
           if(checkedIds.length === 0){
             this.$message.warning('请选择需要导出的事件');
           }
+          else{
+            //window.open(URL_CONFIG.baseURL + '/emergencyplan/exportEventByIds?id=' + id);
+          }
         }
         else{
           console.log('导出全部事件');
+          //window.open(URL_CONFIG.baseURL + '/emergencyplan/exportEventByIds?id=' + id);
         }
       },
       //设置某个事件是否为模版
       setTemplate(item){
         item.isTemplate = !item.isTemplate;
+        this.setEventToTemplate({id:item.id, isTemplate:item.isTemplate}).then(res => {
+          if(res.code === 0){
+            this.$message.success('设置成功');
+          }
+          else{
+            this.$message.error(res.errmsg);
+          }
+        })
       },
-      /***************************事件查询区 end****************************/
+      //新增事件
       addNewEvent(){
         console.log('addNewEvent click');
         this.eventId = '';
+        this.optType = 'add';
         this.dialogTitle = '新增事件';
         this.addEventDialogVisible = true;
       },
-
-      /***************************对已有预案的操作 start****************************/
-      editYuAn(id){
-        this.yuAnId = id;
-        this.dialogTitle = '编辑预案';
-        this.addYuAnDialogVisible = true;
+      //处置事件
+      editEvent(id){
+        this.eventId = id;
+        this.optType = 'edit';
+        this.dialogTitle = '事件处置流程';
+        this.addEventDialogVisible = true;
       },
-
-      setYuAn(item){
-        this.setEmergencyYuAnToTemplate({id:item.id}).then((res)=>{
-          if(item.isTemplate==='0'){
-            item.isTemplate = '1';
-          }
-          else{
-            item.isTemplate = '0';
-          }
-
-        });
-      },
-
-      // deleteYuAn(id,index){
-      //   let _this = this;
-      //   this.$confirm({
-      //     title: '確定删除这个预案吗?',
-      //     content: '删除后不可恢复',
-      //     okText: '确定',
-      //     okType: 'danger',
-      //     cancelText: '取消',
-      //     onOk() {
-      //       _this.deleteEmergencyYuAn({id: id}).then((res)=>{
-      //         _this.getTuAnDataList();
-      //       });
-      //
-      //     },
-      //     onCancel() {
-      //
-      //     },
-      //   });
-      // },
-      // toMonitorPage(item){
-      //   this.$router.push(
-      //     {
-      //       path:'/emergency',
-      //       query:{
-      //         yuAnId: item.id
-      //       }
-      //     }
-      //   )
-      // },
-      /*******************查看详情+审核 start*************************/
-      openInfoDialog(item){
-        console.log('openInfoDialog',item);
-        this.yuAnId = item.id;
-        this.yuAnInfoDialogVisible = true;
-      },
-      /********************查看详情+审核 end************************/
-
+      //查看事件
+      lookEvent(id){
+        this.eventId = id;
+        this.optType = 'look';
+        this.dialogTitle = '事件处置流程';
+        this.addEventDialogVisible = true;
+      }
     },
   }
 </script>
@@ -558,6 +558,7 @@
                         text-align: center;
                         padding: 0px 6px;
                         font-style: normal;
+                        cursor: pointer;
                         &.btn_look{
                             background-color: #1eae80;
                         }
@@ -583,13 +584,11 @@
     ::v-deep.ant-badge-count {
       top: -15px;
     }
-  }
-</style>
-<style lang="scss">
-  .ant-modal-footer {
-    text-align: center;
-  }
-  .ant-tag {
-    margin-bottom: 5px;
+    ::v-deep.ant-modal-footer {
+      text-align: center;
+    }
+    ::v-deep.ant-tag {
+      margin-bottom: 5px;
+    }
   }
 </style>
