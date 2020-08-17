@@ -6,9 +6,11 @@
              :bodyStyle="{padding:'0px 5px',borderRadius:'7px',overFlow: 'hidden'}"
              wrapClassName="peoplewrap">
         <div style="height: 400px;position:relative;" class="yuan_dialog_body">
+            <div v-show="dataLoading" class="loading" flex="main:center cross:center">
+                <a-spin tip="数据加载中..."></a-spin>
+            </div>
             <cg-container scroll>
                 <a-tree checkable showIcon v-model="checkedKeys"
-                        @check="onCheck"
                         :treeData="treeData">
                     <img slot="dept" src="~@img/avatar_dept.png"/>
                     <img slot="male" src="~@img/avatar_boy.png"/>
@@ -31,7 +33,7 @@
           type:Boolean,
           default: false
         },
-        disablePeopleKey:{
+        defaultCheckedPeopleIds:{
           type: Array,
           default(){
             return []
@@ -42,17 +44,18 @@
         return {
           choosePeopleDialogVisible: false,
           treeData: [],
+          dataLoading: false,
           peopleList: {},
           checkedKeys: [],
         }
       },
       computed:{
         checkedPeopleKeys: function(){
-          let arr = this.checkedKeys.reduce((res,item)=>{
+          let arr = this.checkedKeys.reduce((acc,item)=>{
             if(this.peopleList[item]){
-              res.push(item);
+              acc.push(item);
             }
-            return res;
+            return acc;
           },[]);
           return arr
         },
@@ -85,26 +88,26 @@
       },
       mounted(){},
       methods:{
-        ...mapActions('emergency/common', ['getAllPeopleDataList']),
+        ...mapActions('event/common', ['getPeopleTreeData']),
         init(){
-          this.getAllPeopleDataList().then((res)=>{
-            this.setDisabledKeyToTree(res,this.disablePeopleKey);
-            this.getPeopleList(res,this.peopleList);
+          this.dataLoading = true;
+          this.getPeopleTreeData().then((res)=>{
+            this.treeData = res.data;
+            this.getPeopleList(res.data,this.peopleList);
             console.log('this.peopleList',this.peopleList);
-            this.treeData = res;
+            this.checkedKeys = [...this.defaultCheckedPeopleIds];
+            this.dataLoading = false;
           });
         },
-        setDisabledKeyToTree(treeData,disabledKey){
-          disabledKey.map(key => {
-            for (let item of treeData) {
-                if(item.key===key){
-                    item.disabled = true;
-                }
-                if (item.children) {
-                    this.setDisabledKeyToTree(item.children,disabledKey)
-                }
-            }
-          })
+        choosePeople(){
+          console.log('4444',this.checkedKeys);
+          this.$emit('choosePeople',this.checkedPeopleKeys);
+          this.checkedKeys = [];
+          this.choosePeopleDialogVisible = false;
+        },
+        handleCancelForPeople(){
+          this.checkedKeys = [];
+          this.choosePeopleDialogVisible = false;
         },
         getPeopleList(treeData,obj){
           for (let item of treeData) {
@@ -116,23 +119,7 @@
               obj[item.key] = item.title
             }
           }
-        },
-        choosePeople(){
-          // let data = {
-          //   'key': this.checkedPeopleKeys,
-          //   'name': this.checkedPeopleName
-          // }
-          this.$emit('choosePeople',this.checkedPeopleList);
-          this.checkedKeys = [];
-          this.choosePeopleDialogVisible = false;
-        },
-        onCheck(val1,val2){
-          console.log('onCheck',val1,val2);
-        },
-        handleCancelForPeople(){
-          this.checkedKeys = [];
-          this.choosePeopleDialogVisible = false;
-        },
+        }
       }
     }
 </script>
@@ -155,6 +142,15 @@
     .peoplewrap {
         .ant-modal-close-x {
             color: #fff;
+        }
+        .loading{
+            position: absolute;
+            top:0;
+            left:0;
+            right:0;
+            bottom:0;
+            z-index: 10;
+            background-color: rgba(255,255,255,0.8);
         }
         .ant-modal-content {
             background-image: linear-gradient(90deg, #0065ea 0%, #6f62ee 100%);

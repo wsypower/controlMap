@@ -1,6 +1,11 @@
 <template>
     <div class="log-panel">
         <div class="log-panel_header" flex="cross:center">审核日志</div>
+        <div class="log-panel_body" v-show="dataLoading">
+            <div class="loading" flex="main:center cross:center">
+                <a-spin tip="数据加载中..."></a-spin>
+            </div>
+        </div>
         <div class="log-panel_body">
             <div class="log-panel_body-item" flex="dir:left" v-for="log in logData">
                 <div class="log-item_left">{{new Date(log.time)|date_format('YYYY-MM-DD HH:mm:ss')}}</div>
@@ -29,7 +34,8 @@
       },
       data(){
         return {
-            logData:[]
+          dataLoading: false,
+          logData:[]
         }
       },
       mounted() {
@@ -38,7 +44,9 @@
       methods:{
         ...mapActions('event/event', ['getLogDataByEventId']),
         getLogData(){
+          this.dataLoading = true;
           this.getLogDataByEventId({event:this.eventId}).then(res => {
+            this.dataLoading = false;
             this.logData = res.data;
           })
         }

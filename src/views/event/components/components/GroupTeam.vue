@@ -4,7 +4,7 @@
         <div class="group-team-panel-method">
             <div flex="dir:left cross:center">
                 <label>{{title}}定位方式：</label>
-                <a-radio-group v-if="nowOptType"  name="radioGroup" v-model="groupData.leaderPosition">
+                <a-radio-group v-if="nowOptType"  name="radioGroup" v-model="groupResultData.leaderPosition">
                     <a-radio :value="1">单兵设备</a-radio>
                     <a-radio :value="2">手机</a-radio>
                 </a-radio-group>
@@ -133,6 +133,7 @@
      data(){
        return {
          columns: groupColumns,
+         groupResultData: {},
          groupTeam: [],
          chooseTeamDialogVisible: false,
          rowIndex: 0,
@@ -153,7 +154,8 @@
      },
      mounted() {
        this.columns[0].title = this.title;
-       this.groupTeam = JSON.parse(JSON.stringify(this.groupData.groupTeam));
+       this.groupResultData = JSON.parse(JSON.stringify(this.groupData));
+       this.groupTeam = this.groupResultData.groupTeam;
        if(this.optType==='look'){
          this.groupTeam.map(item => {
            let personTemp = this.peopleList.find(person => person.id === item.leaderId);
@@ -161,6 +163,14 @@
          });
        }
        console.log('222222',this.groupTeam);
+     },
+     watch:{
+       groupResultData:{
+         handler: function(value){
+           this.$emit('getResult', value);
+         },
+         deep: true
+       }
      },
      methods:{
        filterOption(input, option) {

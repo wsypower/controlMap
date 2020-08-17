@@ -78,12 +78,12 @@ export function getTeamDataList(data){
 }
 
 /**
- * @description 获取所有人员
+ * @description 根据入参获取所有人员（非树形结构）
  * @author moxuejuan
- * @date 2019-07-12 10:53:20
+ * @date 2020-08-14 17：12：20
  *  @method：GET
  * @response：{
- *     树形结构数据
+ *     非树形结构数据
  * }
  */
 
@@ -96,21 +96,21 @@ export function getPeopleDataList(data){
   })
 }
 
+//
 /**
- * @description 获取所有审核人员
+ * @description 根据入参获取所有人员（树形结构）
  * @author moxuejuan
- * @date 2019-07-12 10:53:20
+ * @date 2020-08-14 17：12：20
  *  @method：GET
  * @response：{
- *     {Number} id: 用户Id
- *     {String} name: 用户名称
+ *     树形结构数据
  * }
  */
 
-export function getReviewPeopleDataList(data){
-  console.log('api:getReviewPeopleDataList',data);
+export function getPeopleTreeData(data){
+  console.log('api:getPeopleTreeData',data);
   return request({
-    url: 'plan/getReviewPeopleDataList?_t='+ new Date().getTime(),
+    url: '@test/getPeopleTreeData?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })

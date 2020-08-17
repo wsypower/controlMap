@@ -424,3 +424,110 @@ const getMessageByEventId = (options) => {
   )
 }
 Mock.mock(/\/@test\/getMessageByEventId/, 'get', getMessageByEventId);
+
+const getPeopleTreeData = (options) => {
+  console.log('getPeopleTreeData options',options);
+  const queryParameters = getQueryParameters(options);
+  console.log('getPeopleTreeData query',queryParameters);
+  let data = [{
+    title: '智慧城管',
+    key: 'chengguan',
+    slots: {
+      icon: 'dept'
+    },
+    children:[{
+      title: '信息采集中心',
+      key: 'xinxi',
+      slots: {
+        icon: 'dept'
+      },
+      children: [{
+        title: '傅建民',
+        key: '001',
+        slots: {
+          icon: 'male'
+        }
+      }, {
+        title: '董亨芳',
+        key: '002',
+        slots: {
+          icon: 'female'
+        }
+      }, {
+        title: '顾 祎',
+        key: '003',
+        slots: {
+          icon: 'male'
+        }
+      }]
+    },{
+      title: '第一中队',
+      key: 'yizhongdui',
+      slots: {
+        icon: 'dept',
+      },
+      children: [{
+        title: '郑波立',
+        key: '004',
+        slots: {
+          icon: 'male'
+        }
+      }, {
+        title: '金 涛',
+        key: '005',
+        slots: {
+          icon: 'male'
+        }
+      }, {
+        title: '周 军',
+        key: '006',
+        slots: {
+          icon: 'male'
+        }
+      }]
+    }]
+  }, {
+    title: '智慧教育',
+    key: 'jiaoyu',
+    slots: {
+      icon: 'dept',
+    },
+    children:[{
+      title: '信息采集中心',
+      key: 'caiji',
+      slots: {
+        icon: 'dept',
+      },
+      children: [{
+        title: '郑 明',
+        key: '007',
+        slots: {
+          icon: 'male'
+        }
+      }, {
+        title: '俞 君',
+        key: '008',
+        slots: {
+          icon: 'male'
+        }
+      }, {
+        title: '邵群艳',
+        key: '009',
+        slots: {
+          icon: 'female'
+        }
+      }]
+    }]
+  }];
+  return builder(
+    {
+      code: 0,
+      data:data,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/getPeopleTreeData/, 'get', getPeopleTreeData);

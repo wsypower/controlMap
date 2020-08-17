@@ -50,11 +50,11 @@
                   <a-icon type="save" theme="twoTone" />人员安排
                 </div>
               </template>
-              <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData"></group-team>
-              <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData"></group-team>
+              <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData" @getResult="getZongZhiHuiResultData"></group-team>
+              <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData" @getResult="getFuZhiHuiResultData"></group-team>
               <team-people :peopleList="peopleList" :groupData="dunDianQuanDaoData"></team-people>
-              <group-people :peopleList="peopleList" :groupData="jiDongXunChaData"></group-people>
-              <group-people :peopleList="peopleList" :groupData="houQinBaoZhangData"></group-people>
+              <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData"></group-people>
+              <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData"></group-people>
             </a-collapse-panel>
             <a-collapse-panel key="3">
               <template slot="header">
@@ -191,8 +191,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           groupPerson:[{
             key: 'jhhjsddsdds',
             leaderId: '',
-            personList: [],
-            personKeyList: []
+            personList: []
           }]
         },
         houQinBaoZhangData:{
@@ -280,6 +279,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           this.dunDianQuanDaoData = res.data.groupData.dunDianQuanDaoData;
           this.jiDongXunChaData = res.data.groupData.jiDongXunChaData;
           this.houQinBaoZhangData = res.data.groupData.houQinBaoZhangData;
+          console.log(this.jiDongXunChaData, this.houQinBaoZhangData);
           this.dataLoading = false;
         });
       },
@@ -343,6 +343,14 @@ import {postEmergencyFeatures} from '@/api/map/service'
         Object.keys(this.baseInfo).forEach(key => {
           this.baseInfo[key] = data[key];
         });
+      },
+      //获取总指挥信息
+      getZongZhiHuiResultData(data){
+        this.zongZhiHuiData = data;
+      },
+      //获取副指挥信息
+      getFuZhiHuiResultData(data){
+        this.fuZhiHuiData = data;
       },
       saveData(type){
         if(type=='save'){

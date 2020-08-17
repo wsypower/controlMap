@@ -4,40 +4,27 @@
         <div class="group-people-panel-method" flex="dir:left cross:center">
             <div class="" flex="dir:left cross:center">
                 <label>负责人定位方式：</label>
-                <span v-if="nowOptType==='look'">{{leaderPositionName}}</span>
-                <a-radio-group v-else name="radioGroup" v-model="groupData.leaderPosition">
+                <a-radio-group v-if="nowOptType" name="radioGroup" v-model="groupData.leaderPosition">
                     <a-radio :value="1">单兵设备</a-radio>
                     <a-radio :value="2">手机</a-radio>
                 </a-radio-group>
+                <span v-else>{{leaderPositionName}}</span>
             </div>
             <div class="" flex="dir:left cross:center">
                 <label>执勤人定位方式：</label>
-                <span v-if="nowOptType==='look'">{{leaderPositionName}}</span>
-                <a-radio-group v-else name="radioGroup" v-model="groupData.leaderPosition">
+                <a-radio-group v-if="nowOptType" name="radioGroup" v-model="groupData.leaderPosition">
                     <a-radio :value="1">单兵设备</a-radio>
                     <a-radio :value="2">手机</a-radio>
                 </a-radio-group>
+                <span  v-else>{{leaderPositionName}}</span>
             </div>
         </div>
-        <a-table v-if="nowOptType==='look'" :columns="columns" :dataSource="groupPerson" :pagination="false" bordered>
-            <template slot="leaderId" slot-scope="text, record, index">
-                <div key="leaderId">{{record.leaderId}}</div>
-            </template>
-            <span slot="team" slot-scope="text, record, index">
-                <a-tag
-                        v-for="person in record.personList"
-                        color="blue"
-                        :key="person.id"
-                >{{ person.name }}</a-tag>
-            </span>
-            <span slot="action" slot-scope="text, record, index">
-            </span>
-        </a-table>
-        <a-table v-else :columns="columns" :dataSource="groupPerson" :pagination="false" bordered>
+        <a-table v-if="nowOptType" :columns="columns" :dataSource="groupPerson" :pagination="false" bordered>
             <template slot="leaderId" slot-scope="text, record, index">
                 <div key="leaderId">
                      <a-select
                         show-search
+                        v-model="record.leaderId"
                         placeholder="请选择"
                         option-filter-prop="children"
                         style="width: 200px"
@@ -49,7 +36,7 @@
                     </a-select>
                 </div>
             </template>
-            <span slot="team" slot-scope="text, record, index">
+            <span slot="personList" slot-scope="text, record, index">
                   <a-tag
                       v-for="person in record.personList"
                       color="blue"
@@ -58,7 +45,7 @@
                       @close="($event) => closeTag(person, index,$event)"
                   >{{ person.name }}</a-tag>
                   <a-button type="primary" size="small" @click="openPeopleDialog(index)">人员选择</a-button>
-                </span>
+            </span>
             <span slot="action" slot-scope="text, record, index">
                   <a-popconfirm
                           v-if="groupPerson.length > 1"
@@ -77,9 +64,23 @@
                   />
                 </span>
         </a-table>
+        <a-table v-else :columns="columns" :dataSource="groupPerson" :pagination="false" bordered>
+            <template slot="leaderId" slot-scope="text, record, index">
+                <div key="leaderId">{{record.leaderName}}</div>
+            </template>
+            <span slot="personList" slot-scope="text, record, index">
+                <a-tag
+                        v-for="person in record.personList"
+                        color="blue"
+                        :key="person.id"
+                >{{ person.name }}</a-tag>
+            </span>
+            <span slot="action" slot-scope="text, record, index">
+            </span>
+        </a-table>
         <choose-people-dialog
                 :visible.sync="choosePeopleDialogVisible"
-                :defaultCheckedIds="defaultCheckedPeopleIds"
+                :defaultCheckedPeopleIds="defaultCheckedPeopleIds"
                 @choosePeople="choosePeople"
         ></choose-people-dialog>
     </div>
@@ -131,8 +132,7 @@
              groupPerson:[{
                  key: 'jhhjsddsdds',
                  leaderId: '',
-                 personList: [],
-                 personKeyList: []
+                 personList: []
              }]
            }
          }
@@ -142,6 +142,7 @@
        return {
          positionMethod: '1',
          columns: groupColumns,
+         groupResultData:{},
          groupPerson: [],
 
          choosePeopleDialogVisible: false,
@@ -156,13 +157,8 @@
        userType: function(){
          return this.$store.getters['cgadmin/user/type'];
        },
-       nowOptType: function(){
-         if(this.userType!=='cjy'){
-           return 'look'
-         }
-         else {
-           return this.optType
-         }
+       nowOptType:function(){
+         return this.userType==='cjy'&&this.optType!=='look'
        },
        leaderPositionName:function(){
          return this.groupData.leaderPosition===1 ? '单兵设备' : '手机'
@@ -172,7 +168,26 @@
        }
      },
      mounted() {
-       this.groupPerson = JSON.parse(JSON.stringify(this.groupData.groupPerson));
+       this.groupResultData = JSON.parse(JSON.stringify(this.groupData));
+       this.groupPerson = this.groupResultData.groupPerson;
+
+        this.groupPerson.map(item => {
+            let personTemp = this.peopleList.find(person => person.id === item.leaderId);
+            item.leaderName = personTemp.name;
+            let ids = [...item.personList];
+            item.personList = [];
+            ids.map(id => {
+              let pTemp = this.peopleList.find(p=> p.id === id);
+              if(pTemp){
+                item.personList.push(pTemp);
+              }
+              else{
+                item.personList.push({id:id,name: '未知'});
+              }
+            })
+        });
+
+       console.log('333333',this.groupPerson);
      },
      methods:{
        filterOption(input, option) {
@@ -185,8 +200,7 @@
          let additem = {
            key: index.toString(),
            leaderId: '',
-           personList: [],
-           personKeyList: []
+           personList: []
          }
          this.groupPerson.push(additem);
        },
@@ -199,12 +213,22 @@
            acc.push(item.id);
            return acc
          },[]);
+         // this.defaultCheckedPeopleIds = [...this.groupPerson[index].personList];
+         console.log('defaultCheckedPeopleIds',this.defaultCheckedPeopleIds)
          this.choosePeopleDialogVisible = true;
        },
        choosePeople(data){
          this.groupPerson[this.rowIndex].personList = [];
+
          data.forEach((item)=>{
-           this.groupPerson[this.rowIndex].personList.push(item);
+           let name, personTemp = this.peopleList.find(person => person.id === item);
+           if(personTemp){
+             name = personTemp.name;
+           }
+           else{
+             name = "未知";
+           }
+           this.groupPerson[this.rowIndex].personList.push({ id: item, name: name });
          });
        },
        closeTag (person,index,e) {
