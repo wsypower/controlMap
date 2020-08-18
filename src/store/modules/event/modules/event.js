@@ -4,7 +4,8 @@ import { getCountForHandle,
   deleteEventByIds,
   getTemplateEventDataList,
   getLogDataByEventId,
-  getMessageByEventId} from '@/api/event/index.js'
+  getMessageByEventId,
+  checkEvent} from '@/api/event/index.js'
 
 export default {
     namespaced: true,
@@ -61,32 +62,6 @@ export default {
             })
         })
       },
-      // setEmergencyYuAnToPass(state,data){
-      //   console.log('store',data);
-      //   return new Promise((resolve, reject) => {
-      //     setEmergencyYuAnToPass(data)
-      //       .then(res => {
-      //         resolve(res)
-      //       })
-      //       .catch(err => {
-      //         console.log(err)
-      //         reject(err)
-      //       })
-      //   })
-      // },
-      // setEmergencyYuAnToBack(state,data){
-      //   console.log('store',data);
-      //   return new Promise((resolve, reject) => {
-      //     setEmergencyYuAnToBack(data)
-      //       .then(res => {
-      //         resolve(res)
-      //       })
-      //       .catch(err => {
-      //         console.log(err)
-      //         reject(err)
-      //       })
-      //   })
-      // },
       deleteEventByIds(state,data){
         console.log('store',data);
         return new Promise((resolve, reject) => {
@@ -104,6 +79,19 @@ export default {
         console.log('store',data);
         return new Promise((resolve, reject) => {
           setEventToTemplate(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
+      checkEvent(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          checkEvent(data)
             .then(res => {
               resolve(res)
             })

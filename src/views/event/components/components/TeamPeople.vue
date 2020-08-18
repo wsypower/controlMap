@@ -8,7 +8,7 @@
                         color="blue"
                         :key="person.id"
                         closable
-                        @close="($event) => closeTag(person, index,$event)"
+                        @close="($event) => closeTeamTag(person, index,$event)"
                 >{{ person.name }}</a-tag>
                 <a-button type="primary" size="small" @click="openTeamDialog">中队选择</a-button>
             </div>
@@ -47,7 +47,7 @@
                     </a-select>
                 </div>
             </template>
-            <span slot="team" slot-scope="text, record, index">
+            <span slot="personList" slot-scope="text, record, index">
                   <a-tag
                       v-for="person in record.personList"
                       color="blue"
@@ -79,33 +79,62 @@
             <div class="team-people-panel-item" v-for="(team, teamIndex) in teamPersonList" :key="team.teamId">
                 <div class="team-item-header" flex="dir:left cross:center main:justify">
                     <span class="team-item-header-left">{{team.teamName}}</span>
-                    <div class="team-item-header-right">
-                        <span v-if="nowOptType==='look'" class="team-item_status"></span>
-                        <span v-if="nowOptType==='edit'" class="btn_review" @click="">预览</span>
-                        <span v-if="nowOptType==='edit'" class="btn_pass" @click="">确认</span>
-                        <span v-if="nowOptType==='edit'" class="btn_back" @click="">驳回</span>
-                        <a-icon type="up" />
+                    <div class="team-item-header-right" flex="dir:left cross:center">
+                        <div>
+                            <span v-if="btnOptType==='look'||team.checkStatusId===1"
+                                  class="team-item_status"
+                                  :class="{red:team.checkStatusId===4, blue:team.checkStatusId===1, yellow:team.checkStatusId===2,green:team.checkStatusId===3}">
+                                {{team.checkStatusName}}
+                            </span>
+                            <span v-if="btnOptType==='edit'&&team.checkStatusId!==1" class="btn btn_review" @click="lookTeamPeopleSet(team)">预览</span>
+                            <span v-if="btnOptType==='edit'&&(team.checkStatusId===2||team.checkStatusId===4)" class="btn btn_pass" @click="passTeamPeopleSet(teamIndex,team.teamId)">确认</span>
+                            <span v-if="btnOptType==='edit'&&team.checkStatusId===3" class="btn btn_pass_text">已确认</span>
+                            <span v-if="btnOptType==='edit'&&(team.checkStatusId===2||team.checkStatusId===3)" class="btn btn_back" @click="openBackModal(teamIndex)">驳回</span>
+                            <span v-if="btnOptType==='edit'&&team.checkStatusId===4" class="btn btn_back_text">已驳回</span>
+                        </div>
+                        <a-icon class="btn_hide" :class="{open: teamIndex>0}" type="up" />
                     </div>
                 </div>
-                <a-table :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
+                <a-table v-if="nowOptType==='look'" :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
                     <template slot="loadName" slot-scope="text, record, index">
                         <div key="loadName">
-                            <span v-if="nowOptType==='look'">{{record.loadName}}</span>
-                            <a-input v-else :value="text" @change="e => changeInputText(teamIndex, e.target.value, record.key, 'loadName')" />
+                            <span >{{record.loadName}}</span>
                         </div>
                     </template>
                     <template slot="position" slot-scope="text, record, index">
                         <div key="position">
-                            <span v-if="nowOptType==='look'">{{record.position}}</span>
-                            <a-input v-else :value="text" @change="e => changeInputText(teamIndex, e.target.value, record.key, 'loadName')" />
+                            <span>{{record.position}}</span>
                         </div>
                     </template>
                     <template slot="leaderId" slot-scope="text, record, index">
                         <div key="leaderId">
-                            <span v-if="nowOptType==='look'">{{groupTeam.leaderName}}</span>
+                            <span>{{record.leaderName}}</span>
+                        </div>
+                    </template>
+                    <span slot="personList" slot-scope="text, record, index">
+                        <a-tag v-for="person in record.personList"
+                                color="blue"
+                                :key="person.id"
+                        >{{ person.name }}</a-tag>
+                    </span>
+                    <span slot="action" slot-scope="text, record, index"></span>
+                </a-table>
+                <a-table v-else :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
+                    <template slot="loadName" slot-scope="text, record, index">
+                        <div key="loadName">
+                            <a-input :value="text" @change="e => changeInputText(teamIndex, e.target.value, record.key, 'loadName')" />
+                        </div>
+                    </template>
+                    <template slot="position" slot-scope="text, record, index">
+                        <div key="position">
+                            <a-input :value="text" @change="e => changeInputText(teamIndex, e.target.value, record.key, 'position')" />
+                        </div>
+                    </template>
+                    <template slot="leaderId" slot-scope="text, record, index">
+                        <div key="leaderId">
                             <a-select
-                                    v-else
                                     show-search
+                                    v-model="record.leaderId"
                                     placeholder="请选择"
                                     option-filter-prop="children"
                                     style="width: 200px"
@@ -118,20 +147,14 @@
 
                         </div>
                     </template>
-                    <span slot="team" slot-scope="text, record, index">
-                        <a-tag v-if="nowOptType==='look'"
-                                v-for="person in record.personList"
-                                color="blue"
-                                :key="person.id"
+                    <span slot="personList" slot-scope="text, record, index">
+                        <a-tag v-for="person in record.personList"
+                               color="blue"
+                               :key="person.id"
+                               closable
+                               @close="($event) => closeTag(person, index,$event)"
                         >{{ person.name }}</a-tag>
-                        <a-tag v-if="nowOptType!=='look'"
-                               v-for="person in record.personList"
-                                  color="blue"
-                                  :key="person.id"
-                                  closable
-                                  @close="($event) => closeTag(person, index,$event)"
-                          >{{ person.name }}</a-tag>
-                          <a-button v-if="nowOptType!=='look'" type="primary" size="small" @click="openPeopleDialog(index)">人员选择</a-button>
+                          <a-button type="primary" size="small" @click="openPeopleDialog(teamIndex,index)">人员选择</a-button>
                         </span>
                     <span slot="action" slot-scope="text, record, index">
                   <a-popconfirm
@@ -153,24 +176,37 @@
                 </a-table>
             </div>
         </div>
-
-
-<!--        <choose-people-dialog-->
-<!--                :visible.sync="choosePeopleDialogVisible"-->
-<!--                :defaultCheckedIds="defaultCheckedPeopleIds"-->
-<!--                @choosePeople="choosePeople"-->
-<!--        ></choose-people-dialog>-->
         <choose-team-dialog
             :visible.sync="chooseTeamDialogVisible"
             :defaultCheckedIds="defaultCheckedTeamIds"
             @chooseTeam="chooseTeam"
         ></choose-team-dialog>
+        <choose-people-dialog
+            :visible.sync="choosePeopleDialogVisible"
+            :defaultCheckedPeopleIds="defaultCheckedPeopleIds"
+            @choosePeople="choosePeople"
+        ></choose-people-dialog>
+        <team-review-dialog
+            :visible.sync="teamInfoDialogVisible"
+            :title="teamInfoTitle"
+            :teamInfo="teamInfo">
+        </team-review-dialog>
+        <a-modal title="驳回理由"
+                :visible="backVisible"
+                :confirm-loading="confirmLoading"
+                @ok="backTeamPeopleSet"
+                @cancel="()=>{this.backVisible=false;this.backReason='';}"
+        >
+            <a-textarea v-model="backReason" placeholder="请输入驳回理由" allow-clear/>
+        </a-modal>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
   import ChooseTeamDialog from './ChooseTeamDialog'
   import ChoosePeopleDialog from './ChoosePeopleDialog'
+  import TeamReviewDialog from './TeamReviewDialog'
+  import { mapActions } from 'vuex'
   const groupColumns = [
     {
       title: '道路',
@@ -191,7 +227,7 @@
       dataIndex: 'leaderId',
       key: 'leaderId',
       scopedSlots: { customRender: 'leaderId' },
-      width: '180px'
+      width: '140px'
     },
     {
       title: '执勤人',
@@ -210,9 +246,14 @@
      name: 'teamPeople',
      components:{
        ChooseTeamDialog,
-       ChoosePeopleDialog
+       ChoosePeopleDialog,
+       TeamReviewDialog
      },
      props:{
+       eventId:{
+         type: String,
+         default: ''
+       },
        optType:{
          type: String,
          default: 'add'
@@ -238,7 +279,9 @@
      data(){
        return {
          columns: groupColumns,
+         groupResultData:{},
          teamPersonList: [],
+         teamIndex: 0,
          teamList: [],
 
          chooseTeamDialogVisible: false,
@@ -247,6 +290,14 @@
          choosePeopleDialogVisible: false,
          rowIndex: 0,
          defaultCheckedPeopleIds: [],
+
+         backVisible: false,
+         confirmLoading: false,
+         backReason: '',
+
+         teamInfoDialogVisible: false,
+         teamInfo: {},
+         teamInfoTitle: ''
        }
      },
      computed:{
@@ -258,11 +309,21 @@
          if(this.userType === 'cjy' && this.optType === 'add'){
            type = 'add';
          }
-         else if(this.optType === 'look'){
-           type = 'look';
+         else if(this.userType === 'zybm' && this.optType === 'edit'){
+           type = 'edit';
          }
          else{
+           type = 'look';
+         }
+         return type
+       },
+       btnOptType: function(){
+         let type = '';
+         if(this.userType === 'cjy' && this.optType === 'edit'){
            type = 'edit';
+         }
+         else{
+           type = 'look';
          }
          return type
        },
@@ -274,9 +335,37 @@
        }
      },
      mounted() {
-       this.teamPersonList = JSON.parse(JSON.stringify(this.groupData.teamPersonList));
+       this.groupResultData = JSON.parse(JSON.stringify(this.groupData));
+       this.teamPersonList = this.groupResultData.teamPersonList;
+       this.teamPersonList.map(teamItem => {
+         teamItem.teamPersonData.map(item => {
+           let personTemp = this.peopleList.find(person => person.id === item.leaderId);
+           item.leaderName = personTemp.name;
+           let ids = [...item.personList];
+           item.personList = [];
+           ids.map(id => {
+             let pTemp = this.peopleList.find(p=> p.id === id);
+             if(pTemp){
+               item.personList.push(pTemp);
+             }
+             else{
+               item.personList.push({id:id,name: '未知'});
+             }
+           })
+         });
+       });
+       console.log('this.teamPersonList', this.teamPersonList);
+     },
+     watch:{
+       groupResultData:{
+         handler: function(value){
+           this.$emit('getResult', value);
+         },
+         deep: true
+       }
      },
      methods:{
+       ...mapActions('event/event', ['checkEvent']),
        openTeamDialog(){
          this.defaultCheckedTeamIds = this.teamList.reduce((acc,item) => {
            acc.push(item.id);
@@ -290,7 +379,7 @@
            this.teamList.push(item);
          });
        },
-       closeTag (person,index,e) {
+       closeTeamTag (person,index,e) {
          console.log(person,index);
          let i = this.groupTeam[index].teamList.indexOf(person);
          this.teamList.splice(i,1);
@@ -325,26 +414,71 @@
        deleteGroup(index,teamIndex){
          this.teamPersonList[teamIndex].teamPersonData.splice(index,1);
        },
-
-       openPeopleDialog(index){
+       openPeopleDialog(teamIndex,index){
          this.rowIndex = index;
-         this.defaultCheckedPeopleIds = this.groupPerson[index].personList.reduce((acc,item) => {
+         this.teamIndex = teamIndex;
+         this.defaultCheckedPeopleIds = this.teamPersonList[teamIndex].teamPersonData[index].personList.reduce((acc,item) => {
            acc.push(item.id);
            return acc
          },[]);
          this.choosePeopleDialogVisible = true;
        },
        choosePeople(data){
-         this.groupPerson[this.rowIndex].personList = [];
+         this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personList = [];
          data.forEach((item)=>{
-           this.groupPerson[this.rowIndex].personList.push(item);
+           let name, personTemp = this.peopleList.find(person => person.id === item);
+           if(personTemp){
+             name = personTemp.name;
+           }
+           else{
+             name = "未知";
+           }
+           this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personList.push({ id: item, name: name });
          });
        },
-       // closeTag (person,index,e) {
-       //   console.log(person,index);
-       //   let i = this.groupPerson[index].personList.indexOf(person);
-       //   this.groupPerson[index].personList.splice(i,1);
-       // }
+       closeTag (person,index,e) {
+         console.log(person,index);
+         let i = this.teamPersonList[this.teamIndex].teamPersonData[index].personList.indexOf(person);
+         this.teamPersonList[this.teamIndex].teamPersonData[index].personList.splice(i,1);
+       },
+       lookTeamPeopleSet(team){
+         console.log('进入预览');
+         this.teamInfoTitle = team.teamName + '信息表';
+         this.teamInfo = team.teamPersonData;
+         this.teamInfoDialogVisible = true;
+       },
+       passTeamPeopleSet(teamIndex, teamId){
+        console.log('eventId teamId operate backReason');
+        let params = {
+          eventId: this.eventId,
+          teamId: teamId,
+          operate: 'yes',
+          backReason: ''
+        }
+        this.checkEvent(params).then( res => {
+          this.teamPersonList[teamIndex].checkStatusId = 3;
+        })
+       },
+       openBackModal(teamIndex){
+         this.teamIndex = teamIndex;
+         this.backVisible = true;
+       },
+       backTeamPeopleSet(){
+         let teamId = this.teamPersonList[this.teamIndex].teamId;
+         let params =  {
+           eventId: this.eventId,
+           teamId: teamId,
+           operate: 'no',
+           backReason: this.backReason
+         }
+         this.confirmLoading = true;
+         this.checkEvent(params).then( res => {
+           this.confirmLoading = false;
+           this.backReason = '';
+           this.backVisible = false;
+           this.teamPersonList[this.teamIndex].checkStatusId = 4;
+         })
+       }
      }
    }
 </script>
@@ -382,6 +516,10 @@
         }
     }
     .team-people-panel-item{
+        margin-top: 10px;
+        &:first-child{
+            margin-top: 0px;
+        }
         .team-item-header{
             .team-item-header-left{
                 height: 40px;
@@ -392,6 +530,66 @@
                 line-height: 40px;
                 letter-spacing: 0px;
                 color: #00a4fe;
+            }
+            .team-item-header-right{
+                .team-item_status{
+                    color: #00a4fe;
+                    &.red{
+                        color: #d30616;
+                    }
+                    &.green{
+                        color: #22ac38;
+                    }
+                    &.yellow{
+                        color: #e7d10e;
+                    }
+                }
+                .btn{
+                    display:inline-block;
+                    margin-left: 5px;
+                    width: 50px;
+                    height: 26px;
+                    border-radius: 4px;
+                    font-family: PingFang-SC-Medium;
+                    font-size: 14px;
+                    font-weight: normal;
+                    font-stretch: normal;
+                    line-height: 26px;
+                    letter-spacing: 0px;
+                    color: #ffffff;
+                    text-align: center;
+                    &.btn_review{
+                        background-color: #22ac38;
+                        cursor: pointer;
+                    }
+                    &.btn_pass{
+                        background-color: #00a4fe;
+                        cursor: pointer;
+                    }
+                    &.btn_back{
+                        background-color: #d30616;
+                        cursor: pointer;
+                    }
+                    &.btn_pass_text{
+                        background-color: #bfbfbf;
+                    }
+                    &.btn_back_text{
+                        background-color: #bfbfbf;
+                    }
+                }
+
+
+                .btn_hide{
+                    margin-left: 10px;
+                    cursor: pointer;
+                    &.open{
+                        transform:rotate(180deg);
+                        -ms-transform:rotate(180deg); 	/* IE 9 */
+                        -moz-transform:rotate(180deg); 	/* Firefox */
+                        -webkit-transform:rotate(180deg); /* Safari 和 Chrome */
+                        -o-transform:rotate(180deg); 	/* Opera */
+                    }
+                }
             }
         }
     }

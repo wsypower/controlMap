@@ -189,6 +189,14 @@
 
        console.log('333333',this.groupPerson);
      },
+     watch:{
+       groupResultData:{
+         handler: function(value){
+           this.$emit('getResult', value);
+         },
+         deep: true
+       }
+     },
      methods:{
        filterOption(input, option) {
          return (
@@ -213,8 +221,6 @@
            acc.push(item.id);
            return acc
          },[]);
-         // this.defaultCheckedPeopleIds = [...this.groupPerson[index].personList];
-         console.log('defaultCheckedPeopleIds',this.defaultCheckedPeopleIds)
          this.choosePeopleDialogVisible = true;
        },
        choosePeople(data){

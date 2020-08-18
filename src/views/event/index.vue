@@ -127,7 +127,9 @@
         needFixedRowNum: 0,
         //全选
         checkedAll: false,
+
         addEventDialogVisible: false,
+        optType: 'add',
         dialogTitle: '新增事件',
         eventId: '',
       }
@@ -427,11 +429,11 @@
           margin-right: 10px;
         }
         button:last-child {
-          margin-left: 10px;
+          /*margin-left: 10px;*/
         }
       }
       .review {
-        margin-right: 0;
+        /*margin-right: 0;*/
         .ant-badge {
           margin-left: 0;
         }

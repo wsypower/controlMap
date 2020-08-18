@@ -364,8 +364,8 @@ const getMessageByEventId = (options) => {
     }
   ];
   let teamPersonList = [
-    {teamId: '001',teamName: '汤溪中队',checkStatusId: '001',checkStatusName: '未上报',teamPersonData:teamPersonData1},
-    {teamId: '009',teamName: '罗埠中队',checkStatusId: '003',checkStatusName: '已确认',teamPersonData:teamPersonData2}]
+    {teamId: '001',teamName: '汤溪中队',checkStatusId:1, checkStatusName: '未上报',teamPersonData:teamPersonData1},
+    {teamId: '009',teamName: '罗埠中队',checkStatusId:3, checkStatusName: '已确认',teamPersonData:teamPersonData2}]
   let dunDianQuanDaoData = {
     groupName: 'dundianquandao',
     leaderPosition: 1,
@@ -531,3 +531,19 @@ const getPeopleTreeData = (options) => {
   )
 }
 Mock.mock(/\/@test\/getPeopleTreeData/, 'get', getPeopleTreeData);
+
+const checkEvent = (options) => {
+  console.log('checkEvent options',options);
+  const body = getBody(options);
+  console.log('checkEvent body',body);
+  return builder(
+    {
+      code: 0,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/checkEvent/, 'post', checkEvent);

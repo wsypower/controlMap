@@ -52,9 +52,9 @@
               </template>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData" @getResult="getZongZhiHuiResultData"></group-team>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData" @getResult="getFuZhiHuiResultData"></group-team>
-              <team-people :peopleList="peopleList" :groupData="dunDianQuanDaoData"></team-people>
-              <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData"></group-people>
-              <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData"></group-people>
+              <team-people :eventId="eventId" :optType="optType" :peopleList="peopleList" :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people>
+              <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData" @getResult="getJiDongXunChaResultData"></group-people>
+              <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData" @getResult="getHouQinBaoZhangResultData"></group-people>
             </a-collapse-panel>
             <a-collapse-panel key="3">
               <template slot="header">
@@ -78,9 +78,9 @@
       <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
       <a-button v-if="userType!=='jld'&&optType==='edit'" type="primary" :loading="loading" @click="">提交审核</a-button>
       <!-- 领导视角 -->
-      <a-button v-if="userType==='jld'" type="primary" :loading="loading" @click="">确认</a-button>
+      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="loading" @click="">确认</a-button>
       <!-- 领导视角 -->
-      <a-button v-if="userType==='jld'" type="primary" :loading="loading" @click="">驳回</a-button>
+      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="loading" @click="">驳回</a-button>
     </template>
     <bao-zhang-map-dialog
       :visible.sync="mapDialogVisible"
@@ -346,11 +346,23 @@ import {postEmergencyFeatures} from '@/api/map/service'
       },
       //获取总指挥信息
       getZongZhiHuiResultData(data){
-        this.zongZhiHuiData = data;
+        this.zongZhiHuiData = JSON.parse(JSON.stringify(data));
       },
       //获取副指挥信息
       getFuZhiHuiResultData(data){
-        this.fuZhiHuiData = data;
+        this.fuZhiHuiData = JSON.parse(JSON.stringify(data));
+      },
+      //获取蹲点劝导组信息
+      geTunDianQuanDaoResultData(data) {
+        this.dunDianQuanDaoData = JSON.parse(JSON.stringify(data));
+      },
+      //获取机动巡查应急组数据
+      getJiDongXunChaResultData(data){
+        this.jiDongXunChaData = JSON.parse(JSON.stringify(data));
+      },
+      //获取后勤保障组数据
+      getHouQinBaoZhangResultData(data){
+        this.houQinBaoZhangData = JSON.parse(JSON.stringify(data));
       },
       saveData(type){
         if(type=='save'){

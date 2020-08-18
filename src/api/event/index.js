@@ -139,22 +139,24 @@ export function getMessageByEventId(data){
 
 
 /**
- * @description 审核通过某个预案
+ * @description 审核通过/驳回某个事件
  * @author moxuejuan
  * @date 2019-08-12 10:53:20
- * @param {String} Id 预案Id
+ * @param {String} eventId 事件Id
+ * @param {String} teamId 中队Id
+ * @param {String} userId 操作用户Id（如果是信息中心，则是审核中队，如果是领导，则是审核整个事件）
+ * @param {String} operate 确认yes/驳回no
+ * @param {String} backReason 驳回原因
  * @method：POST
  * @response：{
- *     data:[{
  *
- *     }]
  * }
  */
 
-export function setEmergencyYuAnToPass(data){
-  console.log('api:setEmergencyYuAnToPass',data);
+export function checkEvent(data){
+  console.log('api:checkEvent',data);
   return request({
-    url: 'plan/setEmergencyYuAnToPass',
+    url: '@test/checkEvent',
     method: 'post',
     data
   })
