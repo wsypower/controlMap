@@ -340,8 +340,7 @@ const getMessageByEventId = (options) => {
   let teamPersonData1 = [
     {
       key: '000000003',
-      loadName: 'xxx',
-      position: 'yyy',
+      address: [{id:'jiangsu',name:'jiangsu'},{id:'nanjing',name:'nanjing'},{id:'zhonghuamen',name:'Zhong Hua Men'}],
       leaderId: '004',
       personList: ['003','008'],
       baoZhangId: 'bz00001',
@@ -353,8 +352,7 @@ const getMessageByEventId = (options) => {
   let teamPersonData2 = [
     {
       key: '000000004',
-      loadName: 'aaaxxx',
-      position: 'aaayyy',
+      address: [{id:'zhejiang',name:'zhejiang'},{id:'hangzhou',name:'hangzhou'}],
       leaderId: '007',
       personList: ['003','008'],
       baoZhangId: 'bz00002',

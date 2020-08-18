@@ -86,6 +86,7 @@
     <bao-zhang-map-dialog
       :visible.sync="mapDialogVisible"
       :baoZhangData="baoZhangData"
+      :optType="optType"
       @saveDrawData="saveDraw"
     ></bao-zhang-map-dialog>
     <a-modal title="驳回理由"
@@ -322,7 +323,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
               return arr
             },[]);
             let temp = {
-              load: item.loadName + '-' + item.position,
+              load: item.addressName,
               leadName: personTemp.name,
               personNameStr: perName.join(','),
               remark: ''

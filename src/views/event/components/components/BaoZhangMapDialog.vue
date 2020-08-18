@@ -55,7 +55,7 @@
           </div>
         </div>
       </div>
-      <div class="operate-panel">
+      <div v-if="nowOptType==='edit'" class="operate-panel">
         <a-dropdown>
           <a-menu slot="overlay" @click="handleOperateClick">
             <a-menu-item key="Point">点</a-menu-item>
@@ -73,8 +73,9 @@
       </div>
     </div>
     <template slot="footer">
-      <a-button type="primary" @click="saveMap">保存视图</a-button>
-      <a-button @click="resetMap">重置视图</a-button>
+      <a-button v-if="nowOptType==='look'" @click="mapDialogVisible=false;">关闭</a-button>
+      <a-button v-if="nowOptType==='edit'" type="primary" @click="saveMap">保存视图</a-button>
+      <a-button v-if="nowOptType==='edit'" @click="resetMap">重置视图</a-button>
     </template>
   </a-modal>
 </template>
@@ -102,6 +103,10 @@
         visible: {
             type: Boolean,
             default: false
+        },
+        optType: {
+          type: String,
+          default: ''
         },
         baoZhangData:{
           type: Array,
@@ -153,7 +158,7 @@
             mapId: '',
             mapType:''
           },
-          //识别编辑/新增某个保障点位
+          // //识别编辑/新增某个保障点位
           opType: 'add',
           //编辑时,确定第几个保障点位
           index: 0,
@@ -168,7 +173,21 @@
         //保障视图是新增还是编辑操作
         mapOperateType:function(){
           return this.baoZhangData.length>0?'edit':'add'
-        }
+        },
+        userType:function(){
+          return this.$store.getters['cgadmin/user/type']
+        },
+        nowOptType:function(){
+          let type = '';
+          console.log('optType',this.optType);
+          if(this.userType === 'zybm' && this.optType === 'edit'){
+            type = 'edit';
+          }
+          else{
+            type = 'look';
+          }
+          return type
+        },
       },
       watch:{
         mapDialogVisible:function(val){

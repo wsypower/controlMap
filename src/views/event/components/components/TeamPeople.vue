@@ -32,48 +32,12 @@
             </div>
         </div>
         <a-table v-if="nowOptType==='add'" :columns="columns" :dataSource="[]" :pagination="false" bordered>
-            <template slot="leaderId" slot-scope="text, record, index">
-                <div key="leaderId">
-                     <a-select
-                        show-search
-                        placeholder="请选择"
-                        option-filter-prop="children"
-                        style="width: 200px"
-                        :filter-option="filterOption"
-                    >
-                        <a-select-option :value="people.id" v-for="people in peopleList" :key="people.id">
-                            {{people.name}}
-                        </a-select-option>
-                    </a-select>
-                </div>
+            <template slot="loadPosition" slot-scope="text, record, index">
+                <div key="loadPosition"></div>
             </template>
-            <span slot="personList" slot-scope="text, record, index">
-                  <a-tag
-                      v-for="person in record.personList"
-                      color="blue"
-                      :key="person.id"
-                      closable
-                      @close="($event) => closeTag(person, index,$event)"
-                  >{{ person.name }}</a-tag>
-                  <a-button type="primary" size="small" @click="openPeopleDialog(index)">人员选择</a-button>
-                </span>
-            <span slot="action" slot-scope="text, record, index">
-                  <a-popconfirm
-                          v-if="groupPerson.length > 1"
-                          theme="filled"
-                          title="确定删除这个组吗？"
-                          @confirm="() => deleteGroup(index)"
-                  >
-                    <a-icon type="minus-circle" class="icon_delete" />
-                  </a-popconfirm>
-                  <a-icon
-                          v-if="index === groupPerson.length - 1"
-                          theme="filled"
-                          type="plus-circle"
-                          class="icon_add"
-                          @click="addGroup(record, index)"
-                  />
-                </span>
+            <span slot="leaderId" slot-scope="text, record, index"></span>
+            <span slot="personList" slot-scope="text, record, index"></span>
+            <span slot="action" slot-scope="text, record, index"></span>
         </a-table>
         <div v-else>
             <div class="team-people-panel-item" v-for="(team, teamIndex) in teamPersonList" :key="team.teamId">
@@ -95,17 +59,17 @@
                         <a-icon class="btn_hide" :class="{open: teamIndex>0}" type="up" />
                     </div>
                 </div>
-                <a-table v-if="nowOptType==='look'" :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
-                    <template slot="loadName" slot-scope="text, record, index">
-                        <div key="loadName">
-                            <span >{{record.loadName}}</span>
+                <a-table v-if="nowOptType==='look'||team.checkStatusId===3" :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
+                    <template slot="loadPosition" slot-scope="text, record, index">
+                        <div key="loadPosition">
+                            <span>{{record.addressName}}</span>
                         </div>
                     </template>
-                    <template slot="position" slot-scope="text, record, index">
-                        <div key="position">
-                            <span>{{record.position}}</span>
-                        </div>
-                    </template>
+<!--                    <template slot="position" slot-scope="text, record, index">-->
+<!--                        <div key="position">-->
+<!--                            <span>{{record.position}}</span>-->
+<!--                        </div>-->
+<!--                    </template>-->
                     <template slot="leaderId" slot-scope="text, record, index">
                         <div key="leaderId">
                             <span>{{record.leaderName}}</span>
@@ -120,16 +84,17 @@
                     <span slot="action" slot-scope="text, record, index"></span>
                 </a-table>
                 <a-table v-else :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
-                    <template slot="loadName" slot-scope="text, record, index">
-                        <div key="loadName">
-                            <a-input :value="text" @change="e => changeInputText(teamIndex, e.target.value, record.key, 'loadName')" />
+                    <template slot="loadPosition" slot-scope="text, record, index">
+                        <div key="loadPosition">
+<!--                            <a-input :value="text" @change="e => changeInputText(teamIndex, e.target.value, record.key, 'loadName')" />-->
+                            <a-cascader :options="options" change-on-select v-model="record.addressIds" @change="(value, selectedOptions)=>{changeAddress(teamIndex,value,record.key)}" style="width: 100%"/>
                         </div>
                     </template>
-                    <template slot="position" slot-scope="text, record, index">
-                        <div key="position">
-                            <a-input :value="text" @change="e => changeInputText(teamIndex, e.target.value, record.key, 'position')" />
-                        </div>
-                    </template>
+<!--                    <template slot="position" slot-scope="text, record, index">-->
+<!--                        <div key="position">-->
+<!--                            <a-input :value="text" @change="e => changeInputText(teamIndex, e.target.value, record.key, 'position')" />-->
+<!--                        </div>-->
+<!--                    </template>-->
                     <template slot="leaderId" slot-scope="text, record, index">
                         <div key="leaderId">
                             <a-select
@@ -144,7 +109,6 @@
                                     {{people.name}}
                                 </a-select-option>
                             </a-select>
-
                         </div>
                     </template>
                     <span slot="personList" slot-scope="text, record, index">
@@ -209,18 +173,11 @@
   import { mapActions } from 'vuex'
   const groupColumns = [
     {
-      title: '道路',
-      dataIndex: 'loadName',
-      key: 'loadName',
-      scopedSlots: { customRender: 'loadName' },
-      width: '280px'
-    },
-    {
-      title: '具体路段',
-      dataIndex: 'position',
-      key: 'position',
-      scopedSlots: { customRender: 'position' },
-      width: '280px'
+      title: '道路--道路分段--具体路段',
+      dataIndex: 'loadPosition',
+      key: 'loadPosition',
+      scopedSlots: { customRender: 'loadPosition' },
+      width: '360px'
     },
     {
       title: '负责人',
@@ -297,7 +254,43 @@
 
          teamInfoDialogVisible: false,
          teamInfo: [],
-         teamInfoTitle: ''
+         teamInfoTitle: '',
+
+         options: [
+           {
+             value: 'zhejiang',
+             label: 'Zhejiang',
+             children: [
+               {
+                 value: 'hangzhou',
+                 label: 'Hangzhou',
+                 children: [
+                   {
+                     value: 'xihu',
+                     label: 'West Lake',
+                   },
+                 ],
+               },
+             ],
+           },
+           {
+             value: 'jiangsu',
+             label: 'Jiangsu',
+             children: [
+               {
+                 value: 'nanjing',
+                 label: 'Nanjing',
+                 children: [
+                   {
+                     value: 'zhonghuamen',
+                     label: 'Zhong Hua Men',
+                   },
+                 ],
+               },
+             ],
+           },
+         ],
+
        }
      },
      computed:{
@@ -341,6 +334,14 @@
          teamItem.teamPersonData.map(item => {
            let personTemp = this.peopleList.find(person => person.id === item.leaderId);
            item.leaderName = personTemp.name;
+           item.addressName = item.address.reduce((acc,ad) => {
+             acc =  acc + '--' + ad.name
+             return acc
+           },'').substring(2);
+           item.addressIds = item.address.reduce((acc,ad) => {
+             acc.push(ad.id);
+             return acc
+           },[]);
            let ids = [...item.personList];
            item.personList = [];
            ids.map(id => {
@@ -391,6 +392,17 @@
          const target = newData.filter(item => key === item.key)[0];
          if (target) {
            target[colName] = val;
+           this.teamPersonList[teamIndex].teamPersonData = newData;
+         }
+       },
+       changeAddress(teamIndex, value, key){
+         console.log(teamIndex, value, key);
+         // this.teamPersonList[teamIndex].teamPersonData[0].addressIds = value;
+         let arr = this.teamPersonList[teamIndex].teamPersonData;
+         const newData = [...arr];
+         const target = newData.filter(item => key === item.key)[0];
+         if (target) {
+           target['addressIds'] = value;
            this.teamPersonList[teamIndex].teamPersonData = newData;
          }
        },
