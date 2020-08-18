@@ -60,7 +60,7 @@ export function getEventList(data){
 }
 
 /**
- * @description 增加新预案
+ * @description 增加新事件
  * @author moxuejuan
  * @date 2019-07-08 15:53:20
  * @param {String} userId请求参数：创建者（不需要传入，使用登入用户）
@@ -83,10 +83,10 @@ export function getEventList(data){
  * }
  */
 
-export function addNewEmergencyYuAn(data){
-    console.log('api:addNewEmergencyYuAn',data);
+export function addNewEvent(data){
+    console.log('api:addNewEvent',data);
     return request({
-        url: 'plan/addNewEmergencyYuAn',
+        url: '@test/addNewEvent',
         method: 'post',
         data
     })
@@ -162,30 +162,6 @@ export function checkEvent(data){
   })
 }
 
-
-/**
- * @description 审核驳回某个预案
- * @author moxuejuan
- * @date 2019-08-12 10:53:20
- * @param {String} Id 预案Id
- * @param {String} backReason 驳回原因
- * @method：POST
- * @response：{
- *     data:[{
- *
- *     }]
- * }
- */
-
-export function setEmergencyYuAnToBack(data){
-  console.log('api:setEmergencyYuAnToBack',data);
-  return request({
-    url: 'plan/setEmergencyYuAnToBack',
-    method: 'post',
-    data
-  })
-}
-
 /**
  * @description 设置某个事件为模板
  * @author moxuejuan
@@ -250,5 +226,39 @@ export function getLogDataByEventId(data){
     url: '@test/getLogDataByEventId?_t='+ new Date().getTime(),
     method: 'get',
     params: data
+  })
+}
+
+/**
+ * @description 中队对于新增的事件输入相关人员安排(中队提交审核)
+ * @author moxuejuan
+ * @date 2020-08-18 15:53:20
+ * @method：POST
+ * @response：{
+ * }
+ */
+export function addTeamPersonForNewEvent(data){
+  console.log('api:addTeamPersonForNewEvent',data);
+  return request({
+    url: '@test/addTeamPersonForNewEvent?_t='+ new Date().getTime(),
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * @description 信息指挥中心--提交审核
+ * @author moxuejuan
+ * @date 2020-08-18 15:53:20
+ * @method：POST
+ * @response：{
+ * }
+ */
+export function submitEventToCheck(data){
+  console.log('api:submitEventToCheck',data);
+  return request({
+    url: '@test/submitEventToCheck?_t='+ new Date().getTime(),
+    method: 'post',
+    data
   })
 }

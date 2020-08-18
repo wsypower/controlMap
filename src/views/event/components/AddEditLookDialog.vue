@@ -74,20 +74,28 @@
       <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
       <a-button v-if="userType==='cjy'&&optType==='edit'" type="primary" :loading="saveLoading" @click="saveDraft">保存</a-button>
       <!-- 发起流程只有在新建的时候才有 -->
-      <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="loading" @click="">发起流程</a-button>
+      <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="loading" @click="submitData">发起流程</a-button>
       <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
-      <a-button v-if="userType!=='jld'&&optType==='edit'" type="primary" :loading="loading" @click="">提交审核</a-button>
+      <a-button v-if="userType==='cjy'&&optType==='edit'" type="primary" :loading="loading" @click="submitCheck('cjy')">提交审核</a-button>
+      <a-button v-if="userType==='zybm'&&optType==='edit'" type="primary" :loading="loading" @click="submitCheck('zybm')">提交审核</a-button>
       <!-- 领导视角 -->
-      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="loading" @click="">确认</a-button>
+      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="loading" @click="passEvent">确认</a-button>
       <!-- 领导视角 -->
-      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="loading" @click="">驳回</a-button>
+      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="loading" @click="openBackDialog">驳回</a-button>
     </template>
     <bao-zhang-map-dialog
       :visible.sync="mapDialogVisible"
-      :sourcePeopleList="sourcePeopleList"
       :baoZhangData="baoZhangData"
       @saveDrawData="saveDraw"
     ></bao-zhang-map-dialog>
+    <a-modal title="驳回理由"
+             :visible="backVisible"
+             :confirm-loading="confirmLoading"
+             @ok="backEvent"
+             @cancel="()=>{this.backVisible=false;this.backReason='';}"
+    >
+      <a-textarea v-model="backReason" placeholder="请输入驳回理由" allow-clear/>
+    </a-modal>
   </a-modal>
 </template>
 <script type="text/ecmascript-6">
@@ -100,7 +108,7 @@ import GroupTeam from './components/GroupTeam'
 import TeamPeople from './components/TeamPeople'
 import GroupPeople from './components/GroupPeople'
 import ChoosePeopleDialog from './ChoosePeopleDialog'
-import BaoZhangMapDialog from './BaoZhangMapDialog'
+import BaoZhangMapDialog from './components/BaoZhangMapDialog'
 import {postEmergencyFeatures} from '@/api/map/service'
 
   export default {
@@ -217,6 +225,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
         mapDialogVisible: false,
         sourcePeopleList: [],
         drawFeatures: [],
+
+        backVisible: false,
+        confirmLoading: false,
+        backReason: ''
       }
     },
     computed:{
@@ -242,7 +254,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       }
     },
     methods:{
-      ...mapActions('event/event', ['getTemplateEventDataList','getMessageByEventId']),
+      ...mapActions('event/event', ['getTemplateEventDataList','getMessageByEventId','addNewEvent','addTeamPersonForNewEvent','submitEventToCheck','checkEvent']),
       ...mapActions('event/common', ['getPeopleDataList']),
       init(){
         this.getTemplateEventDataList().then((res)=>{
@@ -298,8 +310,30 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
       //开启保障视图弹窗
       openBaoZhangMapDialog(){
-        this.sourcePeopleList = this.getSourcePeolpleList();
-        console.log('打开保障视图需要的数据',this.sourcePeopleList,this.baoZhangData);
+        let baoZhangArr = [];
+        this.baoZhangData = JSON.parse(JSON.stringify(this.dunDianQuanDaoData.teamPersonList));
+        this.baoZhangData.forEach(baoZhangItem => {
+          let a = baoZhangItem.teamPersonData.reduce((acc, item) => {
+            // this.peopleList
+            let personTemp = this.peopleList.find(person => person.id === item.leaderId);
+            let perName = item.personList.reduce((arr, id) => {
+              let person = this.peopleList.find(p => p.id === id);
+              arr.push(person.name);
+              return arr
+            },[]);
+            let temp = {
+              load: item.loadName + '-' + item.position,
+              leadName: personTemp.name,
+              personNameStr: perName.join(','),
+              remark: ''
+            }
+            acc.push(temp);
+            return acc
+          },[]);
+          baoZhangArr = baoZhangArr.concat(a);
+        });
+
+        console.log('打开保障视图需要的数据',baoZhangArr);
         this.mapDialogVisible = true;
       },
       //获取保障视图重组后数据
@@ -364,13 +398,63 @@ import {postEmergencyFeatures} from '@/api/map/service'
       getHouQinBaoZhangResultData(data){
         this.houQinBaoZhangData = JSON.parse(JSON.stringify(data));
       },
-      saveData(type){
-        if(type=='save'){
-          this.saveLoading = false;
+      //保存草稿/保存
+      saveDraft(e){
+        e.preventDefault();
+        if(!this.checkParams()){
+          return
         }
-        else{
-          this.loading = false;
+        this.saveLoading = true;
+
+        console.log('baseInfo', this.baseInfo);
+        console.log('zongZhiHuiData', this.zongZhiHuiData);
+        console.log('fuZhiHuiData', this.fuZhiHuiData);
+        console.log('dunDianQuanDaoData', this.dunDianQuanDaoData);
+        console.log('jiDongXunChaData', this.jiDongXunChaData);
+        console.log('houQinBaoZhangData', this.houQinBaoZhangData);
+
+        this.saveData();
+        this.saveLoading = false;
+
+      },
+
+      //发起流程
+      submitData(e){
+        e.preventDefault();
+        if(!this.checkParams()){
+          return
         }
+        this.loading = true;
+
+        console.log('baseInfo', this.baseInfo);
+        console.log('zongZhiHuiData', this.zongZhiHuiData);
+        console.log('fuZhiHuiData', this.fuZhiHuiData);
+        console.log('dunDianQuanDaoData', this.dunDianQuanDaoData);
+        console.log('jiDongXunChaData', this.jiDongXunChaData);
+        console.log('houQinBaoZhangData', this.houQinBaoZhangData);
+
+        this.saveData();
+        this.loading = false;
+      },
+      //中队：提交审核
+      //中心：提交审核
+      submitCheck(type){
+        if(type==='zybm'){
+          console.log('dunDianQuanDaoData', this.dunDianQuanDaoData);
+          this.addTeamPersonForNewEvent().then(res => {
+
+          });
+        }
+        if(type==='cjy'){
+          this.submitEventToCheck().then(res => {
+
+          });
+        }
+      },
+
+      //保存输入数据库
+      saveData(){
+
         if(this.operateType=='add'){
           this.submitForm.id = '';
           this.submitForm.isTemplate = '0';
@@ -404,8 +488,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
           });
         }
 
-        this.addNewEmergencyevent(this.submitForm).then((res)=>{
-          console.log('addNewEmergencyevent',res);
+        this.addNewEvent(this.submitForm).then((res)=>{
+          console.log('addNewEvent',res);
           if(type=='save'){
             this.saveLoading = false;
             this.$notification['success']({
@@ -435,36 +519,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
           this.addEditLookDialogVisible = false;
         });
       },
-      //保存草稿
-      saveDraft(e){
-        e.preventDefault();
-        //调取接口保存的预案状态为未提交
-        // this.submitForm.statusId = '01';
-        // this.saveLoading = true;
-        this.$refs.baseinfo.getResultData();
-        // if(data){
-        //   console.log('121',data);
-        // }
-        // else{
-        //   this.saveLoading = false;
-        // }
-        // this.$refs.zongzhihui.getGroupTeamData();
-        console.log('baseInfo', this.baseInfo);
-        // this.form.validateFields((err, values) => {
-        //   if (!err) {
-        //     console.log('form: value', values);
-        //     this.submitForm.name = values.name;
-        //     this.submitForm.typeId = values.typeId;
-        //     this.submitForm.startDayTime = values.dayRange[0]._d.getTime();
-        //     this.submitForm.endDayTime = values.dayRange[1]._d.getTime();
-        //     this.saveData('save');
-        //   }
-        //   else{
-        //     this.saveLoading = false;
-        //   }
-        // });
-      },
-
 
       checkParams(){
         if(new Date().getTime()>this.submitForm.startDayTime){
@@ -504,6 +558,38 @@ import {postEmergencyFeatures} from '@/api/map/service'
           return false
         }
         return true
+      },
+      passEvent(){
+        let params =  {
+          eventId: this.eventId,
+          teamId: '',
+          operate: 'yes',
+          backReason: ''
+        }
+        this.checkEvent(params).then(res => {
+          this.reset();
+          this.addEditLookDialogVisible = false;
+        });
+      },
+      //打开驳回窗口
+      openBackDialog(){
+        this.backVisible = true;
+      },
+      backEvent(){
+        this.confirmLoading = true;
+        let params =  {
+          eventId: this.eventId,
+          teamId: '',
+          operate: 'no',
+          backReason: this.backReason
+        }
+        this.checkEvent(params).then(res => {
+          this.backReason = '';
+          this.confirmLoading = false;
+          this.backVisible = false;
+          this.reset();
+          this.addEditLookDialogVisible = false;
+        });
       },
       handleCancel(){
         this.reset();

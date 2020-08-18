@@ -296,7 +296,7 @@
          backReason: '',
 
          teamInfoDialogVisible: false,
-         teamInfo: {},
+         teamInfo: [],
          teamInfoTitle: ''
        }
      },

@@ -5,7 +5,10 @@ import { getCountForHandle,
   getTemplateEventDataList,
   getLogDataByEventId,
   getMessageByEventId,
-  checkEvent} from '@/api/event/index.js'
+  checkEvent,
+  addNewEvent,
+  addTeamPersonForNewEvent,
+  submitEventToCheck} from '@/api/event/index.js'
 
 export default {
     namespaced: true,
@@ -36,19 +39,19 @@ export default {
                   })
           })
       },
-      // addNewEmergencyYuAn(state,data){
-      //   console.log('store',data);
-      //   return new Promise((resolve, reject) => {
-      //     addNewEmergencyYuAn(data)
-      //       .then(res => {
-      //         resolve(res)
-      //       })
-      //       .catch(err => {
-      //         console.log(err)
-      //         reject(err)
-      //       })
-      //   })
-      // },
+      addNewEvent(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          addNewEvent(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
       getMessageByEventId(state,data){
         console.log('store',data);
         return new Promise((resolve, reject) => {
@@ -101,19 +104,19 @@ export default {
             })
         })
       },
-      // setEmergencyYuAnToFinishReview(state,data){
-      //   console.log('store',data);
-      //   return new Promise((resolve, reject) => {
-      //     setEmergencyYuAnToFinishReview(data)
-      //       .then(res => {
-      //         resolve(res)
-      //       })
-      //       .catch(err => {
-      //         console.log(err)
-      //         reject(err)
-      //       })
-      //   })
-      // },
+      addTeamPersonForNewEvent(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          addTeamPersonForNewEvent(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
       getTemplateEventDataList(state,data){
         console.log('store',data);
         return new Promise((resolve, reject) => {
@@ -131,6 +134,19 @@ export default {
         console.log('store',data);
         return new Promise((resolve, reject) => {
           getLogDataByEventId(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
+      submitEventToCheck(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          submitEventToCheck(data)
             .then(res => {
               resolve(res)
             })

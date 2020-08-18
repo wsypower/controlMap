@@ -15,7 +15,7 @@ export default {
       return state.info.name && state.info.name.role
     },
     type: state => {
-      return state.info.type||'cjy' //zybm/cjy/jld
+      return state.info.type||'jld' //zybm/cjy/jld
     }
   },
   actions: {

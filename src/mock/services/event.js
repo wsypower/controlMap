@@ -547,3 +547,52 @@ const checkEvent = (options) => {
   )
 }
 Mock.mock(/\/@test\/checkEvent/, 'post', checkEvent);
+
+const addNewEvent = (options) => {
+  console.log('addNewEvent options',options);
+  const body = getBody(options);
+  console.log('addNewEvent body',body);
+  return builder(
+    {
+      code: 0,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/addNewEvent/, 'post', addNewEvent);
+
+
+const addTeamPersonForNewEvent = (options) => {
+  console.log('addTeamPersonForNewEvent options',options);
+  const body = getBody(options);
+  console.log('addTeamPersonForNewEvent body',body);
+  return builder(
+    {
+      code: 0,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/addTeamPersonForNewEvent/, 'post', addTeamPersonForNewEvent);
+
+const submitEventToCheck = (options) => {
+  console.log('submitEventToCheck options',options);
+  const body = getBody(options);
+  console.log('submitEventToCheck body',body);
+  return builder(
+    {
+      code: 0,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/submitEventToCheck/, 'post', submitEventToCheck);

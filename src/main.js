@@ -43,6 +43,10 @@ Vue.prototype.$echarts = echarts;
 // 核心插件
 Vue.use(cgAdmin)
 
+//引入打印插件
+import Print from 'vue-print-nb'
+Vue.use(Print);
+
 new Vue({
   router,
   store,
