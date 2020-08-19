@@ -363,6 +363,15 @@
            this.$emit('getResult', value);
          },
          deep: true
+       },
+       teamList:{
+         handler: function(value){
+           this.groupResultData.teamList = value.reduce((acc, item) => {
+             acc.push(item.id);
+             return acc
+           },[]);
+         },
+         deep: true
        }
      },
      methods:{

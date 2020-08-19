@@ -12,11 +12,11 @@
             </div>
             <div class="" flex="dir:left cross:center">
                 <label>执勤人定位方式：</label>
-                <a-radio-group v-if="nowOptType" name="radioGroup" v-model="groupData.leaderPosition">
+                <a-radio-group v-if="nowOptType" name="radioGroup" v-model="groupData.personPosition">
                     <a-radio :value="1">单兵设备</a-radio>
                     <a-radio :value="2">手机</a-radio>
                 </a-radio-group>
-                <span  v-else>{{leaderPositionName}}</span>
+                <span  v-else>{{personPositionName}}</span>
             </div>
         </div>
         <a-table v-if="nowOptType" :columns="columns" :dataSource="groupPerson" :pagination="false" bordered>
@@ -172,19 +172,21 @@
        this.groupPerson = this.groupResultData.groupPerson;
 
         this.groupPerson.map(item => {
+          if(item.leaderId!=='') {
             let personTemp = this.peopleList.find(person => person.id === item.leaderId);
             item.leaderName = personTemp.name;
-            let ids = [...item.personList];
-            item.personList = [];
-            ids.map(id => {
-              let pTemp = this.peopleList.find(p=> p.id === id);
-              if(pTemp){
-                item.personList.push(pTemp);
-              }
-              else{
-                item.personList.push({id:id,name: '未知'});
-              }
-            })
+          }
+          let ids = [...item.personList];
+          item.personList = [];
+          ids.map(id => {
+            let pTemp = this.peopleList.find(p=> p.id === id);
+            if(pTemp){
+              item.personList.push(pTemp);
+            }
+            else{
+              item.personList.push({id:id,name: '未知'});
+            }
+          })
         });
 
        console.log('333333',this.groupPerson);

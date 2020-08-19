@@ -175,9 +175,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
           leaderPosition: 1,
           groupTeam:[{
             key: 'jhhjsddsdds',
-            leader: '',
-            teamList: [],
-            teamKeyList: []
+            leaderId: '',
+            teamList: []
           }]
         },
         fuZhiHuiData:{
@@ -185,9 +184,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
           leaderPosition: 1,
           groupTeam:[{
             key: 'jhhjsddsdds',
-            leader: '',
-            teamList: [],
-            teamKeyList: []
+            leaderId: '',
+            teamList: []
           }]
         },
         dunDianQuanDaoData:{
@@ -213,8 +211,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           groupPerson:[{
             key: 'jhhjsddsdds',
             leaderId: '',
-            personList: [],
-            personKeyList: []
+            personList: []
           }]
         },
         // groupDataStr: '',
@@ -383,6 +380,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
         Object.keys(this.baseInfo).forEach(key => {
           this.baseInfo[key] = data[key];
         });
+        if(data.dayRange&&data.dayRange.length>0){
+          this.baseInfo['startDayTime'] = data.dayRange[0]._d.getTime();
+          this.baseInfo['endDayTime'] = data.dayRange[1]._d.getTime();
+        }
       },
       //获取总指挥信息
       getZongZhiHuiResultData(data){
@@ -399,17 +400,37 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //获取机动巡查应急组数据
       getJiDongXunChaResultData(data){
         this.jiDongXunChaData = JSON.parse(JSON.stringify(data));
+        this.jiDongXunChaData.groupPerson.map(item => {
+          let temp = [...item.personList];
+          if(temp.length>0){
+            item.personList = [];
+            item.personList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
       },
       //获取后勤保障组数据
       getHouQinBaoZhangResultData(data){
         this.houQinBaoZhangData = JSON.parse(JSON.stringify(data));
+        this.houQinBaoZhangData.groupPerson.map(item => {
+          let temp = [...item.personList];
+          if(temp.length>0){
+            item.personList = [];
+            item.personList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
       },
       //保存草稿/保存
       saveDraft(e){
         e.preventDefault();
-        if(!this.checkParams()){
-          return
-        }
+        // if(!this.checkParams()){
+        //   return
+        // }
         this.saveLoading = true;
 
         console.log('baseInfo', this.baseInfo);
@@ -419,7 +440,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         console.log('jiDongXunChaData', this.jiDongXunChaData);
         console.log('houQinBaoZhangData', this.houQinBaoZhangData);
 
-        this.saveData();
+        // this.saveData();
         this.saveLoading = false;
 
       },
@@ -527,9 +548,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
       },
 
       checkParams(){
-        if(new Date().getTime()>this.submitForm.startDayTime){
+        if(this.baseInfo.name===''){
           this.$notification['error']({
-            message: '保障时间必须是当前时间之后',
+            message: '事件名称必填',
             description: '请检查',
             style: {
               width: '350px',
@@ -539,25 +560,85 @@ import {postEmergencyFeatures} from '@/api/map/service'
           });
           return false
         }
-        if(this.groupData.length===0){
+        if(this.baseInfo.typeId===''){
           this.$notification['error']({
-            message: '请填写分组数据',
+            message: '事件类型必选',
             description: '请检查',
             style: {
-              width: '300px',
-              marginLeft: `100px`,
+              width: '350px',
+              marginLeft: `50px`,
               fontSize: '14px'
             }
           });
           return false
         }
-        if(this.baoZhangData.length===0){
+        if(this.baseInfo.startDayTime===''||this.baseInfo.endDayTime===''){
           this.$notification['error']({
-            message: '请设置保障视图及点位',
+            message: '保障时间必填',
             description: '请检查',
             style: {
-              width: '300px',
-              marginLeft: `100px`,
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
+        if(this.baseInfo.description===''){
+          this.$notification['error']({
+            message: '事件描述必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
+        if(this.baseInfo.jobGoal===''){
+          this.$notification['error']({
+            message: '工作目标必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
+        if(this.baseInfo.jobAssignment===''){
+          this.$notification['error']({
+            message: '组织领导及任务分工必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
+        if(this.baseInfo.jobContent===''){
+          this.$notification['error']({
+            message: '工作内容必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
+        if(this.baseInfo.jobRequirements===''){
+          this.$notification['error']({
+            message: '工作要求必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
               fontSize: '14px'
             }
           });

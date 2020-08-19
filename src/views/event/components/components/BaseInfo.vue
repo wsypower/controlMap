@@ -138,7 +138,7 @@ export default {
     return {
       form: null,
       eventTypeList: [],
-      submitForm: {},
+      submitForm: {}
     }
   },
   computed:{
@@ -165,10 +165,13 @@ export default {
       deep: true
     }
   },
-  mounted() {},
+  mounted() {
+    this.init();
+  },
   methods:{
     ...mapActions('event/common', ['getEventTypeDataList']),
     init(){
+      console.log('000000000000000');
       this.getEventTypeDataList().then((r)=>{
         this.eventTypeList = r.data;
       });
