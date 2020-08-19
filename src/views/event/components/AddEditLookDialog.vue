@@ -69,7 +69,7 @@
       </my-scroll>
     </div>
     <template slot="footer">
-      <a-button type="primary" :loading="saveLoading" @click="">预览</a-button>
+      <a-button type="primary" :loading="saveLoading" @click="reviewEvent">预览</a-button>
       <!-- 信息指挥中心视角 保存只有在新建的时候才有 -->
       <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
       <a-button v-if="userType==='cjy'&&optType==='edit'" type="primary" :loading="saveLoading" @click="saveDraft">保存</a-button>
@@ -97,6 +97,7 @@
     >
       <a-textarea v-model="backReason" placeholder="请输入驳回理由" allow-clear/>
     </a-modal>
+    <review-event-dialog :visible="reviewDialogVisible" :eventId="eventId"></review-event-dialog>
   </a-modal>
 </template>
 <script type="text/ecmascript-6">
@@ -110,6 +111,7 @@ import TeamPeople from './components/TeamPeople'
 import GroupPeople from './components/GroupPeople'
 import ChoosePeopleDialog from './ChoosePeopleDialog'
 import BaoZhangMapDialog from './components/BaoZhangMapDialog'
+import ReviewEventDialog from './ReviewEventDialog'
 import {postEmergencyFeatures} from '@/api/map/service'
 
   export default {
@@ -121,7 +123,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
       TeamPeople,
       GroupPeople,
       ChoosePeopleDialog,
-      BaoZhangMapDialog
+      BaoZhangMapDialog,
+      ReviewEventDialog
     },
     props:{
       visible:{
@@ -229,7 +232,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
         backVisible: false,
         confirmLoading: false,
-        backReason: ''
+        backReason: '',
+
+        reviewDialogVisible: false,
       }
     },
     computed:{
@@ -591,6 +596,11 @@ import {postEmergencyFeatures} from '@/api/map/service'
           this.reset();
           this.addEditLookDialogVisible = false;
         });
+      },
+      reviewEvent(){
+        //URL_CONFIG.eventInfoURL
+        // this.eventId = '1234567890';
+        this.reviewDialogVisible = true;
       },
       handleCancel(){
         this.reset();
