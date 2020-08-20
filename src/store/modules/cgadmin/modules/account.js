@@ -32,9 +32,7 @@ export default {
             // 设置 vuex 用户信息
             await dispatch(
               'cgadmin/user/set',
-              {
-                name: res
-              },
+              res,
               { root: true }
             )
             //加载提示结束

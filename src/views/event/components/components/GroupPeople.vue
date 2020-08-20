@@ -130,7 +130,7 @@
              leaderPosition: 1,
              personPosition: 1,
              groupPerson:[{
-                 key: 'jhhjsddsdds',
+                 key: '@@@',
                  leaderId: '',
                  personList: []
              }]
@@ -146,6 +146,7 @@
          groupPerson: [],
 
          choosePeopleDialogVisible: false,
+         range: '',
          rowIndex: 0,
          defaultCheckedPeopleIds: [],
        }
@@ -158,7 +159,7 @@
          return this.$store.getters['cgadmin/user/type'];
        },
        nowOptType:function(){
-         return this.userType==='cjy'&&this.optType!=='look'
+         return this.userType==='qxsl'&&this.optType!=='look'
        },
        leaderPositionName:function(){
          return this.groupData.leaderPosition===1 ? '单兵设备' : '手机'
@@ -208,7 +209,7 @@
        addGroup(item, index){
          console.log('addGroup',item, index)
          let additem = {
-           key: index.toString(),
+           key: '@@@' + index.toString(),
            leaderId: '',
            personList: []
          }

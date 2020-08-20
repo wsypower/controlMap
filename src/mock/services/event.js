@@ -594,3 +594,20 @@ const submitEventToCheck = (options) => {
   )
 }
 Mock.mock(/\/@test\/submitEventToCheck/, 'post', submitEventToCheck);
+
+
+const submitEvent = (options) => {
+  console.log('submitEvent options',options);
+  const body = getBody(options);
+  console.log('submitEvent body',body);
+  return builder(
+    {
+      code: 0,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/submitEvent/, 'post', submitEvent);

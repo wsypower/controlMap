@@ -140,7 +140,7 @@
              groupName: 'zongzhihui',
              leaderPosition: 1,
              groupTeam:[{
-                 key: 'jhhjsddsdds',
+                 key: '@@@',
                  leaderId: '',
                  teamList: []
              }]
@@ -166,7 +166,7 @@
        },
        nowOptType:function(){
          let userType = this.$store.getters['cgadmin/user/type'];
-         return userType==='cjy'&&this.optType!=='look'
+         return userType==='qxsl'&&this.optType!=='look'
        },
        leaderPositionName: function(){
          return this.groupData.leaderPosition === 1 ? '单兵设备':'手机'
@@ -200,7 +200,7 @@
        addGroup(item, index){
          console.log('addGroup',item, index)
          let additem = {
-           key: index.toString(),
+           key: "@@@" + index.toString(),
            leaderId: '',
            teamList: []
          }

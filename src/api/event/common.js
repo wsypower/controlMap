@@ -14,7 +14,7 @@ import request from '@/plugins/axios/axios'
 export const getUserInfo = data => {
   console.log('api:getUserInfo',data);
   return request({
-    url: `plan/getUserInfo`,
+    url: `planEvent/getUserInfo`,
     method: 'get',
     params: data
   })
@@ -90,7 +90,7 @@ export function getTeamDataList(data){
 export function getPeopleDataList(data){
   console.log('api:getPeopleDataList',data);
   return request({
-    url: '@test/getPeopleDataList?_t='+ new Date().getTime(),
+    url: 'planEvent/getDetailPeopleDataList?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -110,7 +110,7 @@ export function getPeopleDataList(data){
 export function getPeopleTreeData(data){
   console.log('api:getPeopleTreeData',data);
   return request({
-    url: '@test/getPeopleTreeData?_t='+ new Date().getTime(),
+    url: 'planEvent/getPeopleTreeData?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })

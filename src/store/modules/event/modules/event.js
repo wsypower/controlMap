@@ -8,7 +8,8 @@ import { getCountForHandle,
   checkEvent,
   addNewEvent,
   addTeamPersonForNewEvent,
-  submitEventToCheck} from '@/api/event/index.js'
+  submitEventToCheck,
+  submitEvent} from '@/api/event/index.js'
 
 export default {
     namespaced: true,
@@ -155,6 +156,19 @@ export default {
               reject(err)
             })
         })
-      }
+      },
+      submitEvent(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          submitEvent(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
     }
 }

@@ -20,7 +20,7 @@
               <span class="text">待处理</span>
             </a-badge>
           </a-button>
-          <a-button v-if="userType==='cjy'" class="addfiles" icon="plus-circle" @click="addNewEvent" flex="cross:center">新增事件</a-button>
+          <a-button v-if="userType==='qxsl'" class="addfiles" icon="plus-circle" @click="addNewEvent" flex="cross:center">新增事件</a-button>
         </div>
       </div>
       <div class="loading event_list_content" v-if="dataLoading" flex="main:center cross:center">

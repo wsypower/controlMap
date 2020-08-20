@@ -262,3 +262,20 @@ export function submitEventToCheck(data){
     data
   })
 }
+
+/**
+ * @description 信息指挥中心--发起流程
+ * @author moxuejuan
+ * @date 2020-08-20 15:53:20
+ * @method：POST
+ * @response：{
+ * }
+ */
+export function submitEvent(data){
+  console.log('api:submitEvent',data);
+  return request({
+    url: '@test/submitEvent?_t='+ new Date().getTime(),
+    method: 'post',
+    data
+  })
+}

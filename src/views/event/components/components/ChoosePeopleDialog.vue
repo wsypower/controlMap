@@ -33,6 +33,10 @@
           type:Boolean,
           default: false
         },
+        range:{
+          type:String,
+          default: ''
+        },
         defaultCheckedPeopleIds:{
           type: Array,
           default(){
@@ -59,16 +63,8 @@
           },[]);
           return arr
         },
-        checkedPeopleList: function(){
-          let arr = this.checkedPeopleKeys.reduce((res,item)=>{
-            let temp = {
-              id: item,
-              name: this.peopleList[item]
-            }
-            res.push(temp);
-            return res
-          },[]);
-          return arr
+        userType: function(){
+          return this.$store.getters['cgadmin/user/type'];
         }
       },
       watch:{
@@ -91,9 +87,10 @@
         ...mapActions('event/common', ['getPeopleTreeData']),
         init(){
           this.dataLoading = true;
-          this.getPeopleTreeData().then((res)=>{
-            this.treeData = res.data;
-            this.getPeopleList(res.data,this.peopleList);
+          this.getPeopleTreeData({range: this.range}).then((res)=>{
+            console.log(res);
+            this.treeData = res;
+            this.getPeopleList(res,this.peopleList);
             console.log('this.peopleList',this.peopleList);
             this.checkedKeys = [...this.defaultCheckedPeopleIds];
             this.dataLoading = false;
@@ -110,6 +107,7 @@
           this.choosePeopleDialogVisible = false;
         },
         getPeopleList(treeData,obj){
+          console.log(treeData);
           for (let item of treeData) {
             if (item.children) {
               this.getPeopleList(item.children,obj)

@@ -15,7 +15,7 @@ export default {
       return state.info.name && state.info.name.role
     },
     type: state => {
-      return state.info.type||'cjy' //zybm/cjy/jld
+      return state.info.type  //zybm/qxsl/jld
     }
   },
   actions: {
@@ -27,6 +27,7 @@ export default {
     set({ commit, dispatch }, info) {
       return new Promise(async resolve => {
         // store 赋值 => 通过 => createPersistedState()持久化用户数据到se
+        console.log('infoSet',info);
         commit('infoSet', info)
         // 持久化 => 讲用户数据放入到存储到localStorage
         await dispatch(

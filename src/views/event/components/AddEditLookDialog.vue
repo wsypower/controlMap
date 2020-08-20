@@ -72,11 +72,11 @@
     <template slot="footer">
       <a-button v-if="optType!=='add'" type="primary" :loading="reviewLoading" @click="reviewEvent">预览</a-button>
       <!-- 信息指挥中心视角 保存只有在新建的时候才有 -->
-      <a-button v-if="userType==='cjy'&&(optType==='add'||optType==='edit')" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
+      <a-button v-if="userType==='qxsl'&&(optType==='add'||optType==='edit')" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
       <!-- 发起流程只有在新建的时候才有 -->
-      <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="submitLoading" @click="submitData">发起流程</a-button>
+      <a-button v-if="userType==='qxsl'&&optType==='add'" type="primary" :loading="submitLoading" @click="submitData">发起流程</a-button>
       <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
-      <a-button v-if="userType==='cjy'&&optType==='edit'&&baseInfo.processId===3" type="primary" :loading="checkLoading" @click="submitCheck('cjy')">提交审核</a-button>
+      <a-button v-if="userType==='qxsl'&&optType==='edit'&&baseInfo.processId===3" type="primary" :loading="checkLoading" @click="submitCheck('qxsl')">提交审核</a-button>
       <a-button v-if="userType==='zybm'&&optType==='edit'" type="primary" :loading="checkLoading" @click="submitCheck('zybm')">提交审核</a-button>
       <!-- 领导视角 -->
       <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="passLoading" @click="passEvent">确认</a-button>
@@ -394,6 +394,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       getZongZhiHuiResultData(data){
         this.zongZhiHuiData = JSON.parse(JSON.stringify(data));
         this.zongZhiHuiData.groupTeam.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
           let temp = [...item.teamList];
           if(temp.length>0){
             item.teamList = [];
@@ -408,6 +409,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       getFuZhiHuiResultData(data){
         this.fuZhiHuiData = JSON.parse(JSON.stringify(data));
         this.fuZhiHuiData.groupTeam.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
           let temp = [...item.teamList];
           if(temp.length>0){
             item.teamList = [];
@@ -428,6 +430,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       getJiDongXunChaResultData(data){
         this.jiDongXunChaData = JSON.parse(JSON.stringify(data));
         this.jiDongXunChaData.groupPerson.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
           let temp = [...item.personList];
           if(temp.length>0){
             item.personList = [];
@@ -442,6 +445,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       getHouQinBaoZhangResultData(data){
         this.houQinBaoZhangData = JSON.parse(JSON.stringify(data));
         this.houQinBaoZhangData.groupPerson.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
           let temp = [...item.personList];
           if(temp.length>0){
             item.personList = [];
@@ -452,14 +456,11 @@ import {postEmergencyFeatures} from '@/api/map/service'
           }
         })
       },
+
       //信息智慧中心保存草稿/保存
       saveDraft(e){
         e.preventDefault();
-        // if(!this.checkParams()){
-        //   return
-        // }
         this.saveLoading = true;
-
         console.log('baseInfo', this.baseInfo);
         console.log('zongZhiHuiData', this.zongZhiHuiData);
         console.log('fuZhiHuiData', this.fuZhiHuiData);
@@ -467,10 +468,32 @@ import {postEmergencyFeatures} from '@/api/map/service'
         console.log('jiDongXunChaData', this.jiDongXunChaData);
         console.log('houQinBaoZhangData', this.houQinBaoZhangData);
 
-
-        // this.saveData();
-        this.saveLoading = false;
-
+        let params = {
+          baseInfo: this.baseInfo,
+          groupData: {
+            zongZhiHuiData: this.zongZhiHuiData,
+            fuZhiHuiData: this.fuZhiHuiData,
+            dunDianQuanDaoData: this.dunDianQuanDaoData,
+            jiDongXunChaData: this.jiDongXunChaData,
+            houQinBaoZhangData: this.houQinBaoZhangData
+          }
+        }
+        this.addNewEvent(params).then((res)=>{
+          console.log('addNewEvent',res);
+          this.saveLoading = false;
+          this.$notification['success']({
+            message: '保存成功',
+            description: '后续请发起流程',
+            style: {
+              width: '200px',
+              marginLeft: `200px`,
+              fontSize: '14px'
+            },
+          });
+          this.reset();
+          this.$emit('refreshList');
+          this.addEditLookDialogVisible = false;
+        });
       },
 
       //发起流程
@@ -479,8 +502,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         if(!this.checkParams()){
           return
         }
-        this.loading = true;
-
+        this.submitLoading = true;
         console.log('baseInfo', this.baseInfo);
         console.log('zongZhiHuiData', this.zongZhiHuiData);
         console.log('fuZhiHuiData', this.fuZhiHuiData);
@@ -488,8 +510,32 @@ import {postEmergencyFeatures} from '@/api/map/service'
         console.log('jiDongXunChaData', this.jiDongXunChaData);
         console.log('houQinBaoZhangData', this.houQinBaoZhangData);
 
-        this.saveData();
-        this.loading = false;
+        let params = {
+          baseInfo: this.baseInfo,
+          groupData: {
+            zongZhiHuiData: this.zongZhiHuiData,
+            fuZhiHuiData: this.fuZhiHuiData,
+            dunDianQuanDaoData: this.dunDianQuanDaoData,
+            jiDongXunChaData: this.jiDongXunChaData,
+            houQinBaoZhangData: this.houQinBaoZhangData
+          }
+        }
+        this.addNewEvent(params).then((res)=>{
+          console.log('addNewEvent',res);
+          this.submitLoading = false;
+          this.$notification['success']({
+            message: '保存成功',
+            description: '',
+            style: {
+              width: '200px',
+              marginLeft: `200px`,
+              fontSize: '14px'
+            },
+          });
+          this.reset();
+          this.$emit('refreshList');
+          this.addEditLookDialogVisible = false;
+        });
       },
       //中队：提交审核
       //中心：提交审核
@@ -520,7 +566,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
           });
         }
-        if(type==='cjy'){
+        if(type==='qxsl'){
           this.submitEventToCheck().then(res => {
 
           });
@@ -529,70 +575,50 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
       //保存输入数据库
       saveData(){
-
-        if(this.operateType=='add'){
-          this.submitForm.id = '';
-          this.submitForm.isTemplate = '0';
-        }
-        let groupDataTemp = JSON.parse(JSON.stringify(this.groupData));
-        groupDataTemp.forEach(item =>{
-          delete item.key;
-          delete item.checkedPeopleList;
-          item.personList = item.peopleKeyList.reduce((r,item)=>{
-            r.push(item)
-            return r
-          },[])
-          delete item.peopleKeyList;
-        })
-        let groupDataStr = JSON.stringify(groupDataTemp);
-        this.submitForm.groupDataStr = groupDataStr;
-
-        let baoZhangDataStr = JSON.stringify(this.baoZhangData);
-        this.submitForm.baoZhangDataStr = baoZhangDataStr;
-
-        console.log('save/submit',this.submitForm);
-        if(this.drawFeatures){
-          postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
-            console.log('==点数据==', res);
-          });
-          postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
-            console.log('==线数据==', res);
-          });
-          postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
-            console.log('==线数据==', res);
-          });
-        }
-
-        this.addNewEvent(this.submitForm).then((res)=>{
-          console.log('addNewEvent',res);
-          if(type=='save'){
-            this.saveLoading = false;
-            this.$notification['success']({
-              message: '保存成功',
-              description: '状态为待提交',
-              style: {
-                width: '200px',
-                marginLeft: `200px`,
-                fontSize: '14px'
-              },
-            });
+        let params = {
+          baseInfo: this.baseInfo,
+          groupData: {
+            zongZhiHuiData: this.zongZhiHuiData,
+            fuZhiHuiData: this.fuZhiHuiData,
+            dunDianQuanDaoData: this.dunDianQuanDaoData,
+            jiDongXunChaData: this.jiDongXunChaData,
+            houQinBaoZhangData: this.houQinBaoZhangData
           }
-          else{
-            this.loading = false;
-            this.$notification['success']({
-              message: '提交成功',
-              description: '状态为待审核',
-              style: {
-                width: '200px',
-                marginLeft: `200px`,
-                fontSize: '14px'
-              },
-            });
-          }
-          this.reset();
-          this.$emit('refreshList');
-          this.addEditLookDialogVisible = false;
-        });
+        }
+        // if(this.operateType=='add'){
+        //   this.submitForm.id = '';
+        //   this.submitForm.isTemplate = '0';
+        // }
+        // let groupDataTemp = JSON.parse(JSON.stringify(this.groupData));
+        // groupDataTemp.forEach(item =>{
+        //   delete item.key;
+        //   delete item.checkedPeopleList;
+        //   item.personList = item.peopleKeyList.reduce((r,item)=>{
+        //     r.push(item)
+        //     return r
+        //   },[])
+        //   delete item.peopleKeyList;
+        // })
+        // let groupDataStr = JSON.stringify(groupDataTemp);
+        // this.submitForm.groupDataStr = groupDataStr;
+        //
+        // let baoZhangDataStr = JSON.stringify(this.baoZhangData);
+        // this.submitForm.baoZhangDataStr = baoZhangDataStr;
+        //
+        // console.log('save/submit',this.submitForm);
+        // if(this.drawFeatures){
+        //   postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
+        //     console.log('==点数据==', res);
+        //   });
+        //   postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
+        //     console.log('==线数据==', res);
+        //   });
+        //   postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
+        //     console.log('==线数据==', res);
+        //   });
+        // }
+
+
       },
 
       checkParams(){

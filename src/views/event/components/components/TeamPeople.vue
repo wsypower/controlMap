@@ -6,7 +6,7 @@
         <div class="team-people-panel-method" flex="dir:left cross:center">
             <div class="" flex="dir:left cross:center">
                 <label>负责人定位方式：</label>
-                <a-radio-group v-if="userType==='cjy'&&optType!=='look'" name="radioGroup" v-model="groupResultData.leaderPosition">
+                <a-radio-group v-if="userType==='qxsl'&&optType!=='look'" name="radioGroup" v-model="groupResultData.leaderPosition">
                     <a-radio :value="1">单兵设备</a-radio>
                     <a-radio :value="2">手机</a-radio>
                 </a-radio-group>
@@ -14,7 +14,7 @@
             </div>
             <div class="" flex="dir:left cross:center">
                 <label>执勤人定位方式：</label>
-                <a-radio-group v-if="userType==='cjy'&&optType!=='look'" name="radioGroup" v-model="groupResultData.personPosition">
+                <a-radio-group v-if="userType==='qxsl'&&optType!=='look'" name="radioGroup" v-model="groupResultData.personPosition">
                     <a-radio :value="1">单兵设备</a-radio>
                     <a-radio :value="2">手机</a-radio>
                 </a-radio-group>
@@ -40,7 +40,7 @@
                     <a-icon class="btn_hide" :class="{open: teamIndex>0}" type="up" />
                 </div>
             </div>
-            <a-table v-if="nowOptType==='look'||userType==='cjy'" :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
+            <a-table v-if="nowOptType==='look'||userType==='qxsl'" :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
                 <template slot="loadPosition" slot-scope="text, record, index">
                     <div key="loadPosition">
                         <span>{{record.addressName}}</span>
@@ -120,6 +120,7 @@
             </a-table>
         </div>
         <choose-people-dialog
+            :range="range"
             :visible.sync="choosePeopleDialogVisible"
             :defaultCheckedPeopleIds="defaultCheckedPeopleIds"
             @choosePeople="choosePeople"
@@ -213,6 +214,7 @@
          teamIndex: 0,
 
          choosePeopleDialogVisible: false,
+         range: '',
          rowIndex: 0,
          defaultCheckedPeopleIds: [],
 
@@ -266,7 +268,7 @@
        },
        nowOptType:function(){
          let type = '';
-         if(this.userType === 'cjy' && (this.optType === 'add'||this.optType === 'edit')){
+         if(this.userType === 'qxsl' && (this.optType === 'add'||this.optType === 'edit')){
            type = 'add';
          }
          else if(this.userType === 'zybm' && this.optType === 'edit'){
@@ -279,7 +281,7 @@
        },
        btnOptType: function(){
          let type = '';
-         if(this.userType === 'cjy' && this.optType === 'edit'){
+         if(this.userType === 'qxsl' && this.optType === 'edit'){
            type = 'edit';
          }
          else{
@@ -395,6 +397,9 @@
            acc.push(item.id);
            return acc
          },[]);
+         if(this.userType === 'zybm'){
+           this.range = this.teamPersonList[teamIndex].teamId;
+         }
          this.choosePeopleDialogVisible = true;
        },
        choosePeople(data){

@@ -144,7 +144,7 @@ export default {
   computed:{
     nowOptType:function(){
       let userType = this.$store.getters['cgadmin/user/type'];
-      return userType==='cjy'&&this.optType!=='look'
+      return userType==='qxsl'&&this.optType!=='look'
     }
   },
   created() {
