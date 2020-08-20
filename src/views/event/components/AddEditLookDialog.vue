@@ -52,7 +52,8 @@
               </template>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData" @getResult="getZongZhiHuiResultData"></group-team>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData" @getResult="getFuZhiHuiResultData"></group-team>
-              <team-people :eventId="eventId" :optType="optType" :peopleList="peopleList" :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people>
+              <team-people v-if="baseInfo.processName" :eventId="eventId" :optType="optType" :peopleList="peopleList" :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people>
+              <team-people-for-add v-else :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people-for-add>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData" @getResult="getJiDongXunChaResultData"></group-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData" @getResult="getHouQinBaoZhangResultData"></group-people>
             </a-collapse-panel>
@@ -69,19 +70,18 @@
       </my-scroll>
     </div>
     <template slot="footer">
-      <a-button type="primary" :loading="saveLoading" @click="reviewEvent">预览</a-button>
+      <a-button v-if="optType!=='add'" type="primary" :loading="reviewLoading" @click="reviewEvent">预览</a-button>
       <!-- 信息指挥中心视角 保存只有在新建的时候才有 -->
-      <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
-      <a-button v-if="userType==='cjy'&&optType==='edit'" type="primary" :loading="saveLoading" @click="saveDraft">保存</a-button>
+      <a-button v-if="userType==='cjy'&&(optType==='add'||optType==='edit')" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
       <!-- 发起流程只有在新建的时候才有 -->
-      <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="loading" @click="submitData">发起流程</a-button>
+      <a-button v-if="userType==='cjy'&&optType==='add'" type="primary" :loading="submitLoading" @click="submitData">发起流程</a-button>
       <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
-      <a-button v-if="userType==='cjy'&&optType==='edit'" type="primary" :loading="loading" @click="submitCheck('cjy')">提交审核</a-button>
-      <a-button v-if="userType==='zybm'&&optType==='edit'" type="primary" :loading="loading" @click="submitCheck('zybm')">提交审核</a-button>
+      <a-button v-if="userType==='cjy'&&optType==='edit'&&baseInfo.processId===3" type="primary" :loading="checkLoading" @click="submitCheck('cjy')">提交审核</a-button>
+      <a-button v-if="userType==='zybm'&&optType==='edit'" type="primary" :loading="checkLoading" @click="submitCheck('zybm')">提交审核</a-button>
       <!-- 领导视角 -->
-      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="loading" @click="passEvent">确认</a-button>
+      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="passLoading" @click="passEvent">确认</a-button>
       <!-- 领导视角 -->
-      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="loading" @click="openBackDialog">驳回</a-button>
+      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="backLoading" @click="openBackDialog">驳回</a-button>
     </template>
     <bao-zhang-map-dialog
       :visible.sync="mapDialogVisible"
@@ -108,6 +108,7 @@ import Log from './components/Log'
 import BaseInfo  from './components/BaseInfo'
 import GroupTeam from './components/GroupTeam'
 import TeamPeople from './components/TeamPeople'
+import TeamPeopleForAdd from './components/TeamPeopleForAdd'
 import GroupPeople from './components/GroupPeople'
 import ChoosePeopleDialog from './ChoosePeopleDialog'
 import BaoZhangMapDialog from './components/BaoZhangMapDialog'
@@ -121,6 +122,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       BaseInfo,
       GroupTeam,
       TeamPeople,
+      TeamPeopleForAdd,
       GroupPeople,
       ChoosePeopleDialog,
       BaoZhangMapDialog,
@@ -219,9 +221,12 @@ import {postEmergencyFeatures} from '@/api/map/service'
         // reviewUserId: '',
         baoZhangData: [],
 
+        reviewLoading:false,
         saveLoading: false,
-        loading: false,
-        lastLoading: false,
+        submitLoading: false,
+        checkLoading: false,
+        passLoading: false,
+        backLoading: false,
 
         mapDialogVisible: false,
         sourcePeopleList: [],
@@ -388,13 +393,35 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //获取总指挥信息
       getZongZhiHuiResultData(data){
         this.zongZhiHuiData = JSON.parse(JSON.stringify(data));
+        this.zongZhiHuiData.groupTeam.map(item => {
+          let temp = [...item.teamList];
+          if(temp.length>0){
+            item.teamList = [];
+            item.teamList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
       },
       //获取副指挥信息
       getFuZhiHuiResultData(data){
         this.fuZhiHuiData = JSON.parse(JSON.stringify(data));
+        this.fuZhiHuiData.groupTeam.map(item => {
+          let temp = [...item.teamList];
+          if(temp.length>0){
+            item.teamList = [];
+            item.teamList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
       },
       //获取蹲点劝导组信息
       geTunDianQuanDaoResultData(data) {
+        console.log('获取蹲点劝导组信息', data);
+        // if(data)
         this.dunDianQuanDaoData = JSON.parse(JSON.stringify(data));
       },
       //获取机动巡查应急组数据
@@ -425,7 +452,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           }
         })
       },
-      //保存草稿/保存
+      //信息智慧中心保存草稿/保存
       saveDraft(e){
         e.preventDefault();
         // if(!this.checkParams()){
@@ -439,6 +466,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         console.log('dunDianQuanDaoData', this.dunDianQuanDaoData);
         console.log('jiDongXunChaData', this.jiDongXunChaData);
         console.log('houQinBaoZhangData', this.houQinBaoZhangData);
+
 
         // this.saveData();
         this.saveLoading = false;
@@ -467,7 +495,27 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //中心：提交审核
       submitCheck(type){
         if(type==='zybm'){
-          console.log('dunDianQuanDaoData', this.dunDianQuanDaoData);
+          console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
+          let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
+            let data = {
+              key: teamPerson.key.indexOf('@@@')===0?'':teamPerson.key,
+              address: teamPerson.addressIds,
+              leaderId: teamPerson.leaderId,
+              personList: []
+            }
+            data.personList = teamPerson.personList.reduce((ids, person) => {
+              ids.push(person.id);
+              return ids
+            },[])
+            acc.push(data);
+            return acc
+          },[]);
+          let params = {
+            eventId: this.eventId,
+            teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
+            teamPersonData: teamPersonData
+          }
+          console.log('addTeamPersonForNewEvent',params);
           this.addTeamPersonForNewEvent().then(res => {
 
           });

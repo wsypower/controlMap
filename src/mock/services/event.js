@@ -292,7 +292,7 @@ const getMessageByEventId = (options) => {
     typeId: '001',
     typeName: '日常事件',
     processId: '',
-    processName: '',
+    processName: '发起流程',
     startDayTime: 1597109712000,
     endDayTime: 1597363218000,
     description: 'msjkdlsahkjdfksd',
@@ -362,8 +362,8 @@ const getMessageByEventId = (options) => {
     }
   ];
   let teamPersonList = [
-    {teamId: '001',teamName: '汤溪中队',checkStatusId:1, checkStatusName: '未上报',teamPersonData:teamPersonData1},
-    {teamId: '009',teamName: '罗埠中队',checkStatusId:3, checkStatusName: '已确认',teamPersonData:teamPersonData2}]
+    {teamId: '001',teamName: '汤溪中队',checkStatusId:1, checkStatusName: '未上报',teamPersonData:[]},
+    {teamId: '009',teamName: '罗埠中队',checkStatusId:2, checkStatusName: '待审核',teamPersonData:teamPersonData2}]
   let dunDianQuanDaoData = {
     groupName: 'dundianquandao',
     leaderPosition: 1,

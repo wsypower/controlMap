@@ -81,7 +81,7 @@
 
 <script type="text/ecmascript-6">
     import ChooseTeamDialog from './ChooseTeamDialog'
-    const groupColumns = [{
+    const groupZColumns = [{
       title: '总指挥',
       dataIndex: 'leaderId',
       key: 'leaderId',
@@ -99,6 +99,24 @@
       scopedSlots: { customRender: 'action' },
       width: '100px'
       }];
+    const groupFColumns = [{
+      title: '副指挥',
+      dataIndex: 'leaderId',
+      key: 'leaderId',
+      scopedSlots: { customRender: 'leaderId' },
+      width: '280px'
+    }, {
+      title: '管辖中队',
+      dataIndex: 'teamList',
+      key: 'teamList',
+      scopedSlots: { customRender: 'team' }
+    }, {
+      title: '操作',
+      key: 'action',
+      dataIndex: 'action',
+      scopedSlots: { customRender: 'action' },
+      width: '100px'
+    }];
    export default {
      name: 'groupTeam',
      components:{
@@ -132,7 +150,7 @@
      },
      data(){
        return {
-         columns: groupColumns,
+         columns: [],
          groupResultData: {},
          groupTeam: [],
          chooseTeamDialogVisible: false,
@@ -142,7 +160,9 @@
      },
      computed:{
        title: function(){
-         return this.groupData.groupName==='zongzhihui'?'总指挥':'副指挥'
+         let t = this.groupData.groupName==='zongzhihui'?'总指挥':'副指挥';
+         this.columns = this.groupData.groupName==='zongzhihui'? groupZColumns:groupFColumns;
+         return t
        },
        nowOptType:function(){
          let userType = this.$store.getters['cgadmin/user/type'];
@@ -153,10 +173,9 @@
        },
      },
      mounted() {
-       this.columns[0].title = this.title;
        this.groupResultData = JSON.parse(JSON.stringify(this.groupData));
        this.groupTeam = this.groupResultData.groupTeam;
-       if(this.optType==='look'){
+       if(!this.nowOptType){
          this.groupTeam.map(item => {
            let personTemp = this.peopleList.find(person => person.id === item.leaderId);
            item.leaderName = personTemp.name;
