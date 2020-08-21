@@ -169,7 +169,7 @@
          return userType==='qxsl'&&this.optType!=='look'
        },
        leaderPositionName: function(){
-         return this.groupData.leaderPosition === 1 ? '单兵设备':'手机'
+         return this.groupData.leaderPosition === '1'? '单兵设备':'手机'
        },
      },
      mounted() {

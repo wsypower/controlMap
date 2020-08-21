@@ -31,7 +31,7 @@
                               :class="{red:team.checkStatusId===4, blue:team.checkStatusId===1, yellow:team.checkStatusId===2,green:team.checkStatusId===3}">
                             {{team.checkStatusName}}
                         </span>
-                        <span v-if="btnOptType==='edit'" class="btn btn_review" @click="lookTeamPeopleSet(team)">预览</span>
+                        <span class="btn btn_review" @click="lookTeamPeopleSet(team)">预览</span>
                         <span v-if="btnOptType==='edit'&&(team.checkStatusId===2||team.checkStatusId===4)" class="btn btn_pass" @click="passTeamPeopleSet(teamIndex,team.teamId)">确认</span>
                         <span v-if="btnOptType==='edit'&&team.checkStatusId===3" class="btn btn_pass_text">已确认</span>
                         <span v-if="btnOptType==='edit'&&(team.checkStatusId===2||team.checkStatusId===3)" class="btn btn_back" @click="openBackModal(teamIndex)">驳回</span>
@@ -92,7 +92,7 @@
                     </div>
                 </template>
                 <span slot="personList" slot-scope="text, record, index">
-                    <a-tag v-for="person in record.personList"
+                    <a-tag v-for="person in record.personObjList"
                            color="blue"
                            :key="person.id"
                            closable
@@ -120,7 +120,7 @@
             </a-table>
         </div>
         <choose-people-dialog
-            :range="range"
+            :rangeId="rangeId"
             :visible.sync="choosePeopleDialogVisible"
             :defaultCheckedPeopleIds="defaultCheckedPeopleIds"
             @choosePeople="choosePeople"
@@ -128,7 +128,8 @@
         <team-review-dialog
             :visible.sync="teamInfoDialogVisible"
             :title="teamInfoTitle"
-            :teamInfo="teamInfo">
+            :teamId="teamId"
+            :peopleList="peopleList">
         </team-review-dialog>
         <a-modal title="驳回理由"
                 :visible="backVisible"
@@ -194,23 +195,23 @@
            return []
          }
        },
-       groupData:{
-         type: Object,
-         default(){
-           return{
-             groupName: 'dundianquandao',
-             leaderPosition: 1,
-             personPosition: 1,
-             teamPersonList:[]
-           }
-         }
-       },
-       reviewData:{
-         type: Object,
-         default() {
-           return {}
-         }
-       }
+       // groupData:{
+       //   type: Object,
+       //   default(){
+       //     return{
+       //       groupName: 'dundianquandao',
+       //       leaderPosition: 1,
+       //       personPosition: 1,
+       //       teamPersonList:[]
+       //     }
+       //   }
+       // },
+       // reviewData:{
+       //   type: Object,
+       //   default() {
+       //     return {}
+       //   }
+       // }
      },
      data(){
        return {
@@ -220,7 +221,7 @@
          teamIndex: 0,
 
          choosePeopleDialogVisible: false,
-         range: '',
+         rangeId: '',
          rowIndex: 0,
          defaultCheckedPeopleIds: [],
 
@@ -229,7 +230,7 @@
          backReason: '',
 
          teamInfoDialogVisible: false,
-         teamInfo: [],
+         teamId: '',
          teamInfoTitle: '',
 
          address: []
@@ -263,65 +264,90 @@
          return type
        },
        leaderPositionName:function(){
-         return this.groupData.leaderPosition===1 ? '单兵设备' : '手机'
+         return this.groupResultData.leaderPosition==='1' ? '单兵设备' : '手机'
        },
        personPositionName:function(){
-        return this.groupData.personPosition===1 ? '单兵设备' : '手机'
+        return this.groupResultData.personPosition==='1' ? '单兵设备' : '手机'
        }
      },
      mounted() {
-       this.groupResultData = JSON.parse(JSON.stringify(this.groupData));
-       this.teamPersonList = this.groupResultData.teamPersonList;
-       this.teamPersonList.map(teamItem => {
-         teamItem.teamPersonData.map(item => {
-           let personTemp = this.peopleList.find(person => person.id === item.leaderId);
-           item.leaderName = personTemp.name;
-           item.addressName = item.address.reduce((acc,ad) => {
-             acc =  acc + '--' + ad.name
-             return acc
-           },'').substring(2);
-           item.addressIds = item.address.reduce((acc,ad) => {
-             acc.push(ad.id);
-             return acc
-           },[]);
-           let ids = [...item.personList];
-           item.personList = [];
-           ids.map(id => {
-             let pTemp = this.peopleList.find(p=> p.id === id);
-             if(pTemp){
-               item.personList.push(pTemp);
-             }
-             else{
-               item.personList.push({id:id,name: '未知'});
-             }
-           })
-         });
-       });
-
-       if(this.userType==='zybm'&&this.optType!=='look'){
+       this.groupResultData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+       if(this.btnOptType==='look'){
+         this.teamPersonList = JSON.parse(JSON.stringify(this.groupResultData.teamPersonList));
          this.teamPersonList.map(teamItem => {
-           if(teamItem.teamPersonData.length===0){
-             let additem = {
-               key: '@@@',
-               addressIds: [],
-               addressName: '',
-               leaderId: '',
-               personList: []
+           teamItem.teamPersonData.map(item => {
+             let personTemp = this.peopleList.find(person => person.id === item.leaderId);
+             item.leaderName = personTemp.name;
+             item.addressName = item.address.reduce((acc,ad) => {
+               acc =  acc + '--' + ad.name
+               return acc
+             },'').substring(2);
+             let ids = [...item.personList];
+             item.personList = [];
+             ids.map(id => {
+               let pTemp = this.peopleList.find(p=> p.id === id);
+               if(pTemp){
+                 item.personList.push(pTemp);
+               }
+               else{
+                 item.personList.push({id:id,name: '未知'});
+               }
+             })
+           });
+         });
+       }
+       else{
+         //当编辑时会改变groupResultData值，从而改变store里面的数据
+         this.teamPersonList = this.groupResultData.teamPersonList;
+         this.teamPersonList.map(teamItem => {
+           teamItem.teamPersonData.map(item => {
+             item.addressIds = item.address.reduce((acc,ad) => {
+               acc.push(ad.id);
+               return acc
+             },[]);
+             let ids = [...item.personList];
+             item.personObjList = [];
+             ids.map(id => {
+               let pTemp = this.peopleList.find(p=> p.id === id);
+               if(pTemp){
+                 item.personObjList.push(pTemp);
+               }
+               else{
+                 item.personObjList.push({id:id,name: '未知'});
+               }
+             })
+           });
+         });
+         if(this.userType==='zybm'){
+           this.teamPersonList.map(teamItem => {
+             if(teamItem.teamPersonData.length===0){
+               let additem = {
+                 key: '@@@',
+                 addressIds: [],
+                 leaderId: '',
+                 personList: [],
+                 personObjList: [],
+                 positionId: '',
+                 mapId: '',
+                 mapType: '',
+                 remark: '',
+               }
+               teamItem.teamPersonData.push(additem);
              }
-             teamItem.teamPersonData.push(additem);
-           }
-         });
-         this.getLoadTreeData().then( res => {
-           this.address = res.data;
-         });
+           });
+           this.getLoadTreeData().then( res => {
+             this.address = res;
+           });
+         }
        }
        console.log('this.teamPersonList', this.teamPersonList);
      },
      watch:{
        groupResultData:{
          handler: function(value){
-           console.log('88888888');
-           this.$emit('getResult', value);
+           console.log('88888888',value);
+           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',value);
+           // this.$emit('getResult', value);
          },
          deep: true
        }
@@ -347,7 +373,10 @@
          const target = newData.filter(item => key === item.key)[0];
          if (target) {
            target['addressIds'] = value;
-           target['addressName'] = selectedOptions[0].label + '--' + selectedOptions[1].label + '--' + selectedOptions[2].label;
+           let address = [{id: selectedOptions[0].value, name: selectedOptions[0].label},
+             {id: selectedOptions[1].value, name: selectedOptions[1].label},
+             {id: selectedOptions[1].value, name: selectedOptions[1].label}];
+           target['address'] = address;
            this.teamPersonList[teamIndex].teamPersonData = newData;
          }
        },
@@ -361,9 +390,13 @@
          let additem = {
            key: '@@@' + index.toString(),
            addressIds: [],
-           addressName: '',
            leaderId: '',
-           personList: []
+           personList: [],
+           personObjList: [],
+           positionId: '',
+           mapId: '',
+           mapType: '',
+           remark: '',
          }
          this.teamPersonList[teamIndex].teamPersonData.push(additem);
        },
@@ -373,17 +406,19 @@
        openPeopleDialog(teamIndex,index){
          this.rowIndex = index;
          this.teamIndex = teamIndex;
-         this.defaultCheckedPeopleIds = this.teamPersonList[teamIndex].teamPersonData[index].personList.reduce((acc,item) => {
+         this.defaultCheckedPeopleIds = this.teamPersonList[teamIndex].teamPersonData[index].personObjList.reduce((acc,item) => {
            acc.push(item.id);
            return acc
          },[]);
+         this.teamPersonList[teamIndex].teamPersonData[index].personList = this.defaultCheckedPeopleIds;
          if(this.userType === 'zybm'){
-           this.range = this.teamPersonList[teamIndex].teamId;
+           this.rangeId = this.teamPersonList[teamIndex].teamId;
          }
          this.choosePeopleDialogVisible = true;
        },
        choosePeople(data){
-         this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personList = [];
+         this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personList = data;
+         this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personObjList = [];
          data.forEach((item)=>{
            let name, personTemp = this.peopleList.find(person => person.id === item);
            if(personTemp){
@@ -392,18 +427,19 @@
            else{
              name = "未知";
            }
-           this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personList.push({ id: item, name: name });
+           this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personObjList.push({ id: item, name: name });
          });
        },
        closeTag (person,index,e) {
          console.log(person,index);
-         let i = this.teamPersonList[this.teamIndex].teamPersonData[index].personList.indexOf(person);
+         let i = this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.indexOf(person);
+         this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.splice(i,1);
          this.teamPersonList[this.teamIndex].teamPersonData[index].personList.splice(i,1);
        },
        lookTeamPeopleSet(team){
          console.log('进入预览');
          this.teamInfoTitle = team.teamName + '信息表';
-         this.teamInfo = team.teamPersonData;
+         this.teamId= team.teamId;
          this.teamInfoDialogVisible = true;
        },
        passTeamPeopleSet(teamIndex, teamId){

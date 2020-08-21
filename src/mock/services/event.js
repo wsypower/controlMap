@@ -25,7 +25,7 @@ const getEventList = (options) => {
   console.log(queryParameters);
   let temp1 = {
     id: '001',
-    name: '文明创城行动01',
+    name: 'kaifa001',
     typeId:  1,
     typeName: '日常事件',
     startDayTime: 1597109712000,
@@ -285,56 +285,54 @@ const getMessageByEventId = (options) => {
   const queryParameters = getQueryParameters(options);
   console.log('getMessageByEventId query',queryParameters);
   let baseInfo = {
-    id: '002',
-    name: '文明创城行动02',
+    id: '001',
+    name: 'kaifa001',
     templateId: '',
     templateName: '',
-    typeId: '001',
+    typeId: '1',
     typeName: '日常事件',
     processId: '',
     processName: '发起流程',
-    startDayTime: 1597109712000,
-    endDayTime: 1597363218000,
+    startDayTime: 1598066222219,
+    endDayTime: 1601349422219,
     description: 'msjkdlsahkjdfksd',
     jobGoal: 'jegjwegjhqwe',
     jobAssignment: 'jgsjhdgjhsagdf',
     jobContent: 'lkkuutwuyetqu3687236g',
     jobRequirements: 'bnvjhduwqteuw'
   }
-  let zongTeamList = [{id:'002',name:'机动中队'},
-    {id:'004',name:'秋滨中队'}];
+  let zongTeamList = [{id:'6d87b5a06f7411e8772ac3324197bfce',name:'汤溪中队'},
+    {id:'f8143f406a2911e85752236b32c89757',name:'洋埠中队'}];
   let zongZhiHuiData = {
     groupName: 'zongzhihui',
-    leaderPosition: 1,
+    leaderPosition: '2',
     groupTeam:[{
-      key: 'jhhjsddsdds',
-      leaderId: '003',
+      key: 'k0001',
+      leaderId: '2db8aaf0f9fd11e985344cb8100e0968',
       teamList: zongTeamList
     }]
   };
 
   let fuTeamList1 = [
-    {'id':'006','name':'江南中队'}];
+    {'id':'f8143f406a2911e85752236b32c89757','name':'洋埠中队'},{'id':'09468cd06f7711e8772ac3324197bfce','name':'业务科'}];
   let fuTeamList2 = [
-    {'id':'007','name':'西关中队'}];
+    {'id':'dae9d1006a2911e85752236b32c89757','name':'三江中队'},
+    {'id':'ee15ce506a2911e85752236b32c89757','name':'苏孟中队'},
+    {'id':'f39a28d06a2911e85752236b32c89757','name':'罗埠中队'}];
   let fuTeamList3 = [
     {'id':'001','name':'汤溪中队'},
     {'id':'009','name':'罗埠中队'}];
   let fuZhiHuiData = {
     groupName: 'fuzhihui',
-    leaderPosition: 1,
+    leaderPosition: '1',
     groupTeam:[{
       key: '300001',
-      leaderId: '005',
+      leaderId: '335b53706f9a11e8772ac3324197bfce',
       teamList: fuTeamList1
     },{
       key: '300002',
-      leaderId: '002',
+      leaderId: '1daa34d0fdd711e8f90d14d818f02055',
       teamList: fuTeamList2
-    },{
-      key: '300003',
-      leaderId: '004',
-      teamList: fuTeamList3
     }]
   };
   let teamPersonData1 = [
@@ -352,10 +350,20 @@ const getMessageByEventId = (options) => {
   let teamPersonData2 = [
     {
       key: '000000004',
-      address: [{id:'zhejiang',name:'zhejiang'},{id:'hangzhou',name:'hangzhou'}],
-      leaderId: '007',
-      personList: ['003','008'],
-      baoZhangId: 'bz00002',
+      address: [{id:'17',name:'宾虹西路'},{id:'69',name:'宾虹西路1'},{id:'194',name:'宾虹西路（秋高村委-公铁立交）北侧'}],
+      leaderId: '130220006f8511e8772ac3324197bfce',
+      personList: ['af3fcb806f8411e8772ac3324197bfce','db55b1c06f8511e8772ac3324197bfce'],
+      positionId: 'xihu',
+      mapId: '',
+      mapType: '',
+      remark: '',
+    },
+    {
+      key: '000000007',
+      address: [{id:'12',name:'永康街'},{id:'60',name:'永康街1'},{id:'170',name:'（双馨路-四联路）'}],
+      leaderId: 'e39cfcd06f8511e8772ac3324197bfce',
+      personList: ['d5c8a1d0eafa11e939de38e6ac3d6fdb','90b3dc006f8511e8772ac3324197bfce','b84647e06f8411e8772ac3324197bfce'],
+      positionId: 'xihu2',
       mapId: '',
       mapType: '',
       remark: '',
@@ -363,41 +371,36 @@ const getMessageByEventId = (options) => {
   ];
   let teamPersonList = [
     // {teamId: '001',teamName: '汤溪中队',checkStatusId:1, checkStatusName: '未上报',teamPersonData:[]},
-    {teamId: '009',teamName: '罗埠中队',checkStatusId:1, checkStatusName: '未上报',teamPersonData:[]}]
+    {teamId: 'dae9d1006a2911e85752236b32c89757',teamName: '三江中队',checkStatusId:2, checkStatusName: '待审核',teamPersonData:teamPersonData2}]
   let dunDianQuanDaoData = {
     groupName: 'dundianquandao',
-    leaderPosition: 1,
-    personPosition: 1,
+    leaderPosition: '2',
+    personPosition: '1',
     teamPersonList: teamPersonList
   };
   let jiDongXunChaData = {
     groupName: 'jidongxuncha',
-    leaderPosition: 1,
-    personPosition: 1,
+    leaderPosition: '1',
+    personPosition: '1',
     groupPerson:[{
       key: 'xc000001',
-      leaderId: '003',
-      personList: ['001','002']
-    },
-    {
-      key: 'xc000002',
-      leaderId: '005',
-      personList: ['003','004']
+      leaderId: '522aac006f8211e8772ac3324197bfce',
+      personList: ["788b8ad06f8311e8772ac3324197bfce","2393f980672211e92cfa5d79f28d05c6","7e6dd130fe3811e88628cde6ce3e17dc","5fc8d0e0fe3811e88628cde6ce3e17dc","57b1e4a0fe3811e88628cde6ce3e17dc","47ff7db0fe3811e88628cde6ce3e17dc","40b1fbf0fe3811e88628cde6ce3e17dc","e53b2e606f8311e8772ac3324197bfce","fe1862906f8311e8772ac3324197bfce","07e933d06f8411e8772ac3324197bfce","81f0c9006f8311e8772ac3324197bfce","3be1afe06f8511e8772ac3324197bfce","8ac75bc06f8311e8772ac3324197bfce","cb8722306f8311e8772ac3324197bfce"]
     }]
   };
   let houQinBaoZhangData = {
     groupName: 'houqinbaozhang',
-    leaderPosition: 1,
-    personPosition: 1,
+    leaderPosition: '2',
+    personPosition: '1',
     groupPerson:[{
       key: 'hq00001',
-      leaderId: '007',
-      personList: ['003','005']
+      leaderId: '55d94090fdd611e8f90d14d818f02055',
+      personList: ["370be530fe2d11e826f8e792dc49e411","44d1d8906f9a11e8772ac3324197bfce","61ce4e706f9911e8772ac3324197bfce","91ad19006f9911e8772ac3324197bfce","12fa24306f9a11e8772ac3324197bfce"]
     },
     {
       key: 'hq00002',
-      leaderId: '006',
-      personList: ['004','009']
+      leaderId: '472b50606f8311e8772ac3324197bfce',
+      personList: ["575bd660fe2d11e826f8e792dc49e411","4de692a0fe2d11e826f8e792dc49e411"]
     }]
   };
   let data = {

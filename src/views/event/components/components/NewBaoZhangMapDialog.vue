@@ -15,67 +15,9 @@
     <div class="yuan_dialog_body" ref="baoZhangBody">
       <!-- 地图控件注入地址 -->
       <LayoutMap ref="olMap"></LayoutMap>
-      <!--<a-button type="primary" @click="showSetDialog(0)" class="show-set-button">展示设置弹窗</a-button>-->
-      <div hidden>
-        <div class="set-baozhang-dialog" ref="infoOverlay">
-          <div class="set-baozhang-dialog-header" flex="main:justify cross:center">
-            <span>设置保障信息</span>
-            <a-icon type="close" @click="closeSetDialog" />
-          </div>
-          <div class="set-baozhang-dialog-body">
-            <cg-container scroll>
-              <a-form :form="form" style="margin:10px">
-                <a-form-item label="具体路段：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <a-select
-                          mode="multiple"
-                          placeholder="请选择人员"
-                          @change="handleChange"
-                          v-model="baoZhangFormData.positionId"
-                  >
-                    <a-select-option v-for="baoZhang in baoZhangData" :key="baoZhang.name">
-                      {{ baoZhang.load }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-                <a-form-item label="负责人：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{baoZhangFormData.leaderName}}</span>
-                </a-form-item>
-                <a-form-item label="执勤人员：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{baoZhangFormData.personNameStr}}</span>
-                </a-form-item>
-                <a-form-item label="备注：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <a-textarea v-model="baoZhangFormData.remark" placeholder="" :autosize="{ minRows: 2, maxRows: 2 }" />
-                </a-form-item>
-              </a-form>
-            </cg-container>
-          </div>
-          <div class="set-baozhang-dialog-footer">
-            <a-button type="primary" size="small" @click="saveBaoZhangInfo">确定</a-button>
-            <a-button type="primary" size="small" @click="reset">重置</a-button>
-          </div>
-        </div>
-      </div>
-      <div v-if="nowOptType==='edit'" class="operate-panel">
-        <a-dropdown>
-          <a-menu slot="overlay" @click="handleOperateClick">
-            <a-menu-item key="Point">点</a-menu-item>
-            <a-menu-item key="LineString">线</a-menu-item>
-            <a-menu-item key="Polygon">多边形</a-menu-item>
-          </a-menu>
-          <a-button class="op-btn yacz-btn">
-            <span class="memu-title-text">新增</span>
-            <a-icon type="down"/>
-          </a-button>
-        </a-dropdown>
-        <!--<a-button type="primary" @click="editMapFeatures" v-if="this.baoZhangData.length>0">编辑</a-button>-->
-        <a-button type="primary" @click="selectGeometry">选择</a-button>
-        <a-button type="primary" @click="clearSelectGeometry">删除选择</a-button>
-      </div>
     </div>
     <template slot="footer">
-      <a-button v-if="nowOptType==='look'" @click="mapDialogVisible=false;">关闭</a-button>
-      <a-button v-if="nowOptType==='edit'" type="primary" @click="saveMap">保存视图</a-button>
-      <a-button v-if="nowOptType==='edit'" @click="resetMap">重置视图</a-button>
+      <a-button @click="mapDialogVisible=false">关闭</a-button>
     </template>
   </a-modal>
 </template>
@@ -103,17 +45,11 @@
         visible: {
             type: Boolean,
             default: false
-        },
-        optType: {
-          type: String,
-          default: ''
         }
       },
       data(){
         return {
           infoOverlay:null,
-          baoZhangData: [],
-          baoZhangArr: [],
           mapDialogVisible: false,
           pointFeatures:[],
           lineFeatures:[],
@@ -213,32 +149,7 @@
             console.log('关闭了')
         },
         init(){
-          this.baoZhangData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'].teamPersonList;
-          let baoZhangObj = JSON.parse(JSON.stringify(this.baoZhangData));
-          baoZhangObj.forEach(baoZhangItem => {
-            let a = baoZhangItem.teamPersonData.reduce((acc, item) => {
-              let personTemp = this.peopleList.find(person => person.id === item.leaderId);
-              let perName = item.personList.reduce((arr, id) => {
-                let person = this.peopleList.find(p => p.id === id);
-                arr.push(person.name);
-                return arr
-              },[]);
-              let temp = {
-                positionId: item.addressIds[2],
-                load: item.addressName,
-                leadName: personTemp.name,
-                personNameStr: perName.join(','),
-                remark: ''
-              }
-              acc.push(temp);
-              return acc
-            },[]);
-            this.baoZhangArr = this.baoZhangArr.concat(a);
-          });
-          //最终保存时，更新一下store
-          console.log('打开保障视图需要的数据',this.baoZhangArr);
-
-          // console.log('baozhangdata', this.baoZhangData);
+          console.log('baozhangdata', this.baoZhangData);
           this.$nextTick().then(() => {
             // let height = document.body.clientHeight - 300;
             // this.$refs.baoZhangBody.style.height= height + 'px';

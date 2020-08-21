@@ -52,7 +52,7 @@
               </template>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData" @getResult="getZongZhiHuiResultData"></group-team>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData" @getResult="getFuZhiHuiResultData"></group-team>
-              <team-people v-if="baseInfo.processName" :eventId="eventId" :optType="optType" :peopleList="peopleList" :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people>
+              <team-people v-if="baseInfo.processName" :eventId="eventId" :optType="optType" :peopleList="peopleListForTeam"></team-people>
               <team-people-for-add v-else :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people-for-add>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData" @getResult="getJiDongXunChaResultData"></group-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData" @getResult="getHouQinBaoZhangResultData"></group-people>
@@ -70,7 +70,7 @@
       </my-scroll>
     </div>
     <template slot="footer">
-      <a-button v-if="optType!=='add'" type="primary" :loading="reviewLoading" @click="reviewEvent">预览</a-button>
+      <a-button v-if="optType==='!add'" type="primary" :loading="reviewLoading" @click="reviewEvent">预览</a-button>
       <!-- 信息指挥中心视角 保存只有在新建的时候才有 -->
       <a-button v-if="userType==='qxsl'&&(optType==='add'||optType==='edit')" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
       <!-- 发起流程只有在新建的时候才有 -->
@@ -83,12 +83,12 @@
       <!-- 领导视角 -->
       <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="backLoading" @click="openBackDialog">驳回</a-button>
     </template>
-    <bao-zhang-map-dialog
+    <new-bao-zhang-map-dialog v-if="optType==='add'" :visible.sync="mapDialogVisible"></new-bao-zhang-map-dialog>
+    <bao-zhang-map-dialog v-else
       :visible.sync="mapDialogVisible"
-      :baoZhangData="baoZhangData"
       :optType="optType"
-      @saveDrawData="saveDraw"
     ></bao-zhang-map-dialog>
+
     <a-modal title="驳回理由"
              :visible="backVisible"
              :confirm-loading="confirmLoading"
@@ -112,6 +112,7 @@ import TeamPeopleForAdd from './components/TeamPeopleForAdd'
 import GroupPeople from './components/GroupPeople'
 import ChoosePeopleDialog from './ChoosePeopleDialog'
 import BaoZhangMapDialog from './components/BaoZhangMapDialog'
+import NewBaoZhangMapDialog from './components/NewBaoZhangMapDialog'
 import ReviewEventDialog from './ReviewEventDialog'
 import {postEmergencyFeatures} from '@/api/map/service'
 
@@ -125,6 +126,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       TeamPeopleForAdd,
       GroupPeople,
       ChoosePeopleDialog,
+      NewBaoZhangMapDialog,
       BaoZhangMapDialog,
       ReviewEventDialog
     },
@@ -155,6 +157,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         dataLoading: false,
         activeKey: '1',
         peopleList: [],
+        peopleListForTeam: [],
         baseInfo:{
           id: '',
           name: '',
@@ -176,7 +179,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           groupName: 'zongzhihui',
           leaderPosition: '1',
           groupTeam:[{
-            key: 'jhhjsddsdds',
+            key: '@@@',
             leaderId: '',
             teamList: []
           }]
@@ -185,7 +188,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           groupName: 'fuzhihui',
           leaderPosition: '1',
           groupTeam:[{
-            key: 'jhhjsddsdds',
+            key: '@@@',
             leaderId: '',
             teamList: []
           }]
@@ -201,7 +204,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           leaderPosition: '1',
           personPosition: '1',
           groupPerson:[{
-            key: 'jhhjsddsdds',
+            key: '@@@',
             leaderId: '',
             personList: []
           }]
@@ -211,7 +214,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           leaderPosition: '1',
           personPosition: '1',
           groupPerson:[{
-            key: 'jhhjsddsdds',
+            key: '@@@',
             leaderId: '',
             personList: []
           }]
@@ -268,9 +271,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.getTemplateEventDataList().then((res)=>{
           this.templateList = res;
         });
-        this.getPeopleDataList().then(res => {
+        this.getPeopleDataList({id:''}).then(res => {
           this.peopleList = res;
         });
+
         if(this.optType!=='add'){
           this.templateId = this.baseInfo.templateId;
           this.getEventInfoById(this.eventId);
@@ -297,9 +301,15 @@ import {postEmergencyFeatures} from '@/api/map/service'
           this.zongZhiHuiData = res.data.groupData.zongZhiHuiData;
           this.fuZhiHuiData = res.data.groupData.fuZhiHuiData;
           this.dunDianQuanDaoData = res.data.groupData.dunDianQuanDaoData;
+          this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',this.dunDianQuanDaoData);
           this.jiDongXunChaData = res.data.groupData.jiDongXunChaData;
           this.houQinBaoZhangData = res.data.groupData.houQinBaoZhangData;
           console.log(this.jiDongXunChaData, this.houQinBaoZhangData);
+          if(this.userType==='zybm'){
+            this.getPeopleDataList({id:this.dunDianQuanDaoData.teamPersonList[0].teamId}).then(res => {
+              this.peopleListForTeam = res;
+            });
+          }
           this.dataLoading = false;
         });
       },
@@ -407,34 +417,12 @@ import {postEmergencyFeatures} from '@/api/map/service'
         })
       },
 
-
-
       //开启保障视图弹窗
       openBaoZhangMapDialog(){
-        let baoZhangArr = [];
-        let baoZhangObj = JSON.parse(JSON.stringify(this.dunDianQuanDaoData.teamPersonList));
-        baoZhangObj.forEach(baoZhangItem => {
-          let a = baoZhangItem.teamPersonData.reduce((acc, item) => {
-            let personTemp = this.peopleList.find(person => person.id === item.leaderId);
-            let perName = item.personList.reduce((arr, id) => {
-              let person = this.peopleList.find(p => p.id === id);
-              arr.push(person.name);
-              return arr
-            },[]);
-            let temp = {
-              positionId: item.addressIds[2],
-              load: item.addressName,
-              leadName: personTemp.name,
-              personNameStr: perName.join(','),
-              remark: ''
-            }
-            acc.push(temp);
-            return acc
-          },[]);
-          baoZhangArr = baoZhangArr.concat(a);
-        });
-        console.log('打开保障视图需要的数据',baoZhangArr);
-        this.baoZhangData = baoZhangArr;
+        if(this.optType!=='add'){
+
+
+        }
         this.mapDialogVisible = true;
       },
       //获取保障视图重组后数据
@@ -560,6 +548,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //中心：提交审核
       submitCheck(type){
         if(type==='zybm'){
+          this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
           console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
           let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
             let data = {

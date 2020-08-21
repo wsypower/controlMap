@@ -8,14 +8,9 @@
         <div style="min-height:200px;" class="team_dialog_body" flex="dir:left">
             <div class="team_dialog_body-main" id="printTest">
                 <a-table :columns="columns" :dataSource="teamInfo" :pagination="false" bordered>
-                    <template slot="loadName" slot-scope="text, record, index">
-                        <div key="loadName">
-                            <span >{{record.loadName}}</span>
-                        </div>
-                    </template>
-                    <template slot="position" slot-scope="text, record, index">
-                        <div key="position">
-                            <span>{{record.position}}</span>
+                    <template slot="loadPosition" slot-scope="text, record, index">
+                        <div key="loadPosition">
+                            <span >{{record.addressName}}</span>
                         </div>
                     </template>
                     <template slot="leaderId" slot-scope="text, record, index">
@@ -24,7 +19,7 @@
                         </div>
                     </template>
                     <span slot="personList" slot-scope="text, record, index">
-                        <span style="margin: 0px 8px;" v-for="person in record.personList" :key="person.id">{{ person.name }}</span>
+                        <span>{{ record.personNameStr }}</span>
                     </span>
                 </a-table>
                 <div class="team_review_map"></div>
@@ -39,18 +34,11 @@
 <script type="text/ecmascript-6">
   const groupColumns = [
     {
-      title: '道路',
-      dataIndex: 'loadName',
-      key: 'loadName',
-      scopedSlots: { customRender: 'loadName' },
-      width: '200px'
-    },
-    {
-      title: '具体路段',
-      dataIndex: 'position',
-      key: 'position',
-      scopedSlots: { customRender: 'position' },
-      width: '200px'
+      title: '道路--道路分段--具体路段',
+      dataIndex: 'loadPosition',
+      key: 'loadPosition',
+      scopedSlots: { customRender: 'loadPosition' },
+      width: '360px'
     },
     {
       title: '负责人',
@@ -76,16 +64,21 @@
        type:String,
        default: ''
      },
-     teamInfo:{
+      teamId:{
+       type:String,
+        default: ''
+     },
+      peopleList:{
        type:Array,
-       default(){
+        default(){
          return []
-       }
-     }
+        }
+      }
    },
    data(){
       return {
         teamInfoVisible: false,
+        teamInfo: [],
         columns: groupColumns,
         printObj: {
           id: "printTest",
@@ -112,8 +105,33 @@
    },
    methods:{
       init(){
+        let teamPersonList = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'].teamPersonList;
+        this.teamInfo = teamPersonList.find(item => item.teamId===this.teamId).teamPersonData;
         console.log('teamInfo', this.teamInfo);
+        this.teamInfo.map(item => {
+          let personTemp = this.peopleList.find(person => person.id === item.leaderId);
+          item.leaderName = personTemp.name;
+          item.addressName = item.address.reduce((acc,ad) => {
+            acc =  acc + '--' + ad.name
+            return acc
+          },'').substring(2);
+          let ids = [...item.personList];
+          let nameList = [];
+          ids.forEach(id => {
+            let name = '';
+            let pTemp = this.peopleList.find(p=> p.id === id);
+            if(pTemp){
+              name = pTemp.name;
+            }
+            else{
+              name='未知'
+            }
+            nameList.push(name);
+          })
+          item.personNameStr = nameList.join(',');
+        })
         this.printObj.popTitle = this.title;
+
       },
      printTeamInfo(){
        this.$print(this.$refs.print);

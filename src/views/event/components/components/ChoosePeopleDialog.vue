@@ -33,7 +33,7 @@
           type:Boolean,
           default: false
         },
-        range:{
+        rangeId:{
           type:String,
           default: ''
         },
@@ -87,7 +87,7 @@
         ...mapActions('event/common', ['getPeopleTreeData']),
         init(){
           this.dataLoading = true;
-          this.getPeopleTreeData({range: this.range}).then((res)=>{
+          this.getPeopleTreeData({id: this.rangeId}).then((res)=>{
             console.log(res);
             this.treeData = res;
             this.getPeopleList(res,this.peopleList);

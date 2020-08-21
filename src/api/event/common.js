@@ -128,7 +128,7 @@ export function getPeopleTreeData(data){
 export function getLoadTreeData(data){
   console.log('api:getLoadTreeData',data);
   return request({
-    url: '@test/getLoadTreeData?_t='+ new Date().getTime(),
+    url: 'planEvent/getLoadTreeData?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })
