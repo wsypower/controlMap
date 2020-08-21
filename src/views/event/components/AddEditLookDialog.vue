@@ -174,7 +174,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         },
         zongZhiHuiData:{
           groupName: 'zongzhihui',
-          leaderPosition: 1,
+          leaderPosition: '1',
           groupTeam:[{
             key: 'jhhjsddsdds',
             leaderId: '',
@@ -183,7 +183,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         },
         fuZhiHuiData:{
           groupName: 'fuzhihui',
-          leaderPosition: 1,
+          leaderPosition: '1',
           groupTeam:[{
             key: 'jhhjsddsdds',
             leaderId: '',
@@ -192,14 +192,14 @@ import {postEmergencyFeatures} from '@/api/map/service'
         },
         dunDianQuanDaoData:{
           groupName: 'dundianquandao',
-          leaderPosition: 1,
-          personPosition: 1,
+          leaderPosition: '1',
+          personPosition: '1',
           teamPersonList: []
         },
         jiDongXunChaData:{
           groupName: 'jidongxuncha',
-          leaderPosition: 1,
-          personPosition: 1,
+          leaderPosition: '1',
+          personPosition: '1',
           groupPerson:[{
             key: 'jhhjsddsdds',
             leaderId: '',
@@ -208,8 +208,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
         },
         houQinBaoZhangData:{
           groupName: 'houqinbaozhang',
-          leaderPosition: 1,
-          personPosition: 1,
+          leaderPosition: '1',
+          personPosition: '1',
           groupPerson:[{
             key: 'jhhjsddsdds',
             leaderId: '',
@@ -266,10 +266,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
       ...mapActions('event/common', ['getPeopleDataList']),
       init(){
         this.getTemplateEventDataList().then((res)=>{
-          this.templateList = res.data;
+          this.templateList = res;
         });
         this.getPeopleDataList().then(res => {
-          this.peopleList = res.data;
+          this.peopleList = res;
         });
         if(this.optType!=='add'){
           this.templateId = this.baseInfo.templateId;
@@ -315,14 +315,106 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.jiDongXunChaData = Object.assign({},this.$options.data()['jiDongXunChaData']);
         this.houQinBaoZhangData = Object.assign({},this.$options.data()['houQinBaoZhangData']);
       },
+      //获取事件基本信息
+      getBaseInfoResultData(data){
+        Object.keys(this.baseInfo).forEach(key => {
+          this.baseInfo[key] = data[key];
+        });
+        if(data.dayRange&&data.dayRange.length>0){
+          this.baseInfo['startDayTime'] = data.dayRange[0]._d.getTime();
+          this.baseInfo['endDayTime'] = data.dayRange[1]._d.getTime();
+        }
+        console.log('getBaseInfoResultData', this.baseInfo);
+      },
+      //获取总指挥信息
+      getZongZhiHuiResultData(data){
+        this.zongZhiHuiData = JSON.parse(JSON.stringify(data));
+        this.zongZhiHuiData.groupTeam.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
+          let temp = [...item.teamList];
+          if(temp.length>0){
+            item.teamList = [];
+            item.teamList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
+      },
+      //获取副指挥信息
+      getFuZhiHuiResultData(data){
+        this.fuZhiHuiData = JSON.parse(JSON.stringify(data));
+        this.fuZhiHuiData.groupTeam.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
+          let temp = [...item.teamList];
+          if(temp.length>0){
+            item.teamList = [];
+            item.teamList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
+      },
+      //获取蹲点劝导组信息
+      geTunDianQuanDaoResultData(data) {
+        console.log('获取蹲点劝导组信息', data);
+        this.dunDianQuanDaoData = JSON.parse(JSON.stringify(data));
+        if(this.dunDianQuanDaoData.teamPersonList){
+          this.dunDianQuanDaoData.teamPersonList.map(teamPerson => {
+            teamPerson.teamPersonData.map(item => {
+              item.key = item.key.indexOf('@@@')===0?'':item.key;
+              let temp = [...item.personList];
+              if(temp.length>0){
+                item.personList = [];
+                item.personList = temp.reduce((acc, t) => {
+                  acc.push(t.id);
+                  return acc
+                },[])
+              }
+            })
+          })
+        }
+      },
+      //获取机动巡查应急组数据
+      getJiDongXunChaResultData(data){
+        this.jiDongXunChaData = JSON.parse(JSON.stringify(data));
+        this.jiDongXunChaData.groupPerson.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
+          let temp = [...item.personList];
+          if(temp.length>0){
+            item.personList = [];
+            item.personList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
+      },
+      //获取后勤保障组数据
+      getHouQinBaoZhangResultData(data){
+        this.houQinBaoZhangData = JSON.parse(JSON.stringify(data));
+        this.houQinBaoZhangData.groupPerson.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
+          let temp = [...item.personList];
+          if(temp.length>0){
+            item.personList = [];
+            item.personList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
+      },
+
+
 
       //开启保障视图弹窗
       openBaoZhangMapDialog(){
         let baoZhangArr = [];
-        this.baoZhangData = JSON.parse(JSON.stringify(this.dunDianQuanDaoData.teamPersonList));
-        this.baoZhangData.forEach(baoZhangItem => {
+        let baoZhangObj = JSON.parse(JSON.stringify(this.dunDianQuanDaoData.teamPersonList));
+        baoZhangObj.forEach(baoZhangItem => {
           let a = baoZhangItem.teamPersonData.reduce((acc, item) => {
-            // this.peopleList
             let personTemp = this.peopleList.find(person => person.id === item.leaderId);
             let perName = item.personList.reduce((arr, id) => {
               let person = this.peopleList.find(p => p.id === id);
@@ -330,6 +422,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
               return arr
             },[]);
             let temp = {
+              positionId: item.addressIds[2],
               load: item.addressName,
               leadName: personTemp.name,
               personNameStr: perName.join(','),
@@ -340,8 +433,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
           },[]);
           baoZhangArr = baoZhangArr.concat(a);
         });
-
         console.log('打开保障视图需要的数据',baoZhangArr);
+        this.baoZhangData = baoZhangArr;
         this.mapDialogVisible = true;
       },
       //获取保障视图重组后数据
@@ -380,82 +473,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.baoZhangData = data.allBaoZhangData;
       },
 
-      //获取事件基本信息
-      getBaseInfoResultData(data){
-        Object.keys(this.baseInfo).forEach(key => {
-          this.baseInfo[key] = data[key];
-        });
-        if(data.dayRange&&data.dayRange.length>0){
-          this.baseInfo['startDayTime'] = data.dayRange[0]._d.getTime();
-          this.baseInfo['endDayTime'] = data.dayRange[1]._d.getTime();
-        }
-      },
-      //获取总指挥信息
-      getZongZhiHuiResultData(data){
-        this.zongZhiHuiData = JSON.parse(JSON.stringify(data));
-        this.zongZhiHuiData.groupTeam.map(item => {
-          item.key = item.key.indexOf('@@@')===0?'':item.key;
-          let temp = [...item.teamList];
-          if(temp.length>0){
-            item.teamList = [];
-            item.teamList = temp.reduce((acc, t) => {
-              acc.push(t.id);
-              return acc
-            },[])
-          }
-        })
-      },
-      //获取副指挥信息
-      getFuZhiHuiResultData(data){
-        this.fuZhiHuiData = JSON.parse(JSON.stringify(data));
-        this.fuZhiHuiData.groupTeam.map(item => {
-          item.key = item.key.indexOf('@@@')===0?'':item.key;
-          let temp = [...item.teamList];
-          if(temp.length>0){
-            item.teamList = [];
-            item.teamList = temp.reduce((acc, t) => {
-              acc.push(t.id);
-              return acc
-            },[])
-          }
-        })
-      },
-      //获取蹲点劝导组信息
-      geTunDianQuanDaoResultData(data) {
-        console.log('获取蹲点劝导组信息', data);
-        // if(data)
-        this.dunDianQuanDaoData = JSON.parse(JSON.stringify(data));
-      },
-      //获取机动巡查应急组数据
-      getJiDongXunChaResultData(data){
-        this.jiDongXunChaData = JSON.parse(JSON.stringify(data));
-        this.jiDongXunChaData.groupPerson.map(item => {
-          item.key = item.key.indexOf('@@@')===0?'':item.key;
-          let temp = [...item.personList];
-          if(temp.length>0){
-            item.personList = [];
-            item.personList = temp.reduce((acc, t) => {
-              acc.push(t.id);
-              return acc
-            },[])
-          }
-        })
-      },
-      //获取后勤保障组数据
-      getHouQinBaoZhangResultData(data){
-        this.houQinBaoZhangData = JSON.parse(JSON.stringify(data));
-        this.houQinBaoZhangData.groupPerson.map(item => {
-          item.key = item.key.indexOf('@@@')===0?'':item.key;
-          let temp = [...item.personList];
-          if(temp.length>0){
-            item.personList = [];
-            item.personList = temp.reduce((acc, t) => {
-              acc.push(t.id);
-              return acc
-            },[])
-          }
-        })
-      },
+
 
       //信息智慧中心保存草稿/保存
       saveDraft(e){
@@ -467,16 +485,17 @@ import {postEmergencyFeatures} from '@/api/map/service'
         console.log('dunDianQuanDaoData', this.dunDianQuanDaoData);
         console.log('jiDongXunChaData', this.jiDongXunChaData);
         console.log('houQinBaoZhangData', this.houQinBaoZhangData);
-
+        this.baseInfo.startDayTime = this.baseInfo.startDayTime.toString();
+        this.baseInfo.endDayTime = this.baseInfo.endDayTime.toString();
         let params = {
-          baseInfo: this.baseInfo,
-          groupData: {
+          baseInfo: JSON.stringify(this.baseInfo),
+          groupData: JSON.stringify({
             zongZhiHuiData: this.zongZhiHuiData,
             fuZhiHuiData: this.fuZhiHuiData,
             dunDianQuanDaoData: this.dunDianQuanDaoData,
             jiDongXunChaData: this.jiDongXunChaData,
             houQinBaoZhangData: this.houQinBaoZhangData
-          }
+          })
         }
         this.addNewEvent(params).then((res)=>{
           console.log('addNewEvent',res);

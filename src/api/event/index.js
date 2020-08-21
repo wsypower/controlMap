@@ -86,7 +86,7 @@ export function getEventList(data){
 export function addNewEvent(data){
     console.log('api:addNewEvent',data);
     return request({
-        url: '@test/addNewEvent',
+        url: 'planEvent/addNewEvent',
         method: 'post',
         data
     })

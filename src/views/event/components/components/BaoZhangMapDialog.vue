@@ -30,10 +30,10 @@
                           mode="multiple"
                           placeholder="请选择人员"
                           @change="handleChange"
-                          v-model="baoZhangFormData.name"
+                          v-model="baoZhangFormData.positionId"
                   >
                     <a-select-option v-for="baoZhang in baoZhangData" :key="baoZhang.name">
-                      {{ baoZhang.name }}
+                      {{ baoZhang.load }}
                     </a-select-option>
                   </a-select>
                 </a-form-item>
@@ -151,7 +151,8 @@
           form: null,
           //一条保障点位的数据
           baoZhangFormData: {
-            name: '',
+            load: '',
+            positionId: '',
             leaderName: '',
             personNameStr: '',
             remark: '',
@@ -216,6 +217,7 @@
             console.log('关闭了')
         },
         init(){
+          console.log('baozhangdata', this.baoZhangData);
           this.$nextTick().then(() => {
             // let height = document.body.clientHeight - 300;
             // this.$refs.baoZhangBody.style.height= height + 'px';

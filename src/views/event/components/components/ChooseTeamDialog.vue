@@ -65,7 +65,7 @@
           this.teamList = [];
           this.getTeamDataList().then((res)=>{
             this.dataLoading = false;
-            res.data.map(item => {
+            res.map(item => {
               let index = this.defaultCheckedIds.findIndex(id=>id===item.id);
               if(index<0){
                 item.checked = false;
@@ -75,7 +75,7 @@
               }
 
             });
-            this.teamList = res.data;
+            this.teamList = res;
           });
         },
         onChange(item){

@@ -199,7 +199,7 @@ const getPeopleDataList = (options) => {
     { 'Custom-Header': Mock.mock('@id') }
   )
 }
-Mock.mock(/\/@test\/getPeopleDataList/, 'get', getPeopleDataList);
+Mock.mock(/\/@test\/getDetailPeopleDataList/, 'get', getPeopleDataList);
 
 //
 const getLogDataByEventId = (options) => {
@@ -362,8 +362,8 @@ const getMessageByEventId = (options) => {
     }
   ];
   let teamPersonList = [
-    {teamId: '001',teamName: '汤溪中队',checkStatusId:1, checkStatusName: '未上报',teamPersonData:[]},
-    {teamId: '009',teamName: '罗埠中队',checkStatusId:2, checkStatusName: '待审核',teamPersonData:teamPersonData2}]
+    // {teamId: '001',teamName: '汤溪中队',checkStatusId:1, checkStatusName: '未上报',teamPersonData:[]},
+    {teamId: '009',teamName: '罗埠中队',checkStatusId:1, checkStatusName: '未上报',teamPersonData:[]}]
   let dunDianQuanDaoData = {
     groupName: 'dundianquandao',
     leaderPosition: 1,
@@ -611,3 +611,78 @@ const submitEvent = (options) => {
   )
 }
 Mock.mock(/\/@test\/submitEvent/, 'post', submitEvent);
+
+const getLoadTreeData = (options) => {
+  console.log('getLoadTreeData options',options);
+  const queryParameters = getQueryParameters(options);
+  console.log('getLoadTreeData query',queryParameters);
+  let data = [
+    {
+      value: 'zhejiang',
+      label: 'Zhejiang',
+      children: [
+        {
+          value: 'hangzhou',
+          label: 'Hangzhou',
+          children: [
+            {
+              value: 'xihu',
+              label: 'West Lake',
+            },
+            {
+              value: 'xihu2',
+              label: 'West2 Lake',
+            },
+            {
+              value: 'xihu3',
+              label: 'West3 Lake',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      value: 'jiangsu',
+      label: 'Jiangsu',
+      children: [
+        {
+          value: 'nanjing',
+          label: 'Nanjing',
+          children: [
+            {
+              value: 'zhonghuamen',
+              label: 'Zhong Hua Men',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      value: 'ningxia',
+      label: 'ningxia',
+      children: [
+        {
+          value: 'yinchuan',
+          label: 'yinchuan',
+          children: [
+            {
+              value: 'donghu',
+              label: 'donghu',
+            },
+          ],
+        },
+      ],
+    }
+  ];
+  return builder(
+    {
+      code: 0,
+      data:data,
+      msg: '操作成功'
+    },
+    '请求成功',
+    0,
+    { 'Custom-Header': Mock.mock('@id') }
+  )
+}
+Mock.mock(/\/@test\/getLoadTreeData/, 'get', getLoadTreeData);

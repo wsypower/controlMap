@@ -5,8 +5,8 @@
             <div flex="dir:left cross:center">
                 <label>{{title}}定位方式：</label>
                 <a-radio-group v-if="nowOptType"  name="radioGroup" v-model="groupResultData.leaderPosition">
-                    <a-radio :value="1">单兵设备</a-radio>
-                    <a-radio :value="2">手机</a-radio>
+                    <a-radio value="1">单兵设备</a-radio>
+                    <a-radio value="2">手机</a-radio>
                 </a-radio-group>
                 <span v-else>{{leaderPositionName}}</span>
             </div>

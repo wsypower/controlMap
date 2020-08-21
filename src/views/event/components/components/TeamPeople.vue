@@ -7,16 +7,16 @@
             <div class="" flex="dir:left cross:center">
                 <label>负责人定位方式：</label>
                 <a-radio-group v-if="userType==='qxsl'&&optType!=='look'" name="radioGroup" v-model="groupResultData.leaderPosition">
-                    <a-radio :value="1">单兵设备</a-radio>
-                    <a-radio :value="2">手机</a-radio>
+                    <a-radio value="1">单兵设备</a-radio>
+                    <a-radio value="2">手机</a-radio>
                 </a-radio-group>
                 <span v-else>{{leaderPositionName}}</span>
             </div>
             <div class="" flex="dir:left cross:center">
                 <label>执勤人定位方式：</label>
                 <a-radio-group v-if="userType==='qxsl'&&optType!=='look'" name="radioGroup" v-model="groupResultData.personPosition">
-                    <a-radio :value="1">单兵设备</a-radio>
-                    <a-radio :value="2">手机</a-radio>
+                    <a-radio value="1">单兵设备</a-radio>
+                    <a-radio value="2">手机</a-radio>
                 </a-radio-group>
                 <span v-else>{{personPositionName}}</span>
             </div>
@@ -26,12 +26,12 @@
                 <span class="team-item-header-left">{{team.teamName}}</span>
                 <div class="team-item-header-right" flex="dir:left cross:center">
                     <div>
-                        <span v-if="btnOptType==='look'||team.checkStatusId===1"
+                        <span v-if="btnOptType==='look'"
                               class="team-item_status"
                               :class="{red:team.checkStatusId===4, blue:team.checkStatusId===1, yellow:team.checkStatusId===2,green:team.checkStatusId===3}">
                             {{team.checkStatusName}}
                         </span>
-                        <span v-if="btnOptType==='edit'&&team.checkStatusId!==1" class="btn btn_review" @click="lookTeamPeopleSet(team)">预览</span>
+                        <span v-if="btnOptType==='edit'" class="btn btn_review" @click="lookTeamPeopleSet(team)">预览</span>
                         <span v-if="btnOptType==='edit'&&(team.checkStatusId===2||team.checkStatusId===4)" class="btn btn_pass" @click="passTeamPeopleSet(teamIndex,team.teamId)">确认</span>
                         <span v-if="btnOptType==='edit'&&team.checkStatusId===3" class="btn btn_pass_text">已确认</span>
                         <span v-if="btnOptType==='edit'&&(team.checkStatusId===2||team.checkStatusId===3)" class="btn btn_back" @click="openBackModal(teamIndex)">驳回</span>
@@ -67,7 +67,7 @@
             <a-table v-else :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
                 <template slot="loadPosition" slot-scope="text, record, index">
                     <div key="loadPosition">
-                        <a-cascader :options="options" placeholder="请选择" change-on-select v-model="record.addressIds" @change="(value, selectedOptions)=>{changeAddress(teamIndex,value,record.key)}" style="width: 100%"/>
+                        <a-cascader :options="address" placeholder="请选择" v-model="record.addressIds" @change="(value, selectedOptions)=>{changeAddress(teamIndex,value,selectedOptions,record.key)}" style="width: 100%"/>
                     </div>
                 </template>
 <!--                    <template slot="position" slot-scope="text, record, index">-->
@@ -204,6 +204,12 @@
              teamPersonList:[]
            }
          }
+       },
+       reviewData:{
+         type: Object,
+         default() {
+           return {}
+         }
        }
      },
      data(){
@@ -226,40 +232,7 @@
          teamInfo: [],
          teamInfoTitle: '',
 
-         options: [
-           {
-             value: 'zhejiang',
-             label: 'Zhejiang',
-             children: [
-               {
-                 value: 'hangzhou',
-                 label: 'Hangzhou',
-                 children: [
-                   {
-                     value: 'xihu',
-                     label: 'West Lake',
-                   },
-                 ],
-               },
-             ],
-           },
-           {
-             value: 'jiangsu',
-             label: 'Jiangsu',
-             children: [
-               {
-                 value: 'nanjing',
-                 label: 'Nanjing',
-                 children: [
-                   {
-                     value: 'zhonghuamen',
-                     label: 'Zhong Hua Men',
-                   },
-                 ],
-               },
-             ],
-           },
-         ],
+         address: []
        }
      },
      computed:{
@@ -281,7 +254,7 @@
        },
        btnOptType: function(){
          let type = '';
-         if(this.userType === 'qxsl' && this.optType === 'edit'){
+         if(this.userType === 'zybm' && this.optType === 'edit'){
            type = 'edit';
          }
          else{
@@ -331,11 +304,15 @@
              let additem = {
                key: '@@@',
                addressIds: [],
+               addressName: '',
                leaderId: '',
                personList: []
              }
              teamItem.teamPersonData.push(additem);
            }
+         });
+         this.getLoadTreeData().then( res => {
+           this.address = res.data;
          });
        }
        console.log('this.teamPersonList', this.teamPersonList);
@@ -351,6 +328,7 @@
      },
      methods:{
        ...mapActions('event/event', ['checkEvent']),
+       ...mapActions('event/common', ['getLoadTreeData']),
        changeInputText(teamIndex, val,key,colName){
          //console.log('changeGroupName',val,key,colName);
          let arr = this.teamPersonList[teamIndex].teamPersonData;
@@ -361,14 +339,15 @@
            this.teamPersonList[teamIndex].teamPersonData = newData;
          }
        },
-       changeAddress(teamIndex, value, key){
-         console.log(teamIndex, value, key);
+       changeAddress(teamIndex, value, selectedOptions, key){
+         console.log(teamIndex, value, selectedOptions, key);
          // this.teamPersonList[teamIndex].teamPersonData[0].addressIds = value;
          let arr = this.teamPersonList[teamIndex].teamPersonData;
          const newData = [...arr];
          const target = newData.filter(item => key === item.key)[0];
          if (target) {
            target['addressIds'] = value;
+           target['addressName'] = selectedOptions[0].label + '--' + selectedOptions[1].label + '--' + selectedOptions[2].label;
            this.teamPersonList[teamIndex].teamPersonData = newData;
          }
        },
@@ -382,6 +361,7 @@
          let additem = {
            key: '@@@' + index.toString(),
            addressIds: [],
+           addressName: '',
            leaderId: '',
            personList: []
          }

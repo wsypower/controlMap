@@ -52,7 +52,7 @@ export function getStatusDataList(data){
 export function getEventTypeDataList(data){
     console.log('api:getEventTypeDataList',data);
     return request({
-        url: '@test/getEventTypeDataList?_t='+ new Date().getTime(),
+        url: 'planEvent/getEventTypeDataList?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
@@ -71,7 +71,7 @@ export function getEventTypeDataList(data){
 export function getTeamDataList(data){
   console.log('api:getTeamDataList',data);
   return request({
-    url: '@test/getTeamDataList?_t='+ new Date().getTime(),
+    url: 'planEvent/getTeamDataList?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -96,7 +96,6 @@ export function getPeopleDataList(data){
   })
 }
 
-//
 /**
  * @description 根据入参获取所有人员（树形结构）
  * @author moxuejuan
@@ -111,6 +110,25 @@ export function getPeopleTreeData(data){
   console.log('api:getPeopleTreeData',data);
   return request({
     url: 'planEvent/getPeopleTreeData?_t='+ new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * @description 获取路段信息（树形结构）
+ * @author moxuejuan
+ * @date 2020-08-21 08：41：20
+ *  @method：GET
+ * @response：{
+ *     树形结构数据
+ * }
+ */
+
+export function getLoadTreeData(data){
+  console.log('api:getLoadTreeData',data);
+  return request({
+    url: '@test/getLoadTreeData?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })

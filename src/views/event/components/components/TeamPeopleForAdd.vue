@@ -1,30 +1,30 @@
 <template>
     <div class="team-people-panel">
-        <div class="team-people-panel-header" flex="cross:center main:justify">
+        <div class="team-people-panel-header" flex="dir:left cross:center">
             <span>蹲点劝导组：</span>
-            <div class="team-people-panel-header-right">
-                <a-tag v-for="person in groupResultData.teamPersonList"
-                        color="blue"
-                        :key="person.teamId"
-                        closable
-                        @close="($event) => closeTeamTag(person, $event)"
-                >{{ person.teamName }}</a-tag>
-                <a-button type="primary" size="small" @click="openTeamDialog">中队选择</a-button>
-            </div>
+        </div>
+        <div class="team-people-panel-team" flex="dir:left">
+            <a-button type="primary" size="small" @click="openTeamDialog">中队选择</a-button>
+            <a-tag v-for="person in groupResultData.teamPersonList"
+                   color="blue"
+                   :key="person.teamId"
+                   closable
+                   @close="($event) => closeTeamTag(person, $event)"
+            >{{ person.teamName }}</a-tag>
         </div>
         <div class="team-people-panel-method" flex="dir:left cross:center">
             <div class="" flex="dir:left cross:center">
                 <label>负责人定位方式：</label>
                 <a-radio-group name="radioGroup" v-model="groupResultData.leaderPosition">
-                    <a-radio :value="1">单兵设备</a-radio>
-                    <a-radio :value="2">手机</a-radio>
+                    <a-radio value="1">单兵设备</a-radio>
+                    <a-radio value="2">手机</a-radio>
                 </a-radio-group>
             </div>
             <div class="" flex="dir:left cross:center">
                 <label>执勤人定位方式：</label>
                 <a-radio-group name="radioGroup" v-model="groupResultData.personPosition">
-                    <a-radio :value="1">单兵设备</a-radio>
-                    <a-radio :value="2">手机</a-radio>
+                    <a-radio value="1">单兵设备</a-radio>
+                    <a-radio value="2">手机</a-radio>
                 </a-radio-group>
             </div>
         </div>
@@ -161,8 +161,15 @@
             color: #4d4d4d;
             font-weight: 600;
         }
-        .team-people-panel-header-right{
-
+    }
+    .team-people-panel-team{
+        flex-wrap: wrap;
+        button {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        /deep/.ant-tag{
+            margin-bottom: 0px;
         }
     }
     .team-people-panel-method{

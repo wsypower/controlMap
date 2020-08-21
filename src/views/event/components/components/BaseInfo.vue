@@ -138,7 +138,23 @@ export default {
     return {
       form: null,
       eventTypeList: [],
-      submitForm: {}
+      submitForm: {
+        id: '',
+        name: '',
+        typeId: '',
+        typeName: '',
+        templateId: '',
+        templateName: '',
+        processId: '',
+        processName: '',
+        startDayTime: '',
+        endDayTime: '',
+        description: '',
+        jobGoal: '',
+        jobAssignment: '',
+        jobContent: '',
+        jobRequirements: ''
+      }
     }
   },
   computed:{
@@ -172,8 +188,8 @@ export default {
     ...mapActions('event/common', ['getEventTypeDataList']),
     init(){
       console.log('000000000000000');
-      this.getEventTypeDataList().then((r)=>{
-        this.eventTypeList = r.data;
+      this.getEventTypeDataList().then((res)=>{
+        this.eventTypeList = res;
       });
       if(this.optType==='edit'){
         let startTime  = moment(this.submitForm.startDayTime).format('YYYY-MM-DD HH:mm:ss');

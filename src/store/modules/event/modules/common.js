@@ -1,4 +1,4 @@
-import {getUserInfo,getEventTypeDataList,getTeamDataList,getPeopleDataList,getPeopleTreeData} from '@/api/event/common.js'
+import {getUserInfo,getEventTypeDataList,getTeamDataList,getPeopleDataList,getPeopleTreeData,getLoadTreeData} from '@/api/event/common.js'
 
 export default {
   namespaced: true,
@@ -64,5 +64,17 @@ export default {
           })
       })
     },
+    getLoadTreeData(state, data){
+      return new Promise((resolve, reject) => {
+        getLoadTreeData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    }
   }
 }
