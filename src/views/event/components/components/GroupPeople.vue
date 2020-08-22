@@ -4,7 +4,7 @@
         <div class="group-people-panel-method" flex="dir:left cross:center">
             <div class="" flex="dir:left cross:center">
                 <label>负责人定位方式：</label>
-                <a-radio-group v-if="nowOptType" name="radioGroup" v-model="groupData.leaderPosition">
+                <a-radio-group v-if="nowOptType" name="radioGroup" v-model="groupResultData.leaderPosition">
                     <a-radio value="1">单兵设备</a-radio>
                     <a-radio value="2">手机</a-radio>
                 </a-radio-group>
@@ -12,7 +12,7 @@
             </div>
             <div class="" flex="dir:left cross:center">
                 <label>执勤人定位方式：</label>
-                <a-radio-group v-if="nowOptType" name="radioGroup" v-model="groupData.personPosition">
+                <a-radio-group v-if="nowOptType" name="radioGroup" v-model="groupResultData.personPosition">
                     <a-radio value="1">单兵设备</a-radio>
                     <a-radio value="2">手机</a-radio>
                 </a-radio-group>

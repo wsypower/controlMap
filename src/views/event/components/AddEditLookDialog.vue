@@ -12,12 +12,12 @@
            @cancel="handleCancel">
     <div class="event_dialog_body">
       <my-scroll>
-        <log v-if="optType!=='add'" :eventId="eventId"></log>
-        <div v-if="optType!=='add'" class="subtitle-panel" flex="dir:left cross:center main:justify">
+        <log v-if="userType!=='qxsl'||(baseInfo.processId!=='1'&&optType!=='add')" :eventId="eventId"></log>
+        <div v-if="userType!=='qxsl'||(baseInfo.processId!=='1'&&optType!=='add')" class="subtitle-panel" flex="dir:left cross:center main:justify">
           <span>处置事件</span>
           <a-button type="primary" size="small">事件简报下载</a-button>
         </div>
-        <div v-if="optType==='add'" class="template-panel">
+        <div v-if="userType==='qxsl'&&(baseInfo.processId==='1'||optType==='add')" class="template-panel">
           <label>
             <a-icon type="snippets" theme="twoTone" style="marginRight:5px" />选择模板创建：
           </label>
@@ -52,8 +52,8 @@
               </template>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData" @getResult="getZongZhiHuiResultData"></group-team>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData" @getResult="getFuZhiHuiResultData"></group-team>
-              <team-people v-if="baseInfo.processName" :eventId="eventId" :optType="optType" :peopleList="peopleListForTeam"></team-people>
-              <team-people-for-add v-else :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people-for-add>
+              <team-people-for-add v-if="(userType==='qxsl'&&baseInfo.processId==='1')||optType==='add'" :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people-for-add>
+              <team-people v-else :eventId="eventId" :optType="optType" :peopleList="peopleListForTeam"></team-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData" @getResult="getJiDongXunChaResultData"></group-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData" @getResult="getHouQinBaoZhangResultData"></group-people>
             </a-collapse-panel>
@@ -70,11 +70,11 @@
       </my-scroll>
     </div>
     <template slot="footer">
-      <a-button v-if="optType==='!add'" type="primary" :loading="reviewLoading" @click="reviewEvent">预览</a-button>
+      <a-button type="primary" :loading="reviewLoading" @click="reviewEvent">预览</a-button>
       <!-- 信息指挥中心视角 保存只有在新建的时候才有 -->
       <a-button v-if="userType==='qxsl'&&(optType==='add'||optType==='edit')" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
       <!-- 发起流程只有在新建的时候才有 -->
-      <a-button v-if="userType==='qxsl'&&optType==='add'" type="primary" :loading="submitLoading" @click="submitData">发起流程</a-button>
+      <a-button v-if="userType==='qxsl'&&(optType==='add'||baseInfo.processId==='1')" type="primary" :loading="submitLoading" @click="submitData">发起流程</a-button>
       <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
       <a-button v-if="userType==='qxsl'&&optType==='edit'&&baseInfo.processId===3" type="primary" :loading="checkLoading" @click="submitCheck('qxsl')">提交审核</a-button>
       <a-button v-if="userType==='zybm'&&optType==='edit'" type="primary" :loading="checkLoading" @click="submitCheck('zybm')">提交审核</a-button>
@@ -165,7 +165,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           typeName: '',
           templateId: '',
           templateName: '',
-          processId: '',
+          processId: '1',
           processName: '',
           startDayTime: '',
           endDayTime: '',
@@ -265,7 +265,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       }
     },
     methods:{
-      ...mapActions('event/event', ['getTemplateEventDataList','getMessageByEventId','addNewEvent','addTeamPersonForNewEvent','submitEventToCheck','checkEvent']),
+      ...mapActions('event/event', ['getTemplateEventDataList','getMessageByEventId','addNewEvent','updateEvent','addTeamPersonForNewEvent','submitEventToCheck','checkEvent','submitEvent']),
       ...mapActions('event/common', ['getPeopleDataList']),
       init(){
         this.getTemplateEventDataList().then((res)=>{
@@ -296,14 +296,14 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //选择模版
       getEventInfoById(id){
         this.dataLoading = true;
-        this.getMessageByEventId().then(res => {
-          this.baseInfo = res.data.baseInfo;
-          this.zongZhiHuiData = res.data.groupData.zongZhiHuiData;
-          this.fuZhiHuiData = res.data.groupData.fuZhiHuiData;
-          this.dunDianQuanDaoData = res.data.groupData.dunDianQuanDaoData;
+        this.getMessageByEventId({id:this.eventId}).then(res => {
+          this.baseInfo = res.baseInfo;
+          this.zongZhiHuiData = res.groupData.zongZhiHuiData;
+          this.fuZhiHuiData = res.groupData.fuZhiHuiData;
+          this.dunDianQuanDaoData = res.groupData.dunDianQuanDaoData;
           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',this.dunDianQuanDaoData);
-          this.jiDongXunChaData = res.data.groupData.jiDongXunChaData;
-          this.houQinBaoZhangData = res.data.groupData.houQinBaoZhangData;
+          this.jiDongXunChaData = res.groupData.jiDongXunChaData;
+          this.houQinBaoZhangData = res.groupData.houQinBaoZhangData;
           console.log(this.jiDongXunChaData, this.houQinBaoZhangData);
           if(this.userType==='zybm'){
             this.getPeopleDataList({id:this.dunDianQuanDaoData.teamPersonList[0].teamId}).then(res => {
@@ -366,25 +366,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
           }
         })
       },
-      //获取蹲点劝导组信息
+      //获取蹲点劝导组信息(这个只在发起流程之前使用)
       geTunDianQuanDaoResultData(data) {
         console.log('获取蹲点劝导组信息', data);
         this.dunDianQuanDaoData = JSON.parse(JSON.stringify(data));
-        if(this.dunDianQuanDaoData.teamPersonList){
-          this.dunDianQuanDaoData.teamPersonList.map(teamPerson => {
-            teamPerson.teamPersonData.map(item => {
-              item.key = item.key.indexOf('@@@')===0?'':item.key;
-              let temp = [...item.personList];
-              if(temp.length>0){
-                item.personList = [];
-                item.personList = temp.reduce((acc, t) => {
-                  acc.push(t.id);
-                  return acc
-                },[])
-              }
-            })
-          })
-        }
       },
       //获取机动巡查应急组数据
       getJiDongXunChaResultData(data){
@@ -417,12 +402,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
         })
       },
 
+      /****************保障视图操作区域 start******************/
       //开启保障视图弹窗
       openBaoZhangMapDialog(){
-        if(this.optType!=='add'){
-
-
-        }
         this.mapDialogVisible = true;
       },
       //获取保障视图重组后数据
@@ -461,20 +443,172 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.baoZhangData = data.allBaoZhangData;
       },
 
+      /****************保障视图操作区域 end******************/
 
-
-      //信息智慧中心保存草稿/保存
-      saveDraft(e){
-        e.preventDefault();
-        this.saveLoading = true;
+      //在保存数据之前对数据进行处理
+      changeEventDataForSave(){
         console.log('baseInfo', this.baseInfo);
         console.log('zongZhiHuiData', this.zongZhiHuiData);
         console.log('fuZhiHuiData', this.fuZhiHuiData);
+        //发起流程之后的保存草稿（中队内部详细信息不需要保存）
+        if(this.baseInfo.processId!=='1'&&this.optType!=='add'){
+          let dunDianQuanDaoTemp = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+          let teamlist = dunDianQuanDaoTemp.teamPersonList.reduce((acc,item) => {
+            acc.push(item.teamId);
+            return acc
+          },[]);
+          let needData = {
+            groupName: 'dundianquandao',
+            leaderPosition: dunDianQuanDaoTemp.leaderPosition,
+            personPosition: dunDianQuanDaoTemp.personPosition,
+            teamList: teamlist
+          }
+          this.dunDianQuanDaoData = needData;
+        }
         console.log('dunDianQuanDaoData', this.dunDianQuanDaoData);
         console.log('jiDongXunChaData', this.jiDongXunChaData);
         console.log('houQinBaoZhangData', this.houQinBaoZhangData);
         this.baseInfo.startDayTime = this.baseInfo.startDayTime.toString();
         this.baseInfo.endDayTime = this.baseInfo.endDayTime.toString();
+      },
+
+      //信息智慧中心--保存草稿
+      saveDraft(e){
+        e.preventDefault();
+        this.saveLoading = true;
+        this.changeEventDataForSave();
+        let params = {
+          baseInfo: JSON.stringify(this.baseInfo),
+          groupData: JSON.stringify({
+            zongZhiHuiData: this.zongZhiHuiData,
+            fuZhiHuiData: this.fuZhiHuiData,
+            dunDianQuanDaoData: this.dunDianQuanDaoData,
+            jiDongXunChaData: this.jiDongXunChaData,
+            houQinBaoZhangData: this.houQinBaoZhangData
+          })
+        }
+        if(this.baseInfo.id!==''){
+          this.updateEvent.then((res)=>{
+            console.log('updateEvent',res);
+            this.saveLoading = false;
+            this.$notification['success']({
+              message: '保存成功',
+              description: '后续请发起流程',
+              style: {
+                width: '200px',
+                marginLeft: `200px`,
+                fontSize: '14px'
+              },
+            });
+            this.reset();
+            this.$emit('refreshList');
+            this.addEditLookDialogVisible = false;
+          });
+        }
+        else{
+          this.addNewEvent(params).then((res)=>{
+            console.log('addNewEvent',res);
+            this.saveLoading = false;
+            this.$notification['success']({
+              message: '保存成功',
+              description: '后续请发起流程',
+              style: {
+                width: '200px',
+                marginLeft: `200px`,
+                fontSize: '14px'
+              },
+            });
+            this.reset();
+            this.$emit('refreshList');
+            this.addEditLookDialogVisible = false;
+          });
+        }
+      },
+
+      //信息指挥中心--发起流程
+      submitData(e){
+        e.preventDefault();
+        if(!this.checkParams()){
+          return
+        }
+        this.submitLoading = true;
+        this.changeEventDataForSave();
+
+        let params = {
+          baseInfo: JSON.stringify(this.baseInfo),
+          groupData: JSON.stringify({
+            zongZhiHuiData: this.zongZhiHuiData,
+            fuZhiHuiData: this.fuZhiHuiData,
+            dunDianQuanDaoData: this.dunDianQuanDaoData,
+            jiDongXunChaData: this.jiDongXunChaData,
+            houQinBaoZhangData: this.houQinBaoZhangData
+          })
+        }
+        console.log('发起流程',params);
+        if(this.baseInfo.id!==''){
+          this.updateEvent(params).then((res)=>{
+            console.log('updateEvent eventId',res.eventId);
+            this.submitEvent({id: res.eventId}).then(res => {
+              this.submitLoading = false;
+              this.reset();
+              this.$emit('refreshList');
+              this.addEditLookDialogVisible = false;
+            });
+          });
+        }
+        else{
+          this.addNewEvent(params).then((res)=>{
+            console.log('addNewEvent eventId',res.eventId);
+            this.submitEvent({id: res.eventId}).then(res => {
+              this.submitLoading = false;
+              this.reset();
+              this.$emit('refreshList');
+              this.addEditLookDialogVisible = false;
+            });
+          });
+        }
+
+      },
+      //中队：提交审核
+      submitCheckByTeam(){
+        this.checkLoading = true;
+        this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+        console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
+        let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
+          let data = {
+            key: teamPerson.key.indexOf('@@@')===0?'':teamPerson.key,
+            address: teamPerson.addressIds,
+            leaderId: teamPerson.leaderId,
+            personList: [],
+            positionId: teamPerson.addressIds[2],
+            mapId:'',
+            mapType: '',
+            remark: ''
+          }
+          data.personList = teamPerson.personList.reduce((ids, personId) => {
+            ids.push(personId);
+            return ids
+          },[])
+          acc.push(data);
+          return acc
+        },[]);
+        let params = {
+          eventId: this.eventId,
+          teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
+          teamPersonData: JSON.stringify(teamPersonData),
+        }
+        console.log('addTeamPersonForNewEvent',params);
+        this.addTeamPersonForNewEvent(params).then(res => {
+          console.log('addTeamPersonForNewEvent',res);
+        });
+      },
+      //中心：提交审核
+      submitCheckByCenter(){
+        if(!this.checkParams()){
+          return
+        }
+        this.checkLoading = true;
+        this.changeEventDataForSave();
         let params = {
           baseInfo: JSON.stringify(this.baseInfo),
           groupData: JSON.stringify({
@@ -486,98 +620,21 @@ import {postEmergencyFeatures} from '@/api/map/service'
           })
         }
         this.addNewEvent(params).then((res)=>{
-          console.log('addNewEvent',res);
-          this.saveLoading = false;
-          this.$notification['success']({
-            message: '保存成功',
-            description: '后续请发起流程',
-            style: {
-              width: '200px',
-              marginLeft: `200px`,
-              fontSize: '14px'
-            },
+          console.log('addNewEvent eventId',res.eventId);
+          this.submitEventToCheck({eventId: res.eventId}).then(res => {
+            this.checkLoading = false;
+            this.reset();
+            this.$emit('refreshList');
+            this.addEditLookDialogVisible = false;
           });
-          this.reset();
-          this.$emit('refreshList');
-          this.addEditLookDialogVisible = false;
         });
       },
-
-      //发起流程
-      submitData(e){
-        e.preventDefault();
-        if(!this.checkParams()){
-          return
-        }
-        this.submitLoading = true;
-        console.log('baseInfo', this.baseInfo);
-        console.log('zongZhiHuiData', this.zongZhiHuiData);
-        console.log('fuZhiHuiData', this.fuZhiHuiData);
-        console.log('dunDianQuanDaoData', this.dunDianQuanDaoData);
-        console.log('jiDongXunChaData', this.jiDongXunChaData);
-        console.log('houQinBaoZhangData', this.houQinBaoZhangData);
-
-        let params = {
-          baseInfo: this.baseInfo,
-          groupData: {
-            zongZhiHuiData: this.zongZhiHuiData,
-            fuZhiHuiData: this.fuZhiHuiData,
-            dunDianQuanDaoData: this.dunDianQuanDaoData,
-            jiDongXunChaData: this.jiDongXunChaData,
-            houQinBaoZhangData: this.houQinBaoZhangData
-          }
-        }
-        this.addNewEvent(params).then((res)=>{
-          console.log('addNewEvent',res);
-          this.submitLoading = false;
-          this.$notification['success']({
-            message: '保存成功',
-            description: '',
-            style: {
-              width: '200px',
-              marginLeft: `200px`,
-              fontSize: '14px'
-            },
-          });
-          this.reset();
-          this.$emit('refreshList');
-          this.addEditLookDialogVisible = false;
-        });
-      },
-      //中队：提交审核
-      //中心：提交审核
       submitCheck(type){
         if(type==='zybm'){
-          this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-          console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
-          let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
-            let data = {
-              key: teamPerson.key.indexOf('@@@')===0?'':teamPerson.key,
-              address: teamPerson.addressIds,
-              leaderId: teamPerson.leaderId,
-              personList: []
-            }
-            data.personList = teamPerson.personList.reduce((ids, person) => {
-              ids.push(person.id);
-              return ids
-            },[])
-            acc.push(data);
-            return acc
-          },[]);
-          let params = {
-            eventId: this.eventId,
-            teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
-            teamPersonData: teamPersonData
-          }
-          console.log('addTeamPersonForNewEvent',params);
-          this.addTeamPersonForNewEvent().then(res => {
-
-          });
+          this.submitCheckByTeam();
         }
         if(type==='qxsl'){
-          this.submitEventToCheck().then(res => {
-
-          });
+          this.submitCheckByCenter();
         }
       },
 
@@ -625,8 +682,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
         //     console.log('==线数据==', res);
         //   });
         // }
-
-
       },
 
       checkParams(){

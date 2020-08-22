@@ -3,10 +3,10 @@
     <div class="event_list_panel" flex="dir:top">
       <div class="event_list_panel_header" flex="cross:center main:justify">
         <div class="search_btn_panel">
-          <a-button icon="schedule" type="primary" @click="searchEventData('type_01')">日常事件</a-button>
-          <a-button icon="schedule" type="primary" @click="searchEventData('type_02')">活动保障事件</a-button>
-          <a-button icon="schedule" type="primary" @click="searchEventData('type_03')">应急事件</a-button>
-          <a-button icon="schedule" class="templateBtn" @click="searchEventData('template_0')">模板</a-button>
+          <a-button icon="schedule" type="primary" @click="searchEventData('type_1')">日常事件</a-button>
+          <a-button icon="schedule" type="primary" @click="searchEventData('type_2')">活动保障事件</a-button>
+          <a-button icon="schedule" type="primary" @click="searchEventData('type_3')">应急事件</a-button>
+          <a-button icon="schedule" class="templateBtn" @click="searchEventData('template_1')">模板</a-button>
         </div>
         <div class="operate_panel" flex="dir:left cross:center">
 <!--          <a-select v-model="query.statusId" @select="handleSelectChange">-->
@@ -14,7 +14,7 @@
 <!--            <a-select-option v-for="(item,index) in statusList" :value="item.id" :key="index">{{item.name}}</a-select-option>-->
 <!--          </a-select>-->
           <a-input-search v-model="query.searchContent" placeholder="请输入关键字" @search="searchDataByContent"/>
-          <a-button type="primary" icon="user" @click="searchEventData('myEvent_true')" flex="cross:center">我的事件</a-button>
+<!--          <a-button type="primary" icon="user" @click="searchEventData('myEvent_true')" flex="cross:center">我的事件</a-button>-->
           <a-button type="primary" icon="file-sync" class="review" @click="searchEventData('myStatus_02')">
             <a-badge :count="countForMyToHandle">
               <span class="text">待处理</span>
@@ -28,9 +28,9 @@
       </div>
       <div class="event_list_content" v-if="!dataLoading&&eventDataList.length>0" flex="dir:top">
           <div class="event_list_content-operate" flex="dir:left cross:center main:right">
-              <a-button v-if="userType!=='zybm'" class="btn_opt btn_delete"><a-icon type="delete" @click="deleteEvents"/>批量删除</a-button>
-              <a-button class="btn_opt btn_export"><a-icon type="export" @click="exportEvents('part')"/>批量导出</a-button>
-              <a-button class="btn_opt btn_export"><a-icon type="export" @click="exportEvents('all')"/>全部导出</a-button>
+              <a-button v-if="userType!=='zybm'" class="btn_opt btn_delete" @click="deleteEvents"><a-icon type="delete"/>批量删除</a-button>
+              <a-button class="btn_opt btn_export" @click="exportEvents('part')"><a-icon type="export"/>批量导出</a-button>
+              <a-button class="btn_opt btn_export" @click="exportEvents('all')"><a-icon type="export"/>全部导出</a-button>
           </div>
           <div class="main-table-panel">
               <ul class="main-table-header">
@@ -61,14 +61,15 @@
                           <span>{{item.statusName}}</span>
                           <span>
                               <i class="btn_mini btn_look" @click="lookEvent(item.id)">查看</i>
-                              <i class="btn_mini btn_handle" @click="editEvent(item.id)">处置</i>
+                              <i v-if="item.statusId==='1'" class="btn_mini btn_handle" @click="editEvent(item.id)">处置</i>
                           </span>
                           <span v-if="userType!=='zybm'">
-                              <a-icon v-if="item.processId==='008'&&!item.isTemplate" type="star" @click="setTemplate(item)"/>
-                              <a-icon v-if="item.processId==='008'&&item.isTemplate" type="star" theme="filled" style="color: #ffb94c;" @click="setTemplate(item)"/>
+                              <a-icon v-if="item.processId==='7'&&item.isTemplate==='2'" type="star" @click="setTemplate(item)"/>
+                              <a-icon v-if="item.processId==='7'&&item.isTemplate==='1'" type="star" theme="filled" style="color: #ffb94c;" @click="setTemplate(item)"/>
                           </span>
                           <span v-else>
-                              <a-icon v-if="item.isTemplate" type="star" theme="filled" style="color: #ffb94c;"/>
+                              <a-icon v-if="item.isTemplate==='1'" type="star" theme="filled" style="color: #ffb94c; cursor: default"/>
+                              <a-icon v-if="item.isTemplate==='2'" type="star" style="cursor: default"/>
                           </span>
                       </li>
                       <li v-if="needFixedRowNum>0" v-for="i in needFixedRowNum" :key="i"></li>
@@ -93,7 +94,7 @@
                           :dialogTitle="dialogTitle"
                           :eventId="eventId"
                           :optType="optType"
-                          @refreshList=""></add-edit-look-dialog>
+                          @refreshList="getEventDataList"></add-edit-look-dialog>
   </div>
 </template>
 
@@ -115,12 +116,12 @@
         query:{
           typeId:'',
           statusId: '',
-          isTemplate: false,
-          isMyEvent: false,
+          isTemplate: '2',
           searchContent: '',
           pageNo: 1,
           pageSize: 12
         },
+          // isMyEvent: false,
         eventDataList:[],
         totalSize: 0,
         //需要补齐的剩余行
@@ -176,28 +177,26 @@
         console.log('this.query',this.query);
         this.getEventList(this.query).then((res)=>{
           this.dataLoading = false;
-          res.data.list.map(item => {
+          res.list.map(item => {
             item.checked = false;
             return item
           });
-          this.eventDataList = res.data.list;
-          this.totalSize = res.data.total;
-          if(res.data.list.length<12){
-            this.needFixedRowNum = this.query.pageSize - res.data.list.length;
+          this.eventDataList = res.list;
+          this.totalSize = res.total;
+          if(res.list.length<12){
+            this.needFixedRowNum = this.query.pageSize - res.list.length;
           }
         })
-
       },
       //获取待处理的事件总数
       getToHandleCount(){
         let params = {
           userId: this.userId,
-          isMyEvent: true,
-          statusId: 1
+          statusId: '1'
         }
         this.getToHandleCountData(params).then((res)=>{
-          console.log('view ToHandleCount', res);
-          this.countForMyToHandle = res.data;
+          console.log('view ToHandleCount', res.count);
+          this.countForMyToHandle = res.count;
         });
       },
       searchEventData(param){
@@ -218,7 +217,7 @@
             this.query.isMyYuAn = true;
             break;
           case 'myStatus':
-            this.query.isMyYuAn = true;
+            // this.query.isMyYuAn = true;
             this.query.statusId = ct[1];
             break;
           case 'search':
@@ -275,6 +274,7 @@
       },
       //删除选中的事件
       deleteEvents(){
+        console.log('deleteEvents');
         let checkedIds = this.eventDataList.reduce((acc, item)=>{
           if(item.checked){
             acc.push(item.id);

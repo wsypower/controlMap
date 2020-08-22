@@ -7,6 +7,7 @@ import { getCountForHandle,
   getMessageByEventId,
   checkEvent,
   addNewEvent,
+  updateEvent,
   addTeamPersonForNewEvent,
   submitEventToCheck,
   submitEvent} from '@/api/event/index.js'
@@ -44,6 +45,19 @@ export default {
         console.log('store',data);
         return new Promise((resolve, reject) => {
           addNewEvent(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
+      updateEvent(state,data){
+        console.log('store',data);
+        return new Promise((resolve, reject) => {
+          updateEvent(data)
             .then(res => {
               resolve(res)
             })

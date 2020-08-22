@@ -285,14 +285,14 @@ const getMessageByEventId = (options) => {
   const queryParameters = getQueryParameters(options);
   console.log('getMessageByEventId query',queryParameters);
   let baseInfo = {
-    id: '001',
+    id: 'c7967b00e43c11eaa6db04d7e29d0076',
     name: 'kaifa001',
     templateId: '',
     templateName: '',
-    typeId: '1',
-    typeName: '日常事件',
-    processId: '',
-    processName: '发起流程',
+    typeId: '2',
+    typeName: '活动保障事件',
+    processId: '1',
+    processName: '未发起流程',
     startDayTime: 1598066222219,
     endDayTime: 1601349422219,
     description: 'msjkdlsahkjdfksd',
@@ -371,7 +371,7 @@ const getMessageByEventId = (options) => {
   ];
   let teamPersonList = [
     // {teamId: '001',teamName: '汤溪中队',checkStatusId:1, checkStatusName: '未上报',teamPersonData:[]},
-    {teamId: 'dae9d1006a2911e85752236b32c89757',teamName: '三江中队',checkStatusId:2, checkStatusName: '待审核',teamPersonData:teamPersonData2}]
+    {teamId: 'dae9d1006a2911e85752236b32c89757',teamName: '三江中队',checkStatusId:1, checkStatusName: '未上报',teamPersonData:[]}]
   let dunDianQuanDaoData = {
     groupName: 'dundianquandao',
     leaderPosition: '2',
