@@ -438,9 +438,10 @@
        },
        lookTeamPeopleSet(team){
          console.log('进入预览');
-         this.teamInfoTitle = team.teamName + '信息表';
+         // this.teamInfoTitle = team.teamName + '信息表';
          this.teamId= team.teamId;
-         this.teamInfoDialogVisible = true;
+         window.open(URL_CONFIG.eventInfoURL+'/teamInfo/' + this.eventId + '_' + this.teamId, team.teamName + '信息表','width=1000,height=800');
+         // this.teamInfoDialogVisible = true;
        },
        passTeamPeopleSet(teamIndex, teamId){
         console.log('eventId teamId operate backReason');
