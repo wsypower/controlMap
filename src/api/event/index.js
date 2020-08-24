@@ -189,7 +189,7 @@ export function getMessageByEventId(data){
 export function checkEvent(data){
   console.log('api:checkEvent',data);
   return request({
-    url: '@test/checkEvent',
+    url: 'planEvent/checkEvent',
     method: 'post',
     data
   })
@@ -290,7 +290,7 @@ export function addTeamPersonForNewEvent(data){
 export function submitEventToCheck(data){
   console.log('api:submitEventToCheck',data);
   return request({
-    url: '@test/submitEventToCheck?_t='+ new Date().getTime(),
+    url: 'planEvent/submitEventToCheck?_t='+ new Date().getTime(),
     method: 'post',
     data
   })

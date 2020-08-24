@@ -575,6 +575,7 @@
             });
           });
           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',sourceData);
+          this.$emit('saveDrawData',this.drawFeatures);
           this.mapDialogVisible = false;
           // map.on('dblclick', this.mapClickHandler);
         },

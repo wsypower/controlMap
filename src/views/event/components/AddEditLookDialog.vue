@@ -76,7 +76,7 @@
       <!-- 发起流程只有在新建的时候才有 -->
       <a-button v-if="userType==='qxsl'&&(optType==='add'||baseInfo.processId==='1')" type="primary" :loading="submitLoading" @click="submitData">发起流程</a-button>
       <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
-      <a-button v-if="userType==='qxsl'&&optType==='edit'&&baseInfo.processId===3" type="primary" :loading="checkLoading" @click="submitCheck('qxsl')">提交审核</a-button>
+      <a-button v-if="userType==='qxsl'&&optType==='edit'&&baseInfo.processId==='4'" type="primary" :loading="checkLoading" @click="submitCheck('qxsl')">提交审核</a-button>
       <a-button v-if="userType==='zybm'&&optType==='edit'" type="primary" :loading="checkLoading" @click="submitCheck('zybm')">提交审核</a-button>
       <!-- 领导视角 -->
       <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="passLoading" @click="passEvent">确认</a-button>
@@ -88,6 +88,7 @@
       :visible.sync="mapDialogVisible"
       :optType="optType"
       :peopleList="peopleList"
+      @saveDrawData="saveDraw"
     ></bao-zhang-map-dialog>
 
     <a-modal title="驳回理由"
@@ -274,6 +275,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
         });
         this.getPeopleDataList({id:''}).then(res => {
           this.peopleList = res;
+          //中队填写：人员信息通过peopleListForTeam
+          this.peopleListForTeam = res;
         });
 
         if(this.optType!=='add'){
@@ -408,40 +411,11 @@ import {postEmergencyFeatures} from '@/api/map/service'
       openBaoZhangMapDialog(){
         this.mapDialogVisible = true;
       },
-      //获取保障视图重组后数据
-      getSourcePeolpleList(){
-          let pList = this.groupData;
-          let resList = [];
-          pList.forEach((item)=>{
-            let checkedPeopleList = item.checkedPeopleList;
-            checkedPeopleList.map((i)=>{
-              let temp = {
-                id: i.id,
-                name: i.name+ '(' + item.groupName + ')'
-              }
-              resList.push(temp);
-            });
-          })
-          return resList
-      },
 
-      //获取保障视图重组后数据
-      getPeolpleListInBaoZhangData(){
-        let pList = this.baoZhangData;
-        let resList = [];
-        pList.forEach((item)=>{
-          let checkedPeopleList = item.personList;
-          checkedPeopleList.map((i)=>{
-            resList.push(i);
-          });
-        })
-        return resList
-      },
       //保存地图数据
       saveDraw(data){
         console.log("==保存===",data);
-        this.drawFeatures = data.drawFeatures;
-        this.baoZhangData = data.allBaoZhangData;
+        this.drawFeatures = data;
       },
 
       /****************保障视图操作区域 end******************/
@@ -602,34 +576,45 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.addTeamPersonForNewEvent(params).then(res => {
           console.log('addTeamPersonForNewEvent',res);
           this.checkLoading = false;
+          this.reset();
+          this.$emit('refreshList');
+          this.addEditLookDialogVisible = false;
         });
       },
       //中心：提交审核
       submitCheckByCenter(){
-        if(!this.checkParams()){
-          return
-        }
         this.checkLoading = true;
-        this.changeEventDataForSave();
-        let params = {
-          baseInfo: JSON.stringify(this.baseInfo),
-          groupData: JSON.stringify({
-            zongZhiHuiData: this.zongZhiHuiData,
-            fuZhiHuiData: this.fuZhiHuiData,
-            dunDianQuanDaoData: this.dunDianQuanDaoData,
-            jiDongXunChaData: this.jiDongXunChaData,
-            houQinBaoZhangData: this.houQinBaoZhangData
-          })
-        }
-        this.addNewEvent(params).then((res)=>{
-          console.log('addNewEvent eventId',res.eventId);
-          this.submitEventToCheck({eventId: res.eventId}).then(res => {
-            this.checkLoading = false;
-            this.reset();
-            this.$emit('refreshList');
-            this.addEditLookDialogVisible = false;
-          });
+        this.submitEventToCheck({id: this.eventId}).then(res => {
+          this.checkLoading = false;
+          this.reset();
+          this.$emit('refreshList');
+          this.addEditLookDialogVisible = false;
         });
+
+        // if(!this.checkParams()){
+        //   return
+        // }
+        // this.checkLoading = true;
+        // this.changeEventDataForSave();
+        // let params = {
+        //   baseInfo: JSON.stringify(this.baseInfo),
+        //   groupData: JSON.stringify({
+        //     zongZhiHuiData: this.zongZhiHuiData,
+        //     fuZhiHuiData: this.fuZhiHuiData,
+        //     dunDianQuanDaoData: this.dunDianQuanDaoData,
+        //     jiDongXunChaData: this.jiDongXunChaData,
+        //     houQinBaoZhangData: this.houQinBaoZhangData
+        //   })
+        // }
+        // this.updateEvent(params).then((res)=>{
+        //   console.log('updateEvent eventId',res.eventId);
+        //   this.submitEventToCheck({eventId: res.eventId}).then(res => {
+        //     this.checkLoading = false;
+        //     this.reset();
+        //     this.$emit('refreshList');
+        //     this.addEditLookDialogVisible = false;
+        //   });
+        // });
       },
       submitCheck(type){
         if(type==='zybm'){
@@ -789,11 +774,14 @@ import {postEmergencyFeatures} from '@/api/map/service'
         let params =  {
           eventId: this.eventId,
           teamId: '',
-          operate: 'yes',
+          operate: '1',
           backReason: ''
         }
+        this.passLoading = true;
         this.checkEvent(params).then(res => {
           this.reset();
+          this.passLoading = false;
+          this.$emit('refreshList');
           this.addEditLookDialogVisible = false;
         });
       },
@@ -806,7 +794,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         let params =  {
           eventId: this.eventId,
           teamId: '',
-          operate: 'no',
+          operate: '2',
           backReason: this.backReason
         }
         this.checkEvent(params).then(res => {
@@ -814,82 +802,89 @@ import {postEmergencyFeatures} from '@/api/map/service'
           this.confirmLoading = false;
           this.backVisible = false;
           this.reset();
+          this.$emit('refreshList');
           this.addEditLookDialogVisible = false;
         });
       },
       //预览
       reviewEvent(){
+        let userId = util.cookies.get('userId');
         //先调用保存草稿方法
-        if(this.userType==='qxsl') {
-          this.reviewLoading = true;
-          this.changeEventDataForSave();
-          let params = {
-            baseInfo: JSON.stringify(this.baseInfo),
-            groupData: JSON.stringify({
-              zongZhiHuiData: this.zongZhiHuiData,
-              fuZhiHuiData: this.fuZhiHuiData,
-              dunDianQuanDaoData: this.dunDianQuanDaoData,
-              jiDongXunChaData: this.jiDongXunChaData,
-              houQinBaoZhangData: this.houQinBaoZhangData
-            })
-          }
-          if (this.baseInfo.id !== '') {
-            this.updateEvent.then((res) => {
-              console.log('updateEvent', res);
-              this.reviewLoading = false;
-              window.open(URL_CONFIG.eventInfoURL + '/eventInfo/' + this.eventId, '事件详情', 'width=1000,height=800');
-            });
-          } else {
-            this.addNewEvent(params).then((res) => {
-              console.log('addNewEvent', res);
-              this.reviewLoading = false;
-              window.open(URL_CONFIG.eventInfoURL + '/eventInfo/' + this.eventId, '事件详情', 'width=1000,height=800');
-            });
-          }
-        }
-        else if(this.userType==='zybm'){
-          this.reviewLoading = true;
-          this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-          console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
-          let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
-            let data = {
-              key: teamPerson.key.indexOf('@@@')===0?'':teamPerson.key,
-              address: teamPerson.addressIds,
-              leaderId: teamPerson.leaderId,
-              personList: [],
-              positionId: teamPerson.addressIds[2],
-              mapId:'',
-              mapType: '',
-              remark: ''
-            }
-            data.personList = teamPerson.personList.reduce((ids, personId) => {
-              ids.push(personId);
-              return ids
-            },[])
-            acc.push(data);
-            return acc
-          },[]);
-          let params = {
-            eventId: this.eventId,
-            teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
-            teamPersonData: JSON.stringify(teamPersonData),
-          }
-          console.log('addTeamPersonForNewEvent',params);
-          this.addTeamPersonForNewEvent(params).then(res => {
-            console.log('addTeamPersonForNewEvent',res);
-            this.reviewLoading = false;
-            window.open(URL_CONFIG.eventInfoURL + '/eventInfo/' + this.eventId, '事件详情', 'width=1000,height=800');
-          });
+
+        if(this.optType==='look'){
+          window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
         }
         else {
-          window.open(URL_CONFIG.eventInfoURL + '/eventInfo/' + this.eventId, '事件详情', 'width=1000,height=800');
+          if(this.userType==='qxsl') {
+            this.reviewLoading = true;
+            this.changeEventDataForSave();
+            let params = {
+              baseInfo: JSON.stringify(this.baseInfo),
+              groupData: JSON.stringify({
+                zongZhiHuiData: this.zongZhiHuiData,
+                fuZhiHuiData: this.fuZhiHuiData,
+                dunDianQuanDaoData: this.dunDianQuanDaoData,
+                jiDongXunChaData: this.jiDongXunChaData,
+                houQinBaoZhangData: this.houQinBaoZhangData
+              })
+            }
+            if (this.baseInfo.id !== '') {
+              this.updateEvent.then((res) => {
+                console.log('updateEvent', res);
+                this.reviewLoading = false;
+                window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
+              });
+            } else {
+              this.addNewEvent(params).then((res) => {
+                console.log('addNewEvent', res);
+                this.reviewLoading = false;
+                window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
+              });
+            }
+          }
+          else if(this.userType==='zybm'){
+            this.reviewLoading = true;
+            this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+            console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
+            let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
+              let data = {
+                key: teamPerson.key.indexOf('@@@')===0?'':teamPerson.key,
+                address: teamPerson.addressIds,
+                leaderId: teamPerson.leaderId,
+                personList: [],
+                positionId: teamPerson.addressIds[2],
+                mapId:'',
+                mapType: '',
+                remark: ''
+              }
+              data.personList = teamPerson.personList.reduce((ids, personId) => {
+                ids.push(personId);
+                return ids
+              },[])
+              acc.push(data);
+              return acc
+            },[]);
+            let params = {
+              eventId: this.eventId,
+              teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
+              teamPersonData: JSON.stringify(teamPersonData),
+            }
+            console.log('addTeamPersonForNewEvent',params);
+            this.addTeamPersonForNewEvent(params).then(res => {
+              console.log('addTeamPersonForNewEvent',res);
+              this.reviewLoading = false;
+              window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
+            });
+          }
+          else {
+            window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
+          }
         }
-
-
         //this.reviewDialogVisible = true;
       },
       handleCancel(){
         this.reset();
+        this.$emit('refreshList');
         this.addEditLookDialogVisible = false;
       }
     }

@@ -287,6 +287,7 @@
           this.$message.warning('请选择需要删除的事件');
         }
         else{
+          let checkedIdsStr = checkedIds.join(',');
             this.$confirm({
               title: '確定删除这些事件吗?',
               content: '删除后不可恢复',
@@ -294,7 +295,7 @@
               okType: 'danger',
               cancelText: '取消',
               onOk() {
-                _this.deleteEventByIds({ids:checkedIds}).then(res =>{
+                _this.deleteEventByIds({ids:checkedIdsStr}).then(res =>{
                   if(res.code === 0){
                     _this.$message.success('删除成功');
                     _this.getEventDataList();

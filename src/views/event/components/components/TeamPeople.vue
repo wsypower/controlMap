@@ -26,16 +26,16 @@
                 <span class="team-item-header-left">{{team.teamName}}</span>
                 <div class="team-item-header-right" flex="dir:left cross:center">
                     <div>
-                        <span v-if="btnOptType==='look'"
+                        <span v-if="team.checkStatusId==='1'||btnOptType==='look'"
                               class="team-item_status"
-                              :class="{red:team.checkStatusId===4, blue:team.checkStatusId===1, yellow:team.checkStatusId===2,green:team.checkStatusId===3}">
+                              :class="{red:team.checkStatusId==='4', blue:team.checkStatusId==='1', yellow:team.checkStatusId==='2',green:team.checkStatusId==='3'}">
                             {{team.checkStatusName}}
                         </span>
                         <span class="btn btn_review" @click="lookTeamPeopleSet(team)">预览</span>
-                        <span v-if="btnOptType==='edit'&&(team.checkStatusId===2||team.checkStatusId===4)" class="btn btn_pass" @click="passTeamPeopleSet(teamIndex,team.teamId)">确认</span>
-                        <span v-if="btnOptType==='edit'&&team.checkStatusId===3" class="btn btn_pass_text">已确认</span>
-                        <span v-if="btnOptType==='edit'&&(team.checkStatusId===2||team.checkStatusId===3)" class="btn btn_back" @click="openBackModal(teamIndex)">驳回</span>
-                        <span v-if="btnOptType==='edit'&&team.checkStatusId===4" class="btn btn_back_text">已驳回</span>
+                        <span v-if="btnOptType==='edit'&&(team.checkStatusId==='2'||team.checkStatusId==='4')" class="btn btn_pass" @click="passTeamPeopleSet(teamIndex,team.teamId)">确认</span>
+                        <span v-if="btnOptType==='edit'&&team.checkStatusId==='3'" class="btn btn_pass_text">已确认</span>
+                        <span v-if="btnOptType==='edit'&&(team.checkStatusId==='2'||team.checkStatusId==='3')" class="btn btn_back" @click="openBackModal(teamIndex)">驳回</span>
+                        <span v-if="btnOptType==='edit'&&team.checkStatusId==='4'" class="btn btn_back_text">已驳回</span>
                     </div>
                     <a-icon class="btn_hide" :class="{open: teamIndex>0}" type="up" />
                 </div>
@@ -145,6 +145,7 @@
 <script type="text/ecmascript-6">
   import ChoosePeopleDialog from './ChoosePeopleDialog'
   import TeamReviewDialog from './TeamReviewDialog'
+  import util from '@/utils/util.js'
   import { mapActions } from 'vuex'
   const groupColumns = [
     {
@@ -255,11 +256,11 @@
        },
        btnOptType: function(){
          let type = '';
-         if(this.userType === 'zybm' && this.optType === 'edit'){
-           type = 'edit';
+         if(this.optType==='look'||(this.userType==='jld'||this.userType==='zybm')){
+           type = 'look';
          }
          else{
-           type = 'look';
+           type = 'edit';
          }
          return type
        },
@@ -272,7 +273,7 @@
      },
      mounted() {
        this.groupResultData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-       if(this.btnOptType==='look'){
+       if(this.userType === 'qxsl'||this.userType === 'jld'){
          this.teamPersonList = JSON.parse(JSON.stringify(this.groupResultData.teamPersonList));
          this.teamPersonList.map(teamItem => {
            teamItem.teamPersonData.map(item => {
@@ -305,6 +306,7 @@
                acc.push(ad.id);
                return acc
              },[]);
+             item.positionId = item.addressIds[2];
              let ids = [...item.personList];
              item.personObjList = [];
              ids.map(id => {
@@ -375,8 +377,9 @@
            target['addressIds'] = value;
            let address = [{id: selectedOptions[0].value, name: selectedOptions[0].label},
              {id: selectedOptions[1].value, name: selectedOptions[1].label},
-             {id: selectedOptions[1].value, name: selectedOptions[1].label}];
+             {id: selectedOptions[2].value, name: selectedOptions[2].label}];
            target['address'] = address;
+           target['positionId'] = selectedOptions[2].value;
            this.teamPersonList[teamIndex].teamPersonData = newData;
          }
        },
@@ -448,11 +451,11 @@
         let params = {
           eventId: this.eventId,
           teamId: teamId,
-          operate: 'yes',
+          operate: '3',
           backReason: ''
         }
         this.checkEvent(params).then( res => {
-          this.teamPersonList[teamIndex].checkStatusId = 3;
+          this.teamPersonList[teamIndex].checkStatusId = '3';
         })
        },
        openBackModal(teamIndex){
@@ -464,7 +467,7 @@
          let params =  {
            eventId: this.eventId,
            teamId: teamId,
-           operate: 'no',
+           operate: '4',
            backReason: this.backReason
          }
          this.confirmLoading = true;
@@ -472,7 +475,7 @@
            this.confirmLoading = false;
            this.backReason = '';
            this.backVisible = false;
-           this.teamPersonList[this.teamIndex].checkStatusId = 4;
+           this.teamPersonList[this.teamIndex].checkStatusId = '4';
          })
        }
      }
