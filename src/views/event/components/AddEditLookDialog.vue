@@ -99,7 +99,6 @@
     >
       <a-textarea v-model="backReason" placeholder="请输入驳回理由" allow-clear/>
     </a-modal>
-    <review-event-dialog :visible="reviewDialogVisible" :eventId="eventId"></review-event-dialog>
   </a-modal>
 </template>
 <script type="text/ecmascript-6">
@@ -112,10 +111,8 @@ import GroupTeam from './components/GroupTeam'
 import TeamPeople from './components/TeamPeople'
 import TeamPeopleForAdd from './components/TeamPeopleForAdd'
 import GroupPeople from './components/GroupPeople'
-import ChoosePeopleDialog from './ChoosePeopleDialog'
 import BaoZhangMapDialog from './components/BaoZhangMapDialog'
 import NewBaoZhangMapDialog from './components/NewBaoZhangMapDialog'
-import ReviewEventDialog from './ReviewEventDialog'
 import {postEmergencyFeatures} from '@/api/map/service'
 
   export default {
@@ -127,10 +124,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
       TeamPeople,
       TeamPeopleForAdd,
       GroupPeople,
-      ChoosePeopleDialog,
       NewBaoZhangMapDialog,
-      BaoZhangMapDialog,
-      ReviewEventDialog
+      BaoZhangMapDialog
     },
     props:{
       visible:{

@@ -37,7 +37,7 @@
   let vectorLayer;
   let select;
     export default{
-      name: 'baoZhangMapDialog',
+      name: 'newBaoZhangMapDialog',
       components: {
         LayoutMap,
       },
