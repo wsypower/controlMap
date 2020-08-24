@@ -87,6 +87,7 @@
     <bao-zhang-map-dialog v-else
       :visible.sync="mapDialogVisible"
       :optType="optType"
+      :peopleList="peopleList"
     ></bao-zhang-map-dialog>
 
     <a-modal title="驳回理由"
@@ -600,6 +601,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         console.log('addTeamPersonForNewEvent',params);
         this.addTeamPersonForNewEvent(params).then(res => {
           console.log('addTeamPersonForNewEvent',res);
+          this.checkLoading = false;
         });
       },
       //中心：提交审核

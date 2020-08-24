@@ -27,12 +27,11 @@
               <a-form :form="form" style="margin:10px">
                 <a-form-item label="具体路段：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
                   <a-select
-                          mode="multiple"
-                          placeholder="请选择人员"
+                          placeholder="请选择道路"
                           @change="handleChange"
                           v-model="baoZhangFormData.positionId"
                   >
-                    <a-select-option v-for="baoZhang in baoZhangData" :key="baoZhang.name">
+                    <a-select-option v-for="baoZhang in baoZhangArr" :key="baoZhang.positionId">
                       {{ baoZhang.load }}
                     </a-select-option>
                   </a-select>
@@ -107,7 +106,13 @@
         optType: {
           type: String,
           default: ''
-        }
+        },
+        peopleList:{
+          type: Array,
+          default(){
+            return []
+          }
+        },
       },
       data(){
         return {
@@ -209,40 +214,9 @@
         console.log(111)
       },
       methods:{
-        afterClose(){
-            console.log('关闭了')
-        },
         init(){
-          this.baoZhangData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'].teamPersonList;
-          let baoZhangObj = JSON.parse(JSON.stringify(this.baoZhangData));
-          baoZhangObj.forEach(baoZhangItem => {
-            let a = baoZhangItem.teamPersonData.reduce((acc, item) => {
-              let personTemp = this.peopleList.find(person => person.id === item.leaderId);
-              let perName = item.personList.reduce((arr, id) => {
-                let person = this.peopleList.find(p => p.id === id);
-                arr.push(person.name);
-                return arr
-              },[]);
-              let temp = {
-                positionId: item.addressIds[2],
-                load: item.addressName,
-                leadName: personTemp.name,
-                personNameStr: perName.join(','),
-                remark: ''
-              }
-              acc.push(temp);
-              return acc
-            },[]);
-            this.baoZhangArr = this.baoZhangArr.concat(a);
-          });
-          //最终保存时，更新一下store
-          console.log('打开保障视图需要的数据',this.baoZhangArr);
-
-          // console.log('baozhangdata', this.baoZhangData);
+          this.clearInitData();
           this.$nextTick().then(() => {
-            // let height = document.body.clientHeight - 300;
-            // this.$refs.baoZhangBody.style.height= height + 'px';
-            // this.$refs.olMap.$forceUpdate();
             map = this.$refs.olMap.getMap();
             mapManager = new MapManager(map);
             //初始化地图弹框
@@ -252,8 +226,8 @@
             // source=null;
             //绑定地图双击事件
             map.on('dblclick', this.mapClickHandler);
-            this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangData));
             //编辑状态下通过图形id获取已保存的图形数据
+            // 只要设置了组，这里数据一直是大于0
             if(this.allBaoZhangData.length>0){
               const idList=filterMapId(this.allBaoZhangData);
               console.log(idList);
@@ -307,6 +281,41 @@
             }
           })
         },
+        clearInitData(){
+          this.baoZhangData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'].teamPersonList;
+          console.log('this.baoZhangData',this.baoZhangData);
+          this.baoZhangArr = [];
+          let baoZhangObj = JSON.parse(JSON.stringify(this.baoZhangData));
+          baoZhangObj.forEach(baoZhangItem => {
+            let a = baoZhangItem.teamPersonData.reduce((acc, item) => {
+              let personTemp = this.peopleList.find(person => person.id === item.leaderId);
+              let perName = item.personList.reduce((arr, id) => {
+                let person = this.peopleList.find(p => p.id === id);
+                arr.push(person.name);
+                return arr
+              },[]);
+              let addressName = item.address.reduce((acc, it) => {
+                acc = acc + '--' + it.name
+                return acc
+              },'').substring(2);
+              let temp = {
+                positionId: item.addressIds[2],
+                load: addressName,
+                leaderName: personTemp.name,
+                personNameStr: perName.join(','),
+                remark: '',
+                mapId: item.mapId,
+                mapType:item.mapType,
+              }
+              acc.push(temp);
+              return acc
+            },[]);
+            this.baoZhangArr = this.baoZhangArr.concat(a);
+          });
+          this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangArr));
+          //最终保存时，更新一下store
+          console.log('打开保障视图需要的数据',this.allBaoZhangData);
+        },
         //地图点击事件处理器
         mapClickHandler({ pixel, coordinate }) {
           const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
@@ -345,9 +354,6 @@
             });
             map.addLayer(vectorLayer);
           }
-          // if(draw){
-          //   mapManager.inactivateDraw(draw);
-          // }
           map.removeInteraction(draw);
           draw = new Draw({
             source: source,
@@ -453,63 +459,47 @@
           this.opType = flag? 'edit': 'add';
 
           if(this.opType === 'edit'){
-              let temp = null;
-              for(let i=0;i<this.allBaoZhangData.length;i++){
-                if(this.allBaoZhangData[i].mapId === mapId){
-                  temp = this.allBaoZhangData[i];
-                  this.index = i;
-                }
+            let temp = null;
+            for(let i=0;i<this.allBaoZhangData.length;i++){
+              if(this.allBaoZhangData[i].mapId === mapId){
+                temp = this.allBaoZhangData[i];
+                this.index = i;
               }
-              if(temp.personList){
-                let selectList = temp.personList.reduce((r,i)=>{
-                  r.push(i);
-                  return r
-                },[])
-                this.filterPeopleList = this.checkedPeopleIdList.reduce((res,item)=>{
-                  if(!selectList.includes(item)){
-                    res.push(item)
-                  }
-                  return res
-                },[]);
-              }
-            this.baoZhangFormData.name = temp.name;
-            this.baoZhangFormData.personList = temp.personList;
+            }
+            this.baoZhangFormData.positionId = temp.positionId;
+            this.baoZhangFormData.leaderName = temp.leaderName;
+            this.baoZhangFormData.personNameStr = temp.personNameStr;
             this.baoZhangFormData.remark = temp.remark;
           }
           else{
-            this.filterPeopleList = this.checkedPeopleIdList;
+            this.baoZhangFormData = Object.assign({},this.$options.data()['baoZhangFormData']);
             this.baoZhangFormData.mapId = mapId;
-            this.baoZhangFormData.name = '';
-            this.baoZhangFormData.mapType=mapType;
-            this.baoZhangFormData.personList = [];
+            this.baoZhangFormData.mapType = mapType;
             this.baoZhangFormData.remark = '';
           }
         },
         //人员选择
         handleChange(value) {
           console.log(`Selected: ${value}`,value);
-          let baoZhang = this.baoZhangData.find(baoZhang => baoZhang.name === value);
+          let baoZhang = this.baoZhangArr.find(baoZhang => baoZhang.positionId === value);
           this.baoZhangFormData.leaderName = baoZhang.leaderName;
           this.baoZhangFormData.personNameStr = baoZhang.personNameStr;
+          this.baoZhangFormData.load = baoZhang.load;
         },
         //保存保障点位设置
         saveBaoZhangInfo(){
           console.log('this.baoZhangFormData',this.baoZhangFormData);
           console.log('this.opType',this.opType);
-          if(this.opType == 'edit'){
-            this.allBaoZhangData[this.index].name = this.baoZhangFormData.name;
-            this.allBaoZhangData[this.index].personList = this.baoZhangFormData.personList;
-            this.allBaoZhangData[this.index].remark = this.baoZhangFormData.remark;
-          }
-          else{
-            let temp = JSON.parse(JSON.stringify(this.baoZhangFormData))
-            this.allBaoZhangData.push(temp);
-          }
-          this.baoZhangFormData.personList.forEach((item)=>{
-            this.checkedPeopleIdList.push(item);
-          })
-
-          console.log('saveBaoZhangInfo',this.allBaoZhangData);
+          this.allBaoZhangData.map(baozhang => {
+            if(baozhang.positionId===this.baoZhangFormData.positionId){
+              baozhang.load = this.baoZhangFormData.load;
+              baozhang.leaderName = this.baoZhangFormData.leaderName;
+              baozhang.personNameStr = this.baoZhangFormData.personNameStr;
+              baozhang.remark = this.baoZhangFormData.remark;
+              baozhang.mapId = this.baoZhangFormData.mapId;
+              baozhang.mapType = this.baoZhangFormData.mapType;
+            }
+          });
 
           this.infoOverlay.setPosition(undefined);
         },
@@ -569,18 +559,28 @@
             console.log('==drawFeature==',this.drawFeatures)
           }
           console.log('this.allBaoZhangData', this.allBaoZhangData);
-          let data = {
-            drawFeatures: this.drawFeatures,
-            allBaoZhangData:this.allBaoZhangData
-          }
-          this.$emit('saveDrawData',data);
-
+          // this.baoZhangData.map(baozhang => {
+          //   let data = this.allBaoZhangData.find(item => item.positionId===baozhang.positionId);
+          //   baozhang.mapId = data.mapId;
+          //   baozhang.mapType = data.mapType;
+          //   baozhang.remark = data.remark;
+          // });
+          let sourceData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+          sourceData.teamPersonList.forEach(baoZhangTeamItem => {
+            baoZhangTeamItem.teamPersonData.map(baozhang => {
+              let data = this.allBaoZhangData.find(item => item.positionId===baozhang.positionId);
+              baozhang.mapId = data.mapId;
+              baozhang.mapType = data.mapType;
+              baozhang.remark = data.remark;
+            });
+          });
+          this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',sourceData);
           this.mapDialogVisible = false;
-          map.on('dblclick', this.mapClickHandler);
+          // map.on('dblclick', this.mapClickHandler);
         },
         //重置视图
         resetMap(){
-          this.allBaoZhangData = [];
+          this.clearInitData();
           if(vectorLayer){
             vectorLayer.getSource().clear();
           }
@@ -595,6 +595,9 @@
             vectorLayer.getSource().clear();
           }
           this.mapDialogVisible = false;
+      },
+      afterClose(){
+        console.log('关闭了')
       }
     }
 }
