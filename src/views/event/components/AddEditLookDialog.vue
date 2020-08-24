@@ -53,7 +53,7 @@
               <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData" @getResult="getZongZhiHuiResultData"></group-team>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData" @getResult="getFuZhiHuiResultData"></group-team>
               <team-people-for-add v-if="(userType==='qxsl'&&baseInfo.processId==='1')||optType==='add'" :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people-for-add>
-              <team-people v-else :eventId="eventId" :optType="optType" :peopleList="peopleListForTeam"></team-people>
+              <team-people v-else :eventId="eventId" :optType="optType" :peopleList="peopleListForTeam" @setSubmitBtnShow="setSubmitBtnShow"></team-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData" @getResult="getJiDongXunChaResultData"></group-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData" @getResult="getHouQinBaoZhangResultData"></group-people>
             </a-collapse-panel>
@@ -76,7 +76,7 @@
       <!-- 发起流程只有在新建的时候才有 -->
       <a-button v-if="userType==='qxsl'&&(optType==='add'||baseInfo.processId==='1')" type="primary" :loading="submitLoading" @click="submitData">发起流程</a-button>
       <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
-      <a-button v-if="userType==='qxsl'&&optType==='edit'&&baseInfo.processId==='4'" type="primary" :loading="checkLoading" @click="submitCheck('qxsl')">提交审核</a-button>
+      <a-button v-if="userType==='qxsl'&&optType==='edit'&&(baseInfo.processId==='4'||baseInfo.processId==='7')" type="primary" :loading="checkLoading" @click="submitCheck('qxsl')">提交审核</a-button>
       <a-button v-if="userType==='zybm'&&optType==='edit'" type="primary" :loading="checkLoading" @click="submitCheck('zybm')">提交审核</a-button>
       <!-- 领导视角 -->
       <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="passLoading" @click="passEvent">确认</a-button>
@@ -611,6 +611,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         //   });
         // });
       },
+      //提交审核入口
       submitCheck(type){
         if(type==='zybm'){
           this.submitCheckByTeam();
@@ -619,7 +620,13 @@ import {postEmergencyFeatures} from '@/api/map/service'
           this.submitCheckByCenter();
         }
       },
-
+      //打开提交审核按钮
+      setSubmitBtnShow(data){
+        let length = this.dunDianQuanDaoData.teamPersonList.length;
+        if(data===length){
+          this.baseInfo.processId = '4';
+        }
+      },
       //保存输入数据库
       saveData(){
         let params = {

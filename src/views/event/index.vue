@@ -296,7 +296,7 @@
               cancelText: '取消',
               onOk() {
                 _this.deleteEventByIds({ids:checkedIdsStr}).then(res =>{
-                  if(res.code === 0){
+                  if(res.code === '0'){
                     _this.$message.success('删除成功');
                     _this.getEventDataList();
                   }

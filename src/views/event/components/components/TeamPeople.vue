@@ -456,6 +456,13 @@
         }
         this.checkEvent(params).then( res => {
           this.teamPersonList[teamIndex].checkStatusId = '3';
+          let num = this.teamPersonList.reduce((total,item) => {
+            if(item.checkStatusId === '3'){
+              total = total +1;
+            }
+            return total
+          },0);
+          this.$emit('setSubmitBtnShow',num)
         })
        },
        openBackModal(teamIndex){
