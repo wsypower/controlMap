@@ -52,7 +52,7 @@
               </template>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData" @getResult="getZongZhiHuiResultData"></group-team>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData" @getResult="getFuZhiHuiResultData"></group-team>
-              <team-people-for-add v-if="(userType==='qxsl'&&baseInfo.processId==='1')||optType==='add'" :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people-for-add>
+              <team-people-for-add v-if="(userType==='qxsl'&&baseInfo.processId==='1'&&optType!=='look')||optType==='add'" :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people-for-add>
               <team-people v-else :eventId="eventId" :optType="optType" :peopleList="peopleListForTeam" @setSubmitBtnShow="setSubmitBtnShow"></team-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData" @getResult="getJiDongXunChaResultData"></group-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData" @getResult="getHouQinBaoZhangResultData"></group-people>
@@ -74,9 +74,9 @@
       <!-- 信息指挥中心视角 保存只有在新建的时候才有 -->
       <a-button v-if="userType==='qxsl'&&(optType==='add'||optType==='edit')" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
       <!-- 发起流程只有在新建的时候才有 -->
-      <a-button v-if="userType==='qxsl'&&(optType==='add'||baseInfo.processId==='1')" type="primary" :loading="submitLoading" @click="submitData">发起流程</a-button>
+      <a-button v-if="userType==='qxsl'&&optType!=='look'&&(optType==='add'||baseInfo.processId==='1')" type="primary" :loading="submitLoading" @click="submitData">发起流程</a-button>
       <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
-      <a-button v-if="userType==='qxsl'&&optType==='edit'&&(baseInfo.processId==='4'||baseInfo.processId==='7')" type="primary" :loading="checkLoading" @click="submitCheck('qxsl')">提交审核</a-button>
+      <a-button v-if="userType==='qxsl'&&optType==='edit'&&showSubmit" type="primary" :loading="checkLoading" @click="submitCheck('qxsl')">提交审核</a-button>
       <a-button v-if="userType==='zybm'&&optType==='edit'" type="primary" :loading="checkLoading" @click="submitCheck('zybm')">提交审核</a-button>
       <!-- 领导视角 -->
       <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="passLoading" @click="passEvent">确认</a-button>
@@ -237,6 +237,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
         backReason: '',
 
         reviewDialogVisible: false,
+
+        showSubmit: false,
       }
     },
     computed:{
@@ -266,6 +268,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       ...mapActions('event/common', ['getPeopleDataList']),
       init(){
         this.getTemplateEventDataList().then((res)=>{
+          console.log('getTemplateEventDataList', res);
           this.templateList = res;
         });
         this.getPeopleDataList({id:''}).then(res => {
@@ -295,7 +298,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //选择模版
       getEventInfoById(id){
         this.dataLoading = true;
-        this.getMessageByEventId({id:this.eventId}).then(res => {
+        this.getMessageByEventId({id:id}).then(res => {
           this.baseInfo = res.baseInfo;
           this.zongZhiHuiData = res.groupData.zongZhiHuiData;
           this.fuZhiHuiData = res.groupData.fuZhiHuiData;
@@ -447,6 +450,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
         e.preventDefault();
         this.saveLoading = true;
         this.changeEventDataForSave();
+        if(this.optType==='add'){
+          this.baseInfo.id = '';
+        }
         let params = {
           baseInfo: JSON.stringify(this.baseInfo),
           groupData: JSON.stringify({
@@ -457,8 +463,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
             houQinBaoZhangData: this.houQinBaoZhangData
           })
         }
-        if(this.baseInfo.id!==''){
-          this.updateEvent.then((res)=>{
+        if(this.optType!=='add'){
+          this.updateEvent(params).then((res)=>{
             console.log('updateEvent',res);
             this.saveLoading = false;
             this.$notification['success']({
@@ -503,7 +509,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
         }
         this.submitLoading = true;
         this.changeEventDataForSave();
-
         let params = {
           baseInfo: JSON.stringify(this.baseInfo),
           groupData: JSON.stringify({
@@ -542,6 +547,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //中队：提交审核
       submitCheckByTeam(){
         this.checkLoading = true;
+        this.saveDataToGis();
         this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
         console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
         let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
@@ -551,9 +557,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
             leaderId: teamPerson.leaderId,
             personList: [],
             positionId: teamPerson.addressIds[2],
-            mapId:'',
-            mapType: '',
-            remark: ''
+            mapId:teamPerson.mapId,
+            mapType: teamPerson.mapType,
+            remark: teamPerson.remark
           }
           data.personList = teamPerson.personList.reduce((ids, personId) => {
             ids.push(personId);
@@ -578,38 +584,38 @@ import {postEmergencyFeatures} from '@/api/map/service'
       },
       //中心：提交审核
       submitCheckByCenter(){
-        this.checkLoading = true;
-        this.submitEventToCheck({id: this.eventId}).then(res => {
-          this.checkLoading = false;
-          this.reset();
-          this.$emit('refreshList');
-          this.addEditLookDialogVisible = false;
-        });
-
-        // if(!this.checkParams()){
-        //   return
-        // }
         // this.checkLoading = true;
-        // this.changeEventDataForSave();
-        // let params = {
-        //   baseInfo: JSON.stringify(this.baseInfo),
-        //   groupData: JSON.stringify({
-        //     zongZhiHuiData: this.zongZhiHuiData,
-        //     fuZhiHuiData: this.fuZhiHuiData,
-        //     dunDianQuanDaoData: this.dunDianQuanDaoData,
-        //     jiDongXunChaData: this.jiDongXunChaData,
-        //     houQinBaoZhangData: this.houQinBaoZhangData
-        //   })
-        // }
-        // this.updateEvent(params).then((res)=>{
-        //   console.log('updateEvent eventId',res.eventId);
-        //   this.submitEventToCheck({eventId: res.eventId}).then(res => {
-        //     this.checkLoading = false;
-        //     this.reset();
-        //     this.$emit('refreshList');
-        //     this.addEditLookDialogVisible = false;
-        //   });
+        // this.submitEventToCheck({id: this.eventId}).then(res => {
+        //   this.checkLoading = false;
+        //   this.reset();
+        //   this.$emit('refreshList');
+        //   this.addEditLookDialogVisible = false;
         // });
+
+        if(!this.checkParams()){
+          return
+        }
+        this.checkLoading = true;
+        this.changeEventDataForSave();
+        let params = {
+          baseInfo: JSON.stringify(this.baseInfo),
+          groupData: JSON.stringify({
+            zongZhiHuiData: this.zongZhiHuiData,
+            fuZhiHuiData: this.fuZhiHuiData,
+            dunDianQuanDaoData: this.dunDianQuanDaoData,
+            jiDongXunChaData: this.jiDongXunChaData,
+            houQinBaoZhangData: this.houQinBaoZhangData
+          })
+        }
+        this.updateEvent(params).then((res)=>{
+          console.log('updateEvent eventId',res.eventId);
+          this.submitEventToCheck({id: res.eventId}).then(res => {
+            this.checkLoading = false;
+            this.reset();
+            this.$emit('refreshList');
+            this.addEditLookDialogVisible = false;
+          });
+        });
       },
       //提交审核入口
       submitCheck(type){
@@ -624,53 +630,25 @@ import {postEmergencyFeatures} from '@/api/map/service'
       setSubmitBtnShow(data){
         let length = this.dunDianQuanDaoData.teamPersonList.length;
         if(data===length){
-          this.baseInfo.processId = '4';
+          this.showSubmit = true;
+        }
+        else{
+          this.showSubmit = false;
         }
       },
-      //保存输入数据库
-      saveData(){
-        let params = {
-          baseInfo: this.baseInfo,
-          groupData: {
-            zongZhiHuiData: this.zongZhiHuiData,
-            fuZhiHuiData: this.fuZhiHuiData,
-            dunDianQuanDaoData: this.dunDianQuanDaoData,
-            jiDongXunChaData: this.jiDongXunChaData,
-            houQinBaoZhangData: this.houQinBaoZhangData
-          }
+      //保存gis数据输入数据库
+      saveDataToGis(){
+        if(this.drawFeatures){
+          postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
+            console.log('==点数据==', res);
+          });
+          postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
+            console.log('==线数据==', res);
+          });
+          postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
+            console.log('==线数据==', res);
+          });
         }
-        // if(this.operateType=='add'){
-        //   this.submitForm.id = '';
-        //   this.submitForm.isTemplate = '0';
-        // }
-        // let groupDataTemp = JSON.parse(JSON.stringify(this.groupData));
-        // groupDataTemp.forEach(item =>{
-        //   delete item.key;
-        //   delete item.checkedPeopleList;
-        //   item.personList = item.peopleKeyList.reduce((r,item)=>{
-        //     r.push(item)
-        //     return r
-        //   },[])
-        //   delete item.peopleKeyList;
-        // })
-        // let groupDataStr = JSON.stringify(groupDataTemp);
-        // this.submitForm.groupDataStr = groupDataStr;
-        //
-        // let baoZhangDataStr = JSON.stringify(this.baoZhangData);
-        // this.submitForm.baoZhangDataStr = baoZhangDataStr;
-        //
-        // console.log('save/submit',this.submitForm);
-        // if(this.drawFeatures){
-        //   postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
-        //     console.log('==点数据==', res);
-        //   });
-        //   postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
-        //     console.log('==线数据==', res);
-        //   });
-        //   postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
-        //     console.log('==线数据==', res);
-        //   });
-        // }
       },
 
       checkParams(){

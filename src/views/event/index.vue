@@ -64,8 +64,8 @@
                               <i v-if="item.statusId==='1'" class="btn_mini btn_handle" @click="editEvent(item.id)">处置</i>
                           </span>
                           <span v-if="userType!=='zybm'">
-                              <a-icon v-if="item.processId==='7'&&item.isTemplate==='2'" type="star" @click="setTemplate(item)"/>
-                              <a-icon v-if="item.processId==='7'&&item.isTemplate==='1'" type="star" theme="filled" style="color: #ffb94c;" @click="setTemplate(item)"/>
+                              <a-icon v-if="item.processId==='6'&&item.isTemplate==='2'" type="star" @click="setTemplate(item)"/>
+                              <a-icon v-if="item.processId==='6'&&item.isTemplate==='1'" type="star" theme="filled" style="color: #ffb94c;" @click="setTemplate(item)"/>
                           </span>
                           <span v-else>
                               <a-icon v-if="item.isTemplate==='1'" type="star" theme="filled" style="color: #ffb94c; cursor: default"/>
@@ -116,7 +116,7 @@
         query:{
           typeId:'',
           statusId: '',
-          isTemplate: '2',
+          isTemplate: '',
           searchContent: '',
           pageNo: 1,
           pageSize: 12
@@ -335,13 +335,18 @@
       },
       //设置某个事件是否为模版
       setTemplate(item){
-        item.isTemplate = !item.isTemplate;
+        if(item.isTemplate==='2'){
+          item.isTemplate = '1';
+        }
+        else{
+          item.isTemplate = '2';
+        }
         this.setEventToTemplate({id:item.id, isTemplate:item.isTemplate}).then(res => {
-          if(res.code === 0){
+          if(res.code === '0'){
             this.$message.success('设置成功');
           }
           else{
-            this.$message.error(res.errmsg);
+            this.$message.error(res.msg);
           }
         })
       },

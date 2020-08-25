@@ -27,7 +27,18 @@
                 <label><i style="color:#d60000;">*</i>保障时间：</label>
             </a-col>
             <a-col :span="20">
-                <a-range-picker v-if="nowOptType" show-time format="YYYY-MM-DD HH:mm:ss" v-model="submitForm.dayRange"/>
+                <a-range-picker
+                        v-if="nowOptType"
+                        :show-time="{ format: 'HH:mm:ss' }"
+                        format="YYYY-MM-DD HH:mm:ss"
+                        :placeholder="['开始时间', '结束时间']"
+                        v-model="submitForm.dayRange"
+
+                />
+                <!--                        :default-value="submitForm.dayRange"-->
+                <!--                        -->
+                <!--                        @change="onChange"-->
+<!--                <a-range-picker v-if="nowOptType" show-time format="YYYY-MM-DD HH:mm:ss" v-model="submitForm.dayRange"/>-->
                 <span v-else>
                     {{new Date(submitForm.startDayTime)|date_format('YYYY-MM-DD HH:mm:ss')}}
                     ~
@@ -191,7 +202,7 @@ export default {
       this.getEventTypeDataList().then((res)=>{
         this.eventTypeList = res;
       });
-      if(this.optType==='edit'){
+      if(this.submitForm.startDayTime){
         let startTime  = moment(this.submitForm.startDayTime).format('YYYY-MM-DD HH:mm:ss');
         let endTime  = moment(this.submitForm.endDayTime).format('YYYY-MM-DD HH:mm:ss');
         this.submitForm.dayRange = [moment(startTime,'YYYY-MM-DD HH:mm:ss'),moment(endTime,'YYYY-MM-DD HH:mm:ss')];

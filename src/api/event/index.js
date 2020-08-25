@@ -212,7 +212,7 @@ export function checkEvent(data){
 export function setEventToTemplate(data){
   console.log('api:setEventToTemplate',data);
   return request({
-    url: '@test/setEventToTemplate',
+    url: 'planEvent/setEventToTemplate',
     method: 'post',
     data
   })
@@ -234,7 +234,7 @@ export function setEventToTemplate(data){
 export function getTemplateEventDataList(data){
   console.log('api:getTemplateEventDataList',data);
   return request({
-    url: '@test/getTemplateEventDataList?_t='+ new Date().getTime(),
+    url: 'planEvent/getTemplateEventDataList?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })

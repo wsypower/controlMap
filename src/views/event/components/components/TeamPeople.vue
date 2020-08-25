@@ -296,6 +296,13 @@
              })
            });
          });
+         let num = this.teamPersonList.reduce((total,item) => {
+           if(item.checkStatusId === '3'){
+             total = total +1;
+           }
+           return total
+         },0);
+         this.$emit('setSubmitBtnShow',num);
        }
        else{
          //当编辑时会改变groupResultData值，从而改变store里面的数据
@@ -483,6 +490,13 @@
            this.backReason = '';
            this.backVisible = false;
            this.teamPersonList[this.teamIndex].checkStatusId = '4';
+           let num = this.teamPersonList.reduce((total,item) => {
+             if(item.checkStatusId === '3'){
+               total = total +1;
+             }
+             return total
+           },0);
+           this.$emit('setSubmitBtnShow',num)
          })
        }
      }

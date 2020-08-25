@@ -299,11 +299,11 @@
                 return acc
               },'').substring(2);
               let temp = {
-                positionId: item.addressIds[2],
+                positionId: item.address[2].id,
                 load: addressName,
                 leaderName: personTemp.name,
                 personNameStr: perName.join(','),
-                remark: '',
+                remark: item.remark,
                 mapId: item.mapId,
                 mapType:item.mapType,
               }
