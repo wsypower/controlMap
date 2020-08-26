@@ -50,7 +50,7 @@
                   <my-scroll>
                       <li v-for="item in eventDataList" :key="item.id" flex="cross:center">
                           <span><a-checkbox :checked="item.checked" @change="checkHandle(item)"></a-checkbox></span>
-                          <span>{{item.name}}</span>
+                          <span><div class="name">{{item.name}}</div></span>
                           <span>{{item.typeName}}</span>
                           <span>
                               {{new Date(item.startDayTime)|date_format('YYYY-MM-DD HH:mm:ss')}}
@@ -497,10 +497,12 @@
 
                         &:nth-child(2) {
                             flex: 1;
-                            max-width: 300px;
-                            white-space: nowrap;
-                            text-overflow: ellipsis;
-                            overflow: hidden;
+                            .name{
+                                max-width: 300px;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+                            }
                         }
 
                         &:nth-child(3) {
@@ -592,4 +594,9 @@
       margin-bottom: 5px;
     }
   }
+</style>
+<style lang="scss">
+    .ant-modal-footer {
+        text-align: center;
+    }
 </style>
