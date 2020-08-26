@@ -424,7 +424,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
       //在保存数据之前对数据进行处理
       changeEventDataForSave(){
-        debugger
         this.zongZhiHuiData.groupTeam.map(item => {
           item.key = item.key.indexOf('@@@')===0?'':item.key;
           let temp = [...item.teamList];
@@ -646,7 +645,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
             houQinBaoZhangData: this.houQinBaoZhangData
           })
         }
-        debugger
         this.updateEvent(params).then((res)=>{
           console.log('updateEvent eventId',res.eventId);
           this.submitEventToCheck({id: res.eventId}).then(res => {
