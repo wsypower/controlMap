@@ -256,7 +256,7 @@ export function getTemplateEventDataList(data){
 export function getLogDataByEventId(data){
   console.log('api:getLogDataByEventId',data);
   return request({
-    url: '@test/getLogDataByEventId?_t='+ new Date().getTime(),
+    url: 'planEvent/getLogDataByEventId?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })

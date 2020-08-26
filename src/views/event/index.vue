@@ -145,11 +145,6 @@
     },
     created(){},
     mounted(){
-      // let _this = this;
-      // this.setBaseData();
-      // window.onresize = function(){
-      //   _this.setBaseData();
-      // }
       // this.getStatusDataList().then((res)=>{
       //   console.log('getStatusDataList',res);
       //   this.statusList = res;
@@ -199,6 +194,7 @@
           this.countForMyToHandle = res.count;
         });
       },
+
       searchEventData(param){
         this.resetQuery();
         this.query.statusId = null;
@@ -228,10 +224,6 @@
         }
         this.getEventDataList();
       },
-      // handleSelectChange(val){
-      //   let param = 'status_' + val;
-      //   this.searchEventData(param);
-      // },
       //查询内容触发
       searchDataByContent(val,e){
         let param = 'search_' + val;
@@ -342,7 +334,7 @@
           item.isTemplate = '2';
         }
         this.setEventToTemplate({id:item.id, isTemplate:item.isTemplate}).then(res => {
-          if(res.code === '0'){
+          if(res.msg === '操作成功！'){
             this.$message.success('设置成功');
           }
           else{

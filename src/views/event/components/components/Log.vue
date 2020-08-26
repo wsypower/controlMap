@@ -8,7 +8,7 @@
         </div>
         <div class="log-panel_body">
             <div class="log-panel_body-item" flex="dir:left" v-for="log in logData">
-                <div class="log-item_left">{{new Date(log.time)|date_format('YYYY-MM-DD HH:mm:ss')}}</div>
+                <div class="log-item_left">{{new Date(log.createtime)|date_format('YYYY-MM-DD HH:mm:ss')}}</div>
                 <div class="log-item_right">
                     <div class="dot"></div>
                     <div class="log-item_right-dept">{{log.dept}} {{log.user}}</div>
@@ -45,9 +45,9 @@
         ...mapActions('event/event', ['getLogDataByEventId']),
         getLogData(){
           this.dataLoading = true;
-          this.getLogDataByEventId({event:this.eventId}).then(res => {
+          this.getLogDataByEventId({eventId:this.eventId}).then(res => {
             this.dataLoading = false;
-            this.logData = res.data;
+            this.logData = res;
           })
         }
       }

@@ -149,12 +149,16 @@ import {postEmergencyFeatures} from '@/api/map/service'
     data(){
       return{
         addEditLookDialogVisible: false,
+        //模版list
         templateList: [],
+        //使用的模版ID
         templateId: '',
+        //加载数据过渡效果
         dataLoading: false,
         activeKey: '1',
         peopleList: [],
         peopleListForTeam: [],
+        //基本信息
         baseInfo:{
           id: '',
           name: '',
@@ -170,8 +174,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
           jobGoal: '',
           jobAssignment: '',
           jobContent: '',
-          jobRequirements: ''
+          jobRequirements: '',
+          dayRange: []
         },
+        //总指挥数据
         zongZhiHuiData:{
           groupName: 'zongzhihui',
           leaderPosition: '1',
@@ -181,6 +187,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
             teamList: []
           }]
         },
+        //副指挥数据
         fuZhiHuiData:{
           groupName: 'fuzhihui',
           leaderPosition: '1',
@@ -190,12 +197,14 @@ import {postEmergencyFeatures} from '@/api/map/service'
             teamList: []
           }]
         },
+        //蹲点巡导组数据
         dunDianQuanDaoData:{
           groupName: 'dundianquandao',
           leaderPosition: '1',
           personPosition: '1',
           teamPersonList: []
         },
+        //激动巡查组数据
         jiDongXunChaData:{
           groupName: 'jidongxuncha',
           leaderPosition: '1',
@@ -206,6 +215,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
             personList: []
           }]
         },
+        //后勤保障组数据
         houQinBaoZhangData:{
           groupName: 'houqinbaozhang',
           leaderPosition: '1',
@@ -300,10 +310,30 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.dataLoading = true;
         this.getMessageByEventId({id:id}).then(res => {
           this.baseInfo = res.baseInfo;
+          //在baseInfo组建中会对dayRange进行复制，这边只是为了让baseInfo对象有dayRange属性
+          this.baseInfo.dayRange = [];
+          //设置templateId
+          if(this.templateId!==''){
+            //新建时选择了模版
+            this.baseInfo.templateId = this.templateId;
+          }
+          else{
+            //编辑时，设置已选的模版
+            this.templateId = this.baseInfo.templateId;
+          }
           this.zongZhiHuiData = res.groupData.zongZhiHuiData;
           this.fuZhiHuiData = res.groupData.fuZhiHuiData;
           this.dunDianQuanDaoData = res.groupData.dunDianQuanDaoData;
           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',this.dunDianQuanDaoData);
+          let num = this.dunDianQuanDaoData.teamPersonList.reduce((acc,teamPerson) => {
+            if(teamPerson.checkStatusId==='3'){
+              acc = acc + 1;
+            }
+            return acc
+          }, 0)
+          if(this.dunDianQuanDaoData.teamPersonList>0&&this.dunDianQuanDaoData.teamPersonList===num){
+            this.showSubmit = true;
+          }
           this.jiDongXunChaData = res.groupData.jiDongXunChaData;
           this.houQinBaoZhangData = res.groupData.houQinBaoZhangData;
           console.log(this.jiDongXunChaData, this.houQinBaoZhangData);
@@ -341,32 +371,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //获取总指挥信息
       getZongZhiHuiResultData(data){
         this.zongZhiHuiData = JSON.parse(JSON.stringify(data));
-        this.zongZhiHuiData.groupTeam.map(item => {
-          item.key = item.key.indexOf('@@@')===0?'':item.key;
-          let temp = [...item.teamList];
-          if(temp.length>0){
-            item.teamList = [];
-            item.teamList = temp.reduce((acc, t) => {
-              acc.push(t.id);
-              return acc
-            },[])
-          }
-        })
       },
       //获取副指挥信息
       getFuZhiHuiResultData(data){
         this.fuZhiHuiData = JSON.parse(JSON.stringify(data));
-        this.fuZhiHuiData.groupTeam.map(item => {
-          item.key = item.key.indexOf('@@@')===0?'':item.key;
-          let temp = [...item.teamList];
-          if(temp.length>0){
-            item.teamList = [];
-            item.teamList = temp.reduce((acc, t) => {
-              acc.push(t.id);
-              return acc
-            },[])
-          }
-        })
       },
       //获取蹲点劝导组信息(这个只在发起流程之前使用)
       geTunDianQuanDaoResultData(data) {
@@ -420,11 +428,31 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
       //在保存数据之前对数据进行处理
       changeEventDataForSave(){
-        console.log('baseInfo', this.baseInfo);
-        console.log('zongZhiHuiData', this.zongZhiHuiData);
-        console.log('fuZhiHuiData', this.fuZhiHuiData);
-        //发起流程之后的保存草稿（中队内部详细信息不需要保存）
-        if(this.baseInfo.processId!=='1'&&this.optType!=='add'){
+        this.zongZhiHuiData.groupTeam.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
+          let temp = [...item.teamList];
+          if(temp.length>0){
+            item.teamList = [];
+            item.teamList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
+        this.fuZhiHuiData.groupTeam.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
+          let temp = [...item.teamList];
+          if(temp.length>0){
+            item.teamList = [];
+            item.teamList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
+        //发起流程之后的保存草稿（中队内部详细信息不需要保存）或者使用模版新建的事件
+        if((this.baseInfo.processId!=='1'&&this.optType!=='add')
+                ||((this.baseInfo.processId==='1'||this.optType==='add')&&this.baseInfo.templateId!=='')){
           let dunDianQuanDaoTemp = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
           let teamlist = dunDianQuanDaoTemp.teamPersonList.reduce((acc,item) => {
             acc.push(item.teamId);
@@ -438,6 +466,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
           }
           this.dunDianQuanDaoData = needData;
         }
+        console.log('baseInfo', this.baseInfo);
+        console.log('zongZhiHuiData', this.zongZhiHuiData);
+        console.log('fuZhiHuiData', this.fuZhiHuiData);
         console.log('dunDianQuanDaoData', this.dunDianQuanDaoData);
         console.log('jiDongXunChaData', this.jiDongXunChaData);
         console.log('houQinBaoZhangData', this.houQinBaoZhangData);
@@ -467,36 +498,47 @@ import {postEmergencyFeatures} from '@/api/map/service'
           this.updateEvent(params).then((res)=>{
             console.log('updateEvent',res);
             this.saveLoading = false;
-            this.$notification['success']({
-              message: '保存成功',
-              description: '后续请发起流程',
-              style: {
-                width: '200px',
-                marginLeft: `200px`,
-                fontSize: '14px'
-              },
-            });
-            this.reset();
-            this.$emit('refreshList');
-            this.addEditLookDialogVisible = false;
+            if(res.eventId){
+              this.$notification['success']({
+                message: '保存成功',
+                description: '后续请发起流程',
+                style: {
+                  width: '200px',
+                  marginLeft: `200px`,
+                  fontSize: '14px'
+                },
+              });
+              this.reset();
+              this.$emit('refreshList');
+              this.addEditLookDialogVisible = false;
+            }
+            else{
+              this.$message.error(res.msg);
+            }
+
           });
         }
         else{
           this.addNewEvent(params).then((res)=>{
             console.log('addNewEvent',res);
             this.saveLoading = false;
-            this.$notification['success']({
-              message: '保存成功',
-              description: '后续请发起流程',
-              style: {
-                width: '200px',
-                marginLeft: `200px`,
-                fontSize: '14px'
-              },
-            });
-            this.reset();
-            this.$emit('refreshList');
-            this.addEditLookDialogVisible = false;
+            if(res.eventId) {
+              this.$notification['success']({
+                message: '保存成功',
+                description: '后续请发起流程',
+                style: {
+                  width: '200px',
+                  marginLeft: `200px`,
+                  fontSize: '14px'
+                },
+              });
+              this.reset();
+              this.$emit('refreshList');
+              this.addEditLookDialogVisible = false;
+            }
+            else{
+              this.$message.error(res.msg);
+            }
           });
         }
       },
@@ -523,12 +565,17 @@ import {postEmergencyFeatures} from '@/api/map/service'
         if(this.baseInfo.id!==''){
           this.updateEvent(params).then((res)=>{
             console.log('updateEvent eventId',res.eventId);
-            this.submitEvent({id: res.eventId}).then(res => {
-              this.submitLoading = false;
-              this.reset();
-              this.$emit('refreshList');
-              this.addEditLookDialogVisible = false;
-            });
+            if(res.eventId) {
+              this.submitEvent({ id: res.eventId }).then(res => {
+                this.submitLoading = false;
+                this.reset();
+                this.$emit('refreshList');
+                this.addEditLookDialogVisible = false;
+              });
+            }
+            else{
+              this.$message.error(res.msg);
+            }
           });
         }
         else{
@@ -628,6 +675,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       },
       //打开提交审核按钮
       setSubmitBtnShow(data){
+        console.log('666 setSubmitBtnShow');
         let length = this.dunDianQuanDaoData.teamPersonList.length;
         if(data===length){
           this.showSubmit = true;
