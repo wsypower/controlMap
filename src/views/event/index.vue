@@ -153,9 +153,7 @@
       this.getEventDataList();
 
     },
-    watch:{
-
-    },
+    watch:{},
     methods: {
       ...mapActions('event/common', ['getStatusDataList']),
       ...mapActions('event/event', ['getToHandleCountData','getEventList','setEventToTemplate','deleteEventByIds']),
@@ -194,7 +192,7 @@
           this.countForMyToHandle = res.count;
         });
       },
-
+      //各种场景查询数据
       searchEventData(param){
         this.resetQuery();
         this.query.statusId = null;
@@ -266,7 +264,6 @@
       },
       //删除选中的事件
       deleteEvents(){
-        console.log('deleteEvents');
         let checkedIds = this.eventDataList.reduce((acc, item)=>{
           if(item.checked){
             acc.push(item.id);

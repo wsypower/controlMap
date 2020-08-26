@@ -53,7 +53,7 @@
               <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData" @getResult="getZongZhiHuiResultData"></group-team>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData" @getResult="getFuZhiHuiResultData"></group-team>
               <team-people-for-add v-if="(userType==='qxsl'&&baseInfo.processId==='1'&&optType!=='look')||optType==='add'" :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people-for-add>
-              <team-people v-else :eventId="eventId" :optType="optType" :peopleList="peopleListForTeam" @setSubmitBtnShow="setSubmitBtnShow"></team-people>
+              <team-people v-else :eventId="eventId" :optType="optType" :peopleList="peopleListForTeam" @setSubmitBtnShow="setSubmitBtnShow" @reviewTeam="reviewTeam"></team-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData" @getResult="getJiDongXunChaResultData"></group-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData" @getResult="getHouQinBaoZhangResultData"></group-people>
             </a-collapse-panel>
@@ -230,7 +230,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         // baoZhangDataStr: '',
         // reviewUserId: '',
         baoZhangData: [],
-
+        //各个按钮的点击效果
         reviewLoading:false,
         saveLoading: false,
         submitLoading: false,
@@ -238,16 +238,17 @@ import {postEmergencyFeatures} from '@/api/map/service'
         passLoading: false,
         backLoading: false,
 
+        //保障视图弹窗
         mapDialogVisible: false,
         sourcePeopleList: [],
         drawFeatures: [],
 
+        //审核驳回弹窗
         backVisible: false,
         confirmLoading: false,
         backReason: '',
 
-        reviewDialogVisible: false,
-
+        //在信息指挥中心处置下提交审核按钮是否显示（显示）
         showSubmit: false,
       }
     },
@@ -278,7 +279,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
       ...mapActions('event/common', ['getPeopleDataList']),
       init(){
         this.getTemplateEventDataList().then((res)=>{
-          console.log('getTemplateEventDataList', res);
           this.templateList = res;
         });
         this.getPeopleDataList({id:''}).then(res => {
@@ -293,7 +293,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
         }
       },
       handleUserTemplate(val){
-        console.log('handleUserTemplate',val);
         let _this = this;
         this.$confirm({
           title: '确定要改变模版吗?',
@@ -336,7 +335,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
           }
           this.jiDongXunChaData = res.groupData.jiDongXunChaData;
           this.houQinBaoZhangData = res.groupData.houQinBaoZhangData;
-          console.log(this.jiDongXunChaData, this.houQinBaoZhangData);
           if(this.userType==='zybm'){
             this.getPeopleDataList({id:this.dunDianQuanDaoData.teamPersonList[0].teamId}).then(res => {
               this.peopleListForTeam = res;
@@ -366,7 +364,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
           this.baseInfo['startDayTime'] = data.dayRange[0]._d.getTime();
           this.baseInfo['endDayTime'] = data.dayRange[1]._d.getTime();
         }
-        console.log('getBaseInfoResultData', this.baseInfo);
       },
       //获取总指挥信息
       getZongZhiHuiResultData(data){
@@ -378,7 +375,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
       },
       //获取蹲点劝导组信息(这个只在发起流程之前使用)
       geTunDianQuanDaoResultData(data) {
-        console.log('获取蹲点劝导组信息', data);
         this.dunDianQuanDaoData = JSON.parse(JSON.stringify(data));
       },
       //获取机动巡查应急组数据
@@ -631,14 +627,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
       },
       //中心：提交审核
       submitCheckByCenter(){
-        // this.checkLoading = true;
-        // this.submitEventToCheck({id: this.eventId}).then(res => {
-        //   this.checkLoading = false;
-        //   this.reset();
-        //   this.$emit('refreshList');
-        //   this.addEditLookDialogVisible = false;
-        // });
-
         if(!this.checkParams()){
           return
         }
@@ -687,18 +675,63 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //保存gis数据输入数据库
       saveDataToGis(){
         if(this.drawFeatures){
-          postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
-            console.log('==点数据==', res);
-          });
-          postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
-            console.log('==线数据==', res);
-          });
-          postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
-            console.log('==线数据==', res);
-          });
+          if(this.drawFeatures.Point.add.length>0
+                  ||this.drawFeatures.Point.update.length>0
+                  ||this.drawFeatures.Point.delete.length>0) {
+            postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
+              console.log('==点数据==', res);
+            });
+          }
+          if(this.drawFeatures.LineString.add.length>0
+                  ||this.drawFeatures.LineString.update.length>0
+                  ||this.drawFeatures.LineString.delete.length>0) {
+            postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
+              console.log('==线数据==', res);
+            });
+          }
+          if(this.drawFeatures.Polygon.add.length>0
+                  ||this.drawFeatures.Polygon.update.length>0
+                  ||this.drawFeatures.Polygon.delete.length>0) {
+            postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
+              console.log('==线数据==', res);
+            });
+          }
         }
       },
-
+      reviewTeam(data){
+        this.saveDataToGis();
+        this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+        console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
+        let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
+          let data = {
+            key: teamPerson.key.indexOf('@@@')===0?'':teamPerson.key,
+            address: teamPerson.addressIds,
+            leaderId: teamPerson.leaderId,
+            personList: [],
+            positionId: teamPerson.addressIds[2],
+            mapId:teamPerson.mapId,
+            mapType: teamPerson.mapType,
+            remark: teamPerson.remark
+          }
+          data.personList = teamPerson.personList.reduce((ids, personId) => {
+            ids.push(personId);
+            return ids
+          },[])
+          acc.push(data);
+          return acc
+        },[]);
+        let params = {
+          eventId: this.eventId,
+          teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
+          teamPersonData: JSON.stringify(teamPersonData),
+        }
+        console.log('reviewTeam',params);
+        this.addTeamPersonForNewEvent(params).then(res => {
+          console.log('addTeamPersonForNewEvent',res);
+          let userId = util.cookies.get('userId');
+          window.open(URL_CONFIG.eventInfoURL+'/teamInfo/'+ userId + '_' + this.eventId + '_' + data.teamId, team.teamName + '信息表','width=1000,height=800');
+        });
+      },
       checkParams(){
         if(this.baseInfo.name===''){
           this.$notification['error']({

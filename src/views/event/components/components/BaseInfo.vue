@@ -211,7 +211,6 @@ export default {
       }
     },
     timeChange(dates,dateStrings){
-      console.log('change',dates,dateStrings);
       this.submitForm.dayRange = dates;
     }
   }

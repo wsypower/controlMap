@@ -59,7 +59,6 @@ export async function getEmergencyFeatures(mapIdList,mapType) {
  * @author: sijianting
  */
 export async function postEmergencyFeatures(drawType, feature) {
-  debugger
   const format = new WFS()
   let xml
   let featureType

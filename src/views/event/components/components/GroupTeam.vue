@@ -198,7 +198,6 @@
          );
        },
        addGroup(item, index){
-         console.log('addGroup',item, index)
          let additem = {
            key: "@@@" + index.toString(),
            leaderId: '',
@@ -224,7 +223,6 @@
          });
        },
        closeTag (person,index,e) {
-         console.log(person,index);
          let i = this.groupTeam[index].teamList.indexOf(person);
          this.groupTeam[index].teamList.splice(i,1);
        }

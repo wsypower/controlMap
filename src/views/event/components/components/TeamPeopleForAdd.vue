@@ -107,7 +107,7 @@
      watch:{
        groupResultData:{
          handler: function(value){
-           console.log('add 555555');
+           console.log('team people for add 555555');
            let data = {
              groupName: 'dundianquandao',
              leaderPosition: value.leaderPosition,

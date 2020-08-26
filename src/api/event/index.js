@@ -14,7 +14,6 @@ import request from '@/plugins/axios/axios'
  */
 
 export function getCountForHandle(data){
-  console.log('api:getCountForHandle',data);
   return request({
     url: 'planEvent/getCountForHandle?_t='+ new Date().getTime(),
     method: 'get',
@@ -51,7 +50,6 @@ export function getCountForHandle(data){
  */
 
 export function getEventList(data){
-    console.log('api：getEventList',data);
     return request({
         url: `planEvent/getEventList`,
         method: 'post',
@@ -84,7 +82,6 @@ export function getEventList(data){
  */
 
 export function addNewEvent(data){
-    console.log('api:addNewEvent',data);
     return request({
         url: 'planEvent/addNewEvent',
         method: 'post',
@@ -117,7 +114,6 @@ export function addNewEvent(data){
  */
 
 export function updateEvent(data){
-  console.log('api:updateEvent',data);
   return request({
     url: 'planEvent/updateEvent',
     method: 'post',
@@ -137,7 +133,6 @@ export function updateEvent(data){
  */
 
 export function deleteEventByIds(data){
-    console.log('api:deleteEventByIds',data);
     return request({
         url: 'planEvent/deleteEventByIds',
         method: 'post',
@@ -162,7 +157,6 @@ export function deleteEventByIds(data){
  */
 
 export function getMessageByEventId(data){
-    console.log('api:getMessageByEventId',data);
     return request({
         url: 'planEvent/getMessageByEventId?_t='+ new Date().getTime(),
         method: 'get',
@@ -187,7 +181,6 @@ export function getMessageByEventId(data){
  */
 
 export function checkEvent(data){
-  console.log('api:checkEvent',data);
   return request({
     url: 'planEvent/checkEvent',
     method: 'post',
@@ -210,7 +203,6 @@ export function checkEvent(data){
  */
 
 export function setEventToTemplate(data){
-  console.log('api:setEventToTemplate',data);
   return request({
     url: 'planEvent/setEventToTemplate',
     method: 'post',
@@ -232,7 +224,6 @@ export function setEventToTemplate(data){
  */
 
 export function getTemplateEventDataList(data){
-  console.log('api:getTemplateEventDataList',data);
   return request({
     url: 'planEvent/getTemplateEventDataList?_t='+ new Date().getTime(),
     method: 'get',
@@ -254,7 +245,6 @@ export function getTemplateEventDataList(data){
  */
 
 export function getLogDataByEventId(data){
-  console.log('api:getLogDataByEventId',data);
   return request({
     url: 'planEvent/getLogDataByEventId?_t='+ new Date().getTime(),
     method: 'get',
@@ -271,7 +261,6 @@ export function getLogDataByEventId(data){
  * }
  */
 export function addTeamPersonForNewEvent(data){
-  console.log('api:addTeamPersonForNewEvent',data);
   return request({
     url: 'planEvent/addTeamPersonForNewEvent?_t='+ new Date().getTime(),
     method: 'post',
@@ -288,7 +277,6 @@ export function addTeamPersonForNewEvent(data){
  * }
  */
 export function submitEventToCheck(data){
-  console.log('api:submitEventToCheck',data);
   return request({
     url: 'planEvent/submitEventToCheck?_t='+ new Date().getTime(),
     method: 'post',
@@ -305,7 +293,6 @@ export function submitEventToCheck(data){
  * }
  */
 export function submitEvent(data){
-  console.log('api:submitEvent',data);
   return request({
     url: 'planEvent/submitEvent?_t='+ new Date().getTime(),
     method: 'post',

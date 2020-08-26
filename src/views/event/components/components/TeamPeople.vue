@@ -105,7 +105,7 @@
                           v-if="team.teamPersonData.length > 1"
                           theme="filled"
                           title="确定删除这个组吗？"
-                          @confirm="() => deleteGroup(teamIndex,index)"
+                          @confirm="() => deleteGroup(index,teamIndex)"
                   >
                     <a-icon type="minus-circle" class="icon_delete" />
                   </a-popconfirm>
@@ -125,12 +125,6 @@
             :defaultCheckedPeopleIds="defaultCheckedPeopleIds"
             @choosePeople="choosePeople"
         ></choose-people-dialog>
-        <team-review-dialog
-            :visible.sync="teamInfoDialogVisible"
-            :title="teamInfoTitle"
-            :teamId="teamId"
-            :peopleList="peopleList">
-        </team-review-dialog>
         <a-modal title="驳回理由"
                 :visible="backVisible"
                 :confirm-loading="confirmLoading"
@@ -144,8 +138,6 @@
 
 <script type="text/ecmascript-6">
   import ChoosePeopleDialog from './ChoosePeopleDialog'
-  import TeamReviewDialog from './TeamReviewDialog'
-  import util from '@/utils/util.js'
   import { mapActions } from 'vuex'
   const groupColumns = [
     {
@@ -179,7 +171,6 @@
      name: 'teamPeople',
      components:{
        ChoosePeopleDialog,
-       TeamReviewDialog
      },
      props:{
        eventId:{
@@ -448,10 +439,13 @@
        },
        lookTeamPeopleSet(team){
          console.log('进入预览');
-         // this.teamInfoTitle = team.teamName + '信息表';
          this.teamId= team.teamId;
-         window.open(URL_CONFIG.eventInfoURL+'/teamInfo/' + this.eventId + '_' + this.teamId, team.teamName + '信息表','width=1000,height=800');
-         // this.teamInfoDialogVisible = true;
+         let data ={
+           teamId: team.teamId,
+           teamName: team.teamName
+         }
+         this.$emit('reviewTeam',data)
+         //先保存
        },
        passTeamPeopleSet(teamIndex, teamId){
         console.log('eventId teamId operate backReason');
