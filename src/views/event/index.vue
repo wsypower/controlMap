@@ -497,6 +497,10 @@
 
                         &:nth-child(2) {
                             flex: 1;
+                            max-width: 300px;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
                         }
 
                         &:nth-child(3) {
@@ -504,15 +508,15 @@
                         }
 
                         &:nth-child(4) {
-                            width: 400px;
+                            width: 340px;
                         }
 
                         &:nth-child(5) {
-                            flex: 1;
+                            width: 140px;
                         }
 
                         &:nth-child(6) {
-                            flex: 1;
+                            width: 120px;
                         }
 
                         &:nth-child(7) {

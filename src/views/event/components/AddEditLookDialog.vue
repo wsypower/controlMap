@@ -330,7 +330,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
             }
             return acc
           }, 0)
-          if(this.dunDianQuanDaoData.teamPersonList>0&&this.dunDianQuanDaoData.teamPersonList===num){
+          if(this.dunDianQuanDaoData.teamPersonList.length>0&&this.dunDianQuanDaoData.teamPersonList.length===num){
             this.showSubmit = true;
           }
           this.jiDongXunChaData = res.groupData.jiDongXunChaData;
@@ -424,6 +424,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
       //在保存数据之前对数据进行处理
       changeEventDataForSave(){
+        debugger
         this.zongZhiHuiData.groupTeam.map(item => {
           item.key = item.key.indexOf('@@@')===0?'':item.key;
           let temp = [...item.teamList];
@@ -447,20 +448,23 @@ import {postEmergencyFeatures} from '@/api/map/service'
           }
         })
         //发起流程之后的保存草稿（中队内部详细信息不需要保存）或者使用模版新建的事件
-        if((this.baseInfo.processId!=='1'&&this.optType!=='add')
-                ||((this.baseInfo.processId==='1'||this.optType==='add')&&this.baseInfo.templateId!=='')){
+        // if(this.baseInfo.processId==='1'||this.optType==='add'){
+        // if((this.baseInfo.processId!=='1'&&this.optType!=='add')
+        //         ||((this.baseInfo.processId==='1'||this.optType==='add')&&this.baseInfo.templateId!=='')){
           let dunDianQuanDaoTemp = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-          let teamlist = dunDianQuanDaoTemp.teamPersonList.reduce((acc,item) => {
-            acc.push(item.teamId);
-            return acc
-          },[]);
-          let needData = {
-            groupName: 'dundianquandao',
-            leaderPosition: dunDianQuanDaoTemp.leaderPosition,
-            personPosition: dunDianQuanDaoTemp.personPosition,
-            teamList: teamlist
-          }
-          this.dunDianQuanDaoData = needData;
+          if(dunDianQuanDaoTemp.teamPersonList&&dunDianQuanDaoTemp.teamPersonList.length>0){
+            let teamlist = dunDianQuanDaoTemp.teamPersonList.reduce((acc,item) => {
+              acc.push(item.teamId);
+              return acc
+            },[]);
+            let needData = {
+              groupName: 'dundianquandao',
+              leaderPosition: dunDianQuanDaoTemp.leaderPosition,
+              personPosition: dunDianQuanDaoTemp.personPosition,
+              teamList: teamlist
+            }
+            this.dunDianQuanDaoData = needData;
+          // }
         }
         console.log('baseInfo', this.baseInfo);
         console.log('zongZhiHuiData', this.zongZhiHuiData);
@@ -642,6 +646,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
             houQinBaoZhangData: this.houQinBaoZhangData
           })
         }
+        debugger
         this.updateEvent(params).then((res)=>{
           console.log('updateEvent eventId',res.eventId);
           this.submitEventToCheck({id: res.eventId}).then(res => {
@@ -1021,6 +1026,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
     left: 70px;
     .ant-modal-content {
       height: 100%;
+      .ant-modal-footer{
+        text-align: center;
+      }
     }
     .ant-collapse-header {
       .anticon {
