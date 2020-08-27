@@ -168,7 +168,8 @@
           filterPeopleList: [],
           //所有的保障点位数据，后续所有操作已这个为基础，最后保存时也已这个作为保存数据
           //allBaoZhangData有值为编辑，没有值为新增
-          allBaoZhangData: []
+          allBaoZhangData: [],
+          hasSave:false,
         }
       },
       computed:{
@@ -240,13 +241,13 @@
                       color: 'rgba(255, 255, 255, 0.3)'
                     }),
                     stroke: new Stroke({
-                      color: '#ffcc33',
+                      color: '#fc7012',
                       width: 2
                     }),
                     image: new CircleStyle({
                       radius: 7,
                       fill: new Fill({
-                        color: '#ffcc33'
+                        color: '#fc7012'
                       })
                     })
                   })
@@ -341,13 +342,13 @@
                   color: 'rgba(255, 255, 255, 0.3)'
                 }),
                 stroke: new Stroke({
-                  color: '#ffcc33',
+                  color: '#fc7012',
                   width: 2
                 }),
                 image: new CircleStyle({
                   radius: 7,
                   fill: new Fill({
-                    color: '#ffcc33'
+                    color: '#fc7012'
                   })
                 })
               })
@@ -516,6 +517,7 @@
         },
         //保存图形数据
         saveMap() {
+          this.hasSave=true;
           console.log('==编辑要素==',this.editFeatures)
           this.pointFeatures = [];
           this.lineFeatures = [];
@@ -588,12 +590,14 @@
         },
         //关闭保障视图弹窗
         handleCancel(){
-          this.allBaoZhangData = [];
-          if(draw){
-            mapManager.inactivateDraw(draw);
-          }
-          if(vectorLayer){
-            vectorLayer.getSource().clear();
+          if(!this.hasSave) {
+            this.allBaoZhangData = [];
+            if (draw) {
+              mapManager.inactivateDraw(draw);
+            }
+            if (vectorLayer) {
+              vectorLayer.getSource().clear();
+            }
           }
           this.mapDialogVisible = false;
       },

@@ -380,32 +380,11 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //获取机动巡查应急组数据
       getJiDongXunChaResultData(data){
         this.jiDongXunChaData = JSON.parse(JSON.stringify(data));
-        this.jiDongXunChaData.groupPerson.map(item => {
-          item.key = item.key.indexOf('@@@')===0?'':item.key;
-          let temp = [...item.personList];
-          if(temp.length>0){
-            item.personList = [];
-            item.personList = temp.reduce((acc, t) => {
-              acc.push(t.id);
-              return acc
-            },[])
-          }
-        })
       },
       //获取后勤保障组数据
       getHouQinBaoZhangResultData(data){
         this.houQinBaoZhangData = JSON.parse(JSON.stringify(data));
-        this.houQinBaoZhangData.groupPerson.map(item => {
-          item.key = item.key.indexOf('@@@')===0?'':item.key;
-          let temp = [...item.personList];
-          if(temp.length>0){
-            item.personList = [];
-            item.personList = temp.reduce((acc, t) => {
-              acc.push(t.id);
-              return acc
-            },[])
-          }
-        })
+
       },
 
       /****************保障视图操作区域 start******************/
@@ -451,7 +430,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         // if((this.baseInfo.processId!=='1'&&this.optType!=='add')
         //         ||((this.baseInfo.processId==='1'||this.optType==='add')&&this.baseInfo.templateId!=='')){
           let dunDianQuanDaoTemp = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-          if(dunDianQuanDaoTemp.teamPersonList&&dunDianQuanDaoTemp.teamPersonList.length>0){
+          if(dunDianQuanDaoTemp.teamPersonList){
             let teamlist = dunDianQuanDaoTemp.teamPersonList.reduce((acc,item) => {
               acc.push(item.teamId);
               return acc
@@ -464,6 +443,28 @@ import {postEmergencyFeatures} from '@/api/map/service'
             }
             this.dunDianQuanDaoData = needData;
           // }
+            this.jiDongXunChaData.groupPerson.map(item => {
+              item.key = item.key.indexOf('@@@')===0?'':item.key;
+              let temp = [...item.personList];
+              if(temp.length>0){
+                item.personList = [];
+                item.personList = temp.reduce((acc, t) => {
+                  acc.push(t.id);
+                  return acc
+                },[])
+              }
+            })
+            this.houQinBaoZhangData.groupPerson.map(item => {
+              item.key = item.key.indexOf('@@@')===0?'':item.key;
+              let temp = [...item.personList];
+              if(temp.length>0){
+                item.personList = [];
+                item.personList = temp.reduce((acc, t) => {
+                  acc.push(t.id);
+                  return acc
+                },[])
+              }
+            })
         }
         console.log('baseInfo', this.baseInfo);
         console.log('zongZhiHuiData', this.zongZhiHuiData);
@@ -732,7 +733,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.addTeamPersonForNewEvent(params).then(res => {
           console.log('addTeamPersonForNewEvent',res);
           let userId = util.cookies.get('userId');
-          window.open(URL_CONFIG.eventInfoURL+'/teamInfo/'+ userId + '_' + this.eventId + '_' + data.teamId, team.teamName + '信息表','width=1000,height=800');
+          window.open(URL_CONFIG.eventInfoURL+'/teamInfo/'+ userId + '_' + this.eventId + '_' + data.teamId, data.teamName + '信息表','width=1000,height=800');
         });
       },
       checkParams(){
@@ -823,6 +824,18 @@ import {postEmergencyFeatures} from '@/api/map/service'
         if(this.baseInfo.jobRequirements===''){
           this.$notification['error']({
             message: '工作要求必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
+        if(!this.dunDianQuanDaoData.teamList||this.dunDianQuanDaoData.teamList.length===0){
+          this.$notification['error']({
+            message: '蹲点劝导组必须选择中队',
             description: '请检查',
             style: {
               width: '350px',
