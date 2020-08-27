@@ -497,7 +497,9 @@
 
                         &:nth-child(2) {
                             flex: 1;
+                            text-align: center;
                             .name{
+                                display: inline-block;
                                 max-width: 300px;
                                 white-space: nowrap;
                                 text-overflow: ellipsis;
