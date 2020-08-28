@@ -9,6 +9,7 @@ import { getCountForHandle,
   addNewEvent,
   updateEvent,
   addTeamPersonForNewEvent,
+  submitTeamPersonToCheck,
   submitEventToCheck,
   submitEvent} from '@/api/event/index.js'
 
@@ -114,6 +115,18 @@ export default {
       addTeamPersonForNewEvent(state,data){
         return new Promise((resolve, reject) => {
           addTeamPersonForNewEvent(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
+      submitTeamPersonToCheck(state,data){
+        return new Promise((resolve, reject) => {
+          submitTeamPersonToCheck(data)
             .then(res => {
               resolve(res)
             })

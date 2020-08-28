@@ -275,7 +275,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       }
     },
     methods:{
-      ...mapActions('event/event', ['getTemplateEventDataList','getMessageByEventId','addNewEvent','updateEvent','addTeamPersonForNewEvent','submitEventToCheck','checkEvent','submitEvent']),
+      ...mapActions('event/event', ['getTemplateEventDataList','getMessageByEventId','addNewEvent','updateEvent','addTeamPersonForNewEvent','submitEventToCheck','checkEvent','submitEvent','submitTeamPersonToCheck']),
       ...mapActions('event/common', ['getPeopleDataList']),
       init(){
         this.getTemplateEventDataList().then((res)=>{
@@ -594,9 +594,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
         }
 
       },
-      //中队：提交审核
-      submitCheckByTeam(){
-        this.checkLoading = true;
+      //中队--保存数据之后各个情况处理
+      addTeamPerson(isNeedSubmit,isReview,teamInfo){
         this.saveDataToGis();
         this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
         console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
@@ -626,11 +625,39 @@ import {postEmergencyFeatures} from '@/api/map/service'
         console.log('addTeamPersonForNewEvent',params);
         this.addTeamPersonForNewEvent(params).then(res => {
           console.log('addTeamPersonForNewEvent',res);
-          this.checkLoading = false;
-          this.reset();
-          this.$emit('refreshList');
-          this.addEditLookDialogVisible = false;
+          if(res.code&&res.code==='1'){
+            this.$message.error(res.msg);
+          }
+          else{
+            if(isNeedSubmit){
+              let params = {
+                eventId: this.eventId,
+                teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
+              }
+              this.submitTeamPersonToCheck(params).then(res => {
+                this.checkLoading = false;
+                this.reset();
+                this.$emit('refreshList');
+                this.addEditLookDialogVisible = false;
+              })
+            }
+            if(isReview){
+              let userId = util.cookies.get('userId');
+              if(teamInfo){
+                window.open(URL_CONFIG.eventInfoURL+'teamInfo/'+ userId + '_' + this.eventId + '_' + teamInfo.teamId, teamInfo.teamName + '信息表','width=1000,height=800');
+              }
+              else{
+                this.reviewLoading = false;
+                window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
+              }
+            }
+          }
         });
+      },
+      //中队：提交审核
+      submitCheckByTeam(){
+        this.checkLoading = true;
+        this.addTeamPerson(true,false);
       },
       //中心：提交审核
       submitCheckByCenter(){
@@ -683,62 +710,70 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //保存gis数据输入数据库
       saveDataToGis(){
         if(this.drawFeatures){
-          if(this.drawFeatures.Point.add.length>0
+          if(this.drawFeatures.Point&&(this.drawFeatures.Point.add.length>0
                   ||this.drawFeatures.Point.update.length>0
-                  ||this.drawFeatures.Point.delete.length>0) {
+                  ||this.drawFeatures.Point.delete.length>0)) {
             postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
               console.log('==点数据==', res);
             });
           }
-          if(this.drawFeatures.LineString.add.length>0
+          if(this.drawFeatures.LineString&&(this.drawFeatures.LineString.add.length>0
                   ||this.drawFeatures.LineString.update.length>0
-                  ||this.drawFeatures.LineString.delete.length>0) {
+                  ||this.drawFeatures.LineString.delete.length>0)) {
             postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
               console.log('==线数据==', res);
             });
           }
-          if(this.drawFeatures.Polygon.add.length>0
+          if(this.drawFeatures.Polygon&&(this.drawFeatures.Polygon.add.length>0
                   ||this.drawFeatures.Polygon.update.length>0
-                  ||this.drawFeatures.Polygon.delete.length>0) {
+                  ||this.drawFeatures.Polygon.delete.length>0)) {
             postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
               console.log('==线数据==', res);
             });
           }
         }
       },
+      //单独中队的预览
       reviewTeam(data){
-        this.saveDataToGis();
-        this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-        console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
-        let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
-          let data = {
-            key: teamPerson.key.indexOf('@@@')===0?'':teamPerson.key,
-            address: teamPerson.addressIds,
-            leaderId: teamPerson.leaderId,
-            personList: [],
-            positionId: teamPerson.addressIds[2],
-            mapId:teamPerson.mapId,
-            mapType: teamPerson.mapType,
-            remark: teamPerson.remark
-          }
-          data.personList = teamPerson.personList.reduce((ids, personId) => {
-            ids.push(personId);
-            return ids
-          },[])
-          acc.push(data);
-          return acc
-        },[]);
-        let params = {
-          eventId: this.eventId,
-          teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
-          teamPersonData: JSON.stringify(teamPersonData),
+        if(this.optType === 'look'){
+            let userId = util.cookies.get('userId');
+            window.open(URL_CONFIG.eventInfoURL+'teamInfo/'+ userId + '_' + this.eventId + '_' + data.teamId, data.teamName + '信息表','width=1000,height=800');
         }
-        console.log('reviewTeam',params);
-        this.addTeamPersonForNewEvent(params).then(res => {
-          console.log('addTeamPersonForNewEvent',res);
-          let userId = util.cookies.get('userId');
-          window.open(URL_CONFIG.eventInfoURL+'/teamInfo/'+ userId + '_' + this.eventId + '_' + data.teamId, data.teamName + '信息表','width=1000,height=800');
-        });
+        else{
+          this.addTeamPerson(false, true,data);
+        }
+        // this.saveDataToGis();
+        // this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+        // console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
+        // let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
+        //   let data = {
+        //     key: teamPerson.key.indexOf('@@@')===0?'':teamPerson.key,
+        //     address: teamPerson.addressIds,
+        //     leaderId: teamPerson.leaderId,
+        //     personList: [],
+        //     positionId: teamPerson.addressIds[2],
+        //     mapId:teamPerson.mapId,
+        //     mapType: teamPerson.mapType,
+        //     remark: teamPerson.remark
+        //   }
+        //   data.personList = teamPerson.personList.reduce((ids, personId) => {
+        //     ids.push(personId);
+        //     return ids
+        //   },[])
+        //   acc.push(data);
+        //   return acc
+        // },[]);
+        // let params = {
+        //   eventId: this.eventId,
+        //   teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
+        //   teamPersonData: JSON.stringify(teamPersonData),
+        // }
+        // console.log('reviewTeam',params);
+        // this.addTeamPersonForNewEvent(params).then(res => {
+        //   console.log('addTeamPersonForNewEvent',res);
+        //   let userId = util.cookies.get('userId');
+        //   window.open(URL_CONFIG.eventInfoURL+'/teamInfo/'+ userId + '_' + this.eventId + '_' + data.teamId, data.teamName + '信息表','width=1000,height=800');
+        // });
       },
       checkParams(){
         if(this.baseInfo.name===''){
@@ -887,15 +922,14 @@ import {postEmergencyFeatures} from '@/api/map/service'
           this.addEditLookDialogVisible = false;
         });
       },
-      //预览
+      //整个事件预览
       reviewEvent(){
         let userId = util.cookies.get('userId');
-        //先调用保存草稿方法
-
         if(this.optType==='look'){
           window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
         }
         else {
+          //先调用保存草稿方法
           if(this.userType==='qxsl') {
             this.reviewLoading = true;
             this.changeEventDataForSave();
@@ -925,43 +959,43 @@ import {postEmergencyFeatures} from '@/api/map/service'
           }
           else if(this.userType==='zybm'){
             this.reviewLoading = true;
-            this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-            console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
-            let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
-              let data = {
-                key: teamPerson.key.indexOf('@@@')===0?'':teamPerson.key,
-                address: teamPerson.addressIds,
-                leaderId: teamPerson.leaderId,
-                personList: [],
-                positionId: teamPerson.addressIds[2],
-                mapId:'',
-                mapType: '',
-                remark: ''
-              }
-              data.personList = teamPerson.personList.reduce((ids, personId) => {
-                ids.push(personId);
-                return ids
-              },[])
-              acc.push(data);
-              return acc
-            },[]);
-            let params = {
-              eventId: this.eventId,
-              teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
-              teamPersonData: JSON.stringify(teamPersonData),
-            }
-            console.log('addTeamPersonForNewEvent',params);
-            this.addTeamPersonForNewEvent(params).then(res => {
-              console.log('addTeamPersonForNewEvent',res);
-              this.reviewLoading = false;
-              window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
-            });
+            this.addTeamPerson(false, true);
+            // this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+            // console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
+            // let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
+            //   let data = {
+            //     key: teamPerson.key.indexOf('@@@')===0?'':teamPerson.key,
+            //     address: teamPerson.addressIds,
+            //     leaderId: teamPerson.leaderId,
+            //     personList: [],
+            //     positionId: teamPerson.addressIds[2],
+            //     mapId:'',
+            //     mapType: '',
+            //     remark: ''
+            //   }
+            //   data.personList = teamPerson.personList.reduce((ids, personId) => {
+            //     ids.push(personId);
+            //     return ids
+            //   },[])
+            //   acc.push(data);
+            //   return acc
+            // },[]);
+            // let params = {
+            //   eventId: this.eventId,
+            //   teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
+            //   teamPersonData: JSON.stringify(teamPersonData),
+            // }
+            // console.log('addTeamPersonForNewEvent',params);
+            // this.addTeamPersonForNewEvent(params).then(res => {
+            //   console.log('addTeamPersonForNewEvent',res);
+            //   this.reviewLoading = false;
+            //   window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
+            // });
           }
           else {
             window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
           }
         }
-        //this.reviewDialogVisible = true;
       },
       handleCancel(){
         this.reset();

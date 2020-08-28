@@ -299,3 +299,19 @@ export function submitEvent(data){
     data
   })
 }
+
+/**
+ * @description 中队--保存数据
+ * @author moxuejuan
+ * @date 2020-08-20 15:53:20
+ * @method：POST
+ * @response：{
+ * }
+ */
+export function submitTeamPersonToCheck(data){
+  return request({
+    url: 'planEvent/submitTeamPersonToCheck',
+    method: 'post',
+    data
+  })
+}

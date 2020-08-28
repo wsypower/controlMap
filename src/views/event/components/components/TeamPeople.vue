@@ -264,7 +264,7 @@
      },
      mounted() {
        this.groupResultData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-       if(this.userType === 'qxsl'||this.userType === 'jld'){
+       if(this.userType === 'qxsl'||this.userType === 'jld'||(this.userType === 'zybm'&&this.optType==='look')){
          this.teamPersonList = JSON.parse(JSON.stringify(this.groupResultData.teamPersonList));
          this.teamPersonList.map(teamItem => {
            teamItem.teamPersonData.map(item => {
