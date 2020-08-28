@@ -154,6 +154,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         templateList: [],
         //使用的模版ID
         templateId: '',
+        oldTemplateId: '',
         //加载数据过渡效果
         dataLoading: false,
         activeKey: '1',
@@ -290,6 +291,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
         if(this.optType!=='add'){
           this.templateId = this.baseInfo.templateId;
+          this.oldTemplateId = this.baseInfo.templateId;
           this.getEventInfoById(this.eventId);
         }
       },
@@ -299,9 +301,12 @@ import {postEmergencyFeatures} from '@/api/map/service'
           title: '确定要改变模版吗?',
           content: '模版改变后，之前的数据将会清除，不可还原',
           onOk() {
+            _this.oldTemplateId = val;
             _this.getEventInfoById(val);
           },
-          onCancel() {},
+          onCancel() {
+            _this.templateId = _this.oldTemplateId;
+          },
         });
 
       },
@@ -320,6 +325,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           else{
             //编辑时，设置已选的模版
             this.templateId = this.baseInfo.templateId;
+            this.oldTemplateId = this.baseInfo.templateId;
           }
           this.zongZhiHuiData = res.groupData.zongZhiHuiData;
           this.fuZhiHuiData = res.groupData.fuZhiHuiData;
@@ -626,6 +632,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         });
         if(!isOk){
           this.$message.error('道路不可为空，至少输入一条道路');
+          this.reviewLoading = false;
           return;
         }
 

@@ -346,6 +346,9 @@
        groupResultData:{
          handler: function(value){
            console.log('88888888',value);
+           let dunDianQuanDaoInfo = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+           // Todo: 人员修改时，需要保存到store中
+           //let  = dunDianQuanDaoInfo.teamPersonList[0].teamPersonData.find();
            this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',value);
            // this.$emit('getResult', value);
          },
