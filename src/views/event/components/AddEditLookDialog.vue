@@ -280,6 +280,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       ...mapActions('event/event', ['getTemplateEventDataList','getMessageByEventId','addNewEvent','updateEvent','addTeamPersonForNewEvent','submitEventToCheck','checkEvent','submitEvent','submitTeamPersonToCheck']),
       ...mapActions('event/common', ['getPeopleDataList']),
       init(){
+        console.log('into addeditlookdialog');
         this.getTemplateEventDataList().then((res)=>{
           this.templateList = res;
         });
@@ -455,23 +456,27 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.jiDongXunChaData.groupPerson.map(item => {
           item.key = item.key.indexOf('@@@')===0?'':item.key;
           let temp = [...item.personList];
-          if(temp.length>0){
-            item.personList = [];
-            item.personList = temp.reduce((acc, t) => {
-              acc.push(t.id);
-              return acc
-            },[])
+          if(temp[0]&&temp[0].id){
+            if(temp.length>0){
+              item.personList = [];
+              item.personList = temp.reduce((acc, t) => {
+                acc.push(t.id);
+                return acc
+              },[])
+            }
           }
         })
         this.houQinBaoZhangData.groupPerson.map(item => {
           item.key = item.key.indexOf('@@@')===0?'':item.key;
           let temp = [...item.personList];
-          if(temp.length>0){
-            item.personList = [];
-            item.personList = temp.reduce((acc, t) => {
-              acc.push(t.id);
-              return acc
-            },[])
+          if(temp[0]&&temp[0].id) {
+            if (temp.length > 0) {
+              item.personList = [];
+              item.personList = temp.reduce((acc, t) => {
+                acc.push(t.id);
+                return acc
+              }, [])
+            }
           }
         })
 

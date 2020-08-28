@@ -169,6 +169,7 @@
        }
      },
      mounted() {
+       console.log('peoplelist', this.peopleList);
        this.groupResultData = JSON.parse(JSON.stringify(this.groupData));
        this.groupPerson = this.groupResultData.groupPerson;
 
