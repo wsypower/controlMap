@@ -70,7 +70,8 @@
       </my-scroll>
     </div>
     <template slot="footer">
-      <a-button type="primary" :loading="reviewLoading" @click="reviewEvent">预览</a-button>
+      <a-button v-if="userType==='jld'||optType==='look'" type="primary" :loading="reviewLoading" @click="reviewEvent">预览</a-button>
+      <a-button v-else type="primary" :loading="reviewLoading" @click="reviewEvent">保存及预览</a-button>
       <!-- 信息指挥中心视角 保存只有在新建的时候才有 -->
       <a-button v-if="userType==='qxsl'&&(optType==='add'||optType==='edit')" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
       <!-- 发起流程只有在新建的时候才有 -->
@@ -617,6 +618,17 @@ import {postEmergencyFeatures} from '@/api/map/service'
           acc.push(data);
           return acc
         },[]);
+        let isOk = true;
+        teamPersonData.forEach(teamPerson => {
+          if(!teamPerson.positionId){
+            isOk = false;
+          }
+        });
+        if(!isOk){
+          this.$message.error('道路不可为空，至少输入一条道路');
+          return;
+        }
+
         let params = {
           eventId: this.eventId,
           teamId: this.dunDianQuanDaoData.teamPersonList[0].teamId,
@@ -944,7 +956,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
               })
             }
             if (this.baseInfo.id !== '') {
-              this.updateEvent.then((res) => {
+              this.updateEvent(params).then((res) => {
                 console.log('updateEvent', res);
                 this.reviewLoading = false;
                 window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
