@@ -15,7 +15,7 @@
         <log v-if="userType!=='qxsl'||(baseInfo.processId!=='1'&&optType!=='add')" :eventId="eventId"></log>
         <div v-if="userType!=='qxsl'||(baseInfo.processId!=='1'&&optType!=='add')" class="subtitle-panel" flex="dir:left cross:center main:justify">
           <span>处置事件</span>
-          <a-button type="primary" size="small">事件简报下载</a-button>
+<!--          <a-button type="primary" size="small">事件简报下载</a-button>-->
         </div>
         <div v-if="userType==='qxsl'&&(baseInfo.processId==='1'||optType==='add')" class="template-panel">
           <label>
@@ -429,6 +429,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         // if(this.baseInfo.processId==='1'||this.optType==='add'){
         // if((this.baseInfo.processId!=='1'&&this.optType!=='add')
         //         ||((this.baseInfo.processId==='1'||this.optType==='add')&&this.baseInfo.templateId!=='')){
+        if(!this.dunDianQuanDaoData.teamList){
           let dunDianQuanDaoTemp = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
           if(dunDianQuanDaoTemp.teamPersonList){
             let teamlist = dunDianQuanDaoTemp.teamPersonList.reduce((acc,item) => {
@@ -442,30 +443,31 @@ import {postEmergencyFeatures} from '@/api/map/service'
               teamList: teamlist
             }
             this.dunDianQuanDaoData = needData;
-          // }
-            this.jiDongXunChaData.groupPerson.map(item => {
-              item.key = item.key.indexOf('@@@')===0?'':item.key;
-              let temp = [...item.personList];
-              if(temp.length>0){
-                item.personList = [];
-                item.personList = temp.reduce((acc, t) => {
-                  acc.push(t.id);
-                  return acc
-                },[])
-              }
-            })
-            this.houQinBaoZhangData.groupPerson.map(item => {
-              item.key = item.key.indexOf('@@@')===0?'':item.key;
-              let temp = [...item.personList];
-              if(temp.length>0){
-                item.personList = [];
-                item.personList = temp.reduce((acc, t) => {
-                  acc.push(t.id);
-                  return acc
-                },[])
-              }
-            })
+          }
         }
+        this.jiDongXunChaData.groupPerson.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
+          let temp = [...item.personList];
+          if(temp.length>0){
+            item.personList = [];
+            item.personList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
+        this.houQinBaoZhangData.groupPerson.map(item => {
+          item.key = item.key.indexOf('@@@')===0?'':item.key;
+          let temp = [...item.personList];
+          if(temp.length>0){
+            item.personList = [];
+            item.personList = temp.reduce((acc, t) => {
+              acc.push(t.id);
+              return acc
+            },[])
+          }
+        })
+
         console.log('baseInfo', this.baseInfo);
         console.log('zongZhiHuiData', this.zongZhiHuiData);
         console.log('fuZhiHuiData', this.fuZhiHuiData);
@@ -546,11 +548,12 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //信息指挥中心--发起流程
       submitData(e){
         e.preventDefault();
-        if(!this.checkParams()){
-          return
-        }
         this.submitLoading = true;
         this.changeEventDataForSave();
+        if(!this.checkParams()){
+          this.submitLoading = false;
+          return
+        }
         let params = {
           baseInfo: JSON.stringify(this.baseInfo),
           groupData: JSON.stringify({
@@ -631,11 +634,12 @@ import {postEmergencyFeatures} from '@/api/map/service'
       },
       //中心：提交审核
       submitCheckByCenter(){
-        if(!this.checkParams()){
-          return
-        }
         this.checkLoading = true;
         this.changeEventDataForSave();
+        if(!this.checkParams()){
+          this.checkLoading = false;
+          return
+        }
         let params = {
           baseInfo: JSON.stringify(this.baseInfo),
           groupData: JSON.stringify({

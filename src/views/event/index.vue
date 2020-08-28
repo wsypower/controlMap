@@ -3,10 +3,10 @@
     <div class="event_list_panel" flex="dir:top">
       <div class="event_list_panel_header" flex="cross:center main:justify">
         <div class="search_btn_panel">
-          <a-button icon="schedule" type="primary" @click="searchEventData('type_1')">日常事件</a-button>
-          <a-button icon="schedule" type="primary" @click="searchEventData('type_2')">活动保障事件</a-button>
-          <a-button icon="schedule" type="primary" @click="searchEventData('type_3')">应急事件</a-button>
-          <a-button icon="schedule" class="templateBtn" @click="searchEventData('template_1')">模板</a-button>
+          <a-button :class="{active: searchType==='type_1'}" icon="schedule" type="primary" @click="searchEventData('type_1')">日常事件</a-button>
+          <a-button :class="{active: searchType==='type_2'}" icon="schedule" type="primary" @click="searchEventData('type_2')">活动保障事件</a-button>
+          <a-button :class="{active: searchType==='type_3'}" icon="schedule" type="primary" @click="searchEventData('type_3')">应急事件</a-button>
+          <a-button class="templateBtn" :class="{active: searchType==='template_1'}" icon="schedule" @click="searchEventData('template_1')">模板</a-button>
         </div>
         <div class="operate_panel" flex="dir:left cross:center">
 <!--          <a-select v-model="query.statusId" @select="handleSelectChange">-->
@@ -15,8 +15,8 @@
 <!--          </a-select>-->
           <a-input-search v-model="query.searchContent" placeholder="请输入关键字" @search="searchDataByContent"/>
 <!--          <a-button type="primary" icon="user" @click="searchEventData('myEvent_true')" flex="cross:center">我的事件</a-button>-->
-          <a-button type="primary" icon="file-sync" class="review" @click="searchEventData('myStatus_02')">
-            <a-badge :count="countForMyToHandle">
+          <a-button type="primary" icon="file-sync" class="review" :class="{active: searchType==='myStatus_1'}" @click="searchEventData('myStatus_1')">
+            <a-badge :count="countForMyToHandle" show-zero>
               <span class="text">待处理</span>
             </a-badge>
           </a-button>
@@ -122,6 +122,8 @@
           pageSize: 12
         },
           // isMyEvent: false,
+        //查询类型
+        searchType: '',
         eventDataList:[],
         totalSize: 0,
         //需要补齐的剩余行
@@ -219,6 +221,13 @@
             break;
           default:
             console.log('no search');
+        }
+        if(this.searchType===param){
+          this.searchType = '';
+          this.resetQuery();
+        }
+        else{
+          this.searchType = param;
         }
         this.getEventDataList();
       },
@@ -402,6 +411,10 @@
         button {
           font-weight: 600;
           margin-left: 10px;
+            &.active{
+                background-color: #2fd4ef;
+                border-color: #2fd4ef;
+            }
           .anticon-paper-clip {
             font-size: 22px;
           }
@@ -409,6 +422,12 @@
         .templateBtn {
           color: #40a9ff;
           border-color: #40a9ff;
+          background-color: #ffffff;
+          &.active{
+            background-color: #2fd4ef;
+            border-color: #2fd4ef;
+            color: #ffffff;
+          }
           ::v-deep.anticon-alert {
             font-size: 16px;
             color: #40a9ff;
@@ -429,6 +448,11 @@
       }
       .review {
         /*margin-right: 0;*/
+          &.active{
+              background-color: #2fd4ef;
+              border-color: #2fd4ef;
+              color: #ffffff;
+          }
         .ant-badge {
           margin-left: 0;
         }
