@@ -3,7 +3,7 @@
  * @Date: 2019-12-02 09:12:20
  */
 
-import request from '@/plugins/axios/axios'
+import request from '@/plugins/axios/axios2'
 /**
  * @description 获取所有摄像头(非树形结构)
  * @author sijianting
@@ -18,7 +18,7 @@ import request from '@/plugins/axios/axios'
 export function getAllCameraDataList(data) {
   console.log('api:getAllCameraData', data)
   return request({
-    url: 'video/getAllCameraData?_t=' + new Date().getTime(),
+    url: 'ge/camera/list.json?token=fa9f4750224743d2d26435636e16956a&_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -59,7 +59,7 @@ export function getAllCameraTreeData(data) {
 export function getCameraUrl(data) {
   console.log('api:getCameraUrl', data)
   return request({
-    url: 'video/getCameraUrl?_t=' + new Date().getTime(),
+    url: 'ge/camera/url?token=fa9f4750224743d2d26435636e16956a&_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

@@ -7,17 +7,19 @@
             </div>
         </div>
         <div class="log-panel_body">
-            <div class="log-panel_body-item" flex="dir:left" v-for="log in logData">
-                <div class="log-item_left">{{new Date(log.time)|date_format('YYYY-MM-DD HH:mm:ss')}}</div>
-                <div class="log-item_right">
-                    <div class="dot"></div>
-                    <div class="log-item_right-dept">{{log.dept}} {{log.user}}</div>
-                    <div class="log-item_right-content">
-                        <div><span>【操作步骤】</span><span class="blue" :class="{red:log.step.indexOf('驳回')>=0,yellow:log.step.indexOf('提交')>=0,green:log.step.indexOf('确认')>=0}">{{log.step}}</span></div>
-                        <div><span>【操作内容】</span><span>{{log.content}}</span></div>
+            <my-scroll>
+                <div class="log-panel_body-item" flex="dir:left" v-for="log in logData">
+                    <div class="log-item_left">{{new Date(log.createtime)|date_format('YYYY-MM-DD HH:mm:ss')}}</div>
+                    <div class="log-item_right">
+                        <div class="dot"></div>
+                        <div class="log-item_right-dept">{{log.dept}} {{log.user}}</div>
+                        <div class="log-item_right-content">
+                            <div><span>【操作步骤】</span><span class="blue" :class="{red:log.step.indexOf('驳回')>=0,yellow:log.step.indexOf('提交')>=0,green:log.step.indexOf('确认')>=0}">{{log.step}}</span></div>
+                            <div><span>【操作内容】</span><span>{{log.content}}</span></div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </my-scroll>
         </div>
     </div>
 </template>
@@ -45,9 +47,9 @@
         ...mapActions('event/event', ['getLogDataByEventId']),
         getLogData(){
           this.dataLoading = true;
-          this.getLogDataByEventId({event:this.eventId}).then(res => {
+          this.getLogDataByEventId({eventId:this.eventId}).then(res => {
             this.dataLoading = false;
-            this.logData = res.data;
+            this.logData = res;
           })
         }
       }
@@ -73,6 +75,7 @@
     }
     .log-panel_body{
         padding: 10px;
+        height: 200px;
         .log-panel_body-item{
             .log-item_left{
                 width: 110px;

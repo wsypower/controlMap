@@ -27,7 +27,14 @@
                 <label><i style="color:#d60000;">*</i>保障时间：</label>
             </a-col>
             <a-col :span="20">
-                <a-range-picker v-if="nowOptType" show-time format="YYYY-MM-DD HH:mm:ss" v-model="submitForm.dayRange"/>
+                <a-range-picker
+                        v-if="nowOptType"
+                        :show-time="{ format: 'HH:mm:ss' }"
+                        format="YYYY-MM-DD HH:mm:ss"
+                        :placeholder="['开始时间', '结束时间']"
+                        v-model="submitForm.dayRange"
+                        @change="timeChange"
+                />
                 <span v-else>
                     {{new Date(submitForm.startDayTime)|date_format('YYYY-MM-DD HH:mm:ss')}}
                     ~
@@ -136,7 +143,7 @@ export default {
   },
   data(){
     return {
-      form: null,
+      // form: null,
       eventTypeList: [],
       submitForm: {
         id: '',
@@ -153,7 +160,8 @@ export default {
         jobGoal: '',
         jobAssignment: '',
         jobContent: '',
-        jobRequirements: ''
+        jobRequirements: '',
+        dayRange:[],
       }
     }
   },
@@ -164,7 +172,7 @@ export default {
     }
   },
   created() {
-    this.form = this.$form.createForm(this);
+    // this.form = this.$form.createForm(this);
   },
   watch:{
     baseData: function(val){
@@ -182,20 +190,28 @@ export default {
     }
   },
   mounted() {
+    console.log('mounted 000000000000000');
     this.init();
   },
   methods:{
     ...mapActions('event/common', ['getEventTypeDataList']),
+    moment,
     init(){
-      console.log('000000000000000');
-      this.getEventTypeDataList().then((res)=>{
-        this.eventTypeList = res;
-      });
-      if(this.optType==='edit'){
+
+      if(this.nowOptType){
+        this.getEventTypeDataList().then((res)=>{
+          this.eventTypeList = res;
+        });
+      }
+      this.submitForm = JSON.parse(JSON.stringify(this.baseData))
+      if(this.submitForm.startDayTime){
         let startTime  = moment(this.submitForm.startDayTime).format('YYYY-MM-DD HH:mm:ss');
         let endTime  = moment(this.submitForm.endDayTime).format('YYYY-MM-DD HH:mm:ss');
-        this.submitForm.dayRange = [moment(startTime,'YYYY-MM-DD HH:mm:ss'),moment(endTime,'YYYY-MM-DD HH:mm:ss')];
+        this.submitForm.dayRange = [moment(startTime,'YYYY-MM-DD HH:mm:ss'),moment(endTime,'YYYY-MM-DD HH:mm:ss')]
       }
+    },
+    timeChange(dates,dateStrings){
+      this.submitForm.dayRange = dates;
     }
   }
 }

@@ -4,7 +4,6 @@ export default {
   namespaced: true,
   actions: {
     getUserInfo(state, data){
-      console.log('store',data);
       return new Promise((resolve, reject) => {
         getUserInfo(data)
           .then(res => {

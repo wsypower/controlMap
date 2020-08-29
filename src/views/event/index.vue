@@ -3,10 +3,10 @@
     <div class="event_list_panel" flex="dir:top">
       <div class="event_list_panel_header" flex="cross:center main:justify">
         <div class="search_btn_panel">
-          <a-button icon="schedule" type="primary" @click="searchEventData('type_1')">日常事件</a-button>
-          <a-button icon="schedule" type="primary" @click="searchEventData('type_2')">活动保障事件</a-button>
-          <a-button icon="schedule" type="primary" @click="searchEventData('type_3')">应急事件</a-button>
-          <a-button icon="schedule" class="templateBtn" @click="searchEventData('template_1')">模板</a-button>
+          <a-button :class="{active: searchType==='type_1'}" icon="schedule" type="primary" @click="searchEventData('type_1')">日常事件</a-button>
+          <a-button :class="{active: searchType==='type_2'}" icon="schedule" type="primary" @click="searchEventData('type_2')">活动保障事件</a-button>
+          <a-button :class="{active: searchType==='type_3'}" icon="schedule" type="primary" @click="searchEventData('type_3')">应急事件</a-button>
+          <a-button class="templateBtn" :class="{active: searchType==='template_1'}" icon="schedule" @click="searchEventData('template_1')">模板</a-button>
         </div>
         <div class="operate_panel" flex="dir:left cross:center">
 <!--          <a-select v-model="query.statusId" @select="handleSelectChange">-->
@@ -15,8 +15,8 @@
 <!--          </a-select>-->
           <a-input-search v-model="query.searchContent" placeholder="请输入关键字" @search="searchDataByContent"/>
 <!--          <a-button type="primary" icon="user" @click="searchEventData('myEvent_true')" flex="cross:center">我的事件</a-button>-->
-          <a-button type="primary" icon="file-sync" class="review" @click="searchEventData('myStatus_02')">
-            <a-badge :count="countForMyToHandle">
+          <a-button type="primary" icon="file-sync" class="review" :class="{active: searchType==='myStatus_1'}" @click="searchEventData('myStatus_1')">
+            <a-badge :count="countForMyToHandle" show-zero>
               <span class="text">待处理</span>
             </a-badge>
           </a-button>
@@ -50,7 +50,7 @@
                   <my-scroll>
                       <li v-for="item in eventDataList" :key="item.id" flex="cross:center">
                           <span><a-checkbox :checked="item.checked" @change="checkHandle(item)"></a-checkbox></span>
-                          <span>{{item.name}}</span>
+                          <span><div class="name">{{item.name}}</div></span>
                           <span>{{item.typeName}}</span>
                           <span>
                               {{new Date(item.startDayTime)|date_format('YYYY-MM-DD HH:mm:ss')}}
@@ -64,8 +64,8 @@
                               <i v-if="item.statusId==='1'" class="btn_mini btn_handle" @click="editEvent(item.id)">处置</i>
                           </span>
                           <span v-if="userType!=='zybm'">
-                              <a-icon v-if="item.processId==='7'&&item.isTemplate==='2'" type="star" @click="setTemplate(item)"/>
-                              <a-icon v-if="item.processId==='7'&&item.isTemplate==='1'" type="star" theme="filled" style="color: #ffb94c;" @click="setTemplate(item)"/>
+                              <a-icon v-if="item.processId==='6'&&item.isTemplate==='2'" type="star" @click="setTemplate(item)"/>
+                              <a-icon v-if="item.processId==='6'&&item.isTemplate==='1'" type="star" theme="filled" style="color: #ffb94c;" @click="setTemplate(item)"/>
                           </span>
                           <span v-else>
                               <a-icon v-if="item.isTemplate==='1'" type="star" theme="filled" style="color: #ffb94c; cursor: default"/>
@@ -116,12 +116,14 @@
         query:{
           typeId:'',
           statusId: '',
-          isTemplate: '2',
+          isTemplate: '',
           searchContent: '',
           pageNo: 1,
           pageSize: 12
         },
           // isMyEvent: false,
+        //查询类型
+        searchType: '',
         eventDataList:[],
         totalSize: 0,
         //需要补齐的剩余行
@@ -145,11 +147,6 @@
     },
     created(){},
     mounted(){
-      // let _this = this;
-      // this.setBaseData();
-      // window.onresize = function(){
-      //   _this.setBaseData();
-      // }
       // this.getStatusDataList().then((res)=>{
       //   console.log('getStatusDataList',res);
       //   this.statusList = res;
@@ -158,9 +155,7 @@
       this.getEventDataList();
 
     },
-    watch:{
-
-    },
+    watch:{},
     methods: {
       ...mapActions('event/common', ['getStatusDataList']),
       ...mapActions('event/event', ['getToHandleCountData','getEventList','setEventToTemplate','deleteEventByIds']),
@@ -199,6 +194,7 @@
           this.countForMyToHandle = res.count;
         });
       },
+      //各种场景查询数据
       searchEventData(param){
         this.resetQuery();
         this.query.statusId = null;
@@ -226,12 +222,15 @@
           default:
             console.log('no search');
         }
+        if(this.searchType===param){
+          this.searchType = '';
+          this.resetQuery();
+        }
+        else{
+          this.searchType = param;
+        }
         this.getEventDataList();
       },
-      // handleSelectChange(val){
-      //   let param = 'status_' + val;
-      //   this.searchEventData(param);
-      // },
       //查询内容触发
       searchDataByContent(val,e){
         let param = 'search_' + val;
@@ -274,7 +273,6 @@
       },
       //删除选中的事件
       deleteEvents(){
-        console.log('deleteEvents');
         let checkedIds = this.eventDataList.reduce((acc, item)=>{
           if(item.checked){
             acc.push(item.id);
@@ -335,13 +333,18 @@
       },
       //设置某个事件是否为模版
       setTemplate(item){
-        item.isTemplate = !item.isTemplate;
+        if(item.isTemplate==='2'){
+          item.isTemplate = '1';
+        }
+        else{
+          item.isTemplate = '2';
+        }
         this.setEventToTemplate({id:item.id, isTemplate:item.isTemplate}).then(res => {
-          if(res.code === 0){
+          if(res.msg === '操作成功！'){
             this.$message.success('设置成功');
           }
           else{
-            this.$message.error(res.errmsg);
+            this.$message.error(res.msg);
           }
         })
       },
@@ -408,6 +411,10 @@
         button {
           font-weight: 600;
           margin-left: 10px;
+            &.active{
+                background-color: #2fd4ef;
+                border-color: #2fd4ef;
+            }
           .anticon-paper-clip {
             font-size: 22px;
           }
@@ -415,6 +422,12 @@
         .templateBtn {
           color: #40a9ff;
           border-color: #40a9ff;
+          background-color: #ffffff;
+          &.active{
+            background-color: #2fd4ef;
+            border-color: #2fd4ef;
+            color: #ffffff;
+          }
           ::v-deep.anticon-alert {
             font-size: 16px;
             color: #40a9ff;
@@ -435,6 +448,11 @@
       }
       .review {
         /*margin-right: 0;*/
+          &.active{
+              background-color: #2fd4ef;
+              border-color: #2fd4ef;
+              color: #ffffff;
+          }
         .ant-badge {
           margin-left: 0;
         }
@@ -503,6 +521,14 @@
 
                         &:nth-child(2) {
                             flex: 1;
+                            text-align: center;
+                            .name{
+                                display: inline-block;
+                                max-width: 300px;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+                            }
                         }
 
                         &:nth-child(3) {
@@ -510,15 +536,15 @@
                         }
 
                         &:nth-child(4) {
-                            width: 400px;
+                            width: 340px;
                         }
 
                         &:nth-child(5) {
-                            flex: 1;
+                            width: 140px;
                         }
 
                         &:nth-child(6) {
-                            flex: 1;
+                            width: 120px;
                         }
 
                         &:nth-child(7) {
@@ -594,4 +620,9 @@
       margin-bottom: 5px;
     }
   }
+</style>
+<style lang="scss">
+    .ant-modal-footer {
+        text-align: center;
+    }
 </style>

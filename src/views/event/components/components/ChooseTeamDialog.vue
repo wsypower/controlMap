@@ -92,7 +92,7 @@
             return acc
           },[]);
           this.chooseTeamDialogVisible = false;
-          console.log('team checkedTeams',checkedTeams);
+          console.log('chooseTeam',checkedTeams);
           this.$emit('chooseTeam',checkedTeams);
         }
       }

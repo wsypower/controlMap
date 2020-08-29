@@ -131,7 +131,6 @@
           console.log('==mapForView',this.baoZhangData);
           //编辑状态下通过图形id获取已保存的图形数据
           if(this.baoZhangData.length>0){
-            debugger;
             const idList=filterMapId(this.baoZhangData);
             console.log(idList);
             if(!source){

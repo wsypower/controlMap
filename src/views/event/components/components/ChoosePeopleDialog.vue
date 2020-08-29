@@ -88,16 +88,14 @@
         init(){
           this.dataLoading = true;
           this.getPeopleTreeData({id: this.rangeId}).then((res)=>{
-            console.log(res);
             this.treeData = res;
             this.getPeopleList(res,this.peopleList);
-            console.log('this.peopleList',this.peopleList);
             this.checkedKeys = [...this.defaultCheckedPeopleIds];
             this.dataLoading = false;
           });
         },
         choosePeople(){
-          console.log('4444',this.checkedKeys);
+          console.log('choosePeople',this.checkedKeys);
           this.$emit('choosePeople',this.checkedPeopleKeys);
           this.checkedKeys = [];
           this.choosePeopleDialogVisible = false;
@@ -107,13 +105,11 @@
           this.choosePeopleDialogVisible = false;
         },
         getPeopleList(treeData,obj){
-          console.log(treeData);
           for (let item of treeData) {
             if (item.children) {
               this.getPeopleList(item.children,obj)
             }
             else{
-              //console.log(item.key,item.title);
               obj[item.key] = item.title
             }
           }

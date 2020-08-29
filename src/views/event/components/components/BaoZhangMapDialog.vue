@@ -54,6 +54,44 @@
           </div>
         </div>
       </div>
+      <div hidden>
+        <div class="set-baozhang-dialog" ref="reviewInfoOverlay">
+          <div class="set-baozhang-dialog-header" flex="main:justify cross:center">
+            <span>保障信息</span>
+            <a-icon type="close" @click="closeSetDialog" />
+          </div>
+          <div class="set-baozhang-dialog-body">
+            <cg-container scroll>
+              <a-form :form="form" style="margin:10px">
+                <a-form-item label="具体路段：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+                  <a-select
+                          placeholder="请选择道路"
+                          @change="handleChange"
+                          v-model="baoZhangFormData.positionId"
+                          disabled
+                  >
+                    <a-select-option v-for="baoZhang in baoZhangArr" :key="baoZhang.positionId">
+                      {{ baoZhang.load }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-item>
+                <a-form-item label="负责人：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+                  <span>{{baoZhangFormData.leaderName}}</span>
+                </a-form-item>
+                <a-form-item label="执勤人员：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+                  <span>{{baoZhangFormData.personNameStr}}</span>
+                </a-form-item>
+                <a-form-item label="备注：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+                  <a-textarea v-model="baoZhangFormData.remark" placeholder="" :autosize="{ minRows: 2, maxRows: 2 }" disabled/>
+                </a-form-item>
+              </a-form>
+            </cg-container>
+          </div>
+          <div class="set-baozhang-dialog-footer">
+            <a-button type="primary" size="small" @click="closeSetDialog">关闭</a-button>
+          </div>
+        </div>
+      </div>
       <div v-if="nowOptType==='edit'" class="operate-panel">
         <a-dropdown>
           <a-menu slot="overlay" @click="handleOperateClick">
@@ -168,7 +206,9 @@
           filterPeopleList: [],
           //所有的保障点位数据，后续所有操作已这个为基础，最后保存时也已这个作为保存数据
           //allBaoZhangData有值为编辑，没有值为新增
-          allBaoZhangData: []
+          allBaoZhangData: [],
+          hasSave:false,
+          reviewInfoOverlay:null,
         }
       },
       computed:{
@@ -223,6 +263,9 @@
             this.infoOverlay = mapManager.addOverlay({
               element: this.$refs.infoOverlay
             });
+            this.reviewInfoOverlay = mapManager.addOverlay({
+              element: this.$refs.reviewInfoOverlay
+            });
             // source=null;
             //绑定地图双击事件
             map.on('dblclick', this.mapClickHandler);
@@ -240,13 +283,13 @@
                       color: 'rgba(255, 255, 255, 0.3)'
                     }),
                     stroke: new Stroke({
-                      color: '#ffcc33',
+                      color: '#fc7012',
                       width: 2
                     }),
                     image: new CircleStyle({
                       radius: 7,
                       fill: new Fill({
-                        color: '#ffcc33'
+                        color: '#fc7012'
                       })
                     })
                   })
@@ -275,7 +318,9 @@
                 console.log('==source==',source);
                 console.log(source.getFeatures());
                 _this.tempSource=source;
-                _this.editMapFeatures();
+                if(this.nowOptType!='look'){
+                  _this.editMapFeatures();
+                }
                 map.addLayer(vectorLayer);
               },500)
             }
@@ -299,11 +344,11 @@
                 return acc
               },'').substring(2);
               let temp = {
-                positionId: item.addressIds[2],
+                positionId: item.address[2].id,
                 load: addressName,
                 leaderName: personTemp.name,
                 personNameStr: perName.join(','),
-                remark: '',
+                remark: item.remark,
                 mapId: item.mapId,
                 mapType:item.mapType,
               }
@@ -321,7 +366,11 @@
           const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
           if(feature&&feature.get('id')){
             this.showSetDialog(feature.get('id'));
-            this.infoOverlay.setPosition(coordinate);
+            if(this.nowOptType!='edit'){
+              this.reviewInfoOverlay.setPosition(coordinate);
+            }else{
+              this.infoOverlay.setPosition(coordinate);
+            }
             console.log('==点击feature==',feature);
           }
         },
@@ -341,13 +390,13 @@
                   color: 'rgba(255, 255, 255, 0.3)'
                 }),
                 stroke: new Stroke({
-                  color: '#ffcc33',
+                  color: '#fc7012',
                   width: 2
                 }),
                 image: new CircleStyle({
                   radius: 7,
                   fill: new Fill({
-                    color: '#ffcc33'
+                    color: '#fc7012'
                   })
                 })
               })
@@ -453,6 +502,7 @@
         },
         //双击区域后触发此方法，带出mapId
         showSetDialog(mapId,mapType){
+
           let flag = this.allBaoZhangData.some(item =>{
             return item.mapId === mapId
           });
@@ -511,11 +561,13 @@
         },
         //保障点位设置弹窗的左上角关闭
         closeSetDialog(){
-            this.infoOverlay.setPosition(undefined)
-            this.reset();
+          this.infoOverlay&&this.infoOverlay.setPosition(undefined)
+          this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
+          this.reset();
         },
         //保存图形数据
         saveMap() {
+          this.hasSave=true;
           console.log('==编辑要素==',this.editFeatures)
           this.pointFeatures = [];
           this.lineFeatures = [];
@@ -588,12 +640,14 @@
         },
         //关闭保障视图弹窗
         handleCancel(){
-          this.allBaoZhangData = [];
-          if(draw){
-            mapManager.inactivateDraw(draw);
-          }
-          if(vectorLayer){
-            vectorLayer.getSource().clear();
+          if(!this.hasSave) {
+            this.allBaoZhangData = [];
+            if (draw) {
+              mapManager.inactivateDraw(draw);
+            }
+            if (vectorLayer) {
+              vectorLayer.getSource().clear();
+            }
           }
           this.mapDialogVisible = false;
       },

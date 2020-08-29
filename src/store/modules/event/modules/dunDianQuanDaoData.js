@@ -6,13 +6,7 @@ export default {
       groupName: 'jidongxuncha',
       leaderPosition: '1',
       personPosition: '1',
-      teamPersonList:[{
-        teamId: '',
-        teamName: '',
-        checkStatusId:1,
-        checkStatusName: '未上报',
-        teamPersonData:[]
-      }]
+      teamPersonList:[]
     }
   },
   getters: {

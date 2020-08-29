@@ -9,6 +9,7 @@ import { getCountForHandle,
   addNewEvent,
   updateEvent,
   addTeamPersonForNewEvent,
+  submitTeamPersonToCheck,
   submitEventToCheck,
   submitEvent} from '@/api/event/index.js'
 
@@ -16,7 +17,6 @@ export default {
     namespaced: true,
     actions: {
       getToHandleCountData(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           getCountForHandle(data)
             .then(res => {
@@ -29,7 +29,6 @@ export default {
         })
       },
       getEventList(state,data) {
-          console.log('store',data);
           return new Promise((resolve, reject) => {
               getEventList(data)
                   .then(res => {
@@ -42,7 +41,6 @@ export default {
           })
       },
       addNewEvent(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           addNewEvent(data)
             .then(res => {
@@ -55,7 +53,6 @@ export default {
         })
       },
       updateEvent(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           updateEvent(data)
             .then(res => {
@@ -68,7 +65,6 @@ export default {
         })
       },
       getMessageByEventId(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           getMessageByEventId(data)
             .then(res => {
@@ -81,7 +77,6 @@ export default {
         })
       },
       deleteEventByIds(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           deleteEventByIds(data)
             .then(res => {
@@ -94,7 +89,6 @@ export default {
         })
       },
       setEventToTemplate(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           setEventToTemplate(data)
             .then(res => {
@@ -107,7 +101,6 @@ export default {
         })
       },
       checkEvent(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           checkEvent(data)
             .then(res => {
@@ -120,7 +113,6 @@ export default {
         })
       },
       addTeamPersonForNewEvent(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           addTeamPersonForNewEvent(data)
             .then(res => {
@@ -132,8 +124,19 @@ export default {
             })
         })
       },
+      submitTeamPersonToCheck(state,data){
+        return new Promise((resolve, reject) => {
+          submitTeamPersonToCheck(data)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              console.log(err)
+              reject(err)
+            })
+        })
+      },
       getTemplateEventDataList(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           getTemplateEventDataList(data)
             .then(res => {
@@ -146,7 +149,6 @@ export default {
         })
       },
       getLogDataByEventId(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           getLogDataByEventId(data)
             .then(res => {
@@ -159,7 +161,6 @@ export default {
         })
       },
       submitEventToCheck(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           submitEventToCheck(data)
             .then(res => {
@@ -172,7 +173,6 @@ export default {
         })
       },
       submitEvent(state,data){
-        console.log('store',data);
         return new Promise((resolve, reject) => {
           submitEvent(data)
             .then(res => {

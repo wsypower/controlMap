@@ -169,6 +169,7 @@
        }
      },
      mounted() {
+       console.log('peoplelist', this.peopleList);
        this.groupResultData = JSON.parse(JSON.stringify(this.groupData));
        this.groupPerson = this.groupResultData.groupPerson;
 
@@ -207,7 +208,6 @@
          );
        },
        addGroup(item, index){
-         console.log('addGroup',item, index)
          let additem = {
            key: '@@@' + index.toString(),
            leaderId: '',
@@ -241,7 +241,6 @@
          });
        },
        closeTag (person,index,e) {
-         console.log(person,index);
          let i = this.groupPerson[index].personList.indexOf(person);
          this.groupPerson[index].personList.splice(i,1);
        }

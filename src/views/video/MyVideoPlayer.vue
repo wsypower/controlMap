@@ -64,6 +64,7 @@ export default {
   },
   methods: {
     close(index) {
+      console.log('close(index)');
       this.realVideoSrcArr[index].show = false
       this.realVideoSrc = ''
     },
@@ -102,6 +103,7 @@ export default {
       color: #ffffff;
       font-size: 16px;
       cursor: pointer;
+      z-index: 99;
       &:hover {
         background-color: rgba(255, 0, 0, 0.8);
       }

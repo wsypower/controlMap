@@ -105,7 +105,7 @@
                           v-if="team.teamPersonData.length > 1"
                           theme="filled"
                           title="确定删除这个组吗？"
-                          @confirm="() => deleteGroup(teamIndex,index)"
+                          @confirm="() => deleteGroup(index,teamIndex)"
                   >
                     <a-icon type="minus-circle" class="icon_delete" />
                   </a-popconfirm>
@@ -125,12 +125,6 @@
             :defaultCheckedPeopleIds="defaultCheckedPeopleIds"
             @choosePeople="choosePeople"
         ></choose-people-dialog>
-        <team-review-dialog
-            :visible.sync="teamInfoDialogVisible"
-            :title="teamInfoTitle"
-            :teamId="teamId"
-            :peopleList="peopleList">
-        </team-review-dialog>
         <a-modal title="驳回理由"
                 :visible="backVisible"
                 :confirm-loading="confirmLoading"
@@ -144,8 +138,6 @@
 
 <script type="text/ecmascript-6">
   import ChoosePeopleDialog from './ChoosePeopleDialog'
-  import TeamReviewDialog from './TeamReviewDialog'
-  import util from '@/utils/util.js'
   import { mapActions } from 'vuex'
   const groupColumns = [
     {
@@ -179,7 +171,6 @@
      name: 'teamPeople',
      components:{
        ChoosePeopleDialog,
-       TeamReviewDialog
      },
      props:{
        eventId:{
@@ -273,7 +264,7 @@
      },
      mounted() {
        this.groupResultData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-       if(this.userType === 'qxsl'||this.userType === 'jld'){
+       if(this.userType === 'qxsl'||this.userType === 'jld'||(this.userType === 'zybm'&&this.optType==='look')){
          this.teamPersonList = JSON.parse(JSON.stringify(this.groupResultData.teamPersonList));
          this.teamPersonList.map(teamItem => {
            teamItem.teamPersonData.map(item => {
@@ -296,6 +287,13 @@
              })
            });
          });
+         let num = this.teamPersonList.reduce((total,item) => {
+           if(item.checkStatusId === '3'){
+             total = total +1;
+           }
+           return total
+         },0);
+         this.$emit('setSubmitBtnShow',num);
        }
        else{
          //当编辑时会改变groupResultData值，从而改变store里面的数据
@@ -348,8 +346,25 @@
        groupResultData:{
          handler: function(value){
            console.log('88888888',value);
-           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',value);
-           // this.$emit('getResult', value);
+           let changeValue = JSON.parse(JSON.stringify(value));
+           if(this.userType === 'zybm'&&this.optType==='edit'){
+             // 人员修改时，需要带上视图数据保存到store中
+             let dunDianQuanDaoInfo = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+             let sourceData = dunDianQuanDaoInfo.teamPersonList[0].teamPersonData;
+             let resultTeamPersonData = changeValue.teamPersonList[0].teamPersonData.map(teamPerson => {
+               let needData = sourceData.find(source=>source.positionId===teamPerson.positionId);
+               if(needData){
+                 teamPerson.mapId = needData.mapId;
+                 teamPerson.mapType = needData.mapType;
+                 teamPerson.remark = needData.remark;
+               }
+               return teamPerson
+             });
+             changeValue.teamPersonList[0].teamPersonData = resultTeamPersonData;
+           }
+
+           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',changeValue);
+
          },
          deep: true
        }
@@ -441,10 +456,13 @@
        },
        lookTeamPeopleSet(team){
          console.log('进入预览');
-         // this.teamInfoTitle = team.teamName + '信息表';
          this.teamId= team.teamId;
-         window.open(URL_CONFIG.eventInfoURL+'/teamInfo/' + this.eventId + '_' + this.teamId, team.teamName + '信息表','width=1000,height=800');
-         // this.teamInfoDialogVisible = true;
+         let data ={
+           teamId: team.teamId,
+           teamName: team.teamName
+         }
+         this.$emit('reviewTeam',data)
+         //先保存
        },
        passTeamPeopleSet(teamIndex, teamId){
         console.log('eventId teamId operate backReason');
@@ -483,6 +501,13 @@
            this.backReason = '';
            this.backVisible = false;
            this.teamPersonList[this.teamIndex].checkStatusId = '4';
+           let num = this.teamPersonList.reduce((total,item) => {
+             if(item.checkStatusId === '3'){
+               total = total +1;
+             }
+             return total
+           },0);
+           this.$emit('setSubmitBtnShow',num)
          })
        }
      }

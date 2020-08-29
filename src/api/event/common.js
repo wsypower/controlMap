@@ -12,7 +12,6 @@ import request from '@/plugins/axios/axios'
  * @param {String} userId 请求参数 :用户唯一标识符默认参数）
  */
 export const getUserInfo = data => {
-  console.log('api:getUserInfo',data);
   return request({
     url: `planEvent/getUserInfo`,
     method: 'get',
@@ -31,9 +30,8 @@ export const getUserInfo = data => {
  * }}
  */
 export function getStatusDataList(data){
-    console.log('api:getStatusDataList',data);
     return request({
-        url: 'plan/getStatusDataList?_t='+ new Date().getTime(),
+        url: '@test/getStatusDataList?_t='+ new Date().getTime(),
         method: 'get',
         params: data
     })
@@ -50,7 +48,6 @@ export function getStatusDataList(data){
  * }}
  */
 export function getEventTypeDataList(data){
-    console.log('api:getEventTypeDataList',data);
     return request({
         url: 'planEvent/getEventTypeDataList?_t='+ new Date().getTime(),
         method: 'get',
@@ -69,7 +66,6 @@ export function getEventTypeDataList(data){
  * }}
  */
 export function getTeamDataList(data){
-  console.log('api:getTeamDataList',data);
   return request({
     url: 'planEvent/getTeamDataList?_t='+ new Date().getTime(),
     method: 'get',
@@ -88,7 +84,6 @@ export function getTeamDataList(data){
  */
 
 export function getPeopleDataList(data){
-  console.log('api:getPeopleDataList',data);
   return request({
     url: 'planEvent/getDetailPeopleDataList?_t='+ new Date().getTime(),
     method: 'get',
@@ -107,7 +102,6 @@ export function getPeopleDataList(data){
  */
 
 export function getPeopleTreeData(data){
-  console.log('api:getPeopleTreeData',data);
   return request({
     url: 'planEvent/getPeopleTreeData?_t='+ new Date().getTime(),
     method: 'get',
@@ -126,7 +120,6 @@ export function getPeopleTreeData(data){
  */
 
 export function getLoadTreeData(data){
-  console.log('api:getLoadTreeData',data);
   return request({
     url: 'planEvent/getLoadTreeData?_t='+ new Date().getTime(),
     method: 'get',
