@@ -346,11 +346,25 @@
        groupResultData:{
          handler: function(value){
            console.log('88888888',value);
-           let dunDianQuanDaoInfo = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-           // Todo: 人员修改时，需要保存到store中
-           //let  = dunDianQuanDaoInfo.teamPersonList[0].teamPersonData.find();
-           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',value);
-           // this.$emit('getResult', value);
+           let changeValue = JSON.parse(JSON.stringify(value));
+           if(this.userType === 'zybm'&&this.optType==='edit'){
+             // 人员修改时，需要带上视图数据保存到store中
+             let dunDianQuanDaoInfo = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+             let sourceData = dunDianQuanDaoInfo.teamPersonList[0].teamPersonData;
+             let resultTeamPersonData = changeValue.teamPersonList[0].teamPersonData.map(teamPerson => {
+               let needData = sourceData.find(source=>source.positionId===teamPerson.positionId);
+               if(needData){
+                 teamPerson.mapId = needData.mapId;
+                 teamPerson.mapType = needData.mapType;
+                 teamPerson.remark = needData.remark;
+               }
+               return teamPerson
+             });
+             changeValue.teamPersonList[0].teamPersonData = resultTeamPersonData;
+           }
+
+           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',changeValue);
+
          },
          deep: true
        }

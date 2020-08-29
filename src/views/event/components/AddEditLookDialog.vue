@@ -971,13 +971,14 @@ import {postEmergencyFeatures} from '@/api/map/service'
               this.updateEvent(params).then((res) => {
                 console.log('updateEvent', res);
                 this.reviewLoading = false;
-                window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
+                window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.baseInfo.id, '事件详情', 'width=1000,height=800');
               });
             } else {
               this.addNewEvent(params).then((res) => {
                 console.log('addNewEvent', res);
                 this.reviewLoading = false;
-                window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');
+                this.baseInfo.id = res.eventId;
+                window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + res.eventId, '事件详情', 'width=1000,height=800');
               });
             }
           }
