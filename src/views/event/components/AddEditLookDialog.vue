@@ -316,6 +316,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.dataLoading = true;
         this.getMessageByEventId({id:id}).then(res => {
           this.baseInfo = res.baseInfo;
+          if(this.eventId){
+            this.baseInfo.id = this.eventId;
+          }
           //在baseInfo组建中会对dayRange进行复制，这边只是为了让baseInfo对象有dayRange属性
           this.baseInfo.dayRange = [];
           //设置templateId
@@ -417,7 +420,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.zongZhiHuiData.groupTeam.map(item => {
           item.key = item.key.indexOf('@@@')===0?'':item.key;
           let temp = [...item.teamList];
-          if(temp.length>0){
+          if(temp.length>0&&temp[0].id){
             item.teamList = [];
             item.teamList = temp.reduce((acc, t) => {
               acc.push(t.id);
@@ -428,7 +431,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.fuZhiHuiData.groupTeam.map(item => {
           item.key = item.key.indexOf('@@@')===0?'':item.key;
           let temp = [...item.teamList];
-          if(temp.length>0){
+          if(temp.length>0&&temp[0].id){
             item.teamList = [];
             item.teamList = temp.reduce((acc, t) => {
               acc.push(t.id);
@@ -451,6 +454,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
               groupName: 'dundianquandao',
               leaderPosition: dunDianQuanDaoTemp.leaderPosition,
               personPosition: dunDianQuanDaoTemp.personPosition,
+              teamPersonList: dunDianQuanDaoTemp.teamPersonList,
               teamList: teamlist
             }
             this.dunDianQuanDaoData = needData;
@@ -495,7 +499,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
       //信息智慧中心--保存草稿
       saveDraft(e){
-        e.preventDefault();
         this.saveLoading = true;
         this.changeEventDataForSave();
         if(this.optType==='add'){
@@ -562,7 +565,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
       //信息指挥中心--发起流程
       submitData(e){
-        e.preventDefault();
         this.submitLoading = true;
         this.changeEventDataForSave();
         if(!this.checkParams()){
@@ -911,7 +913,94 @@ import {postEmergencyFeatures} from '@/api/map/service'
           });
           return false
         }
+        if(!this.checkObj(this.zongZhiHuiData)){
+          this.$notification['error']({
+            message: '总指挥小组各个字段必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
+        if(!this.checkObj(this.fuZhiHuiData)){
+          this.$notification['error']({
+            message: '副指挥小组各个字段必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
+        //
+        if(!this.checkGroupObj(this.jiDongXunChaData)){
+          this.$notification['error']({
+            message: '机动巡查小组各个字段必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
+        if(!this.checkGroupObj(this.houQinBaoZhangData)){
+          this.$notification['error']({
+            message: '后勤保障小组各个字段必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
         return true
+      },
+      checkObj(obj){
+        if(!obj.groupTeam||obj.groupTeam.length===0){
+          return false
+        }
+        else{
+          let flag = true;
+          for(let i=0; i<obj.groupTeam.length;i++){
+            if(obj.groupTeam[i].leaderId===''){
+                flag = false;
+                break;
+            }
+            if(obj.groupTeam[i].teamList.length===0){
+              flag = false;
+              break;
+            }
+          }
+          return flag
+        }
+      },
+      checkGroupObj(obj){
+        if(!obj.groupPerson||obj.groupPerson.length===0){
+          return false
+        }
+        else{
+          let flag = true;
+          for(let i=0; i<obj.groupPerson.length;i++){
+            if(obj.groupPerson[i].leaderId===''){
+              flag = false;
+              break;
+            }
+            if(obj.groupPerson[i].personList.length===0){
+              flag = false;
+              break;
+            }
+          }
+          return flag
+        }
       },
       passEvent(){
         let params =  {
@@ -981,6 +1070,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
                 console.log('addNewEvent', res);
                 this.reviewLoading = false;
                 this.baseInfo.id = res.eventId;
+                this.optType = 'edit';
                 window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + res.eventId, '事件详情', 'width=1000,height=800');
               });
             }
