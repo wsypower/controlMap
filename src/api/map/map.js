@@ -6,7 +6,11 @@
 
 import request from '@/plugins/axios/axios'
 
-let gisApi = 'http://192.168.1.10:8080/geoserver/'
+// let gisApi = 'http://192.168.1.10:8080/geoserver/';// 测试gis服务器
+// let featurePre='jinkaiqu';// 测试gis服务器
+let gisApi = 'http://zhcg.jhk.gov.cn:84/geoserver/';// 正式gis服务器
+let featurePre='hescgis';
+
 let baseApi = URL_CONFIG.baseURL
 /**
  * @description: 获取点数据接口
@@ -15,13 +19,13 @@ let baseApi = URL_CONFIG.baseURL
  */
 export function getPointFeatures(mapIdList, mapType) {
   return request({
-    url: gisApi + 'jinkaiqu/ows',
+    url: gisApi+`${featurePre}/ows`,
     method: 'get',
     params: {
       service: 'WFS',
       version: '1.0.0',
       request: 'GetFeature',
-      typeName: `jinkaiqu:${mapType}`,
+      typeName: `${featurePre}:${mapType}`,
       outputFormat: 'application/json',
       srsname: 'EPSG:4326',
       cql_filter: `"id" in ${mapIdList}`
@@ -36,7 +40,7 @@ export function getPointFeatures(mapIdList, mapType) {
  * */
 export function postFeature(data) {
   return request({
-    url: gisApi + 'jinkaiqu/wfs',
+    url: gisApi + `${featurePre}/wfs`,
     method: 'post',
     headers: { 'Content-Type': 'text/xml' },
     transformRequest: [
@@ -111,7 +115,7 @@ export function getVideoById(id) {
  */
 export function getPeopleListApi() {
   return request({
-    url: URL_CONFIG.baseURL + 'gps/onlineUser',
+    url: 'http://60.191.224.129:83/api/gps/onlineUser',
     method: 'get'
   })
 }
