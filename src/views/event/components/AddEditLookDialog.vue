@@ -764,7 +764,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       },
       //单独中队的预览
       reviewTeam(data){
-        if(this.optType === 'look'){
+        if(this.optType === 'look'||this.userType === 'qxsl'||this.userType === 'jld'){
             let userId = util.cookies.get('userId');
             window.open(URL_CONFIG.eventInfoURL+'teamInfo/'+ userId + '_' + this.eventId + '_' + data.teamId, data.teamName + '信息表','width=1000,height=800');
         }
