@@ -356,6 +356,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
       reset(){
         this.drawFeatures=null;
         this.activeKey = '1';
+        this.templateId = '';
+        this.oldTemplateId = '';
+        this.showSubmit = false;
         this.baseInfo = Object.assign({},this.$options.data()['baseInfo']);
         this.zongZhiHuiData = Object.assign({},this.$options.data()['zongZhiHuiData']);
         this.fuZhiHuiData = Object.assign({},this.$options.data()['fuZhiHuiData']);
