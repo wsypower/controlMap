@@ -439,7 +439,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
       //在保存数据之前对数据进行处理
       changeEventDataForSave(){
-        this.zongZhiHuiData.groupTeam.map((item,index) => {
+        this.zongZhiHuiData.groupTeam.map(item => {
           item.key = item.key.indexOf('@@@')===0?'':item.key;
           item.teamList = [];
           if(item.teamObjList.length>0){
@@ -478,11 +478,11 @@ import {postEmergencyFeatures} from '@/api/map/service'
             this.fuZhiHuiData.groupTeam.splice(i,1)
           }
         }
-        //如果dunDianQuanDaoData中不存在teamList，则需要加入
+        //如果dunDianQuanDaoData中不存在teamList（说明人员安排没有点开过），则需要加入
         if(!this.dunDianQuanDaoData.teamList){
           let dunDianQuanDaoTemp = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
           if(dunDianQuanDaoTemp.teamPersonList){
-            let teamlist = dunDianQuanDaoTemp.teamPersonList.reduce((acc,item) => {
+            let teamList = dunDianQuanDaoTemp.teamPersonList.reduce((acc,item) => {
               acc.push(item.teamId);
               return acc
             },[]);
@@ -491,7 +491,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
               leaderPosition: dunDianQuanDaoTemp.leaderPosition,
               personPosition: dunDianQuanDaoTemp.personPosition,
               teamPersonList: dunDianQuanDaoTemp.teamPersonList,
-              teamList: teamlist
+              teamList: teamList
             }
             this.dunDianQuanDaoData = needData;
           }
