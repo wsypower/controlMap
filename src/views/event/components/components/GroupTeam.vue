@@ -30,7 +30,7 @@
             </template>
             <span slot="team" slot-scope="text, record, index">
                 <a-tag
-                        v-for="person in record.teamList"
+                        v-for="person in record.teamObjList"
                         color="blue"
                         :key="person.id"
                         closable
@@ -63,7 +63,7 @@
                 </div>
             </template>
             <span slot="team" slot-scope="text, record, index">
-                <a-tag v-for="person in record.teamList"
+                <a-tag v-for="person in record.teamObjList"
                        color="blue"
                        :key="person.id"
                 >{{ person.name }}</a-tag>
@@ -142,7 +142,8 @@
              groupTeam:[{
                  key: '@@@',
                  leaderId: '',
-                 teamList: []
+                 teamList: [],
+                 teamObjList: []
              }]
            }
          }
@@ -201,7 +202,8 @@
          let additem = {
            key: "@@@" + index.toString(),
            leaderId: '',
-           teamList: []
+           teamList: [],
+           teamObjList: []
          }
          this.groupTeam.push(additem);
        },
@@ -210,21 +212,21 @@
        },
        openTeamDialog(index){
          this.rowIndex = index;
-         this.defaultCheckedTeamIds = this.groupTeam[index].teamList.reduce((acc,item) => {
+         this.defaultCheckedTeamIds = this.groupTeam[index].teamObjList.reduce((acc,item) => {
            acc.push(item.id);
            return acc
          },[]);
          this.chooseTeamDialogVisible = true;
        },
        chooseTeam(data){
-         this.groupTeam[this.rowIndex].teamList = [];
+         this.groupTeam[this.rowIndex].teamObjList = [];
          data.forEach((item)=>{
-           this.groupTeam[this.rowIndex].teamList.push(item);
+           this.groupTeam[this.rowIndex].teamObjList.push(item);
          });
        },
        closeTag (person,index,e) {
-         let i = this.groupTeam[index].teamList.indexOf(person);
-         this.groupTeam[index].teamList.splice(i,1);
+         let i = this.groupTeam[index].teamObjList.indexOf(person);
+         this.groupTeam[index].teamObjList.splice(i,1);
        }
      }
    }
