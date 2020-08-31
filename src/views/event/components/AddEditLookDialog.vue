@@ -439,7 +439,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
 
       //在保存数据之前对数据进行处理
       changeEventDataForSave(){
-        this.zongZhiHuiData.groupTeam.map(item => {
+        this.zongZhiHuiData.groupTeam.map((item,index) => {
           item.key = item.key.indexOf('@@@')===0?'':item.key;
           item.teamList = [];
           if(item.teamObjList.length>0){
@@ -448,7 +448,17 @@ import {postEmergencyFeatures} from '@/api/map/service'
               return acc
             },[])
           }
+          if(item.leaderId===''&&item.teamList.length===0){
+            item.key = 'delete_'
+          }
         })
+        //主动去除空白行
+        for(let i=this.zongZhiHuiData.groupTeam.length-1;i>=0;i--){
+            if(this.zongZhiHuiData.groupTeam[i].key==='delete_'){
+              this.zongZhiHuiData.groupTeam.splice(i,1)
+            }
+        }
+
         this.fuZhiHuiData.groupTeam.map(item => {
           item.key = item.key.indexOf('@@@')===0?'':item.key;
           item.teamList = [];
@@ -458,11 +468,17 @@ import {postEmergencyFeatures} from '@/api/map/service'
               return acc
             },[])
           }
+          if(item.leaderId===''&&item.teamList.length===0){
+            item.key = 'delete_'
+          }
         })
-        //发起流程之后的保存草稿（中队内部详细信息不需要保存）或者使用模版新建的事件
-        // if(this.baseInfo.processId==='1'||this.optType==='add'){
-        // if((this.baseInfo.processId!=='1'&&this.optType!=='add')
-        //         ||((this.baseInfo.processId==='1'||this.optType==='add')&&this.baseInfo.templateId!=='')){
+        //主动去除空白行
+        for(let i=this.fuZhiHuiData.groupTeam.length-1;i>=0;i--){
+          if(this.fuZhiHuiData.groupTeam[i].key==='delete_'){
+            this.fuZhiHuiData.groupTeam.splice(i,1)
+          }
+        }
+        //如果dunDianQuanDaoData中不存在teamList，则需要加入
         if(!this.dunDianQuanDaoData.teamList){
           let dunDianQuanDaoTemp = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
           if(dunDianQuanDaoTemp.teamPersonList){
@@ -492,7 +508,17 @@ import {postEmergencyFeatures} from '@/api/map/service'
               },[])
             }
           }
+          if(item.leaderId===''&&item.personList.length===0){
+            item.key = 'delete_'
+          }
         })
+        //主动去除空白行
+        for(let i=this.jiDongXunChaData.groupPerson.length-1;i>=0;i--){
+          if(this.jiDongXunChaData.groupPerson[i].key==='delete_'){
+            this.jiDongXunChaData.groupPerson.splice(i,1)
+          }
+        }
+
         this.houQinBaoZhangData.groupPerson.map(item => {
           item.key = item.key.indexOf('@@@')===0?'':item.key;
           let temp = [...item.personList];
@@ -505,7 +531,16 @@ import {postEmergencyFeatures} from '@/api/map/service'
               }, [])
             }
           }
+          if(item.leaderId===''&&item.personList.length===0){
+            item.key = 'delete_'
+          }
         })
+        //主动去除空白行
+        for(let i=this.houQinBaoZhangData.groupPerson.length-1;i>=0;i--){
+          if(this.houQinBaoZhangData.groupPerson[i].key==='delete_'){
+            this.houQinBaoZhangData.groupPerson.splice(i,1)
+          }
+        }
 
         console.log('baseInfo', this.baseInfo);
         console.log('zongZhiHuiData', this.zongZhiHuiData);
@@ -654,8 +689,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
             ids.push(personId);
             return ids
           },[])
-
-          acc.push(data);
+          //出现空白行，主动去除
+          if(!(data.positionId===''&&data.leaderId===''&&data.personList.length===0)){
+            acc.push(data);
+          }
           return acc
         },[]);
 
