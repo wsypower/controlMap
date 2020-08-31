@@ -3,9 +3,9 @@
         <div class="view-content-header" flex="cross:center">
             <span class="title">视频监控列表</span>
         </div>
-<!--        <div class="search-panel">-->
-<!--            <a-input-search placeholder="输入关键词搜索" @search="onSearch" enterButton="搜 索"></a-input-search>-->
-<!--        </div>-->
+        <div class="search-panel">
+            <a-input-search placeholder="输入关键词搜索" v-model="searchContent" @search="onSearch"></a-input-search>
+        </div>
         <div class="result_body">
             <div class="result_body-main">
                 <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
@@ -13,10 +13,15 @@
                 </div>
                 <my-scroll>
                     <ul>
-                        <li v-for="camera in allCameraDataList" :key="camera.mpid" flex="dir:left cross:center" @click="selectCamera(camera)">
+                        <li v-show="camera.mpname.indexOf(searchContent)>=0"
+                            v-for="camera in allCameraDataList"
+                            :key="camera.mpid"
+                            flex="dir:left cross:center"
+                            :class="{active:activeId===camera.mpid}"
+                            @click="selectCamera(camera)">
                             <img v-if="camera.status==='1'" src="~@img/globel-eye.png" />
                             <img v-else src="~@img/globel-eye_offline.png" />
-                            {{camera.mpname}}
+                            <span :title="camera.mpname">{{camera.mpname}}</span>
                         </li>
                     </ul>
                 </my-scroll>
@@ -29,6 +34,9 @@
                 </div>
             </div>
         </div>
+        <div hidden>
+            <video-info ref="videoInfo" :info="videoInfoData" @closeTip="closeTip" @openVideoPlayer="openVideoPlayer"></video-info>
+        </div>
         <div class="player-panel active">
             <my-video-player :videoSrc.sync="videoSrc" :multiple="true"></my-video-player>
         </div>
@@ -36,19 +44,29 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapState,mapActions } from 'vuex'
+import VideoInfo from './VideoInfo'
 import MyVideoPlayer from "./MyVideoPlayer.vue";
 export default {
   name: 'videolist',
   components:{
+    VideoInfo,
     MyVideoPlayer
   },
   data(){
     return {
+      //
+      searchContent:'',
       //展示数据的过渡效果
       showLoading: false,
       //后台传过来的数据
-      sourceData: [],
       allCameraDataList: [],
+      //激活的mpid
+      activeId: '',
+      //多个摄像头展示数据
+      videoInfoData:{
+        addressName: '视频列表',
+        videoList: []
+      },
       //视频流URL
       videoSrc: '',
       videoInfoData:{
@@ -57,17 +75,7 @@ export default {
       },
     }
   },
-  computed:{
-    // //获得展示的数据与属性
-    // treeData:function(){
-    //   let data = JSON.parse(JSON.stringify(this.sourceData));
-    //   this.videoFeatures=[];
-    //   this.allCameraData = [];
-    //   this.changeTreeData(data,'');
-    //   this.isLoadData=!this.isLoadData;
-    //   return data;
-    // }
-  },
+  computed:{},
   mounted() {
     this.showLoading = true;
     this.getAllCameraDataList().then(res=>{
@@ -95,12 +103,23 @@ export default {
   },
   methods:{
     ...mapActions('video/manage', ['getAllCameraDataList','getCameraUrl']),
+    onSearch(){
+
+    },
+    closeTip(){
+      this.selectOverlay.setPosition(undefined);
+      this.videoInfoData.videoList=[];
+    },
     selectCamera(camera){
+      this.activeId = camera.mpid;
       this.getCameraUrl({mpid: camera.mpid}).then(res => {
         console.log('getCameraUrl',res.data);
         let url = res.data.mediaURL;
         this.playVideo(url);
       })
+    },
+    openVideoPlayer(videoList){
+      console.log('openVideoPlayer',videoList);
     },
     playVideo(videoUrl){
       this.videoSrc = videoUrl;
@@ -135,24 +154,36 @@ export default {
         padding: 20px;
     }
     .result_body {
-        margin-top: 20px;
-        height: calc(100% - 80px);
+        height: calc(100% - 150px);
         padding: 0px 20px 20px 20px;
+        width: 100%;
         .result_body-main{
             position: relative;
             background-color: #f5f5f5;
             height: 100%;
+            width: 100%;
             ul{
                 padding: 10px 16px;
                 list-style: none;
+                width: 318px;
                 li{
+                    width: 286px;
                     height: 30px;
                     line-height: 30px;
                     color: rgb(0, 102, 232);
                     cursor: pointer;
+                    &.active{
+                        background-color: rgba(0, 164, 254, 0.24);
+                    }
                     img{
                         width: 20px;
                         margin-right: 10px;
+                    }
+                    span{
+                        width: 250px;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
                     }
                 }
             }
