@@ -172,7 +172,7 @@
        console.log('peoplelist', this.peopleList);
        this.groupResultData = JSON.parse(JSON.stringify(this.groupData));
        this.groupPerson = this.groupResultData.groupPerson;
-
+       //数据转换，通过ID得到人员的名字
         this.groupPerson.map(item => {
           if(item.leaderId!=='') {
             let personTemp = this.peopleList.find(person => person.id === item.leaderId);
@@ -202,11 +202,13 @@
        }
      },
      methods:{
+       //下拉选择
        filterOption(input, option) {
          return (
            option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
          );
        },
+       //增加一行
        addGroup(item, index){
          let additem = {
            key: '@@@' + index.toString(),
@@ -215,20 +217,23 @@
          }
          this.groupPerson.push(additem);
        },
+       //删除一行
        deleteGroup(index){
          this.groupPerson.splice(index,1);
        },
+       //打开选择人员弹窗
        openPeopleDialog(index){
          this.rowIndex = index;
+         //已经选择的人员
          this.defaultCheckedPeopleIds = this.groupPerson[index].personList.reduce((acc,item) => {
            acc.push(item.id);
            return acc
          },[]);
          this.choosePeopleDialogVisible = true;
        },
+       //重新设置选中的人员
        choosePeople(data){
          this.groupPerson[this.rowIndex].personList = [];
-
          data.forEach((item)=>{
            let name, personTemp = this.peopleList.find(person => person.id === item);
            if(personTemp){
@@ -240,6 +245,7 @@
            this.groupPerson[this.rowIndex].personList.push({ id: item, name: name });
          });
        },
+       //删除已选的人员
        closeTag (person,index,e) {
          let i = this.groupPerson[index].personList.indexOf(person);
          this.groupPerson[index].personList.splice(i,1);

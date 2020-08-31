@@ -193,11 +193,13 @@
        }
      },
      methods:{
+       //下拉选择
        filterOption(input, option) {
          return (
            option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
          );
        },
+       //新增一行
        addGroup(item, index){
          let additem = {
            key: "@@@" + index.toString(),
@@ -207,23 +209,28 @@
          }
          this.groupTeam.push(additem);
        },
+       //删除一行
        deleteGroup(index){
          this.groupTeam.splice(index,1);
        },
+       //打开中队弹窗
        openTeamDialog(index){
          this.rowIndex = index;
+         //已经选择的中队
          this.defaultCheckedTeamIds = this.groupTeam[index].teamObjList.reduce((acc,item) => {
            acc.push(item.id);
            return acc
          },[]);
          this.chooseTeamDialogVisible = true;
        },
+       //重新设置选中的中队
        chooseTeam(data){
          this.groupTeam[this.rowIndex].teamObjList = [];
          data.forEach((item)=>{
            this.groupTeam[this.rowIndex].teamObjList.push(item);
          });
        },
+       //删除某个中队
        closeTag (person,index,e) {
          let i = this.groupTeam[index].teamObjList.indexOf(person);
          this.groupTeam[index].teamObjList.splice(i,1);

@@ -154,10 +154,12 @@
       },
       data(){
         return {
-          infoOverlay:null,
           baoZhangData: [],
           baoZhangArr: [],
           mapDialogVisible: false,
+
+
+          infoOverlay:null,
           pointFeatures:[],
           lineFeatures:[],
           polygonFeatures:[],
@@ -187,6 +189,7 @@
           tempSource:null,
           tempFeatures:null,
           selectedFeature:null,
+
           form: null,
           //一条保障点位的数据
           baoZhangFormData: {
@@ -202,10 +205,8 @@
           opType: 'add',
           //编辑时,确定第几个保障点位
           index: 0,
-          //某一个保障点位，需要过滤的人员数据
-          filterPeopleList: [],
+
           //所有的保障点位数据，后续所有操作已这个为基础，最后保存时也已这个作为保存数据
-          //allBaoZhangData有值为编辑，没有值为新增
           allBaoZhangData: [],
           hasSave:false,
           reviewInfoOverlay:null,
@@ -219,6 +220,7 @@
         userType:function(){
           return this.$store.getters['cgadmin/user/type']
         },
+        //只有中队可以编辑，其他角色不可编辑
         nowOptType:function(){
           let type = '';
           console.log('optType',this.optType);
@@ -611,12 +613,7 @@
             console.log('==drawFeature==',this.drawFeatures)
           }
           console.log('this.allBaoZhangData', this.allBaoZhangData);
-          // this.baoZhangData.map(baozhang => {
-          //   let data = this.allBaoZhangData.find(item => item.positionId===baozhang.positionId);
-          //   baozhang.mapId = data.mapId;
-          //   baozhang.mapType = data.mapType;
-          //   baozhang.remark = data.remark;
-          // });
+
           let sourceData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
           sourceData.teamPersonList.forEach(baoZhangTeamItem => {
             baoZhangTeamItem.teamPersonData.map(baozhang => {

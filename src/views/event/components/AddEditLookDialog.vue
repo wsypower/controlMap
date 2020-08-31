@@ -357,6 +357,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           });
           this.dunDianQuanDaoData = res.groupData.dunDianQuanDaoData;
           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',this.dunDianQuanDaoData);
+          //如果进来的数据所有的中队已经全部确认了，那么提交审核按钮会出现
           let num = this.dunDianQuanDaoData.teamPersonList.reduce((acc,teamPerson) => {
             if(teamPerson.checkStatusId==='3'){
               acc = acc + 1;
@@ -368,6 +369,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           }
           this.jiDongXunChaData = res.groupData.jiDongXunChaData;
           this.houQinBaoZhangData = res.groupData.houQinBaoZhangData;
+          //如果是中队，则选择的人员范围为这个中队内的人员
           if(this.userType==='zybm'){
             this.getPeopleDataList({id:this.dunDianQuanDaoData.teamPersonList[0].teamId}).then(res => {
               this.peopleListForTeam = res;
@@ -375,21 +377,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
           }
           this.dataLoading = false;
         });
-      },
-
-
-      reset(){
-        this.drawFeatures=null;
-        this.activeKey = '1';
-        this.templateId = '';
-        this.oldTemplateId = '';
-        this.showSubmit = false;
-        this.baseInfo = Object.assign({},this.$options.data()['baseInfo']);
-        this.zongZhiHuiData = Object.assign({},this.$options.data()['zongZhiHuiData']);
-        this.fuZhiHuiData = Object.assign({},this.$options.data()['fuZhiHuiData']);
-        this.dunDianQuanDaoData = Object.assign({},this.$options.data()['dunDianQuanDaoData']);
-        this.jiDongXunChaData = Object.assign({},this.$options.data()['jiDongXunChaData']);
-        this.houQinBaoZhangData = Object.assign({},this.$options.data()['houQinBaoZhangData']);
       },
       //获取事件基本信息
       getBaseInfoResultData(data){
@@ -420,7 +407,6 @@ import {postEmergencyFeatures} from '@/api/map/service'
       //获取后勤保障组数据
       getHouQinBaoZhangResultData(data){
         this.houQinBaoZhangData = JSON.parse(JSON.stringify(data));
-
       },
 
       /****************保障视图操作区域 start******************/
@@ -880,6 +866,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           this.addTeamPerson(false, true,data);
         }
       },
+      /************************************校验 start********************************************/
       checkParams(){
         if(this.baseInfo.name===''){
           this.$notification['error']({
@@ -1078,6 +1065,8 @@ import {postEmergencyFeatures} from '@/api/map/service'
           return flag
         }
       },
+      /************************************校验 end********************************************/
+      //领导通过中心提交
       passEvent(){
         let params =  {
           eventId: this.eventId,
@@ -1097,6 +1086,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       openBackDialog(){
         this.backVisible = true;
       },
+      //领导驳回中心提交
       backEvent(){
         this.confirmLoading = true;
         let params =  {
@@ -1114,12 +1104,25 @@ import {postEmergencyFeatures} from '@/api/map/service'
           this.addEditLookDialogVisible = false;
         });
       },
-
+      //选择关闭按钮
       handleCancel(){
         this.reset();
         this.$emit('refreshList');
         this.addEditLookDialogVisible = false;
-      }
+      },
+      reset(){
+        this.drawFeatures=null;
+        this.activeKey = '1';
+        this.templateId = '';
+        this.oldTemplateId = '';
+        this.showSubmit = false;
+        this.baseInfo = Object.assign({},this.$options.data()['baseInfo']);
+        this.zongZhiHuiData = Object.assign({},this.$options.data()['zongZhiHuiData']);
+        this.fuZhiHuiData = Object.assign({},this.$options.data()['fuZhiHuiData']);
+        this.dunDianQuanDaoData = Object.assign({},this.$options.data()['dunDianQuanDaoData']);
+        this.jiDongXunChaData = Object.assign({},this.$options.data()['jiDongXunChaData']);
+        this.houQinBaoZhangData = Object.assign({},this.$options.data()['houQinBaoZhangData']);
+      },
     }
   }
 </script>

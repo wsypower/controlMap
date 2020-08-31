@@ -171,9 +171,7 @@ export default {
       return userType==='qxsl'&&this.optType!=='look'
     }
   },
-  created() {
-    // this.form = this.$form.createForm(this);
-  },
+  created() {},
   watch:{
     baseData: function(val){
       this.submitForm = JSON.parse(JSON.stringify(val))
@@ -190,14 +188,13 @@ export default {
     }
   },
   mounted() {
-    console.log('mounted 000000000000000');
     this.init();
   },
   methods:{
     ...mapActions('event/common', ['getEventTypeDataList']),
     moment,
     init(){
-
+      //可编辑则需要事件类型
       if(this.nowOptType){
         this.getEventTypeDataList().then((res)=>{
           this.eventTypeList = res;

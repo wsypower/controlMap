@@ -318,6 +318,7 @@
              })
            });
          });
+         //当是中队时，编辑时如果没有数据，则增加一条新数据
          if(this.userType==='zybm'){
            this.teamPersonList.map(teamItem => {
              if(teamItem.teamPersonData.length===0){
@@ -335,6 +336,7 @@
                teamItem.teamPersonData.push(additem);
              }
            });
+           //获取所有道路数据
            this.getLoadTreeData().then( res => {
              this.address = res;
            });
@@ -372,19 +374,18 @@
      methods:{
        ...mapActions('event/event', ['checkEvent']),
        ...mapActions('event/common', ['getLoadTreeData']),
-       changeInputText(teamIndex, val,key,colName){
-         //console.log('changeGroupName',val,key,colName);
-         let arr = this.teamPersonList[teamIndex].teamPersonData;
-         const newData = [...arr];
-         const target = newData.filter(item => key === item.key)[0];
-         if (target) {
-           target[colName] = val;
-           this.teamPersonList[teamIndex].teamPersonData = newData;
-         }
-       },
+       // changeInputText(teamIndex, val,key,colName){
+       //   let arr = this.teamPersonList[teamIndex].teamPersonData;
+       //   const newData = [...arr];
+       //   const target = newData.filter(item => key === item.key)[0];
+       //   if (target) {
+       //     target[colName] = val;
+       //     this.teamPersonList[teamIndex].teamPersonData = newData;
+       //   }
+       // },
+       //选择道路
        changeAddress(teamIndex, value, selectedOptions, key){
          console.log(teamIndex, value, selectedOptions, key);
-         // this.teamPersonList[teamIndex].teamPersonData[0].addressIds = value;
          let arr = this.teamPersonList[teamIndex].teamPersonData;
          const newData = [...arr];
          const target = newData.filter(item => key === item.key)[0];
@@ -398,11 +399,13 @@
            this.teamPersonList[teamIndex].teamPersonData = newData;
          }
        },
+       //选择过滤责任人
        filterOption(input, option) {
          return (
            option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
          );
        },
+       //新增一行
        addGroup(item, index,teamIndex){
          console.log('addGroup',item, index, teamIndex)
          let additem = {
@@ -418,9 +421,11 @@
          }
          this.teamPersonList[teamIndex].teamPersonData.push(additem);
        },
+       //删除一行
        deleteGroup(index,teamIndex){
          this.teamPersonList[teamIndex].teamPersonData.splice(index,1);
        },
+       //打开选择人员窗口
        openPeopleDialog(teamIndex,index){
          this.rowIndex = index;
          this.teamIndex = teamIndex;
@@ -434,6 +439,7 @@
          }
          this.choosePeopleDialogVisible = true;
        },
+       //重新设置执勤人
        choosePeople(data){
          this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personList = data;
          this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personObjList = [];
@@ -448,14 +454,16 @@
            this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personObjList.push({ id: item, name: name });
          });
        },
+       //删除执勤人
        closeTag (person,index,e) {
          console.log(person,index);
          let i = this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.indexOf(person);
          this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.splice(i,1);
          this.teamPersonList[this.teamIndex].teamPersonData[index].personList.splice(i,1);
        },
+       //进入中队预览
        lookTeamPeopleSet(team){
-         console.log('进入预览');
+         console.log('进入中队预览');
          this.teamId= team.teamId;
          let data ={
            teamId: team.teamId,
@@ -464,6 +472,7 @@
          this.$emit('reviewTeam',data)
          //先保存
        },
+       //中心确认中队通过
        passTeamPeopleSet(teamIndex, teamId){
         console.log('eventId teamId operate backReason');
         let params = {
@@ -487,6 +496,7 @@
          this.teamIndex = teamIndex;
          this.backVisible = true;
        },
+       //中心确认中队驳回
        backTeamPeopleSet(){
          let teamId = this.teamPersonList[this.teamIndex].teamId;
          let params =  {
