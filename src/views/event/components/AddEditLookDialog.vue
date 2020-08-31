@@ -636,7 +636,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.saveDataToGis();
         this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
         console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
-        let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce( (acc, teamPerson) => {
+        let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce((acc, teamPerson) => {
+          if(!teamPerson.addressIds){
+            teamPerson.addressIds = [teamPerson.address[0].id,teamPerson.address[1].id,teamPerson.address[2].id]
+          }
           let data = {
             key: teamPerson.key.indexOf('@@@')===0?'':teamPerson.key,
             address: teamPerson.addressIds,
@@ -651,9 +654,11 @@ import {postEmergencyFeatures} from '@/api/map/service'
             ids.push(personId);
             return ids
           },[])
+
           acc.push(data);
           return acc
         },[]);
+
         let isOk = true;
         teamPersonData.forEach(teamPerson => {
           if(!teamPerson.positionId){
