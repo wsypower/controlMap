@@ -77,8 +77,8 @@ export async function postEmergencyFeatures(drawType, feature) {
       break
   }
   const obj = {
-    featureNS: 'http://www.jinkaiqu.com', //该图层所在工作空间的url
-    featurePrefix: 'jinkaiqu', //工作空间名称0
+    featureNS: 'http://www.' + URL_CONFIG.featurePre + '.com', //该图层所在工作空间的url
+    featurePrefix: URL_CONFIG.featurePre, //工作空间名称0
     featureType: featureType //图层名称
   }
   let addFeature=null;
