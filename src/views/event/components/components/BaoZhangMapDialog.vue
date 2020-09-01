@@ -335,26 +335,28 @@
           let baoZhangObj = JSON.parse(JSON.stringify(this.baoZhangData));
           baoZhangObj.forEach(baoZhangItem => {
             let a = baoZhangItem.teamPersonData.reduce((acc, item) => {
-              let personTemp = this.peopleList.find(person => person.id === item.leaderId);
-              let perName = item.personList.reduce((arr, id) => {
-                let person = this.peopleList.find(p => p.id === id);
-                arr.push(person.name);
-                return arr
-              },[]);
-              let addressName = item.address.reduce((acc, it) => {
-                acc = acc + '--' + it.name
-                return acc
-              },'').substring(2);
-              let temp = {
-                positionId: item.address[2].id,
-                load: addressName,
-                leaderName: personTemp&&personTemp.name ? personTemp.name : '',
-                personNameStr: perName.join(','),
-                remark: item.remark,
-                mapId: item.mapId,
-                mapType:item.mapType,
+              if(item.address){
+                let personTemp = this.peopleList.find(person => person.id === item.leaderId);
+                let perName = item.personList.reduce((arr, id) => {
+                  let person = this.peopleList.find(p => p.id === id);
+                  arr.push(person.name);
+                  return arr
+                },[]);
+                let addressName = item.address.reduce((acc, it) => {
+                    acc = acc + '--' + it.name
+                    return acc
+                  },'').substring(2);
+                let temp = {
+                  positionId: item.address[2].id,
+                  load: addressName,
+                  leaderName: personTemp&&personTemp.name ? personTemp.name : '',
+                  personNameStr: perName.join(','),
+                  remark: item.remark,
+                  mapId: item.mapId,
+                  mapType:item.mapType,
+                }
+                acc.push(temp);
               }
-              acc.push(temp);
               return acc
             },[]);
             this.baoZhangArr = this.baoZhangArr.concat(a);
