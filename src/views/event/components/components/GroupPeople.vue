@@ -172,6 +172,14 @@
        console.log('peoplelist', this.peopleList);
        this.groupResultData = JSON.parse(JSON.stringify(this.groupData));
        this.groupPerson = this.groupResultData.groupPerson;
+       if(this.groupPerson.length===0){
+         let additem = {
+           key: '@@@',
+           leaderId: '',
+           personList: []
+         }
+         this.groupPerson.push(additem);
+       }
        //数据转换，通过ID得到人员的名字
         this.groupPerson.map(item => {
           if(item.leaderId!=='') {

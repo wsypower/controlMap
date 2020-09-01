@@ -182,6 +182,18 @@
            item.leaderName = personTemp.name;
          });
        }
+       else{
+         if(this.groupTeam.length==0){
+           let additem = {
+             key: "@@@",
+             leaderId: '',
+             teamList: [],
+             teamObjList: []
+           }
+           this.groupTeam.push(additem);
+         }
+       }
+
        console.log('222222',this.groupTeam);
      },
      watch:{

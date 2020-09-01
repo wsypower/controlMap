@@ -348,7 +348,7 @@
               let temp = {
                 positionId: item.address[2].id,
                 load: addressName,
-                leaderName: personTemp.name,
+                leaderName: personTemp&&personTemp.name ? personTemp.name : '',
                 personNameStr: perName.join(','),
                 remark: item.remark,
                 mapId: item.mapId,

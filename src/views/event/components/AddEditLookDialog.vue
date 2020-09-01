@@ -1124,6 +1124,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.addEditLookDialogVisible = false;
       },
       reset(){
+        this.templateList = [];
+        this.peopleList = [];
+        this.peopleListForTeam = [];
         this.drawFeatures=null;
         this.activeKey = '1';
         this.templateId = '';
