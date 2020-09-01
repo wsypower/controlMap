@@ -30,7 +30,7 @@
           <div class="event_list_content-operate" flex="dir:left cross:center main:right">
               <a-button v-if="userType!=='zybm'" class="btn_opt btn_delete" @click="deleteEvents"><a-icon type="delete"/>批量删除</a-button>
               <a-button class="btn_opt btn_export" @click="exportEvents('part')"><a-icon type="export"/>批量导出</a-button>
-              <a-button class="btn_opt btn_export" @click="exportEvents('all')"><a-icon type="export"/>全部导出</a-button>
+<!--              <a-button class="btn_opt btn_export" @click="exportEvents('all')"><a-icon type="export"/>全部导出</a-button>-->
           </div>
           <div class="main-table-panel">
               <ul class="main-table-header">
