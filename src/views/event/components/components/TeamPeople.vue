@@ -1,7 +1,7 @@
 <template>
     <div class="team-people-panel">
         <div class="team-people-panel-header" flex="cross:center main:justify">
-            <span>蹲点劝导组：</span>
+            <span><i style="color:#d60000;">*</i>蹲点劝导组：</span>
         </div>
         <div class="team-people-panel-method" flex="dir:left cross:center">
             <div class="" flex="dir:left cross:center">

@@ -1,6 +1,6 @@
 <template>
     <div class="group-team-panel">
-        <div class="group-team-panel-header">{{title}}小组：</div>
+        <div class="group-team-panel-header"><i style="color:#d60000;">*</i>{{title}}小组：</div>
         <div class="group-team-panel-method">
             <div flex="dir:left cross:center">
                 <label>{{title}}定位方式：</label>

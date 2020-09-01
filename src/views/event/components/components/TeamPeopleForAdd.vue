@@ -1,7 +1,7 @@
 <template>
     <div class="team-people-panel">
         <div class="team-people-panel-header" flex="dir:left cross:center">
-            <span>蹲点劝导组：</span>
+            <span><i style="color:#d60000;">*</i>蹲点劝导组：</span>
         </div>
         <div class="team-people-panel-team" flex="dir:left">
             <a-button type="primary" size="small" @click="openTeamDialog">中队选择</a-button>

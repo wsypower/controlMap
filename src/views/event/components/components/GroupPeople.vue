@@ -1,6 +1,6 @@
 <template>
     <div class="group-people-panel">
-        <div class="group-people-panel-header">{{title}}：</div>
+        <div class="group-people-panel-header"><i style="color:#d60000;">*</i>{{title}}：</div>
         <div class="group-people-panel-method" flex="dir:left cross:center">
             <div class="" flex="dir:left cross:center">
                 <label>负责人定位方式：</label>

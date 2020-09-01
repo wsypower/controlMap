@@ -155,6 +155,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         //使用的模版ID
         templateId: '',
         oldTemplateId: '',
+        isUseTemplate: false,
         //加载数据过渡效果
         dataLoading: false,
         activeKey: '1',
@@ -305,6 +306,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
           content: '模版改变后，之前的数据将会清除，不可还原',
           onOk() {
             _this.oldTemplateId = val;
+            _this.isUseTemplate = true;
             _this.getEventInfoById(val);
           },
           onCancel() {
@@ -318,9 +320,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.dataLoading = true;
         this.getMessageByEventId({id:id}).then(res => {
           this.baseInfo = res.baseInfo;
-          if(this.eventId){
-            this.baseInfo.id = this.eventId;
-          }
+          this.baseInfo.id = this.eventId;
           //在baseInfo组建中会对dayRange进行复制，这边只是为了让baseInfo对象有dayRange属性
           this.baseInfo.dayRange = [];
           //设置templateId
@@ -356,6 +356,18 @@ import {postEmergencyFeatures} from '@/api/map/service'
             this.fuZhiHuiData[key] = res.groupData.fuZhiHuiData[key]
           });
           this.dunDianQuanDaoData = res.groupData.dunDianQuanDaoData;
+
+          if(this.isUseTemplate){
+            //使用了模版需要把审核流程定为'未发起流程'；
+            this.baseInfo.processId = '1';
+            this.baseInfo.processName = '未发起流程';
+            //使用了模版之后，中队填写的信息在创建的时候中心是看不到的
+            this.dunDianQuanDaoData.teamPersonList.forEach(teamPerson => {
+              teamPerson.checkStatusId = '1';
+              teamPerson.checkStatusName = '';
+              teamPerson.teamPersonData = [];
+            })
+          }
           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',this.dunDianQuanDaoData);
           //如果进来的数据所有的中队已经全部确认了，那么提交审核按钮会出现
           let num = this.dunDianQuanDaoData.teamPersonList.reduce((acc,teamPerson) => {
@@ -691,6 +703,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
         if(!isOk){
           this.$message.error('道路不可为空，至少输入一条道路');
           this.reviewLoading = false;
+          this.checkLoading = false;
           return;
         }
 

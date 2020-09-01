@@ -294,7 +294,7 @@
               cancelText: '取消',
               onOk() {
                 _this.deleteEventByIds({ids:checkedIdsStr}).then(res =>{
-                  if(res.code === '0'){
+                  if(res.msg.indexOf('成功')>=0){
                     _this.$message.success('删除成功');
                     _this.getEventDataList();
                   }
@@ -624,5 +624,9 @@
 <style lang="scss">
     .ant-modal-footer {
         text-align: center;
+    }
+    i{
+        font-style: normal;
+        margin-right: 3px;
     }
 </style>
