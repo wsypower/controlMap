@@ -92,7 +92,7 @@
           </div>
         </div>
       </div>
-      <div v-if="nowOptType==='edit'" class="operate-panel">
+      <div v-if="nowOptType==='edit'&&!disableEdit" class="operate-panel">
         <a-dropdown>
           <a-menu slot="overlay" @click="handleOperateClick">
             <a-menu-item key="Point">点</a-menu-item>
@@ -110,9 +110,9 @@
       </div>
     </div>
     <template slot="footer">
-      <a-button v-if="nowOptType==='look'" @click="mapDialogVisible=false;">关闭</a-button>
-      <a-button v-if="nowOptType==='edit'" type="primary" @click="saveMap">保存视图</a-button>
-      <a-button v-if="nowOptType==='edit'" @click="resetMap">重置视图</a-button>
+      <a-button v-if="nowOptType==='look'||disableEdit" @click="disableEdit = false;mapDialogVisible=false;">关闭</a-button>
+      <a-button v-if="nowOptType==='edit'&&!disableEdit" type="primary" @click="saveMap">保存视图</a-button>
+      <a-button v-if="nowOptType==='edit'&&!disableEdit" @click="resetMap">重置视图</a-button>
     </template>
   </a-modal>
 </template>
@@ -157,7 +157,8 @@
           baoZhangData: [],
           baoZhangArr: [],
           mapDialogVisible: false,
-
+          //当没有数据可操作时，则所有按钮不可操作
+          disableEdit:false,
 
           infoOverlay:null,
           pointFeatures:[],
@@ -364,6 +365,12 @@
           this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangArr));
           //最终保存时，更新一下store
           console.log('打开保障视图需要的数据',this.allBaoZhangData);
+          if(this.allBaoZhangData.length===0){
+            this.disableEdit = true;
+          }
+          else{
+            this.disableEdit = false;
+          }
         },
         //地图点击事件处理器
         mapClickHandler({ pixel, coordinate }) {
@@ -625,6 +632,7 @@
               baozhang.remark = data.remark;
             });
           });
+          this.disableEdit = false;
           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',sourceData);
           this.$emit('saveDrawData',this.drawFeatures);
           this.mapDialogVisible = false;
@@ -639,6 +647,7 @@
         },
         //关闭保障视图弹窗
         handleCancel(){
+          this.disableEdit = false;
           if(!this.hasSave) {
             this.allBaoZhangData = [];
             if (draw) {
@@ -651,6 +660,7 @@
           this.mapDialogVisible = false;
       },
       afterClose(){
+        this.disableEdit = false;
         console.log('关闭了')
       }
     }
