@@ -85,7 +85,7 @@ export default {
       videoFeatures:[],
       videoLayer:null,
       selectLayer:null,
-
+      selectOverlay:null
     }
   },
   computed:{},
@@ -93,7 +93,13 @@ export default {
     this.$nextTick().then(() => {
       map = this.$refs.olMap.getMap();
       mapManager = new MapManager(map);
-      map.on('click', this.videoMapClickHandler);
+      // map.on('click', this.videoMapClickHandler);
+      this.selectOverlay = mapManager.addOverlay({
+        id:'selectVideoOverlay',
+        offset:[0,-20],
+        positioning: 'bottom-center',
+        element: this.$refs.videoInfo.$el
+      });
       this.getAllCameraData();
     });
   },
@@ -126,11 +132,35 @@ export default {
             this.videoLayer.getSource().getSource().clear();
             this.videoLayer.getSource().getSource().addFeatures(this.videoFeatures);
           }else{
-            this.videoLayer = mapManager.addClusterLayerByFeatures(this.videoFeatures);
+            const data=mapManager.addClusterLayerByFeatures(this.videoFeatures);
+            this.videoLayer = data[0];
+            const selectCluster = data[1];
+            const _this=this;
+            selectCluster.getFeatures().on(['add'], function(e) {
+              _this.selectLayer.getSource().clear();
+            const c = e.element.get('features');
+            if (!c) {
+              return;
+            }
+            if(c.length <6){
+              _this.videoInfoData.videoList=[];
+              for(let i=0;i<c.length;i++){
+                const props=c[i].get('props');
+                _this.videoInfoData.videoList.push({
+                  label:props.mpname,
+                  value:props.mpid
+                })
+              }
+              const coor = e.element.get('geometry').getCoordinates();
+              _this.selectOverlay.setPosition(coor);
+            }
+              // if (c.length == 1) {
+              // } else
+            });
             this.videoLayer.set('featureType','videoDistribute');
+            const extent = this.videoLayer.getSource().getSource().getExtent();
+            mapManager.getMap().getView().fit(extent);
           }
-          const extent=this.videoLayer.getSource().getSource().getExtent();
-          mapManager.getMap().getView().fit(extent);
         }
       });
     },
@@ -160,11 +190,12 @@ export default {
         const feature = new Feature({
           geometry: new Point([parseFloat(camera.longitude), parseFloat(camera.latitude)])
         });
+        feature.set('type','select');
         if(this.selectLayer) {
           this.selectLayer.getSource().addFeatures([feature]);
         }else{
-          this.selectLayer = mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),4);
-          this.selectLayer.set('featureType','videoDistribute');
+          this.selectLayer = mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),100);
+          // this.selectLayer.set('featureType','videoDistribute');
         }
       }
       this.getCameraUrl({mpid: camera.mpid}).then(res => {
