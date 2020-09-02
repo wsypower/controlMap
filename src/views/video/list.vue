@@ -54,7 +54,6 @@ export default {
   },
   data(){
     return {
-      //
       searchContent:'',
       //展示数据的过渡效果
       showLoading: false,
@@ -69,10 +68,7 @@ export default {
       },
       //视频流URL
       videoSrc: '',
-      videoInfoData:{
-        addressName: '视频列表',
-        videoList: []
-      },
+      videoFeatures:[]
     }
   },
   computed:{},
@@ -98,7 +94,6 @@ export default {
           this.videoFeatures.push(feature);
         }
       })
-
     });
   },
   methods:{

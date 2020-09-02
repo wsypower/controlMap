@@ -21,6 +21,7 @@ import Circle from 'ol/style/Circle'
 import Text from 'ol/style/Text';
 import LinearRing from 'ol/geom/LinearRing.js';
 import {Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon} from 'ol/geom.js';
+import  AnimatedCluster from 'ol-ext/layer/AnimatedCluster';
 
 export class MapManager {
   constructor(map) {
@@ -66,57 +67,63 @@ export class MapManager {
    * @createDate:2019/8/15 19:16
    */
   addClusterLayerByFeatures(features) {
-    const source = new VectorSource({
-      features: features
-    })
     const clusterSource = new Cluster({
       distance: 40,
-      source: source
-    })
-    let styleCache = {}
-    const clusters = new VectorLayer({
+      source: new VectorSource()
+    });
+    const clusterLayer = new AnimatedCluster({
+      name: 'Cluster',
       source: clusterSource,
-      style: function(feature) {
-        const size = feature.get('features').length
-        let style = styleCache[size];
-        if (!style) {
-          if (size > 1) {
-            style = [
-              new Style({
-                image: new Circle({
-                  radius: 18,
-                  stroke: new Stroke({
-                    color: '#fff'
-                  }),
-                  fill: new Fill({
-                    color: '#ffcc00'
-                  })
-                }),
-                text: new Text({
-                  text: size.toString(),
-                  font: '16px bold serif',
-                  fill: new Fill({
-                    color: '#000000'
-                  })
-                })
-              })
-            ]
-            styleCache[size] = style
-          } else {
-            style = [
-              new Style({
-                image: new Icon({
-                  src: '@/assets/mapImage/people-zx.png'
-                })
-              })
-            ]
-            styleCache[size] = style
-          }
-        }
-        return style
+      animationDuration: 700,
+      style: getClusterStyle
+    });
+    this.map.addLayer(clusterLayer);
+    function getClusterStyle(feature, resolution) {
+      let styleCache = {};
+      if (!feature.get('features')) {
+        return;
       }
-    })
-    this.map.addLayer(clusters)
+      let size = feature.get('features').length;
+
+      let style = styleCache[size];
+      if (!style) {
+        if (size == 1) {
+          const styleFeature=feature.get('features')[0];
+          style = styleCache[size] = new Style({
+            image:  new Icon({
+              src: require('@/assets/mapImage/'+styleFeature.get('icon')+'.png'),
+              anchor: [0.5, 0.5],
+              size: [30, 39],
+              opacity: 1
+            }),
+          });
+        } else {
+          const color = size>25 ? '192, 0, 0' : size>8 ? '255, 128, 0' : '0, 128, 0';
+          const radius = Math.max(8, Math.min(size * 0.75, 20));
+          style = styleCache[size] = new Style({
+            image: new Circle({
+              radius: radius,
+              stroke: new Stroke({
+                color: 'rgba(' + color + ', 0.5)',
+                width: 15
+              }),
+              fill: new Fill({
+                color:'rgba(' + color + ', 1)'
+              })
+            }),
+            text: new Text({
+              text: size.toString(),
+              fill: new Fill({
+                color: '#fff'
+              })
+            })
+          });
+        }
+      }
+      return [style];
+    }
+    clusterSource.getSource().addFeatures(features);
+    return clusterLayer;
   }
   /**
    * @description: 添加弹框
@@ -134,7 +141,7 @@ export class MapManager {
   locateTo(coord) {
     this.map.getView().animate({
       center: coord,
-      zoom: 15,
+      zoom: 18,
       duration: 500
     })
   }
@@ -196,6 +203,16 @@ export class MapManager {
   }
   getMap() {
     return this.map
+  }
+  /**
+   * @description: xy生成要素
+   * @param {number} x
+   * @param {number} y
+   */
+  xyToFeature(x, y) {
+    return new Feature({
+      geometry: new Point([parseFloat(x), parseFloat(y)])
+    })
   }
 }
 
@@ -332,4 +349,14 @@ export function getPointByPeopleList(list) {
     }
   });
   return features.filter(Boolean);
+}
+export function pointToFeature(item,icon) {
+  if(item.x && item.x.length>0 && item.y && item.y.length>0){
+    const feature=new Feature({
+      geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+    });
+    feature.set('icon',icon);
+    feature.set('props',item);
+    return feature;
+  }
 }
