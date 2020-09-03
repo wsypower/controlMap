@@ -1,17 +1,17 @@
 <template>
-  <a-modal ref="baoZhangDialog"
-           title="保障视图"
-           v-model="mapDialogVisible"
-           :maskClosable="false"
-           @cancel="handleCancel"
-           wrapClassName="baoZhangDialogwraps"
-           width="80%"
-           :bodyStyle="{padding:'0px 5px',borderRadius:'7px',overFlow: 'hidden'}"
-           style="top:57px"
-           :destroyOnClose="false"
-           :afterClose="afterClose"
+  <a-modal
+    ref="baoZhangDialog"
+    title="保障视图"
+    v-model="mapDialogVisible"
+    :maskClosable="false"
+    @cancel="handleCancel"
+    wrapClassName="baoZhangDialogwraps"
+    width="80%"
+    :bodyStyle="{ padding: '0px 5px', borderRadius: '7px', overFlow: 'hidden' }"
+    style="top:57px"
+    :destroyOnClose="false"
+    :afterClose="afterClose"
   >
-
     <div class="yuan_dialog_body" ref="baoZhangBody">
       <!-- 地图控件注入地址 -->
       <LayoutMap ref="olMap"></LayoutMap>
@@ -26,21 +26,17 @@
             <cg-container scroll>
               <a-form :form="form" style="margin:10px">
                 <a-form-item label="具体路段：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <a-select
-                          placeholder="请选择道路"
-                          @change="handleChange"
-                          v-model="baoZhangFormData.positionId"
-                  >
+                  <a-select placeholder="请选择道路" @change="handleChange" v-model="baoZhangFormData.positionId">
                     <a-select-option v-for="baoZhang in baoZhangArr" :key="baoZhang.positionId">
                       {{ baoZhang.load }}
                     </a-select-option>
                   </a-select>
                 </a-form-item>
                 <a-form-item label="负责人：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{baoZhangFormData.leaderName}}</span>
+                  <span>{{ baoZhangFormData.leaderName }}</span>
                 </a-form-item>
                 <a-form-item label="执勤人员：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{baoZhangFormData.personNameStr}}</span>
+                  <span>{{ baoZhangFormData.personNameStr }}</span>
                 </a-form-item>
                 <a-form-item label="备注：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
                   <a-textarea v-model="baoZhangFormData.remark" placeholder="" :autosize="{ minRows: 2, maxRows: 2 }" />
@@ -65,10 +61,10 @@
               <a-form :form="form" style="margin:10px">
                 <a-form-item label="具体路段：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
                   <a-select
-                          placeholder="请选择道路"
-                          @change="handleChange"
-                          v-model="baoZhangFormData.positionId"
-                          disabled
+                    placeholder="请选择道路"
+                    @change="handleChange"
+                    v-model="baoZhangFormData.positionId"
+                    disabled
                   >
                     <a-select-option v-for="baoZhang in baoZhangArr" :key="baoZhang.positionId">
                       {{ baoZhang.load }}
@@ -76,13 +72,18 @@
                   </a-select>
                 </a-form-item>
                 <a-form-item label="负责人：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{baoZhangFormData.leaderName}}</span>
+                  <span>{{ baoZhangFormData.leaderName }}</span>
                 </a-form-item>
                 <a-form-item label="执勤人员：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{baoZhangFormData.personNameStr}}</span>
+                  <span>{{ baoZhangFormData.personNameStr }}</span>
                 </a-form-item>
                 <a-form-item label="备注：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <a-textarea v-model="baoZhangFormData.remark" placeholder="" :autosize="{ minRows: 2, maxRows: 2 }" disabled/>
+                  <a-textarea
+                    v-model="baoZhangFormData.remark"
+                    placeholder=""
+                    :autosize="{ minRows: 2, maxRows: 2 }"
+                    disabled
+                  />
                 </a-form-item>
               </a-form>
             </cg-container>
@@ -92,7 +93,7 @@
           </div>
         </div>
       </div>
-      <div v-if="nowOptType==='edit'&&!disableEdit" class="operate-panel">
+      <div v-if="nowOptType === 'edit' && !disableEdit" class="operate-panel">
         <a-dropdown>
           <a-menu slot="overlay" @click="handleOperateClick">
             <a-menu-item key="Point">点</a-menu-item>
@@ -101,7 +102,7 @@
           </a-menu>
           <a-button class="op-btn yacz-btn">
             <span class="memu-title-text">新增</span>
-            <a-icon type="down"/>
+            <a-icon type="down" />
           </a-button>
         </a-dropdown>
         <!--<a-button type="primary" @click="editMapFeatures" v-if="this.baoZhangData.length>0">编辑</a-button>-->
@@ -110,9 +111,16 @@
       </div>
     </div>
     <template slot="footer">
-      <a-button v-if="nowOptType==='look'||disableEdit" @click="disableEdit = false;mapDialogVisible=false;">关闭</a-button>
-      <a-button v-if="nowOptType==='edit'&&!disableEdit" type="primary" @click="saveMap">保存视图</a-button>
-      <a-button v-if="nowOptType==='edit'&&!disableEdit" @click="resetMap">重置视图</a-button>
+      <a-button
+        v-if="nowOptType === 'look' || disableEdit"
+        @click="
+          disableEdit = false
+          mapDialogVisible = false
+        "
+        >关闭</a-button
+      >
+      <a-button v-if="nowOptType === 'edit' && !disableEdit" type="primary" @click="saveMap">保存视图</a-button>
+      <a-button v-if="nowOptType === 'edit' && !disableEdit" @click="resetMap">重置视图</a-button>
     </template>
   </a-modal>
 </template>
@@ -125,6 +133,7 @@
   import { Circle as CircleStyle,Fill, Stroke, Style} from 'ol/style.js';
   import { getEmergencyFeatures } from '@/api/map/service'
   import Draw from 'ol/interaction/Draw.js'
+  import { deepClone } from '@/utils/util.tool'
   let map;
   let mapManager;
   let draw,modify;
@@ -181,6 +190,7 @@
               delete:[]
             }
           },
+          tempDrawFeature:null,
           editFeatures:{
             add:[],
             update:[],
@@ -211,7 +221,8 @@
           allBaoZhangData: [],
           hasSave:false,
           reviewInfoOverlay:null,
-          initFeatures:[]
+          initFeatures:[],
+          initFinish:false,
         }
       },
       computed:{
@@ -258,11 +269,13 @@
       },
       methods:{
         init(){
+          this.initFinish=false;
           this.clearInitData();
           source&&source.clear();
           if(this.initFeatures.length>0){
             source.addFeatures(this.initFeatures);
           }
+          this.tempDrawFeature = _.cloneDeep(this.drawFeatures);
           this.$nextTick().then(() => {
             map = this.$refs.olMap.getMap();
             mapManager = new MapManager(map);
@@ -321,6 +334,7 @@
               }
               const _this=this;
               setTimeout(()=>{
+                _this.initFinish=true;
                 _this.tempSource=source;
                 if(this.nowOptType!='look'){
                   _this.editMapFeatures();
@@ -328,7 +342,6 @@
                 map.addLayer(vectorLayer);
               },500)
             }
-
           })
         },
         clearInitData(){
@@ -440,8 +453,10 @@
           // });
           source.on('addfeature', function(e) {
             e.preventDefault();
-            const type=e.feature.getGeometry().getType();
-            _this.drawFeatures[type].add.push(e.feature);
+            if(_this.initFinish){
+              const type=e.feature.getGeometry().getType();
+              _this.drawFeatures[type].add.push(e.feature);
+            }
           });
           source.on('changefeature', function(e) {
             e.preventDefault();
@@ -449,9 +464,11 @@
           });
           source.on('removefeature', function(e) {
             e.preventDefault();
-            const type=e.feature.getGeometry().getType();
-            if(!_this.drawFeatures[type].add.includes(e.feature)){
-              _this.drawFeatures[type].delete.push(e.feature);
+            if(_this.initFinish){
+              const type=e.feature.getGeometry().getType();
+              if(!_this.drawFeatures[type].add.includes(e.feature)){
+                _this.drawFeatures[type].delete.push(e.feature);
+              }
             }
           });
         },
@@ -588,6 +605,7 @@
             map.removeInteraction(draw);
           }
           console.log('新增还是编辑：mapOperateType', this.mapOperateType);
+          debugger;
           if(this.mapOperateType=='add'){
             const features = vectorLayer.getSource().getFeatures();
             for (let i = 0; i < features.length; i++) {
@@ -658,6 +676,8 @@
               mapManager.inactivateDraw(draw);
             }
             source&&source.clear();
+            this.drawFeatures= _.cloneDeep(this.tempDrawFeature);
+            console.log('关闭this.drawFeatures',this.drawFeatures);
             // if (vectorLayer) {
             //   vectorLayer.getSource().clear();
             // }
@@ -733,28 +753,28 @@
   }
 }
 </style>
-<style lang='scss'>
-  .baoZhangDialogwraps {
-    .ant-modal-close-x {
-      color: #fff;
-    }
-    .ant-modal-content {
+<style lang="scss">
+.baoZhangDialogwraps {
+  .ant-modal-close-x {
+    color: #fff;
+  }
+  .ant-modal-content {
+    background-image: linear-gradient(90deg, #0065ea 0%, #6f62ee 100%);
+    .ant-modal-header {
       background-image: linear-gradient(90deg, #0065ea 0%, #6f62ee 100%);
-      .ant-modal-header {
-        background-image: linear-gradient(90deg, #0065ea 0%, #6f62ee 100%);
-        // color: #fff;
-        border: none;
-        .ant-modal-title {
-          color: #fff;
-          font-size: 18px;
-        }
+      // color: #fff;
+      border: none;
+      .ant-modal-title {
+        color: #fff;
+        font-size: 18px;
       }
-      .ant-modal-footer {
-        border: 1px solid;
-        border-image: linear-gradient(90deg,#0065ea 0%, #6f62ee 100%) 30 30;
-        border-width: 0px 5px 10px 5px;
-        background-color: #fff;
-      }
+    }
+    .ant-modal-footer {
+      border: 1px solid;
+      border-image: linear-gradient(90deg, #0065ea 0%, #6f62ee 100%) 30 30;
+      border-width: 0px 5px 10px 5px;
+      background-color: #fff;
     }
   }
+}
 </style>
