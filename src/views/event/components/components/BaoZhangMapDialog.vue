@@ -223,6 +223,7 @@
           reviewInfoOverlay:null,
           initFeatures:[],
           initFinish:false,
+          firstOpen:true,
         }
       },
       computed:{
@@ -276,71 +277,74 @@
             source.addFeatures(this.initFeatures);
           }
           this.tempDrawFeature = _.cloneDeep(this.drawFeatures);
+          this.initFinish=true;
           this.$nextTick().then(() => {
-            map = this.$refs.olMap.getMap();
-            mapManager = new MapManager(map);
-            //初始化地图弹框
-            this.infoOverlay = mapManager.addOverlay({
-              element: this.$refs.infoOverlay
-            });
-            this.reviewInfoOverlay = mapManager.addOverlay({
-              element: this.$refs.reviewInfoOverlay
-            });
-            // source=null;
-            //绑定地图双击事件
-            map.on('dblclick', this.mapClickHandler);
-            //编辑状态下通过图形id获取已保存的图形数据
-            // 只要设置了组，这里数据一直是大于0
-            if(this.allBaoZhangData.length>0){
-              const idList=filterMapId(this.allBaoZhangData);
-              if(!source){
-                source = new VectorSource({ wrapX: false });
-                vectorLayer = new VectorLayer({
-                  source: source,
-                  style: new Style({
-                    fill: new Fill({
-                      color: 'rgba(255, 255, 255, 0.3)'
-                    }),
-                    stroke: new Stroke({
-                      color: '#fc7012',
-                      width: 5
-                    }),
-                    image: new CircleStyle({
-                      radius: 7,
+            if(this.firstOpen) {
+              map = this.$refs.olMap.getMap();
+              mapManager = new MapManager(map);
+              //初始化地图弹框
+              this.infoOverlay = mapManager.addOverlay({
+                element: this.$refs.infoOverlay
+              });
+              this.reviewInfoOverlay = mapManager.addOverlay({
+                element: this.$refs.reviewInfoOverlay
+              });
+              // source=null;
+              //绑定地图双击事件
+              map.on('dblclick', this.mapClickHandler);
+              //编辑状态下通过图形id获取已保存的图形数据
+              // 只要设置了组，这里数据一直是大于0
+              if (this.allBaoZhangData.length > 0) {
+                const idList = filterMapId(this.allBaoZhangData);
+                if (!source) {
+                  source = new VectorSource({ wrapX: false });
+                  vectorLayer = new VectorLayer({
+                    source: source,
+                    style: new Style({
                       fill: new Fill({
-                        color: '#fc7012'
+                        color: 'rgba(255, 255, 255, 0.3)'
+                      }),
+                      stroke: new Stroke({
+                        color: '#fc7012',
+                        width: 5
+                      }),
+                      image: new CircleStyle({
+                        radius: 7,
+                        fill: new Fill({
+                          color: '#fc7012'
+                        })
                       })
                     })
-                  })
-                });
-              }
-              if(idList[0]){
-                getEmergencyFeatures(idList[0],'Point').then(data=>{
-                  console.log('查询点',data);
-                  source.addFeatures(data);
-                });
-              }
-              if(idList[1]){
-                getEmergencyFeatures(idList[1],'LineString').then(data=>{
-                  console.log('查询线',data);
-                  source.addFeatures(data);
-                });
-              }
-              if(idList[2]){
-                getEmergencyFeatures(idList[2],'Polygon').then(data=>{
-                  console.log('查询面',data);
-                  source.addFeatures(data);
-                });
-              }
-              const _this=this;
-              setTimeout(()=>{
-                _this.initFinish=true;
-                _this.tempSource=source;
-                if(this.nowOptType!='look'){
-                  _this.editMapFeatures();
+                  });
                 }
-                map.addLayer(vectorLayer);
-              },500)
+                if (idList[0]) {
+                  getEmergencyFeatures(idList[0], 'Point').then(data => {
+                    console.log('查询点', data);
+                    source.addFeatures(data);
+                  });
+                }
+                if (idList[1]) {
+                  getEmergencyFeatures(idList[1], 'LineString').then(data => {
+                    console.log('查询线', data);
+                    source.addFeatures(data);
+                  });
+                }
+                if (idList[2]) {
+                  getEmergencyFeatures(idList[2], 'Polygon').then(data => {
+                    console.log('查询面', data);
+                    source.addFeatures(data);
+                  });
+                }
+                const _this = this;
+                setTimeout(() => {
+                  _this.tempSource = source;
+                  if (this.nowOptType != 'look') {
+                    _this.editMapFeatures();
+                  }
+                  _this.firstOpen=false;
+                  map.addLayer(vectorLayer);
+                }, 500)
+              }
             }
           })
         },
