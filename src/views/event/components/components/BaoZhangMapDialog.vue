@@ -211,6 +211,7 @@
           allBaoZhangData: [],
           hasSave:false,
           reviewInfoOverlay:null,
+          initFeatures:[]
         }
       },
       computed:{
@@ -258,6 +259,10 @@
       methods:{
         init(){
           this.clearInitData();
+          source&&source.clear();
+          if(this.initFeatures.length>0){
+            source.addFeatures(this.initFeatures);
+          }
           this.$nextTick().then(() => {
             map = this.$refs.olMap.getMap();
             mapManager = new MapManager(map);
@@ -275,7 +280,6 @@
             // 只要设置了组，这里数据一直是大于0
             if(this.allBaoZhangData.length>0){
               const idList=filterMapId(this.allBaoZhangData);
-              console.log(idList);
               if(!source){
                 source = new VectorSource({ wrapX: false });
                 vectorLayer = new VectorLayer({
@@ -286,7 +290,7 @@
                     }),
                     stroke: new Stroke({
                       color: '#fc7012',
-                      width: 2
+                      width: 5
                     }),
                     image: new CircleStyle({
                       radius: 7,
@@ -324,6 +328,7 @@
                 map.addLayer(vectorLayer);
               },500)
             }
+
           })
         },
         clearInitData(){
@@ -399,7 +404,7 @@
                 }),
                 stroke: new Stroke({
                   color: '#fc7012',
-                  width: 2
+                  width: 5
                 }),
                 image: new CircleStyle({
                   radius: 7,
@@ -428,11 +433,11 @@
         },
         editMapFeatures(){
           const _this=this;
-          modify = mapManager.activeModify(source);
-          modify.on("modifyend",function (e) {
-            const type=_this.tempChangeFeature.getGeometry().getType();
-            _this.drawFeatures[type].update.push(_this.tempChangeFeature);
-          });
+          // modify = mapManager.activeModify(source);
+          // modify.on("modifyend",function (e) {
+          //   const type=_this.tempChangeFeature.getGeometry().getType();
+          //   _this.drawFeatures[type].update.push(_this.tempChangeFeature);
+          // });
           source.on('addfeature', function(e) {
             e.preventDefault();
             const type=e.feature.getGeometry().getType();
@@ -444,11 +449,6 @@
           });
           source.on('removefeature', function(e) {
             e.preventDefault();
-            // console.log(_this.tempSource.getFeatures());
-            // if(_this.tempSource.hasFeature(e.feature)){
-            //   const type=e.feature.getGeometry().getType();
-            //   _this.drawFeatures[type].delete.push(e.feature);
-            // }
             const type=e.feature.getGeometry().getType();
             if(!_this.drawFeatures[type].add.includes(e.feature)){
               _this.drawFeatures[type].delete.push(e.feature);
@@ -465,7 +465,7 @@
           map.removeInteraction(modify);
           map.on('dblclick', this.mapClickHandler);
           if(draw){
-            mapManager.inactivateDraw(draw);
+            map.removeInteraction(draw);
           }
           select = new Select();
           map.addInteraction(select);
@@ -490,8 +490,9 @@
             }
           };
           let deleteData;
-          if (vectorLayer) {
-            vectorLayer.getSource().removeFeature(this.selectedFeature);
+          if (source) {
+            source.removeFeature(this.selectedFeature);
+            // vectorLayer.getSource()
             map.removeInteraction(select);
             for(let i=0;i<this.allBaoZhangData.length;i++){
               if(this.allBaoZhangData[i].mapId==this.selectedFeature.get('id')){
@@ -510,7 +511,6 @@
         },
         //双击区域后触发此方法，带出mapId
         showSetDialog(mapId,mapType){
-
           let flag = this.allBaoZhangData.some(item =>{
             return item.mapId === mapId
           });
@@ -573,15 +573,19 @@
           this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
           this.reset();
         },
+        closeDialog(){
+          source=null;
+          this.mapDialogVisible=false;
+        },
         //保存图形数据
         saveMap() {
           this.hasSave=true;
-          console.log('==编辑要素==',this.editFeatures)
           this.pointFeatures = [];
           this.lineFeatures = [];
           this.polygonFeatures = [];
           if (draw) {
-            mapManager.inactivateDraw(draw);
+            // mapManager.inactivateDraw(draw);
+            map.removeInteraction(draw);
           }
           console.log('新增还是编辑：mapOperateType', this.mapOperateType);
           if(this.mapOperateType=='add'){
@@ -618,6 +622,9 @@
           if(this.mapOperateType=='edit'){
             console.log('==drawFeature==',this.drawFeatures)
           }
+          this.initFeatures=source.getFeatures();
+          // source=null;
+          source.clear();
           console.log('this.allBaoZhangData', this.allBaoZhangData);
 
           let sourceData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
@@ -650,9 +657,10 @@
             if (draw) {
               mapManager.inactivateDraw(draw);
             }
-            if (vectorLayer) {
-              vectorLayer.getSource().clear();
-            }
+            source&&source.clear();
+            // if (vectorLayer) {
+            //   vectorLayer.getSource().clear();
+            // }
           }
           this.mapDialogVisible = false;
       },
