@@ -22,6 +22,7 @@ import Text from 'ol/style/Text';
 import LinearRing from 'ol/geom/LinearRing.js';
 import {Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon} from 'ol/geom.js';
 import  AnimatedCluster from 'ol-ext/layer/AnimatedCluster';
+import  SelectCluster from 'ol-ext/interaction/SelectCluster';
 
 export class MapManager {
   constructor(map) {
@@ -74,10 +75,19 @@ export class MapManager {
     const clusterLayer = new AnimatedCluster({
       name: 'Cluster',
       source: clusterSource,
+      zIndex:99,
       animationDuration: 700,
       style: getClusterStyle
     });
     this.map.addLayer(clusterLayer);
+    const selectCluster = new SelectCluster({
+      pointRadius: 7,
+      animate: true,
+      featureStyle: getSingleStyle,
+      style: getClusterStyle
+    });
+    this.map.addInteraction(selectCluster);
+    selectCluster.set('featureType','add');
     function getClusterStyle(feature, resolution) {
       let styleCache = {};
       if (!feature.get('features')) {
@@ -122,8 +132,30 @@ export class MapManager {
       }
       return [style];
     }
+    function getSingleStyle(feature) {
+      if (!feature.get('features')) {
+        return;
+      }
+      const style = new Style({
+        image:  new Icon({
+          src: require('@/assets/mapImage/'+feature.get('features')[0].get('icon')+'.png'),
+          anchor: [0.5, 0.5],
+          size: [30, 39],
+          opacity: 1
+        }),
+      });
+      if (feature.get('features')) {
+        if (feature.get('features').length == 1) {
+          return style;
+        } else {
+          return [ style ];
+        }
+      } else {
+        return style;
+      }
+    }
     clusterSource.getSource().addFeatures(features);
-    return clusterLayer;
+    return [clusterLayer,selectCluster];
   }
   /**
    * @description: 添加弹框

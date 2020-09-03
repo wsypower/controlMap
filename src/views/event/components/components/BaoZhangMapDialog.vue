@@ -240,7 +240,6 @@
             this.init();
           }
           else{
-
             this.$emit('update:visible', false);
           }
         },
@@ -318,8 +317,6 @@
               }
               const _this=this;
               setTimeout(()=>{
-                console.log('==source==',source);
-                console.log(source.getFeatures());
                 _this.tempSource=source;
                 if(this.nowOptType!='look'){
                   _this.editMapFeatures();
