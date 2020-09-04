@@ -279,7 +279,7 @@
           this.tempDrawFeature = _.cloneDeep(this.drawFeatures);
           this.initFinish=true;
           this.$nextTick().then(() => {
-            if(this.firstOpen) {
+            if(this.firstOpen||!this.hasSave) {
               map = this.$refs.olMap.getMap();
               mapManager = new MapManager(map);
               //初始化地图弹框

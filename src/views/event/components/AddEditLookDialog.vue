@@ -706,11 +706,16 @@ import {postEmergencyFeatures} from '@/api/map/service'
         },[]);
 
         let isOk = true;
-        teamPersonData.forEach(teamPerson => {
-          if(!teamPerson.positionId){
-            isOk = false;
-          }
-        });
+        if(teamPersonData.length===0){
+          isOk = false;
+        }
+        else{
+          teamPersonData.forEach(teamPerson => {
+            if(!teamPerson.positionId){
+              isOk = false;
+            }
+          });
+        }
         if(!isOk){
           this.$message.error('道路不可为空，至少输入一条道路');
           this.reviewLoading = false;
