@@ -1,12 +1,15 @@
 <template>
-  <div class="addr-list-page" flex="dir:left cross:center">
-    <div class="addr-list-page-left">
-      <department @getSelectRange="getSelectRange"></department>
+<!--  <div class="addr-list-page" flex="dir:left cross:center">-->
+<!--    <div class="addr-list-page-left">-->
+<!--      <department @getSelectRange="getSelectRange"></department>-->
+<!--    </div>-->
+<!--    <div class="addr-list-page-right">-->
+<!--      <person-table :rangeId="rangeId" :range="range"></person-table>-->
+<!--    </div>-->
+<!--  </div>-->
+    <div class="addr-list-page" style="background-color: #ffffff;padding:100px 40px">
+        <div style="font-size: 30px; color: #00a5ff">正在开发中...</div>
     </div>
-    <div class="addr-list-page-right">
-      <person-table :rangeId="rangeId" :range="range"></person-table>
-    </div>
-  </div>
 </template>
 
 <script type="text/ecmascript-6">
