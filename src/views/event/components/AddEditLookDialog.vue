@@ -368,6 +368,13 @@ import {postEmergencyFeatures} from '@/api/map/service'
               teamPerson.teamPersonData = [];
             })
           }
+
+          this.dunDianQuanDaoData.teamPersonList.forEach(teamPerson => {
+            teamPerson.teamPersonData.forEach(loadItem => {
+              loadItem.positionId = loadItem.address.length>0?loadItem.address[2].id:'';
+            })
+          })
+
           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',this.dunDianQuanDaoData);
           //如果进来的数据所有的中队已经全部确认了，那么提交审核按钮会出现
           let num = this.dunDianQuanDaoData.teamPersonList.reduce((acc,teamPerson) => {
@@ -398,6 +405,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
         if(data.dayRange&&data.dayRange.length>0){
           this.baseInfo['startDayTime'] = data.dayRange[0]._d.getTime();
           this.baseInfo['endDayTime'] = data.dayRange[1]._d.getTime();
+        }
+        else{
+          this.baseInfo['startDayTime'] = '';
+          this.baseInfo['endDayTime'] = '';
         }
       },
       //获取总指挥信息

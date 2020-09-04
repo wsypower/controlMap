@@ -206,6 +206,9 @@ export default {
         let endTime  = moment(this.submitForm.endDayTime).format('YYYY-MM-DD HH:mm:ss');
         this.submitForm.dayRange = [moment(startTime,'YYYY-MM-DD HH:mm:ss'),moment(endTime,'YYYY-MM-DD HH:mm:ss')]
       }
+      else{
+        this.submitForm.dayRange = [];
+      }
     },
     timeChange(dates,dateStrings){
       this.submitForm.dayRange = dates;

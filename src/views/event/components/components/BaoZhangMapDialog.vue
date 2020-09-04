@@ -596,11 +596,15 @@
         },
         closeDialog(){
           source=null;
+          this.infoOverlay&&this.infoOverlay.setPosition(undefined)
+          this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
           this.mapDialogVisible=false;
         },
         //保存图形数据
         saveMap() {
           this.hasSave=true;
+          this.infoOverlay&&this.infoOverlay.setPosition(undefined)
+          this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
           this.pointFeatures = [];
           this.lineFeatures = [];
           this.polygonFeatures = [];
@@ -667,6 +671,8 @@
         //重置视图
         resetMap(){
           this.clearInitData();
+          this.infoOverlay&&this.infoOverlay.setPosition(undefined)
+          this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
           if(vectorLayer){
             vectorLayer.getSource().clear();
           }
@@ -674,6 +680,8 @@
         //关闭保障视图弹窗
         handleCancel(){
           this.disableEdit = false;
+          this.infoOverlay&&this.infoOverlay.setPosition(undefined)
+          this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
           if(!this.hasSave) {
             this.allBaoZhangData = [];
             if (draw) {

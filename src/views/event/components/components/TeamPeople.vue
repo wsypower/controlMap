@@ -298,8 +298,8 @@
        else{
          //当编辑时会改变groupResultData值，从而改变store里面的数据
          this.teamPersonList = this.groupResultData.teamPersonList;
-         this.teamPersonList.map(teamItem => {
-           teamItem.teamPersonData.map(item => {
+         let temp = this.teamPersonList.reduce((needArr,teamItem)=> {
+           let needTeamItem = teamItem.teamPersonData.reduce((needTeam,item) => {
              item.addressIds = item.address.reduce((acc,ad) => {
                acc.push(ad.id);
                return acc
@@ -316,11 +316,20 @@
                  item.personObjList.push({id:id,name: '未知'});
                }
              })
-           });
-         });
+             needTeam.push(item);
+             return needTeam
+           },[]);
+           teamItem.teamPersonData = needTeamItem;
+           needArr.push(teamItem);
+           return needArr
+         },[]);
          //当是中队时，编辑时如果没有数据，则增加一条新数据
          if(this.userType==='zybm'){
-           this.teamPersonList.map(teamItem => {
+           //获取所有道路数据
+           this.getLoadTreeData().then( res => {
+             this.address = res;
+           });
+           let changeTemp = temp.reduce((acc,teamItem) => {
              if(teamItem.teamPersonData.length===0){
                let additem = {
                  key: '@@@',
@@ -335,12 +344,15 @@
                }
                teamItem.teamPersonData.push(additem);
              }
-           });
-           //获取所有道路数据
-           this.getLoadTreeData().then( res => {
-             this.address = res;
-           });
+             acc.push(teamItem)
+             return acc
+           },[]);
+           this.teamPersonList = changeTemp;
          }
+         else{
+           this.teamPersonList = temp;
+         }
+
        }
        console.log('this.teamPersonList', this.teamPersonList);
      },
