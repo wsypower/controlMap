@@ -266,10 +266,22 @@
        this.groupResultData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
        if(this.userType === 'qxsl'||this.userType === 'jld'||(this.userType === 'zybm'&&this.optType==='look')){
          this.teamPersonList = JSON.parse(JSON.stringify(this.groupResultData.teamPersonList));
-         this.teamPersonList.map(teamItem => {
-           teamItem.teamPersonData.map(item => {
-             let personTemp = this.peopleList.find(person => person.id === item.leaderId);
-             item.leaderName = personTemp.name;
+         let teamPersonTempList = this.teamPersonList.reduce((teamPersonList,teamItem) => {
+           let teamPersonTempData = teamItem.teamPersonData.reduce((teamPersonData,item) => {
+
+             if(item.leaderId===''){
+               item.leaderName = '';
+             }
+             else{
+               let personTemp = this.peopleList.find(person => person.id === item.leaderId);
+               if(personTemp){
+                 item.leaderName = personTemp.name;
+               }
+               else{
+                 item.leaderName = '未知';
+               }
+             }
+
              item.addressName = item.address.reduce((acc,ad) => {
                acc =  acc + '--' + ad.name
                return acc
@@ -285,8 +297,14 @@
                  item.personList.push({id:id,name: '未知'});
                }
              })
-           });
-         });
+             teamPersonData.push(item);
+             return teamPersonData
+           },[]);
+           teamItem.teamPersonData = teamPersonTempData;
+           teamPersonList.push(teamItem);
+           return teamPersonList
+         },[]);
+         this.teamPersonList = teamPersonTempList;
          let num = this.teamPersonList.reduce((total,item) => {
            if(item.checkStatusId === '3'){
              total = total +1;
