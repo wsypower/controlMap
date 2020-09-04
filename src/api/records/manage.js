@@ -19,7 +19,7 @@ import request from '@/plugins/axios/axios'
 export function getAllAddressData(data) {
   console.log('api:getAllAddressData', data)
   return request({
-    url: '@test/getAllAddressData_t=' + new Date().getTime(),
+    url: 'event/getAllAddressData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -48,9 +48,9 @@ export function getAllAddressData(data) {
 export const getAllRecordsDataList = data => {
   console.log('api:getAllRecordsDataList', data)
   return request({
-    url: `@test/getAllRecordsDataList_t=` + new Date().getTime(),
-    method: 'get',
-    params: data
+    url: '/statistics/event/query',
+    method: 'post',
+    data
   })
 }
 

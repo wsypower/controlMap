@@ -13,14 +13,14 @@ export default {
       //tab标签
       tabData: [
         {
-          name: '统计分析',
-          component: StatisticalAnalysis,
-          hasScroll: true
-        },
-        {
           name: '车辆管控',
           component: CarManage,
           hasScroll: false
+        },
+        {
+          name: '统计分析',
+          component: StatisticalAnalysis,
+          hasScroll: true
         }
       ]
     }

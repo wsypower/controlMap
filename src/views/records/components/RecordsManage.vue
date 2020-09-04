@@ -3,18 +3,18 @@
     <div class="search-panel">
       <div flex="fir:left cross:center" style="margin-bottom: 10px">
         <label style="width: 80px;">案卷状态：</label>
-        <a-radio-group name="recordsStatus" v-model="query.statusId">
-          <a-radio :value="1">超期</a-radio>
-          <a-radio :value="2">紧急</a-radio>
+        <a-radio-group name="recordsStatus" v-model="query.type">
+          <a-radio :value="2">超期</a-radio>
+          <a-radio :value="1">紧急</a-radio>
           <a-radio :value="3">督办</a-radio>
         </a-radio-group>
       </div>
       <div flex="fir:left cross:center" style="margin-bottom: 10px">
         <label style="width: 80px;">查询时间：</label>
-        <a-radio-group name="searchType" v-model="query.timeTypeId">
-          <a-radio :value="1">今日</a-radio>
-          <a-radio :value="2">本月</a-radio>
-          <a-radio :value="3">历史</a-radio>
+        <a-radio-group name="searchType" v-model="query.timetype">
+          <a-radio :value="0">今日</a-radio>
+          <a-radio :value="1">本月</a-radio>
+          <a-radio :value="2">历史</a-radio>
         </a-radio-group>
       </div>
       <div flex="fir:left cross:center" style="margin-bottom: 10px">
@@ -50,15 +50,15 @@
           </div>
           <div class="item-right" flex="cross:center">
             <div class="description-panel">
-              <div class="name-panel" :title="itemData.name">【{{ itemData.code }}】</div>
+              <div class="name-panel" :title="itemData.taskcode">【{{ itemData.taskcode }}】</div>
               <div flex>
-                <span>类型：</span><span>{{ itemData.typeName }}</span>
+                <span>类型：</span><span>{{ itemData.type1name }}</span>
               </div>
               <div flex>
-                <span>描述：</span><span :title="itemData.description">{{ itemData.description }}</span>
+                <span>描述：</span><span :title="itemData.eventdesc">{{ itemData.eventdesc }}</span>
               </div>
             </div>
-            <div class="photo"><img :src="itemData.photoUrl" /></div>
+            <div class="photo"><img :src="itemData.url" /></div>
           </div>
         </div>
         <div v-if="dataList.length > 20" class="pagination-panel">
@@ -85,6 +85,8 @@ import { mapActions,mapState } from 'vuex'
 import Pin from '../../emergency/components/Position.vue';
 import RecordInfo from './RecordInfo.vue';
 import { pointByCoord } from '@/utils/util.map.manage';
+import util from '@/utils/util';
+const userId = util.cookies.get('userId');
 export default {
   name: 'recordsManage',
   components:{
@@ -97,11 +99,15 @@ export default {
       addressData: [],
       //各项查询条件
       query: {
-        statusId: 1,
-        timeTypeId: 1,
+        userId: userId,
+        type: 1,
+        timetype: 0,
         address: [],
-        pageNo: 1,
-        pageSize: 20
+        areaId: '',
+        streetId: '',
+        countryId: '',
+        curpage: 1,
+        pagesize: 20
       },
       //查询时的过渡效果
       showLoading: false,
@@ -120,8 +126,8 @@ export default {
       ...mapState('map', ['mapManager']),
   },
   mounted(){
-    this.getAllAddressData().then(res=>{
-      this.addressData = res.data;
+    this.getAllAddressData({userId: userId}).then(res=>{
+      this.addressData = res;
     });
     this.getDataList();
     this.map = this.mapManager.getMap();
@@ -140,27 +146,30 @@ export default {
     onChange(val){
       console.log('onChange', val);
       this.query.address = val;
+      this.query.areaId = val[0]?val[0]:'';
+      this.query.streetId = val[1]?val[1]:'';
+      this.query.countryId = val[2]?val[2]:'';
     },
-    //获取人员轨迹数据
+    //获取案卷数据
     getDataList(){
       console.log('this.query',this.query);
       this.showLoading = true;
       this.getAllRecordsDataList(this.query).then(res=>{
         this.showLoading = false;
-        this.dataList = res.data.list;
-        this.totalSize = res.data.total;
+        this.dataList = res.data;
+        this.totalSize = res.count;
         this.eventPointHandler(this.dataList);
       });
     },
     //查询(默认显示当天，当前登入的用户)
     onSearch() {
-      this.query.pageNo = 1;
+      this.query.curpage = 1;
       this.getDataList()
     },
     //翻页
     changePagination(pageNo, pageSize) {
       console.log('changePagination', pageNo, pageSize);
-      this.query.pageNo = pageNo;
+      this.query.curpage = pageNo;
       this.getDataList()
     },
     clickDataItem(item,index){
@@ -198,8 +207,8 @@ export default {
     eventPointHandler(list){
         const features=[];
         list.forEach((item)=>{
-            if(item.x&&item.x.length>0&&item.y&&item.y.length>0){
-                const feature=pointByCoord([parseFloat(item.x),parseFloat(item.y)]);
+            if(item.x84&&item.x84.length>0&&item.y84&&item.y84.length>0){
+                const feature=pointByCoord([parseFloat(item.x84),parseFloat(item.y84)]);
                 feature.set('icon','event');
                 feature.set('props',item);
                 feature.set('type','eventPosition');

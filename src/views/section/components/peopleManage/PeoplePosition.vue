@@ -24,7 +24,7 @@
           <img slot="female" src="~@img/avatar-female.png" />
           <img slot="female-outline" src="~@img/avatar-female-outline.png" />
           <template slot="title" slot-scope="{ title }">
-            <span v-if="title.indexOf(searchValue) > -1">
+            <span v-if="title&&title.indexOf(searchValue) > -1">
               {{ title.substr(0, title.indexOf(searchValue)) }}
               <span style="color: #f50">{{ searchValue }}</span>
               {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}

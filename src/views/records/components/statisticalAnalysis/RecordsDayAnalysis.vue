@@ -41,18 +41,101 @@ export default {
     //获取越界数据
     getChartData(){
       //this.chartData = [['一月','二月','三月','四月','五月'],[20,30,40,50,60],[40,50,60,30,20],[60,70,40,50,20]];
-      this.getRecordsDayAnalysisData({year: this.year}).then(res=>{
-        console.log('getRecordsDayAnalysisData',res);
-        let xArr = [], yArr1 = [], yArr2 = [], yArr3 = [];
-        res.data.forEach(item=>{
-          xArr.push(item.month);
-          yArr1.push(item.num1);
-          yArr2.push(item.num2);
-          yArr3.push(item.num3);
-        })
-        this.chartData = [xArr, yArr1, yArr2, yArr3];
-        this.chartInit();
+      // this.getRecordsDayAnalysisData({year: this.year}).then(res=>{
+      //   console.log('getRecordsDayAnalysisData',res);
+      //   let xArr = [], yArr1 = [], yArr2 = [], yArr3 = [];
+      //   res.data.forEach(item=>{
+      //     xArr.push(item.month);
+      //     yArr1.push(item.num1);
+      //     yArr2.push(item.num2);
+      //     yArr3.push(item.num3);
+      //   })
+      //   this.chartData = [xArr, yArr1, yArr2, yArr3];
+      //   this.chartInit();
+      // })
+      let data = [
+        {
+          month: '一月',
+          num1: 20,
+          num2: 40,
+          num3: 60
+        },
+        {
+          month: '二月',
+          num1: 30,
+          num2: 50,
+          num3: 70
+        },
+        {
+          month: '三月',
+          num1: 40,
+          num2: 60,
+          num3: 40
+        },
+        {
+          month: '四月',
+          num1: 50,
+          num2: 30,
+          num3: 50
+        },
+        {
+          month: '五月',
+          num1: 60,
+          num2: 20,
+          num3: 20
+        },
+        {
+          month: '六月',
+          num1: 40,
+          num2: 30,
+          num3: 30
+        },
+        {
+          month: '七月',
+          num1: 10,
+          num2: 20,
+          num3: 10
+        },
+        {
+          month: '八月',
+          num1: 20,
+          num2: 60,
+          num3: 30
+        },
+        {
+          month: '九月',
+          num1: 20,
+          num2: 40,
+          num3: 60
+        },
+        {
+          month: '十月',
+          num1: 20,
+          num2: 40,
+          num3: 60
+        },
+        {
+          month: '十一月',
+          num1: 80,
+          num2: 40,
+          num3: 60
+        },
+        {
+          month: '十二月',
+          num1: 100,
+          num2: 40,
+          num3: 60
+        }
+      ]
+      let xArr = [], yArr1 = [], yArr2 = [], yArr3 = [];
+      data.forEach(item=>{
+        xArr.push(item.month);
+        yArr1.push(item.num1);
+        yArr2.push(item.num2);
+        yArr3.push(item.num3);
       })
+      this.chartData = [xArr, yArr1, yArr2, yArr3];
+      this.chartInit();
     },
     //初始化图表
     chartInit(){

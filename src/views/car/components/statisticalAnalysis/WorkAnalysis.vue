@@ -85,28 +85,156 @@ export default {
       },
         //获取人员状态数据
         getChartData(){
-            this.getCarWorkInfoData().then(res=>{
-              this.sourceData = res.data;
-              res.data.forEach((item) => {
-                this.carTypeData.push(item.type);
-              });
-              let tempData = res.data[0].groupData;
-              let groupArr = [];
-              let totalArr = [];
-              let lcArr = [];
-              let yjlcArr = [];
-              let cslcArr = [];
-              tempData.forEach((item) => {
-                groupArr.push(item.groupName);
-                totalArr.push(-item.totalNum);
-                lcArr.push(item.lc);
-                cslcArr.push(item.cslc);
-                yjlcArr.push(item.yjlc);
-              });
-              this.chartData = [groupArr,totalArr,lcArr,cslcArr,yjlcArr];
-              this.chartInit();
-            });
-
+            // this.getCarWorkInfoData().then(res=>{
+            //   this.sourceData = res.data;
+            //   res.data.forEach((item) => {
+            //     this.carTypeData.push(item.type);
+            //   });
+            //   let tempData = res.data[0].groupData;
+            //   let groupArr = [];
+            //   let totalArr = [];
+            //   let lcArr = [];
+            //   let yjlcArr = [];
+            //   let cslcArr = [];
+            //   tempData.forEach((item) => {
+            //     groupArr.push(item.groupName);
+            //     totalArr.push(-item.totalNum);
+            //     lcArr.push(item.lc);
+            //     cslcArr.push(item.cslc);
+            //     yjlcArr.push(item.yjlc);
+            //   });
+            //   this.chartData = [groupArr,totalArr,lcArr,cslcArr,yjlcArr];
+            //   this.chartInit();
+            // });
+          let data = [
+            {
+              type: '执法车',
+              groupData: [
+                {
+                  groupName: '中队名1',
+                  totalNum: 50,
+                  lc: 548,
+                  cslc: 223,
+                  yjlc: 150
+                },
+                {
+                  groupName: '中队名2',
+                  totalNum: 48,
+                  lc: 440,
+                  cslc: 165,
+                  yjlc: 190
+                },
+                {
+                  groupName: '中队名3',
+                  totalNum: 35,
+                  lc: 467,
+                  cslc: 324,
+                  yjlc: 90
+                },
+                {
+                  groupName: '中队名4',
+                  totalNum: 45,
+                  lc: 460,
+                  cslc: 245,
+                  yjlc: 125
+                },
+                {
+                  groupName: '中队名5',
+                  totalNum: 40,
+                  lc: 548,
+                  cslc: 380,
+                  yjlc: 95
+                },
+                {
+                  groupName: '中队名6',
+                  totalNum: 35,
+                  lc: 548,
+                  cslc: 354,
+                  yjlc: 80
+                },
+                {
+                  groupName: '中队名7',
+                  totalNum: 40,
+                  lc: 489,
+                  cslc: 310,
+                  yjlc: 105
+                }
+              ]
+            },
+            {
+              type: '渣土车',
+              groupData: [
+                {
+                  groupName: '中队名1',
+                  totalNum: 10,
+                  lc: 148,
+                  cslc: 123,
+                  yjlc: 50
+                },
+                {
+                  groupName: '中队名2',
+                  totalNum: 2,
+                  lc: 40,
+                  cslc: 15,
+                  yjlc: 0
+                },
+                {
+                  groupName: '中队名3',
+                  totalNum: 35,
+                  lc: 467,
+                  cslc: 324,
+                  yjlc: 90
+                },
+                {
+                  groupName: '中队名4',
+                  totalNum: 45,
+                  lc: 460,
+                  cslc: 245,
+                  yjlc: 125
+                },
+                {
+                  groupName: '中队名5',
+                  totalNum: 40,
+                  lc: 548,
+                  cslc: 380,
+                  yjlc: 95
+                },
+                {
+                  groupName: '中队名6',
+                  totalNum: 35,
+                  lc: 548,
+                  cslc: 354,
+                  yjlc: 80
+                },
+                {
+                  groupName: '中队名7',
+                  totalNum: 40,
+                  lc: 489,
+                  cslc: 310,
+                  yjlc: 105
+                }
+              ]
+            }
+          ]
+          this.sourceData = data;
+          data.forEach((item) => {
+            this.carTypeData.push(item.type);
+          });
+          let tempData = data[0].groupData;
+          let groupArr = [];
+          let totalArr = [];
+          let lcArr = [];
+          let yjlcArr = [];
+          let cslcArr = [];
+          tempData.forEach((item) => {
+            groupArr.push(item.groupName);
+            totalArr.push(-item.totalNum);
+            lcArr.push(item.lc);
+            cslcArr.push(item.cslc);
+            yjlcArr.push(item.yjlc);
+          });
+          this.chartData = [groupArr,totalArr,lcArr,cslcArr,yjlcArr];
+          this.chartInit();
         },
         //初始化图表
         chartInit(){

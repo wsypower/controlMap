@@ -110,38 +110,48 @@
           <div class="file-img-content" flex>
             <div class="file-img-content-item">
               <div class="img-box" v-if="handleBeforeObj.photosList.length>1">
-                <swiper :options="swiperOption" ref="beforeSwiper">
+                <swiper :options="swiperOption" ref="beforeSwiper" style="height:100%">
                   <swiper-slide v-for="(item, index) in handleBeforeObj.photosList" :key="index">
-                    <img :src="item" alt="" />
+                    <div class="photo-panel">
+                      <img class="photo-panel_img" :src="item.imgUrl" alt="" />
+                      <div class="photo-panel_mes"><span>{{item.type}}</span><span>{{ new Date(item.time) | date_format() }}</span></div>
+                    </div>
                   </swiper-slide>
                 </swiper>
                 <div class="swiper-button-prev" slot="button-prev"><a-icon type="left" /></div>
                 <div class="swiper-button-next" slot="button-next"><a-icon type="right" /></div>
               </div>
               <div class="img-box" v-else>
-                <img v-for="(item, index) in handleBeforeObj.photosList" :key="index" :src="item" />
+                <div class="photo-panel" v-for="(item, index) in handleBeforeObj.photosList" :key="index">
+                  <img class="photo-panel_img" :src="item.imgUrl" alt="" />
+                  <div class="photo-panel_mes"><span>{{item.type}}</span><span>{{ new Date(item.time) | date_format() }}</span></div>
+                </div>
               </div>
               <div class="img-box-title">
                 <div>处理前（{{handleBeforeObj.photosList.length}}）</div>
-                <div>{{ new Date(handleBeforeObj.uploadTime) | date_format() }}</div>
               </div>
             </div>
             <div class="file-img-content-item">
               <div class="img-box" v-if="handleAfterObj.photosList.length>1">
-                <swiper :options="swiperOption" ref="afterSwiper">
+                <swiper :options="swiperOption" ref="afterSwiper" style="height:100%">
                   <swiper-slide v-for="(item, index) in handleAfterObj.photosList" :key="index">
-                    <img :src="item" alt="" />
+                    <div class="photo-panel">
+                      <img class="photo-panel_img" :src="item.imgUrl" alt="" />
+                      <div class="photo-panel_mes"><span>{{item.type}}</span><span>{{ new Date(item.time) | date_format() }}</span></div>
+                    </div>
                   </swiper-slide>
                 </swiper>
                 <div class="swiper-button-prev" slot="button-prev"><a-icon type="left" /></div>
                 <div class="swiper-button-next" slot="button-next"><a-icon type="right" /></div>
               </div>
               <div class="img-box" v-else>
-                <img v-for="(item, index) in handleAfterObj.photosList" :key="index" :src="item">
+                <div class="photo-panel" v-for="(item, index) in handleAfterObj.photosList" :key="index">
+                  <img class="photo-panel_img" :src="item.imgUrl" alt="" />
+                  <div class="photo-panel_mes"><span>{{item.type}}</span><span>{{ new Date(item.time) | date_format() }}</span></div>
+                </div>
               </div>
               <div class="img-box-title">
                 <div>处理后（{{handleAfterObj.photosList.length}}）</div>
-                <div>{{ new Date(handleAfterObj.uploadTime) | date_format() }}</div>
               </div>
             </div>
           </div>
@@ -464,6 +474,7 @@ export default {
                 width: 60%;
               }
               span {
+                flex: 1;
                 color: #333333;
               }
             }
@@ -481,6 +492,7 @@ export default {
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 2;
+                flex: 1;
               }
             }
           }
@@ -506,9 +518,29 @@ export default {
               background: #fafafa url('~@img/noImage.png') no-repeat 30px 10px;
               overflow: hidden;
               position: relative;
-              img {
+              .photo-panel{
                 width: 100%;
+                height: 100%;
+                position: relative;
+                img {
+                  width: 100%;
+                }
+                .photo-panel_mes{
+                  position: absolute;
+                  bottom: 0px;
+                  left: 0px;
+                  width: 100%;
+                  height: 30px;
+                  line-height: 30px;
+                  padding-left: 10px;
+                  background-color: rgba(0,0,0,0.5);
+                  color: #fff;
+                  span:last-child{
+                    margin-left: 5px;
+                  }
+                }
               }
+
               .swiper-button-prev,
               .swiper-button-next {
                 position: absolute;
