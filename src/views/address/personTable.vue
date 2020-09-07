@@ -29,7 +29,8 @@
                         <span>{{item.department}}</span>
                         <span>{{item.phone}}</span>
                         <span>{{item.bindEquip}}</span>
-                        <span :class="{red: item.bindStatus=='0'}">{{item.bindStatus==='0'?'未绑定':''}}</span>
+                        <span v-if="item.bindStatus" :class="{red: item.bindStatus=='0'}">{{item.bindStatus==='0'?'未绑定':'已绑定'}}</span>
+                        <span v-else></span>
                     </li>
                 </my-scroll>
             </ul>
@@ -73,6 +74,10 @@ export default {
     groupType:{
       type: String,
       default: ''
+    },//
+    placeCode:{
+      type: String,
+      default: ''
     }
   },
   data(){
@@ -86,6 +91,7 @@ export default {
         type: '',
         groupType: '',
         rangeId: '',
+        placecode: '',
         searchValue: '',
         pageSize: 12,
         pageNo: 1
@@ -96,10 +102,27 @@ export default {
   watch:{
     rangeId: {
       handler:function(value){
+        this.query = Object.assign({},this.$options.data()['query']);
         this.header = this.range.substring(0,this.range.length-1).split('@').reverse().join(' > ')
-        this.query.rangeId = value;
         this.query.type = this.type;
-        this.query.groupType = this.groupType;
+        console.log('rangeid', value);
+        if(this.query.type==='2'){
+          if(this.groupType){
+            this.query.groupType = this.groupType;
+            this.query.rangeId = value.split('@')[0];
+          }else{
+            this.query.rangeId = value;
+          }
+        }
+        else{
+          if(value.split('@').length === 1){
+            this.query.placecode = '';
+          }
+          else{
+            this.query.placecode = this.placeCode;
+          }
+        }
+
         this.getTableListData();
       },
       immediate: false

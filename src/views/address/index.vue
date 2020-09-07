@@ -4,7 +4,7 @@
       <department @getSelectRange="getSelectRange"></department>
     </div>
     <div class="addr-list-page-right">
-      <person-table :rangeId="rangeId" :range="range" :type="type" :groupType="groupType"></person-table>
+      <person-table :rangeId="rangeId" :range="range" :type="type" :groupType="groupType" :placeCode="placeCode"></person-table>
     </div>
   </div>
 <!--    <div class="addr-list-page" style="background-color: #ffffff;padding:100px 40px">-->
@@ -26,7 +26,8 @@ export default {
       rangeId: 'all',
       range: '国测',
       type: '1',
-      groupType: ''
+      groupType: '',
+      placeCode: ''
     }
   },
   methods:{
@@ -36,6 +37,7 @@ export default {
       this.range = data.range;
       this.type = data.type;
       this.groupType = data.groupType;
+      this.placeCode = data.placeCode;
     }
   }
 }

@@ -35,7 +35,8 @@ export default {
     //获得展示的数据与属性
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
-      this.changeTreeData(data,'');
+      this.changeTreeData(data,'','');
+      console.log('changeTreeData',data);
       return data;
     }
   },
@@ -44,6 +45,7 @@ export default {
     this.getAllAddressListTreeData().then(res=>{
       console.log('getAllAddressListTreeData',res);
       this.sourceData = res;
+      this.sourceData[0].id = "all" + this.sourceData[0].id
       this.selectedKeys.push(this.sourceData[0].id);
       let data = {
         id: this.sourceData[0].id,
@@ -58,32 +60,34 @@ export default {
   methods:{
     ...mapActions('address/list', ['getAllAddressListTreeData']),
     //给后端的数据增加一些前端展示与判断需要的属性
-    changeTreeData(arr,deptName){
+    changeTreeData(arr,deptName,id){
       const _this = this;
       arr.forEach(item=>{
         item.scopedSlots = { title: 'title' };
         if(item.isLeaf){
           item.title = item.name;
-          item.key = item.id;
+          item.key = id + '@' + item.id;
           item.range = item.name + '@' + deptName;
           item.slots = {icon: 'dot'};
           item.class = 'itemClass';
         }
         else{
           item.title = item.name;
-          item.key = item.id;
+          item.key = id ? id + '@' + item.id : item.id;
           item.range = item.name + '@' + deptName;
           // item.slots = {icon: 'dept'};
-          this.changeTreeData(item.children, item.range);
+          this.changeTreeData(item.children, item.range,item.id);
         }
       })
     },
     onSelect(selectedKeys, e){
+      console.log('select',e);
       let needData = e.selectedNodes[0].data.props;
       let data = {
-        id:needData.id,
+        id: needData.dataRef.key,
+        placeCode: needData.placecode ? needData.placecode:'',
         range: needData.range,
-        type: this.sourceData[0].type,
+        type: needData.type,
         groupType: needData.groupType ? needData.groupType : ''
       }
       this.$emit('getSelectRange', data)
