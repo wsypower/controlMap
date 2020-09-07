@@ -20,7 +20,7 @@ import request from '@/plugins/axios/axios'
 export function getAllAddressListTreeData(data) {
   console.log('api:getAllAddressListTreeData', data)
   return request({
-    url: '@test/getAllAddressListTreeData?_t=' + new Date().getTime(),
+    url: 'planEvent/getAllAddressListTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -40,7 +40,7 @@ export function getAllAddressListTreeData(data) {
 export function getAllPersonListData(data) {
   console.log('api:getAllPersonListData', data)
   return request({
-    url: '@test/getAllPersonListData?_t=' + new Date().getTime(),
+    url: 'planEvent/getAllPersonListData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

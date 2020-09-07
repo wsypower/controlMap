@@ -1,15 +1,15 @@
 <template>
-<!--  <div class="addr-list-page" flex="dir:left cross:center">-->
-<!--    <div class="addr-list-page-left">-->
-<!--      <department @getSelectRange="getSelectRange"></department>-->
-<!--    </div>-->
-<!--    <div class="addr-list-page-right">-->
-<!--      <person-table :rangeId="rangeId" :range="range"></person-table>-->
-<!--    </div>-->
-<!--  </div>-->
-    <div class="addr-list-page" style="background-color: #ffffff;padding:100px 40px">
-        <div style="font-size: 30px; color: #00a5ff">正在开发中...</div>
+  <div class="addr-list-page" flex="dir:left cross:center">
+    <div class="addr-list-page-left">
+      <department @getSelectRange="getSelectRange"></department>
     </div>
+    <div class="addr-list-page-right">
+      <person-table :rangeId="rangeId" :range="range" :type="type" :groupType="groupType"></person-table>
+    </div>
+  </div>
+<!--    <div class="addr-list-page" style="background-color: #ffffff;padding:100px 40px">-->
+<!--        <div style="font-size: 30px; color: #00a5ff">正在开发中...</div>-->
+<!--    </div>-->
 </template>
 
 <script type="text/ecmascript-6">
@@ -23,8 +23,10 @@ export default {
   },
   data(){
     return {
-      rangeId: '',
-      range: ''
+      rangeId: 'all',
+      range: '国测',
+      type: '1',
+      groupType: ''
     }
   },
   methods:{
@@ -32,6 +34,8 @@ export default {
       console.log('getSelectRange', data);
       this.rangeId = data.id;
       this.range = data.range;
+      this.type = data.type;
+      this.groupType = data.groupType;
     }
   }
 }

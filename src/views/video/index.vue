@@ -208,6 +208,16 @@ export default {
     },
     openVideoPlayer(videoList){
       console.log('openVideoPlayer',videoList);
+      if(videoList.length>0){
+        videoList.forEach(mpid => {
+          this.getCameraUrl({mpid: mpid}).then(res => {
+            console.log('getCameraUrl',res.data);
+            const data=res.data;
+            let url = data.mediaURL;
+            this.playVideo(url);
+          })
+        })
+      }
     },
     // 地图点击事件
     videoMapClickHandler({ pixel, coordinate }) {
@@ -263,7 +273,7 @@ export default {
         }
         .result_body {
             height: calc(100% - 150px);
-            padding: 0px 20px 20px 20px;
+            padding: 0px 20px 0px 20px;
             width: 100%;
             .result_body-main{
                 position: relative;

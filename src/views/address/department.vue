@@ -42,12 +42,14 @@ export default {
   mounted() {
     this.showLoading = true;
     this.getAllAddressListTreeData().then(res=>{
-      console.log('getAllAddressListTreeData',res.data);
-      this.sourceData = res.data;
+      console.log('getAllAddressListTreeData',res);
+      this.sourceData = res;
       this.selectedKeys.push(this.sourceData[0].id);
       let data = {
         id: this.sourceData[0].id,
-        range: this.sourceData[0].name + '@'
+        range: this.sourceData[0].name + '@',
+        type: this.sourceData[0].type,
+        groupType: ''
       }
       this.$emit('getSelectRange', data)
       this.showLoading = false;
@@ -80,7 +82,9 @@ export default {
       let needData = e.selectedNodes[0].data.props;
       let data = {
         id:needData.id,
-        range: needData.range
+        range: needData.range,
+        type: this.sourceData[0].type,
+        groupType: needData.groupType ? needData.groupType : ''
       }
       this.$emit('getSelectRange', data)
     }

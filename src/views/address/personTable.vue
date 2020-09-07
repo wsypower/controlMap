@@ -29,7 +29,7 @@
                         <span>{{item.department}}</span>
                         <span>{{item.phone}}</span>
                         <span>{{item.bindEquip}}</span>
-                        <span :class="{red: item.bindStatus=='未绑定'}">{{item.bindStatus}}</span>
+                        <span :class="{red: item.bindStatus=='0'}">{{item.bindStatus==='0'?'未绑定':''}}</span>
                     </li>
                 </my-scroll>
             </ul>
@@ -65,6 +65,14 @@ export default {
     range:{
       type: String,
       default: '国测'
+    },
+    type:{
+      type: String,
+      default: '1'
+    },
+    groupType:{
+      type: String,
+      default: ''
     }
   },
   data(){
@@ -75,6 +83,8 @@ export default {
       tableData:[],
       totalSize: 0,
       query:{
+        type: '',
+        groupType: '',
         rangeId: '',
         searchValue: '',
         pageSize: 12,
@@ -88,9 +98,11 @@ export default {
       handler:function(value){
         this.header = this.range.substring(0,this.range.length-1).split('@').reverse().join(' > ')
         this.query.rangeId = value;
+        this.query.type = this.type;
+        this.query.groupType = this.groupType;
         this.getTableListData();
       },
-      immediate: true
+      immediate: false
     }
   },
   methods:{
@@ -108,9 +120,9 @@ export default {
       this.getAllPersonListData(this.query).then(res=>{
         console.log('getAllPersonListData',res.data);
         this.showLoading = false;
-        this.tableData = res.data;
-        this.totalSize = res.data.length;
-        let length = 12-res.data.length;
+        this.tableData = res.list;
+        this.totalSize = res.total;
+        let length = 12-res.list.length;
         if(length>0){
           for(let i=0;i<length;i++){
             this.tableData.push(row);
