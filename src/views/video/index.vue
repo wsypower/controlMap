@@ -137,25 +137,26 @@ export default {
             const selectCluster = data[1];
             const _this=this;
             selectCluster.getFeatures().on(['add'], function(e) {
-              _this.selectLayer.getSource().clear();
-            const c = e.element.get('features');
-            if (!c) {
-              return;
-            }
-            if(c.length <6){
-              _this.videoInfoData.videoList=[];
-              for(let i=0;i<c.length;i++){
-                const props=c[i].get('props');
-                _this.videoInfoData.videoList.push({
-                  label:props.mpname,
-                  value:props.mpid
-                })
+              _this.selectLayer&&_this.selectLayer.getSource().clear();
+              if(e.element.get('type')){
+                _this.$message.warning('当前视频已打开！！！');
               }
-              const coor = e.element.get('geometry').getCoordinates();
-              _this.selectOverlay.setPosition(coor);
-            }
-              // if (c.length == 1) {
-              // } else
+                const c = e.element.get('features');
+                if (!c) {
+                  return;
+                }
+                if(c.length <6){
+                  _this.videoInfoData.videoList=[];
+                  for(let i=0;i<c.length;i++){
+                    const props=c[i].get('props');
+                    _this.videoInfoData.videoList.push({
+                      label:props.mpname,
+                      value:props.mpid
+                    })
+                  }
+                  const coor = e.element.get('geometry').getCoordinates();
+                  _this.selectOverlay.setPosition(coor);
+                }
             });
             this.videoLayer.set('featureType','videoDistribute');
             const extent = this.videoLayer.getSource().getSource().getExtent();
