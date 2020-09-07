@@ -120,7 +120,7 @@ export default {
             if(Camera.status==='1'){
               feature.set('icon','carmera_online');
             } else{
-              feature.set('icon','carmera_online');
+              feature.set('icon','carmera_offline');
             }
             feature.set('props',Camera);
             feature.set('type','VideoDistribute');
