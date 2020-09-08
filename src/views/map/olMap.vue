@@ -53,7 +53,7 @@ export default {
         target: 'map',
         view: new View({
           projection: 'EPSG:4326',
-          center: [122.22190299972,30.26656000004],
+          center: [119.642882, 29.081101],
           zoom: 13,
           maxZoom: 20,
           minZoom: 7
@@ -144,10 +144,10 @@ export default {
         source: new WMTS({
           style: 'default',
           version: '1.0.0',
-          layer: 'ZJEMAP',
-          matrixSet: 'TileMatrixSet0',
-          format: 'image/png',
-          url: 'http://srv.zjditu.cn/ZJEMAP_2D/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          layer: 'emap',
+          matrixSet: 'default028mm',
+          format: 'image/jpgpng',
+          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap/2020_S2/oss',
           tileGrid: tdtGridzj,
           wrapX: true
         }),
@@ -159,10 +159,10 @@ export default {
         source: new WMTS({
           style: 'default',
           version: '1.0.0',
-          layer: 'ZJEMAPANNO',
-          matrixSet: 'TileMatrixSet0',
-          format: 'image/png',
-          url: 'http://srv.zjditu.cn/ZJEMAPANNO_2D/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          layer: 'emap_lab',
+          matrixSet: 'default028mm',
+          format: 'image/jpgpng',
+          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap_lab/2020_S2/oss',
           tileGrid: tdtGridzj,
           wrapX: true
         }),
