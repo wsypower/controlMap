@@ -9,9 +9,9 @@
         <label style="width: 90px;">告警类型：</label>
         <a-select v-model="query.alarmTypeId" showSearch placeholder="请选择" style="width: 100%">
           <a-select-option value="" :key="-1">所有</a-select-option>
-          <a-select-option v-for="(alarmType, index) in alarmTypeList" :value="alarmType.id" :key="index">{{
-            alarmType.name
-          }}</a-select-option>
+          <a-select-option v-for="(alarmType, index) in alarmTypeList" :value="alarmType.id" :key="index">
+            {{ alarmType.name }}
+          </a-select-option>
         </a-select>
       </div>
       <a-button type="primary" style="width: 100%" @click="onSearch">查询</a-button>

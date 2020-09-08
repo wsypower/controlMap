@@ -46,7 +46,7 @@
           :class="{ active: activeIndex === index }"
         >
           <div class="item-left">
-            <pin :content="index" :isActive="activeIndex === index"></pin>
+            <pin :isActive="activeIndex === index"></pin>
           </div>
           <div class="item-right" flex="cross:center">
             <div class="description-panel">
@@ -58,7 +58,7 @@
                 <span>描述：</span><span :title="itemData.eventdesc">{{ itemData.eventdesc }}</span>
               </div>
             </div>
-            <div class="photo"><img :src="itemData.url" /></div>
+            <div class="photo"><img :src="itemData.url ? itemData.fileServer + itemData.url:''" /></div>
           </div>
         </div>
         <div v-if="totalSize > 20" class="pagination-panel">
@@ -66,7 +66,7 @@
             :total="totalSize"
             :showTotal="total => `共 ${total} 条`"
             :pageSize="20"
-            :defaultCurrent="1"
+            :current="query.curpage"
             @change="changePagination"
           />
         </div>
