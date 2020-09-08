@@ -4,9 +4,9 @@
       <div flex="fir:left cross:center" style="margin-bottom: 10px">
         <label style="width: 80px;">案卷状态：</label>
         <a-radio-group name="recordsStatus" v-model="query.type">
-          <a-radio :value="2">超期</a-radio>
+          <a-radio :value="0">所有</a-radio>
           <a-radio :value="1">紧急</a-radio>
-          <a-radio :value="3">督办</a-radio>
+          <a-radio :value="2">超期</a-radio>
         </a-radio-group>
       </div>
       <div flex="fir:left cross:center" style="margin-bottom: 10px">
@@ -62,7 +62,7 @@
           </div>
         </div>
         <div v-if="totalSize > 20" class="pagination-panel">
-          <a-pagination
+          <a-pagination size="small"
             :total="totalSize"
             :showTotal="total => `共 ${total} 条`"
             :pageSize="20"
@@ -100,7 +100,7 @@ export default {
       //各项查询条件
       query: {
         userId: userId,
-        type: 1,
+        type: 0,
         timetype: 0,
         address: [],
         areaId: '',
@@ -315,6 +315,7 @@ export default {
         .photo {
           width: 100px;
           height: 70px;
+          overflow: hidden;
           img {
             width: 100%;
           }

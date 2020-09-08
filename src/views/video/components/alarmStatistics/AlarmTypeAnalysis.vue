@@ -27,22 +27,56 @@ export default {
         ...mapActions('video/statistical', ['getAlarmTypeAnalysisData']),
         //获取全部数据
         getChartData(){
-            this.getAlarmTypeAnalysisData().then(res=>{
-                console.log('getAlarmTypeAnalysisData',res);
-                //一次性获取全部数据，从而把数据进行归类显示
-              res.data.forEach((item) => {
-                let temp = {
-                  name: item.name +'  '+ item.num,
-                  value: item.num
-                }
-                this.dataArr.push(temp);
-              })
-              let totalNum = res.data.reduce((acc,item) => {
-                return acc + item.num
-              },0);
+          let data = [
+            {
+              name: '道路不洁',
+              num: 44
+            },
+            {
+              name: '机动车违停',
+              num: 23
+            },
+            {
+              name: '游商经营',
+              num: 45
+            },
+            {
+              name: '出店经营',
+              num: 77
+            },
+            {
+              name: '沿街违停',
+              num: 88
+            }
+          ]
+          data.forEach((item) => {
+            let temp = {
+              name: item.name +'  '+ item.num,
+              value: item.num
+            }
+            this.dataArr.push(temp);
+          })
+          let totalNum = data.reduce((acc,item) => {
+            return acc + item.num
+          },0);
 
-                this.chartInit(this.dataArr,totalNum);
-            })
+          this.chartInit(this.dataArr,totalNum);
+            // this.getAlarmTypeAnalysisData().then(res=>{
+            //     console.log('getAlarmTypeAnalysisData',res);
+            //     //一次性获取全部数据，从而把数据进行归类显示
+            //   res.data.forEach((item) => {
+            //     let temp = {
+            //       name: item.name +'  '+ item.num,
+            //       value: item.num
+            //     }
+            //     this.dataArr.push(temp);
+            //   })
+            //   let totalNum = res.data.reduce((acc,item) => {
+            //     return acc + item.num
+            //   },0);
+            //
+            //     this.chartInit(this.dataArr,totalNum);
+            // })
         },
         //初始化图表
         chartInit(data,total){
