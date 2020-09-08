@@ -61,7 +61,7 @@
             <div class="photo"><img :src="itemData.url" /></div>
           </div>
         </div>
-        <div v-if="dataList.length > 20" class="pagination-panel">
+        <div v-if="totalSize > 20" class="pagination-panel">
           <a-pagination
             :total="totalSize"
             :showTotal="total => `共 ${total} 条`"
@@ -116,7 +116,7 @@ export default {
       //总数
       totalSize: 0,
       //目前激活的告警
-      activeIndex: 0,
+      activeIndex: null,
       //案卷编码
       code: '',
       eventLayer:null
@@ -174,9 +174,9 @@ export default {
     },
     clickDataItem(item,index){
       this.activeIndex = index;
-      this.code = item.code.toString();
-      if(item.x&&item.y){
-          const coordinate=[parseFloat(item.x),parseFloat(item.y)];
+      this.code = item.taskcode.toString();
+      if(item.x84&&item.y84){
+          const coordinate=[parseFloat(item.x84),parseFloat(item.y84)];
           this.eventOverlay.setPosition(coordinate);
           this.mapManager.locateTo(coordinate);
       }else{
@@ -234,7 +234,7 @@ export default {
   height: 100%;
   width: 100%;
   .search-panel {
-    padding: 20px;
+    padding: 20px 20px 0px 20px;
     /deep/.ant-radio-wrapper {
       width: 70px;
     }
@@ -323,7 +323,7 @@ export default {
     }
     .pagination-panel {
       text-align: right;
-      padding: 20px 20px 0px 0px;
+      padding: 10px 20px 20px 0px;
     }
     .nodata-panel,
     .spin-panel {

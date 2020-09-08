@@ -83,9 +83,9 @@ export const getAllRecordsDataList = data => {
 export const getRecordDetailData = data => {
   console.log('api:getRecordDetailData', data)
   return request({
-    url: `@test/getRecordDetailData?_t=` + new Date().getTime(),
-    method: 'get',
-    params: data
+    url: `/event/detail`,
+    method: 'post',
+    data
   })
 }
 
@@ -109,7 +109,7 @@ export const getRecordDetailData = data => {
 export const getRecordPhotosData = data => {
   console.log('api:getRecordPhotosData', data)
   return request({
-    url: `@test/getRecordPhotosData?_t=` + new Date().getTime(),
+    url: `/event/getRecordPhotosData?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -128,8 +128,8 @@ export const getRecordPhotosData = data => {
 export const getRecordLogsData = data => {
   console.log('api:getRecordLogsData', data)
   return request({
-    url: `@test/getRecordLogsData?_t=` + new Date().getTime(),
-    method: 'get',
-    params: data
+    url: `event/log`,
+    method: 'post',
+    data
   })
 }

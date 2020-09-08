@@ -173,7 +173,7 @@ export default {
       this.getAllAlarmDataList(this.query).then(res=>{
         _this.showLoading = false;
         console.log('测试====',res);
-        _this.dataList = res.list;
+        _this.dataList = res.data;
         if(_this.dataList&&_this.dataList.length>0) {
             _this.alarmFeatures = this.dataList.map((d) => {
                 if (d.x && d.x.length > 0 && d.y && d.y.length > 0) {
@@ -244,7 +244,7 @@ export default {
   height: 100%;
   width: 100%;
   .search-panel {
-    padding: 20px;
+    padding: 20px 20px 0px 20px;
   }
   .table_header {
     padding: 10px 20px 5px 20px;

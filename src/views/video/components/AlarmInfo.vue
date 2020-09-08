@@ -68,6 +68,7 @@ export default{
       ...mapActions('video/manage', ['alarmNormalHandle','alarmReportHandle']),
       //关闭弹窗
       closeDialog(isRefresh){
+        this.remark = '';
         this.$emit('closeTip', isRefresh)
       },
       //未违规操作
