@@ -251,6 +251,7 @@ export default {
   },
   watch:{
     code: function(val){
+      console.log('watch code: ' + val);
       this.getRecordDetailData({taskcode: val}).then( res => {
         this.detailInfo = res;
       })

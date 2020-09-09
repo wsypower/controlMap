@@ -53,37 +53,37 @@ export default {
               onlineNum: 180
             },
             {
-              groupName: '越城区指挥平台',
+              groupName: '金东区指挥平台',
               allNum: 290,
               onWorkNum: 130,
               onlineNum: 230
             },
             {
-              groupName: '柯桥区指挥平台',
+              groupName: '婺城区指挥平台',
               allNum: 240,
               onWorkNum: 150,
               onlineNum: 180
             },
             {
-              groupName: '上虞区指挥平台',
+              groupName: '兰溪市指挥平台',
               allNum: 290,
               onWorkNum: 180,
               onlineNum: 230
             },
             {
-              groupName: '新昌县指挥平台',
+              groupName: '义乌市指挥平台',
               allNum: 260,
               onWorkNum: 70,
               onlineNum: 160
             },
             {
-              groupName: '诸暨市指挥平台',
+              groupName: '东阳市指挥平台',
               allNum: 275,
               onWorkNum: 130,
               onlineNum: 195
             },
             {
-              groupName: '嵊州市指挥平台',
+              groupName: '永康市指挥平台',
               allNum: 310,
               onWorkNum: 90,
               onlineNum: 220

@@ -194,7 +194,7 @@ export default {
     //地图点击事件
     eventMapClickHandler({ pixel, coordinate }){
         const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-        if(feature.get('features')) {
+        if(feature&&feature.get('features')) {
             const clickFeature = feature.get('features')[0];
             // const coordinates = clickFeature.getGeometry().getCoordinates();
             if (clickFeature && clickFeature.get('type') == 'eventPosition') {
