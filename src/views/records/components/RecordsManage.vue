@@ -215,6 +215,7 @@ export default {
                 features.push(feature);
             }
         })
+        
         //加载聚类车辆图层
         if(this.eventLayer){
             this.eventLayer.getSource().getSource().clear();
