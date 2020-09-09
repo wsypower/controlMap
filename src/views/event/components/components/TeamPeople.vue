@@ -421,11 +421,17 @@
          const target = newData.filter(item => key === item.key)[0];
          if (target) {
            target['addressIds'] = value;
-           let address = [{id: selectedOptions[0].value, name: selectedOptions[0].label},
-             {id: selectedOptions[1].value, name: selectedOptions[1].label},
-             {id: selectedOptions[2].value, name: selectedOptions[2].label}];
+           let address = [];
+           if(value.length!==0){
+             address = [{id: selectedOptions[0].value, name: selectedOptions[0].label},
+               {id: selectedOptions[1].value, name: selectedOptions[1].label},
+               {id: selectedOptions[2].value, name: selectedOptions[2].label}];
+             target['positionId'] = selectedOptions[2].value;
+           }
+           else{
+             target['positionId'] = '';
+           }
            target['address'] = address;
-           target['positionId'] = selectedOptions[2].value;
            this.teamPersonList[teamIndex].teamPersonData = newData;
          }
        },
