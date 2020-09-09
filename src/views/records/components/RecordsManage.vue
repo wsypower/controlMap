@@ -198,7 +198,7 @@ export default {
             const clickFeature = feature.get('features')[0];
             // const coordinates = clickFeature.getGeometry().getCoordinates();
             if (clickFeature && clickFeature.get('type') == 'eventPosition') {
-                this.code = clickFeature.get('props').code;
+                this.code = clickFeature.get('props').taskcode;
                 this.eventOverlay.setPosition(coordinate);
             }
         }
@@ -217,9 +217,12 @@ export default {
         })
         //加载聚类车辆图层
         if(this.eventLayer){
-            this.eventLayer.getSource().clear();
-            this.eventLayer.getSource().addFeatures(features);
+            this.eventLayer.getSource().getSource().clear();
+            this.eventLayer.getSource().getSource().addFeatures(features);
         }else{
+            if (features.length == 0) {
+              return;
+            }
             this.eventLayer = this.mapManager.addClusterLayerByFeatures(features);
             this.eventLayer.set('featureType','eventPosition');
         }
