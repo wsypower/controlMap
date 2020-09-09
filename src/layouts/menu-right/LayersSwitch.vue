@@ -134,7 +134,7 @@ export default {
             _this.getAllRecordsDataList({
               userId: userId,
               type: 0,
-              timetype: 1,
+              timetype: 0,
               curpage: 1,
               pagesize: 10000
             }).then(res => {
