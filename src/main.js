@@ -59,6 +59,10 @@ Vue.use(vuescroll, {
   name: 'myScroll' // 在这里自定义组件名字，默认是vueScroll
 });
 
+//图片放大查看
+import viewer from '@/plugins/cg-viewer';
+Vue.use(viewer)
+
 //mock => 生产环境(上线前请注释！！！)
 import '@/mock'
 

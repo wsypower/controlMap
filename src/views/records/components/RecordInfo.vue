@@ -110,7 +110,7 @@
           <div class="file-img-content" flex>
             <div class="file-img-content-item">
               <div class="img-box" v-if="handleBeforeObj.photosList.length>1">
-                <swiper :options="swiperOption" ref="beforeSwiper" style="height:100%">
+                <swiper :options="swiperOption" ref="beforeSwiper" style="height:100%" v-viewer>
                   <swiper-slide v-for="(item, index) in handleBeforeObj.photosList" :key="index">
                     <div class="photo-panel">
                       <img class="photo-panel_img" :src="fileServer + item.path" alt="" />
@@ -122,7 +122,7 @@
                 <div class="swiper-button-next" slot="button-next"><a-icon type="right" /></div>
               </div>
               <div class="img-box" v-else>
-                <div class="photo-panel" v-for="(item, index) in handleBeforeObj.photosList" :key="index">
+                <div class="photo-panel" v-for="(item, index) in handleBeforeObj.photosList" :key="index" v-viewer>
                   <img class="photo-panel_img" :src="fileServer + item.path" alt="" />
                   <div class="photo-panel_mes"><span>{{item.type}}</span><span>{{ new Date(item.createtime) | date_format() }}</span></div>
                 </div>
@@ -133,7 +133,7 @@
             </div>
             <div class="file-img-content-item">
               <div class="img-box" v-if="handleAfterObj.photosList.length>1">
-                <swiper :options="swiperOption" ref="afterSwiper" style="height:100%">
+                <swiper :options="swiperOption" ref="afterSwiper" style="height:100%" v-viewer>
                   <swiper-slide v-for="(item, index) in handleAfterObj.photosList" :key="index">
                     <div class="photo-panel">
                       <img class="photo-panel_img" :src="fileServer+item.path" alt="" />
@@ -145,7 +145,7 @@
                 <div class="swiper-button-next" slot="button-next"><a-icon type="right" /></div>
               </div>
               <div class="img-box" v-else>
-                <div class="photo-panel" v-for="(item, index) in handleAfterObj.photosList" :key="index">
+                <div class="photo-panel" v-for="(item, index) in handleAfterObj.photosList" :key="index" v-viewer>
                   <img class="photo-panel_img" :src="fileServer+item.path" alt="" />
                   <div class="photo-panel_mes"><span>{{item.type}}</span><span>{{ new Date(item.createtime) | date_format() }}</span></div>
                 </div>
@@ -450,6 +450,7 @@ export default {
                 position: relative;
                 img {
                   width: 100%;
+                  cursor: zoom-in;
                 }
                 .photo-panel_mes{
                   position: absolute;

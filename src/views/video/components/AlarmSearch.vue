@@ -57,7 +57,7 @@
                   <span>监控名称：</span><span>{{ itemData.cameraName }}</span>
                 </div>
               </div>
-              <div class="photo"><img :src="itemData.photoUrl" /></div>
+              <div class="photo" @click.stop v-viewer><img :src="itemData.photoUrl" /></div>
             </div>
           </div>
         </div>
@@ -341,6 +341,7 @@ export default {
           .photo {
             width: 84px;
             height: 60px;
+            cursor: zoom-in;
             img {
               width: 100%;
             }
