@@ -15,6 +15,9 @@
         </li>
       </ul>
     </div>
+    <div hidden>
+      <record-info ref="recordInfo" :code="code" @closeTip="closeTip"></record-info>
+    </div>
   </div>
 </template>
 <script>
@@ -24,6 +27,7 @@ import unselectedImg from '@/assets/mapImage/unselected.png';
 import { getTypePoint } from '@/api/map/service';
 import { gridStyle } from '@/utils/util.map.style';
 import { listToFeatures } from '@/utils/util.map.manage';
+import RecordInfo from '@/views/records/components/RecordInfo.vue';
 import util from '@/utils/util'
 let selectLayer = ['区县', '街道', '社区', '监督网格', '单元网格', '人员', '车辆', '视频', '案卷'];
 let gridLayer = ['区县', '街道', '社区', '监督网格', '单元网格'];
@@ -34,34 +38,37 @@ export default {
       type: Boolean
     },
   },
+  components: {
+    RecordInfo
+  },
   data() {
     return {
       allLayers: [{
-            name: '区县',
-            color:'#800000',
-            icon: require('@/assets/mapImage/qx.png'),
-            lyr: null
-        }, {
-            name: '街道',
-            color:'#400000',
-            icon: require('@/assets/mapImage/jd.png'),
-            lyr: null
-        }, {
-            name: '社区',
-            color:'#808080',
-            icon: require('@/assets/mapImage/sq.png'),
-            lyr: null
-        }, {
-            name: '监督网格',
-            color:'#0000FF',
-            icon: require('@/assets/mapImage/jdwg.png'),
-            lyr:null
-        }, {
-            name: '单元网格',
-            color:'#FF0000',
-            icon: require('@/assets/mapImage/dywg.png'),
-            lyr: null
-        },{
+        name: '区县',
+        color: '#800000',
+        icon: require('@/assets/mapImage/qx.png'),
+        lyr: null
+      }, {
+        name: '街道',
+        color: '#400000',
+        icon: require('@/assets/mapImage/jd.png'),
+        lyr: null
+      }, {
+        name: '社区',
+        color: '#808080',
+        icon: require('@/assets/mapImage/sq.png'),
+        lyr: null
+      }, {
+        name: '监督网格',
+        color: '#0000FF',
+        icon: require('@/assets/mapImage/jdwg.png'),
+        lyr: null
+      }, {
+        name: '单元网格',
+        color: '#FF0000',
+        icon: require('@/assets/mapImage/dywg.png'),
+        lyr: null
+      }, {
         name: '人员',
         icon: require('@/assets/mapImage/ry.png'),
         lyr: null
@@ -78,7 +85,8 @@ export default {
         icon: require('@/assets/mapImage/aj.png'),
         lyr: null
       }, ],
-      selectLayer: []
+      selectLayer: [],
+      code: ''
     }
   },
   computed: {
@@ -146,6 +154,14 @@ export default {
           }
         }
       });
+      this.map = this.mapManager.getMap();
+      this.map.on('click', this.mapClickHandler);
+      this.detailOverlay = this.mapManager.addOverlay({
+        id: 'detailOverlay',
+        offset: [0, -20],
+        positioning: 'bottom-center',
+        element: this.$refs.recordInfo.$el
+      });
     },
     toggleService(layer) {
       if (layer.name === '全部图层') {
@@ -173,7 +189,21 @@ export default {
           layer.lyr.setVisible(true)
         }
       }
-    }
+    },
+    closeTip() {
+      this.detailOverlay.setPosition(undefined);
+    },
+    mapClickHandler({ pixel, coordinate }) {
+      const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+      if (feature && feature.get('features')) {
+        const clickFeature = feature.get('features')[0];
+        // const coordinates = clickFeature.getGeometry().getCoordinates();
+        if (clickFeature && clickFeature.get('type') == 'eventPosition') {
+          this.code = clickFeature.get('props').taskcode;
+          this.detailOverlay.setPosition(coordinate);
+        }
+      }
+    },
   },
   destroyed() {
     this.allLayers.forEach(layer => {

@@ -408,7 +408,7 @@ export function listToFeatures(list, type) {
           });
           feature.set('icon', 'event');
           feature.set('props', item);
-          // feature.set('type','CarPosition');
+          feature.set('type', 'eventPosition');
           return feature;
         }
       });
