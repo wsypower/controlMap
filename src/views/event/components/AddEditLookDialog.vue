@@ -56,6 +56,8 @@
               <team-people v-else :eventId="eventId" :optType="optType" :peopleList="peopleListForTeam" @setSubmitBtnShow="setSubmitBtnShow" @reviewTeam="reviewTeam"></team-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData" @getResult="getJiDongXunChaResultData"></group-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData" @getResult="getHouQinBaoZhangResultData"></group-people>
+              <group-people-two :optType="optType" :groupData="zongHeXieTiaoData" @getResult="getZongHeXieTiaoResultData"></group-people-two>
+              <group-people-two :optType="optType" :groupData="jiJianDuChaData" @getResult="getJiJianDuChaResultData"></group-people-two>
             </a-collapse-panel>
             <a-collapse-panel key="3">
               <template slot="header">
@@ -112,6 +114,7 @@ import GroupTeam from './components/GroupTeam'
 import TeamPeople from './components/TeamPeople'
 import TeamPeopleForAdd from './components/TeamPeopleForAdd'
 import GroupPeople from './components/GroupPeople'
+import GroupPeopleTwo from './components/GroupPeopleTwo'
 import BaoZhangMapDialog from './components/BaoZhangMapDialog'
 import NewBaoZhangMapDialog from './components/NewBaoZhangMapDialog'
 import {postEmergencyFeatures} from '@/api/map/service'
@@ -125,6 +128,7 @@ import {postEmergencyFeatures} from '@/api/map/service'
       TeamPeople,
       TeamPeopleForAdd,
       GroupPeople,
+      GroupPeopleTwo,
       NewBaoZhangMapDialog,
       BaoZhangMapDialog
     },
@@ -231,9 +235,14 @@ import {postEmergencyFeatures} from '@/api/map/service'
             personList: []
           }]
         },
-        // groupDataStr: '',
-        // baoZhangDataStr: '',
-        // reviewUserId: '',
+        zongHeXieTiaoData:{
+          groupName: 'zonghexietiao',
+          description: ''
+        },
+        jiJianDuChaData:{
+          groupName: 'jijianducha',
+          description: ''
+        },
         baoZhangData: [],
         //各个按钮的点击效果
         reviewLoading:false,
@@ -388,6 +397,10 @@ import {postEmergencyFeatures} from '@/api/map/service'
           }
           this.jiDongXunChaData = res.groupData.jiDongXunChaData;
           this.houQinBaoZhangData = res.groupData.houQinBaoZhangData;
+
+          this.zongHeXieTiaoData = res.groupData.zongHeXieTiaoData;
+          this.jiJianDuChaData = res.groupData.jiJianDuChaData;
+
           //如果是中队，则选择的人员范围为这个中队内的人员
           if(this.userType==='zybm'){
             this.getPeopleDataList({id:this.dunDianQuanDaoData.teamPersonList[0].teamId}).then(res => {
@@ -432,6 +445,15 @@ import {postEmergencyFeatures} from '@/api/map/service'
         this.houQinBaoZhangData = JSON.parse(JSON.stringify(data));
       },
 
+      //获取综合协调组数据
+      getZongHeXieTiaoResultData(data){
+        this.zongHeXieTiaoData = JSON.parse(JSON.stringify(data));
+      },
+
+      //获取纪检督查组数据
+      getJiJianDuChaResultData(data){
+        this.jiJianDuChaData = JSON.parse(JSON.stringify(data));
+      },
       /****************保障视图操作区域 start******************/
       //开启保障视图弹窗
       openBaoZhangMapDialog(){
@@ -575,7 +597,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
             fuZhiHuiData: this.fuZhiHuiData,
             dunDianQuanDaoData: this.dunDianQuanDaoData,
             jiDongXunChaData: this.jiDongXunChaData,
-            houQinBaoZhangData: this.houQinBaoZhangData
+            houQinBaoZhangData: this.houQinBaoZhangData,
+            zongHeXieTiaoData: this.zongHeXieTiaoData,
+            jiJianDuChaData: this.jiJianDuChaData
           })
         }
         if(this.optType!=='add'){
@@ -642,7 +666,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
             fuZhiHuiData: this.fuZhiHuiData,
             dunDianQuanDaoData: this.dunDianQuanDaoData,
             jiDongXunChaData: this.jiDongXunChaData,
-            houQinBaoZhangData: this.houQinBaoZhangData
+            houQinBaoZhangData: this.houQinBaoZhangData,
+            zongHeXieTiaoData: this.zongHeXieTiaoData,
+            jiJianDuChaData: this.jiJianDuChaData
           })
         }
         console.log('发起流程',params);
@@ -780,7 +806,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
             fuZhiHuiData: this.fuZhiHuiData,
             dunDianQuanDaoData: this.dunDianQuanDaoData,
             jiDongXunChaData: this.jiDongXunChaData,
-            houQinBaoZhangData: this.houQinBaoZhangData
+            houQinBaoZhangData: this.houQinBaoZhangData,
+            zongHeXieTiaoData: this.zongHeXieTiaoData,
+            jiJianDuChaData: this.jiJianDuChaData
           })
         }
         this.updateEvent(params).then((res)=>{
@@ -857,7 +885,9 @@ import {postEmergencyFeatures} from '@/api/map/service'
                 fuZhiHuiData: this.fuZhiHuiData,
                 dunDianQuanDaoData: this.dunDianQuanDaoData,
                 jiDongXunChaData: this.jiDongXunChaData,
-                houQinBaoZhangData: this.houQinBaoZhangData
+                houQinBaoZhangData: this.houQinBaoZhangData,
+                zongHeXieTiaoData: this.zongHeXieTiaoData,
+                jiJianDuChaData: this.jiJianDuChaData
               })
             }
             if (this.baseInfo.id !== '') {
@@ -1054,8 +1084,34 @@ import {postEmergencyFeatures} from '@/api/map/service'
           });
           return false
         }
+
+        if(this.zongHeXieTiaoData.description==='') {
+          this.$notification['error']({
+            message: '综合协调组字段必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
+        if(this.jiJianDuChaData.description===''){
+          this.$notification['error']({
+            message: '纪检督查组字段必填',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
         return true
       },
+
       checkObj(obj){
         if(!obj.groupTeam||obj.groupTeam.length===0){
           return false
