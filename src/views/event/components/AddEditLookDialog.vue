@@ -52,12 +52,12 @@
               </template>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData" @getResult="getZongZhiHuiResultData"></group-team>
               <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData" @getResult="getFuZhiHuiResultData"></group-team>
+              <group-people-two :optType="optType" :groupData="zongHeXieTiaoData" @getResult="getZongHeXieTiaoResultData"></group-people-two>
+              <group-people-two :optType="optType" :groupData="jiJianDuChaData" @getResult="getJiJianDuChaResultData"></group-people-two>
               <team-people-for-add v-if="(userType==='qxsl'&&baseInfo.processId==='1'&&optType!=='look')||optType==='add'" :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people-for-add>
               <team-people v-else :eventId="eventId" :optType="optType" :peopleList="peopleListForTeam" @setSubmitBtnShow="setSubmitBtnShow" @reviewTeam="reviewTeam"></team-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData" @getResult="getJiDongXunChaResultData"></group-people>
               <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData" @getResult="getHouQinBaoZhangResultData"></group-people>
-              <group-people-two :optType="optType" :groupData="zongHeXieTiaoData" @getResult="getZongHeXieTiaoResultData"></group-people-two>
-              <group-people-two :optType="optType" :groupData="jiJianDuChaData" @getResult="getJiJianDuChaResultData"></group-people-two>
             </a-collapse-panel>
             <a-collapse-panel key="3">
               <template slot="header">
