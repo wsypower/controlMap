@@ -219,7 +219,7 @@
        //增加一行
        addGroup(item, index){
          let additem = {
-           key: '@@@' + index.toString(),
+           key: '@@@' + new Date().getTime(),
            leaderId: '',
            personList: []
          }
