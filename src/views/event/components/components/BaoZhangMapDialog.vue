@@ -200,6 +200,7 @@
           tempSource:null,
           tempFeatures:null,
           selectedFeature:null,
+          deleteFeature:false,
 
           form: null,
           //一条保障点位的数据
@@ -271,6 +272,7 @@
       methods:{
         init(){
           this.initFinish=false;
+          this.deleteFeature=false;
           this.clearInitData();
           source&&source.clear();
           if(this.initFeatures.length>0){
@@ -468,7 +470,7 @@
           });
           source.on('removefeature', function(e) {
             e.preventDefault();
-            if(_this.initFinish){
+            if(_this.initFinish&&_this.deleteFeature){
               const type=e.feature.getGeometry().getType();
               if(!_this.drawFeatures[type].add.includes(e.feature)){
                 _this.drawFeatures[type].delete.push(e.feature);
@@ -498,6 +500,7 @@
         },
         //清除选中的图形
         clearSelectGeometry() {
+          this.deleteFeature=true;
           Array.prototype.indexOf = function (val) {
             for (var i = 0; i < this.length; i++) {
               if (this[i] == val) return i;
@@ -613,7 +616,6 @@
             map.removeInteraction(draw);
           }
           console.log('新增还是编辑：mapOperateType', this.mapOperateType);
-          debugger;
           if(this.mapOperateType=='add'){
             const features = vectorLayer.getSource().getFeatures();
             for (let i = 0; i < features.length; i++) {
@@ -666,6 +668,7 @@
           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',sourceData);
           this.$emit('saveDrawData',this.drawFeatures);
           this.mapDialogVisible = false;
+          this.deleteFeature=false;
           // map.on('dblclick', this.mapClickHandler);
         },
         //重置视图
@@ -690,6 +693,7 @@
             source&&source.clear();
             this.drawFeatures= _.cloneDeep(this.tempDrawFeature);
             console.log('关闭this.drawFeatures',this.drawFeatures);
+            // this.deleteFeature=false;
             // if (vectorLayer) {
             //   vectorLayer.getSource().clear();
             // }
