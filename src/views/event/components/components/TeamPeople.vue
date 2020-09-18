@@ -46,11 +46,6 @@
                         <span>{{record.addressName}}</span>
                     </div>
                 </template>
-<!--                    <template slot="position" slot-scope="text, record, index">-->
-<!--                        <div key="position">-->
-<!--                            <span>{{record.position}}</span>-->
-<!--                        </div>-->
-<!--                    </template>-->
                 <template slot="leaderId" slot-scope="text, record, index">
                     <div key="leaderId">
                         <span>{{record.leaderName}}</span>
@@ -62,6 +57,11 @@
                             :key="person.id"
                     >{{ person.name }}</a-tag>
                 </span>
+                <template slot="zhiyuan" slot-scope="text, record, index">
+                    <div key="zhiyuan">
+                        <span>{{record.zhiyuan}}</span>
+                    </div>
+                </template>
                 <span slot="action" slot-scope="text, record, index"></span>
             </a-table>
             <a-table v-else :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
@@ -70,11 +70,6 @@
                         <a-cascader :options="address" placeholder="请选择" v-model="record.addressIds" @change="(value, selectedOptions)=>{changeAddress(teamIndex,value,selectedOptions,record.key)}" style="width: 100%"/>
                     </div>
                 </template>
-<!--                    <template slot="position" slot-scope="text, record, index">-->
-<!--                        <div key="position">-->
-<!--                            <a-input :value="text" @change="e => changeInputText(teamIndex, e.target.value, record.key, 'position')" />-->
-<!--                        </div>-->
-<!--                    </template>-->
                 <template slot="leaderId" slot-scope="text, record, index">
                     <div key="leaderId">
                         <a-select
@@ -100,6 +95,14 @@
                     >{{ person.name }}</a-tag>
                     <a-button type="primary" size="small" @click="openPeopleDialog(teamIndex,index)">人员选择</a-button>
                 </span>
+                <template slot="zhiyuan" slot-scope="text, record, index">
+                    <div key="zhiyuan">
+                        <a-textarea v-model="record.zhiyuan"
+                                    placeholder="请输入支援人员详情"
+                                    allow-clear
+                                    :autosize="{ minRows: 3, maxRows: 3 }"/>
+                    </div>
+                </template>
                 <span slot="action" slot-scope="text, record, index">
                   <a-popconfirm
                           v-if="team.teamPersonData.length > 1"
@@ -159,6 +162,13 @@
       dataIndex: 'personList',
       key: 'personList',
       scopedSlots: { customRender: 'personList' }
+    },
+    {
+      title: '支援人员',
+      dataIndex: 'zhiyuan',
+      key: 'zhiyuan',
+      scopedSlots: { customRender: 'zhiyuan' },
+      width: '200px'
     },
     {
       title: '操作',
@@ -356,6 +366,7 @@
                  personList: [],
                  personObjList: [],
                  positionId: '',
+                 zhiyuan: '',
                  mapId: '',
                  mapType: '',
                  remark: '',
@@ -404,15 +415,6 @@
      methods:{
        ...mapActions('event/event', ['checkEvent']),
        ...mapActions('event/common', ['getLoadTreeData']),
-       // changeInputText(teamIndex, val,key,colName){
-       //   let arr = this.teamPersonList[teamIndex].teamPersonData;
-       //   const newData = [...arr];
-       //   const target = newData.filter(item => key === item.key)[0];
-       //   if (target) {
-       //     target[colName] = val;
-       //     this.teamPersonList[teamIndex].teamPersonData = newData;
-       //   }
-       // },
        //选择道路
        changeAddress(teamIndex, value, selectedOptions, key){
          console.log(teamIndex, value, selectedOptions, key);
@@ -451,6 +453,7 @@
            personList: [],
            personObjList: [],
            positionId: '',
+           zhiyuan: '',
            mapId: '',
            mapType: '',
            remark: '',
