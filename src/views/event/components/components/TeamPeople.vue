@@ -155,7 +155,7 @@
       dataIndex: 'leaderId',
       key: 'leaderId',
       scopedSlots: { customRender: 'leaderId' },
-      width: '140px'
+      width: '120px'
     },
     {
       title: '执勤人',
@@ -168,7 +168,7 @@
       dataIndex: 'zhiyuan',
       key: 'zhiyuan',
       scopedSlots: { customRender: 'zhiyuan' },
-      width: '200px'
+      width: '280px'
     },
     {
       title: '操作',
