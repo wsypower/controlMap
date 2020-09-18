@@ -445,7 +445,7 @@
        addGroup(item, index,teamIndex){
          console.log('addGroup',item, index, teamIndex)
          let additem = {
-           key: '@@@' + index.toString(),
+           key: '@@@' + new Date().getTime(),
            addressIds: [],
            leaderId: '',
            personList: [],
