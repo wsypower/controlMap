@@ -100,7 +100,7 @@
                         <a-textarea v-model="record.zhiyuan"
                                     placeholder="请输入支援人员详情"
                                     allow-clear
-                                    :autosize="{ minRows: 3, maxRows: 3 }"/>
+                                    :autosize="{ minRows: 2, maxRows: 2 }"/>
                     </div>
                 </template>
                 <span slot="action" slot-scope="text, record, index">
