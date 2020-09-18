@@ -606,6 +606,7 @@
         //保存图形数据
         saveMap() {
           this.hasSave=true;
+          this.deleteFeature=false;
           this.infoOverlay&&this.infoOverlay.setPosition(undefined)
           this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
           this.pointFeatures = [];
@@ -668,7 +669,6 @@
           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',sourceData);
           this.$emit('saveDrawData',this.drawFeatures);
           this.mapDialogVisible = false;
-          this.deleteFeature=false;
           // map.on('dblclick', this.mapClickHandler);
         },
         //重置视图
