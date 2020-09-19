@@ -271,7 +271,6 @@
       },
       methods:{
         init(){
-          debugger;
           this.initFinish=false;
           // this.deleteFeature=false;
           this.clearInitData();

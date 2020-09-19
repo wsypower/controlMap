@@ -1,35 +1,39 @@
 <template>
-  <a-modal :title="dialogTitle"
-           v-model="addEditLookDialogVisible"
-           wrapClassName="addmodelwrap"
-           class="add-edit-dialog"
-           width="100%"
-           style="paddingBottom: 0px;margin: 0px;height: 100%;top:0px"
-           :bodyStyle="{height:'calc(100% - 108px)',padding:'10px 20px 0px 20px'}"
-           :mask="false"
-           :maskClosable="false"
-           :destroyOnClose="true"
-           @cancel="handleCancel">
+  <a-modal
+    :title="dialogTitle"
+    v-model="addEditLookDialogVisible"
+    wrapClassName="addmodelwrap"
+    class="add-edit-dialog"
+    width="100%"
+    style="paddingBottom: 0px;margin: 0px;height: 100%;top:0px"
+    :bodyStyle="{ height: 'calc(100% - 108px)', padding: '10px 20px 0px 20px' }"
+    :mask="false"
+    :maskClosable="false"
+    :destroyOnClose="true"
+    @cancel="handleCancel"
+  >
     <div class="event_dialog_body">
       <my-scroll>
-        <log v-if="userType!=='qxsl'||(baseInfo.processId!=='1'&&optType!=='add')" :eventId="eventId"></log>
-        <div v-if="userType!=='qxsl'||(baseInfo.processId!=='1'&&optType!=='add')" class="subtitle-panel" flex="dir:left cross:center main:justify">
+        <log v-if="userType !== 'qxsl' || (baseInfo.processId !== '1' && optType !== 'add')" :eventId="eventId"></log>
+        <div
+          v-if="userType !== 'qxsl' || (baseInfo.processId !== '1' && optType !== 'add')"
+          class="subtitle-panel"
+          flex="dir:left cross:center main:justify"
+        >
           <span>处置事件</span>
-<!--          <a-button type="primary" size="small">事件简报下载</a-button>-->
+          <!--          <a-button type="primary" size="small">事件简报下载</a-button>-->
         </div>
-        <div v-if="userType==='qxsl'&&(baseInfo.processId==='1'||optType==='add')" class="template-panel">
-          <label>
-            <a-icon type="snippets" theme="twoTone" style="marginRight:5px" />选择模板创建：
-          </label>
+        <div v-if="userType === 'qxsl' && (baseInfo.processId === '1' || optType === 'add')" class="template-panel">
+          <label> <a-icon type="snippets" theme="twoTone" style="marginRight:5px" />选择模板创建： </label>
           <a-select v-model="templateId" placeholder="请选择模板" style="width: 180px;" @change="handleUserTemplate">
-            <a-select-option v-for="(item, index) in templateList" :value="item.id" :key="index">{{item.name }}</a-select-option>
+            <a-select-option v-for="(item, index) in templateList" :value="item.id" :key="index">{{
+              item.name
+            }}</a-select-option>
           </a-select>
         </div>
         <div v-else class="template-panel">
-          <label>
-            <a-icon type="snippets" theme="twoTone" style="marginRight:5px" />选择模板创建：
-          </label>
-          <span>{{baseInfo.templateName===''?'未使用模版':baseInfo.templateName}}</span>
+          <label> <a-icon type="snippets" theme="twoTone" style="marginRight:5px" />选择模板创建： </label>
+          <span>{{ baseInfo.templateName === '' ? '未使用模版' : baseInfo.templateName }}</span>
         </div>
         <div class="event_dialog_body_content">
           <div v-show="dataLoading" class="loading" flex="main:center cross:center">
@@ -38,32 +42,65 @@
           <a-collapse v-model="activeKey">
             <a-collapse-panel key="1">
               <template slot="header">
-                <div class="collapse__header">
-                  <a-icon type="reconciliation" theme="twoTone" />基本信息
-                </div>
+                <div class="collapse__header"><a-icon type="reconciliation" theme="twoTone" />基本信息</div>
               </template>
               <base-info :optType="optType" :baseData="baseInfo" @getResult="getBaseInfoResultData"></base-info>
             </a-collapse-panel>
             <a-collapse-panel key="2">
               <template slot="header">
-                <div class="collapse__header">
-                  <a-icon type="save" theme="twoTone" />人员安排
-                </div>
+                <div class="collapse__header"><a-icon type="save" theme="twoTone" />人员安排</div>
               </template>
-              <group-team :optType="optType" :peopleList="peopleList" :groupData="zongZhiHuiData" @getResult="getZongZhiHuiResultData"></group-team>
-              <group-team :optType="optType" :peopleList="peopleList" :groupData="fuZhiHuiData" @getResult="getFuZhiHuiResultData"></group-team>
-              <group-people-two :optType="optType" :groupData="zongHeXieTiaoData" @getResult="getZongHeXieTiaoResultData"></group-people-two>
-              <group-people-two :optType="optType" :groupData="jiJianDuChaData" @getResult="getJiJianDuChaResultData"></group-people-two>
-              <team-people-for-add v-if="(userType==='qxsl'&&baseInfo.processId==='1'&&optType!=='look')||optType==='add'" :groupData="dunDianQuanDaoData" @getResult="geTunDianQuanDaoResultData"></team-people-for-add>
-              <team-people v-else :eventId="eventId" :optType="optType" :peopleList="peopleListForTeam" @setSubmitBtnShow="setSubmitBtnShow" @reviewTeam="reviewTeam"></team-people>
-              <group-people :optType="optType" :peopleList="peopleList" :groupData="jiDongXunChaData" @getResult="getJiDongXunChaResultData"></group-people>
-              <group-people :optType="optType" :peopleList="peopleList" :groupData="houQinBaoZhangData" @getResult="getHouQinBaoZhangResultData"></group-people>
+              <group-team
+                :optType="optType"
+                :peopleList="peopleList"
+                :groupData="zongZhiHuiData"
+                @getResult="getZongZhiHuiResultData"
+              ></group-team>
+              <group-team
+                :optType="optType"
+                :peopleList="peopleList"
+                :groupData="fuZhiHuiData"
+                @getResult="getFuZhiHuiResultData"
+              ></group-team>
+              <group-people-two
+                :optType="optType"
+                :groupData="zongHeXieTiaoData"
+                @getResult="getZongHeXieTiaoResultData"
+              ></group-people-two>
+              <group-people-two
+                :optType="optType"
+                :groupData="jiJianDuChaData"
+                @getResult="getJiJianDuChaResultData"
+              ></group-people-two>
+              <team-people-for-add
+                v-if="(userType === 'qxsl' && baseInfo.processId === '1' && optType !== 'look') || optType === 'add'"
+                :groupData="dunDianQuanDaoData"
+                @getResult="geTunDianQuanDaoResultData"
+              ></team-people-for-add>
+              <team-people
+                v-else
+                :eventId="eventId"
+                :optType="optType"
+                :peopleList="peopleListForTeam"
+                @setSubmitBtnShow="setSubmitBtnShow"
+                @reviewTeam="reviewTeam"
+              ></team-people>
+              <group-people
+                :optType="optType"
+                :peopleList="peopleList"
+                :groupData="jiDongXunChaData"
+                @getResult="getJiDongXunChaResultData"
+              ></group-people>
+              <group-people
+                :optType="optType"
+                :peopleList="peopleList"
+                :groupData="houQinBaoZhangData"
+                @getResult="getHouQinBaoZhangResultData"
+              ></group-people>
             </a-collapse-panel>
             <a-collapse-panel key="3">
               <template slot="header">
-                <div class="collapse__header">
-                  <a-icon type="profile" theme="twoTone" />保障视图
-                </div>
+                <div class="collapse__header"><a-icon type="profile" theme="twoTone" />保障视图</div>
               </template>
               <a-button type="primary" @click="openBaoZhangMapDialog">保障视图</a-button>
             </a-collapse-panel>
@@ -72,35 +109,80 @@
       </my-scroll>
     </div>
     <template slot="footer">
-      <a-button v-if="userType==='jld'||optType==='look'" type="primary" :loading="reviewLoading" @click="reviewEvent">预览</a-button>
+      <a-button
+        v-if="userType === 'jld' || optType === 'look'"
+        type="primary"
+        :loading="reviewLoading"
+        @click="reviewEvent"
+        >预览</a-button
+      >
       <a-button v-else type="primary" :loading="reviewLoading" @click="reviewEvent">保存及预览</a-button>
       <!-- 信息指挥中心视角 保存只有在新建的时候才有 -->
-      <a-button v-if="userType==='qxsl'&&(optType==='add'||optType==='edit')" type="primary" :loading="saveLoading" @click="saveDraft">保存草稿</a-button>
+      <a-button
+        v-if="userType === 'qxsl' && (optType === 'add' || optType === 'edit')"
+        type="primary"
+        :loading="saveLoading"
+        @click="saveDraft"
+        >保存草稿</a-button
+      >
       <!-- 发起流程只有在新建的时候才有 -->
-      <a-button v-if="userType==='qxsl'&&optType!=='look'&&(optType==='add'||baseInfo.processId==='1')" type="primary" :loading="submitLoading" @click="submitData">发起流程</a-button>
+      <a-button
+        v-if="userType === 'qxsl' && optType !== 'look' && (optType === 'add' || baseInfo.processId === '1')"
+        type="primary"
+        :loading="submitLoading"
+        @click="submitData"
+        >发起流程</a-button
+      >
       <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
-      <a-button v-if="userType==='qxsl'&&optType==='edit'&&showSubmit" type="primary" :loading="checkLoading" @click="submitCheck('qxsl')">提交审核</a-button>
-      <a-button v-if="userType==='zybm'&&optType==='edit'" type="primary" :loading="checkLoading" @click="submitCheck('zybm')">提交审核</a-button>
+      <a-button
+        v-if="userType === 'qxsl' && optType === 'edit' && showSubmit"
+        type="primary"
+        :loading="checkLoading"
+        @click="submitCheck('qxsl')"
+        >提交审核</a-button
+      >
+      <a-button
+        v-if="userType === 'zybm' && optType === 'edit'"
+        type="primary"
+        :loading="checkLoading"
+        @click="submitCheck('zybm')"
+        >提交审核</a-button
+      >
       <!-- 领导视角 -->
-      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="passLoading" @click="passEvent">确认</a-button>
+      <a-button v-if="userType === 'jld' && optType === 'edit'" type="primary" :loading="passLoading" @click="passEvent"
+        >确认</a-button
+      >
       <!-- 领导视角 -->
-      <a-button v-if="userType==='jld'&&optType==='edit'" type="primary" :loading="backLoading" @click="openBackDialog">驳回</a-button>
+      <a-button
+        v-if="userType === 'jld' && optType === 'edit'"
+        type="primary"
+        :loading="backLoading"
+        @click="openBackDialog"
+        >驳回</a-button
+      >
     </template>
-    <new-bao-zhang-map-dialog v-if="optType==='add'" :visible.sync="mapDialogVisible"></new-bao-zhang-map-dialog>
-    <bao-zhang-map-dialog v-else
+    <new-bao-zhang-map-dialog v-if="optType === 'add'" :visible.sync="mapDialogVisible"></new-bao-zhang-map-dialog>
+    <bao-zhang-map-dialog
+      v-else
       :visible.sync="mapDialogVisible"
       :optType="optType"
       :peopleList="peopleList"
       @saveDrawData="saveDraw"
     ></bao-zhang-map-dialog>
 
-    <a-modal title="驳回理由"
-             :visible="backVisible"
-             :confirm-loading="confirmLoading"
-             @ok="backEvent"
-             @cancel="()=>{this.backVisible=false;this.backReason='';}"
+    <a-modal
+      title="驳回理由"
+      :visible="backVisible"
+      :confirm-loading="confirmLoading"
+      @ok="backEvent"
+      @cancel="
+        () => {
+          this.backVisible = false
+          this.backReason = ''
+        }
+      "
     >
-      <a-textarea v-model="backReason" placeholder="请输入驳回理由" allow-clear/>
+      <a-textarea v-model="backReason" placeholder="请输入驳回理由" allow-clear />
     </a-modal>
   </a-modal>
 </template>
@@ -117,7 +199,7 @@ import GroupPeople from './components/GroupPeople'
 import GroupPeopleTwo from './components/GroupPeopleTwo'
 import BaoZhangMapDialog from './components/BaoZhangMapDialog'
 import NewBaoZhangMapDialog from './components/NewBaoZhangMapDialog'
-import {postEmergencyFeatures} from '@/api/map/service'
+import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
 
   export default {
     name: 'addEditDialog',
@@ -843,27 +925,96 @@ import {postEmergencyFeatures} from '@/api/map/service'
       },
       //保存gis数据输入数据库
       saveDataToGis(){
-        if(this.drawFeatures){
-          if(this.drawFeatures.Point&&(this.drawFeatures.Point.add.length>0
-                  ||this.drawFeatures.Point.update.length>0
-                  ||this.drawFeatures.Point.delete.length>0)) {
-            postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
-              console.log('==点数据==', res);
-            });
+        if(this.drawFeatures) {
+          if (this.drawFeatures.Point.add.length > 0) {
+            const features = this.drawFeatures.Point.add;
+            let searchPointId;
+            searchPointId = '('
+            for (let i = 0; i < features.length; i++) {
+              searchPointId += "'" + features[i].get('id') + "'"
+              if (i + 1 < features.length) {
+                searchPointId += ','
+              }
+            }
+            searchPointId += ')'
+            getEmergencyFeatures(searchPointId, 'Point').then(data => {
+              data.forEach(f => {
+                // features = features.forEach(d=>d.get('id')!=f.get('id'));
+                for (let i = 0; i < features.length; i++) {
+                  if (features[i].get('id') == f.get('id')) {
+                    features.splice(i, 1);
+                    i--;
+                  }
+                }
+              })
+              if (this.drawFeatures.Point && (this.drawFeatures.Point.add.length > 0
+                || this.drawFeatures.Point.update.length > 0
+                || this.drawFeatures.Point.delete.length > 0)) {
+                postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
+                  console.log('==点数据==', res);
+                });
+              }
+            })
           }
-          if(this.drawFeatures.LineString&&(this.drawFeatures.LineString.add.length>0
-                  ||this.drawFeatures.LineString.update.length>0
-                  ||this.drawFeatures.LineString.delete.length>0)) {
-            postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
-              console.log('==线数据==', res);
-            });
+          if (this.drawFeatures.LineString.add.length > 0) {
+            const features = this.drawFeatures.LineString.add;
+            let searchPointId;
+            searchPointId = '('
+            for (let i = 0; i < features.length; i++) {
+              searchPointId += "'" + features[i].get('id') + "'"
+              if (i + 1 < features.length) {
+                searchPointId += ','
+              }
+            }
+            searchPointId += ')'
+            getEmergencyFeatures(searchPointId, 'LineString').then(data => {
+              data.forEach(f => {
+                // features = features.forEach(d=>d.get('id')!=f.get('id'));
+                for (let i = 0; i < features.length; i++) {
+                  if (features[i].get('id') == f.get('id')) {
+                    features.splice(i, 1);
+                    i--;
+                  }
+                }
+              })
+              if (this.drawFeatures.LineString && (this.drawFeatures.LineString.add.length > 0
+                || this.drawFeatures.LineString.update.length > 0
+                || this.drawFeatures.LineString.delete.length > 0)) {
+                postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
+                  console.log('==点数据==', res);
+                });
+              }
+            })
           }
-          if(this.drawFeatures.Polygon&&(this.drawFeatures.Polygon.add.length>0
-                  ||this.drawFeatures.Polygon.update.length>0
-                  ||this.drawFeatures.Polygon.delete.length>0)) {
-            postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
-              console.log('==线数据==', res);
-            });
+          if (this.drawFeatures.Polygon.add.length > 0) {
+            const features = this.drawFeatures.Polygon.add;
+            let searchPointId;
+            searchPointId = '('
+            for (let i = 0; i < features.length; i++) {
+              searchPointId += "'" + features[i].get('id') + "'"
+              if (i + 1 < features.length) {
+                searchPointId += ','
+              }
+            }
+            searchPointId += ')'
+            getEmergencyFeatures(searchPointId, 'Polygon').then(data => {
+              data.forEach(f => {
+                // features = features.forEach(d=>d.get('id')!=f.get('id'));
+                for (let i = 0; i < features.length; i++) {
+                  if (features[i].get('id') == f.get('id')) {
+                    features.splice(i, 1);
+                    i--;
+                  }
+                }
+              })
+              if (this.drawFeatures.Polygon && (this.drawFeatures.Polygon.add.length > 0
+                || this.drawFeatures.Polygon.update.length > 0
+                || this.drawFeatures.Polygon.delete.length > 0)) {
+                postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
+                  console.log('==点数据==', res);
+                });
+              }
+            })
           }
         }
       },
@@ -1215,28 +1366,28 @@ import {postEmergencyFeatures} from '@/api/map/service'
   }
 </script>
 <style lang="scss" scoped>
-  .collapse__header {
-    color: #028efc;
-    font-size: 16px;
-    .anticon {
-      margin-right: 5px;
-    }
+.collapse__header {
+  color: #028efc;
+  font-size: 16px;
+  .anticon {
+    margin-right: 5px;
   }
+}
 .add-edit-dialog {
   width: 100%;
   height: 100%;
-  .event_dialog_body{
+  .event_dialog_body {
     width: 100%;
     height: 100%;
   }
-  .subtitle-panel{
+  .subtitle-panel {
     font-size: 14px;
     height: 40px;
     margin-bottom: 10px;
     color: #028efc;
     border-botton: 1px solid #d9d9d9;
   }
-  .template-panel{
+  .template-panel {
     margin-bottom: 10px;
     font-size: 14px;
     padding: 8px 0 8px 40px;
@@ -1246,21 +1397,21 @@ import {postEmergencyFeatures} from '@/api/map/service'
     color: #028efc;
     font-size: 16px;
   }
-  .turnDown{
-    background-color: #FDE2E2;
-    color: #F76B6B;
+  .turnDown {
+    background-color: #fde2e2;
+    color: #f76b6b;
   }
   .event_dialog_body_content {
     height: calc(100% - 60px);
     position: relative;
-    .loading{
+    .loading {
       position: absolute;
-      top:0;
-      left:0;
-      right:0;
-      bottom:0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       z-index: 10;
-      background-color: rgba(255,255,255,0.8);
+      background-color: rgba(255, 255, 255, 0.8);
     }
     .icon_delete,
     .icon_add {
@@ -1277,21 +1428,21 @@ import {postEmergencyFeatures} from '@/api/map/service'
 }
 </style>
 <style lang="scss">
-  .addmodelwrap {
-    top: 69px;
-    height: calc(100% - 78px);
-    width: calc(100% - 80px);
-    left: 70px;
-    .ant-modal-content {
-      height: 100%;
-      .ant-modal-footer{
-        text-align: center;
-      }
-    }
-    .ant-collapse-header {
-      .anticon {
-        color: #00a4fe;
-      }
+.addmodelwrap {
+  top: 69px;
+  height: calc(100% - 78px);
+  width: calc(100% - 80px);
+  left: 70px;
+  .ant-modal-content {
+    height: 100%;
+    .ant-modal-footer {
+      text-align: center;
     }
   }
+  .ant-collapse-header {
+    .anticon {
+      color: #00a4fe;
+    }
+  }
+}
 </style>
