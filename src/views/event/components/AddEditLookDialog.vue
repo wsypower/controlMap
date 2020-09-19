@@ -926,7 +926,7 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
       //保存gis数据输入数据库
       saveDataToGis(){
         if(this.drawFeatures) {
-          if (this.drawFeatures.Point.add.length > 0) {
+          if (this.drawFeatures.Point&&this.drawFeatures.Point.add.length > 0) {
             const features = this.drawFeatures.Point.add;
             let searchPointId;
             searchPointId = '('
@@ -956,7 +956,7 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
               }
             })
           }
-          if (this.drawFeatures.LineString.add.length > 0) {
+          if (this.drawFeatures.LineString&&this.drawFeatures.LineString.add.length > 0) {
             const features = this.drawFeatures.LineString.add;
             let searchPointId;
             searchPointId = '('
@@ -986,7 +986,7 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
               }
             })
           }
-          if (this.drawFeatures.Polygon.add.length > 0) {
+          if (this.drawFeatures.Polygon&&this.drawFeatures.Polygon.add.length > 0) {
             const features = this.drawFeatures.Polygon.add;
             let searchPointId;
             searchPointId = '('
