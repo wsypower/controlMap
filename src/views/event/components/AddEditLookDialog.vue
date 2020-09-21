@@ -798,6 +798,7 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
             leaderId: teamPerson.leaderId,
             personList: [],
             positionId: teamPerson.addressIds[2],
+            zhiyuan: teamPerson.zhiyuan,
             mapId:teamPerson.mapId,
             mapType: teamPerson.mapType,
             remark: teamPerson.remark
@@ -807,7 +808,7 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
             return ids
           },[])
           //出现空白行，主动去除
-          if(!(data.positionId===''&&data.leaderId===''&&data.personList.length===0)){
+          if(!(data.positionId===''&&data.leaderId===''&&data.personList.length===0&&data.zhiyuan.trim()==='')){
             acc.push(data);
           }
           return acc
