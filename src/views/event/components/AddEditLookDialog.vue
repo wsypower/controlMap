@@ -174,6 +174,7 @@
       title="驳回理由"
       :visible="backVisible"
       :confirm-loading="confirmLoading"
+      :maskClosable="false"
       @ok="backEvent"
       @cancel="
         () => {

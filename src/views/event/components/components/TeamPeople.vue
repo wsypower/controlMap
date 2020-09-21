@@ -131,6 +131,7 @@
         <a-modal title="驳回理由"
                 :visible="backVisible"
                 :confirm-loading="confirmLoading"
+                 :maskClosable="false"
                 @ok="backTeamPeopleSet"
                 @cancel="()=>{this.backVisible=false;this.backReason='';}"
         >
@@ -168,7 +169,7 @@
       dataIndex: 'zhiyuan',
       key: 'zhiyuan',
       scopedSlots: { customRender: 'zhiyuan' },
-      width: '280px'
+      width: '340px'
     },
     {
       title: '操作',
