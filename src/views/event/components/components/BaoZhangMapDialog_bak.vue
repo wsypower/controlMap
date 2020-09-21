@@ -15,6 +15,7 @@
     <div class="yuan_dialog_body" ref="baoZhangBody">
       <!-- 地图控件注入地址 -->
       <LayoutMap ref="olMap"></LayoutMap>
+      <!--<a-button type="primary" @click="showSetDialog(0)" class="show-set-button">展示设置弹窗</a-button>-->
       <div hidden>
         <div class="set-baozhang-dialog" ref="infoOverlay">
           <div class="set-baozhang-dialog-header" flex="main:justify cross:center">
@@ -25,19 +26,20 @@
             <cg-container scroll>
               <a-form :form="form" style="margin:10px">
                 <a-form-item label="具体路段：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{baoZhangItemData.load}}</span>
+                  <a-select placeholder="请选择道路" @change="handleChange" v-model="baoZhangFormData.positionId">
+                    <a-select-option v-for="baoZhang in baoZhangArr" :key="baoZhang.positionId">
+                      {{ baoZhang.load }}
+                    </a-select-option>
+                  </a-select>
                 </a-form-item>
                 <a-form-item label="负责人：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{ baoZhangItemData.leaderName }}</span>
+                  <span>{{ baoZhangFormData.leaderName }}</span>
                 </a-form-item>
                 <a-form-item label="执勤人员：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{ baoZhangItemData.personNameStr }}</span>
-                </a-form-item>
-                <a-form-item label="支援人员：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{ baoZhangItemData.zhiyuan }}</span>
+                  <span>{{ baoZhangFormData.personNameStr }}</span>
                 </a-form-item>
                 <a-form-item label="备注：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <a-textarea v-model="baoZhangItemData.remark" placeholder="" :autosize="{ minRows: 2, maxRows: 2 }" />
+                  <a-textarea v-model="baoZhangFormData.remark" placeholder="" :autosize="{ minRows: 2, maxRows: 2 }" />
                 </a-form-item>
               </a-form>
             </cg-container>
@@ -58,19 +60,30 @@
             <cg-container scroll>
               <a-form :form="form" style="margin:10px">
                 <a-form-item label="具体路段：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                 <span>{{baoZhangItemData.load}}</span>
+                  <a-select
+                    placeholder="请选择道路"
+                    @change="handleChange"
+                    v-model="baoZhangFormData.positionId"
+                    disabled
+                  >
+                    <a-select-option v-for="baoZhang in baoZhangArr" :key="baoZhang.positionId">
+                      {{ baoZhang.load }}
+                    </a-select-option>
+                  </a-select>
                 </a-form-item>
                 <a-form-item label="负责人：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{ baoZhangItemData.leaderName }}</span>
+                  <span>{{ baoZhangFormData.leaderName }}</span>
                 </a-form-item>
                 <a-form-item label="执勤人员：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{ baoZhangItemData.personNameStr }}</span>
-                </a-form-item>
-                <a-form-item label="支援人员：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{ baoZhangItemData.zhiyuan }}</span>
+                  <span>{{ baoZhangFormData.personNameStr }}</span>
                 </a-form-item>
                 <a-form-item label="备注：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <span>{{baoZhangItemData.remark}}</span>
+                  <a-textarea
+                    v-model="baoZhangFormData.remark"
+                    placeholder=""
+                    :autosize="{ minRows: 2, maxRows: 2 }"
+                    disabled
+                  />
                 </a-form-item>
               </a-form>
             </cg-container>
@@ -147,18 +160,12 @@
             return []
           }
         },
-        loadData: {
-          type: Object,
-          default(){
-            return {}
-          }
-        },
       },
       data(){
         return {
+          baoZhangData: [],
+          baoZhangArr: [],
           mapDialogVisible: false,
-          //此环境中数据修改使用
-          baoZhangItemData: {},
           //当没有数据可操作时，则所有按钮不可操作
           disableEdit:false,
 
@@ -196,10 +203,23 @@
           // deleteFeature:false,
 
           form: null,
-
+          //一条保障点位的数据
+          baoZhangFormData: {
+            load: '',
+            positionId: '',
+            leaderName: '',
+            personNameStr: '',
+            remark: '',
+            mapId: '',
+            mapType:''
+          },
           // //识别编辑/新增某个保障点位
           opType: 'add',
+          //编辑时,确定第几个保障点位
+          index: 0,
 
+          //所有的保障点位数据，后续所有操作已这个为基础，最后保存时也已这个作为保存数据
+          allBaoZhangData: [],
           hasSave:false,
           reviewInfoOverlay:null,
           initFeatures:[],
@@ -277,7 +297,8 @@
               map.on('dblclick', this.mapClickHandler);
               //编辑状态下通过图形id获取已保存的图形数据
               // 只要设置了组，这里数据一直是大于0
-                const idList = filterMapId(this.baoZhangItemData);
+              if (this.allBaoZhangData.length > 0) {
+                const idList = filterMapId(this.allBaoZhangData);
                 if (!source) {
                   source = new VectorSource({ wrapX: false });
                   vectorLayer = new VectorLayer({
@@ -326,41 +347,52 @@
                   _this.firstOpen=false;
                   map.addLayer(vectorLayer);
                 }, 500)
-
+              }
             }
           })
         },
         clearInitData(){
-          console.log('loadData',this.loadData);
-          this.baoZhangItemData = JSON.parse(JSON.stringify(this.loadData));
-          if(this.baoZhangItemData.address){
-            let personTemp = null;
-            if(this.baoZhangItemData.leaderId){
-              personTemp = this.peopleList.find(person => person.id === this.baoZhangItemData.leaderId);
-            }
-            let perName = this.baoZhangItemData.personList.reduce((arr, id) => {
-              let person = this.peopleList.find(p => p.id === id);
-              arr.push(person.name);
-              return arr
-            },[]);
-            let addressName = this.baoZhangItemData.address.reduce((acc, it) => {
-              acc = acc + '--' + it.name
+          this.baoZhangData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'].teamPersonList;
+          console.log('this.baoZhangData',this.baoZhangData);
+          this.baoZhangArr = [];
+          let baoZhangObj = JSON.parse(JSON.stringify(this.baoZhangData));
+          baoZhangObj.forEach(baoZhangItem => {
+            let a = baoZhangItem.teamPersonData.reduce((acc, item) => {
+              if(item.address){
+                let personTemp = this.peopleList.find(person => person.id === item.leaderId);
+                let perName = item.personList.reduce((arr, id) => {
+                  let person = this.peopleList.find(p => p.id === id);
+                  arr.push(person.name);
+                  return arr
+                },[]);
+                let addressName = item.address.reduce((acc, it) => {
+                    acc = acc + '--' + it.name
+                    return acc
+                  },'').substring(2);
+                let temp = {
+                  positionId: item.address[2].id,
+                  load: addressName,
+                  leaderName: personTemp&&personTemp.name ? personTemp.name : '',
+                  personNameStr: perName.join(','),
+                  remark: item.remark,
+                  mapId: item.mapId,
+                  mapType:item.mapType,
+                }
+                acc.push(temp);
+              }
               return acc
-            },'').substring(2);
-            let temp = {
-              positionId: this.baoZhangItemData.address[2].id,
-              load: addressName,
-              leaderName: personTemp&&personTemp.name ? personTemp.name : '',
-              personNameStr: perName.join(','),
-              zhiyuan: this.baoZhangItemData.zhiyuan,
-              mapId: this.baoZhangItemData.mapId,
-              mapType:this.baoZhangItemData.mapType,
-              remark: this.baoZhangItemData.remark
-            }
-            this.baoZhangItemData = temp;
+            },[]);
+            this.baoZhangArr = this.baoZhangArr.concat(a);
+          });
+          this.allBaoZhangData = JSON.parse(JSON.stringify(this.baoZhangArr));
+          //最终保存时，更新一下store
+          console.log('打开保障视图需要的数据',this.allBaoZhangData);
+          if(this.allBaoZhangData.length===0){
+            this.disableEdit = true;
           }
-          console.log('======保障视图内部操作的数据源=======',this.baoZhangItemData);
-
+          else{
+            this.disableEdit = false;
+          }
         },
         //地图点击事件处理器
         mapClickHandler({ pixel, coordinate }) {
@@ -491,25 +523,78 @@
             }
             // vectorLayer.getSource()
             map.removeInteraction(select);
-            this.baoZhangItemData.mapId = '';
-            this.baoZhangItemData.mapType = '';
-            this.baoZhangItemData.remark = '';
+            for(let i=0;i<this.allBaoZhangData.length;i++){
+              if(this.allBaoZhangData[i].mapId==this.selectedFeature.get('id')){
+                deleteData=this.allBaoZhangData[i];
+              }
+            }
+            const deletePeopleList = deleteData.personList;
+            for(let i=0;i<deletePeopleList.length;i++){
+              this.checkedPeopleIdList.remove(deletePeopleList[i]);
+            }
+            this.allBaoZhangData.remove(deleteData);
+            console.log(this.allBaoZhangData);
+            console.log(this.checkedPeopleIdList)
             console.log('==removemapip==',this.selectedFeature.get('id'));
           }
         },
         //双击区域后触发此方法，带出mapId
         showSetDialog(mapId,mapType){
+          let flag = this.allBaoZhangData.some(item =>{
+            return item.mapId === mapId
+          });
+          this.opType = flag? 'edit': 'add';
 
+          if(this.opType === 'edit'){
+            let temp = null;
+            for(let i=0;i<this.allBaoZhangData.length;i++){
+              if(this.allBaoZhangData[i].mapId === mapId){
+                temp = this.allBaoZhangData[i];
+                this.index = i;
+              }
+            }
+            this.baoZhangFormData.positionId = temp.positionId;
+            this.baoZhangFormData.leaderName = temp.leaderName;
+            this.baoZhangFormData.personNameStr = temp.personNameStr;
+            this.baoZhangFormData.remark = temp.remark;
+          }
+          else{
+            this.baoZhangFormData = Object.assign({},this.$options.data()['baoZhangFormData']);
+            this.baoZhangFormData.mapId = mapId;
+            this.baoZhangFormData.mapType = mapType;
+            this.baoZhangFormData.remark = '';
+          }
+        },
+        //人员选择
+        handleChange(value) {
+          console.log(`Selected: ${value}`,value);
+          let baoZhang = this.baoZhangArr.find(baoZhang => baoZhang.positionId === value);
+          this.baoZhangFormData.leaderName = baoZhang.leaderName;
+          this.baoZhangFormData.personNameStr = baoZhang.personNameStr;
+          this.baoZhangFormData.load = baoZhang.load;
         },
         //保存保障点位设置
         saveBaoZhangInfo(){
-          //只是对备注的修改
-          console.log('saveBaoZhangInfo baoZhangItemData',this.baoZhangItemData);
+          console.log('this.baoZhangFormData',this.baoZhangFormData);
+          console.log('this.opType',this.opType);
+          this.allBaoZhangData.map(baozhang => {
+            if(baozhang.positionId===this.baoZhangFormData.positionId){
+              baozhang.load = this.baoZhangFormData.load;
+              baozhang.leaderName = this.baoZhangFormData.leaderName;
+              baozhang.personNameStr = this.baoZhangFormData.personNameStr;
+              baozhang.remark = this.baoZhangFormData.remark;
+              baozhang.mapId = this.baoZhangFormData.mapId;
+              baozhang.mapType = this.baoZhangFormData.mapType;
+            }
+          });
+
           this.infoOverlay.setPosition(undefined);
         },
-        //重置保障点位备注信息
+        //重置保障点位设置
         reset(){
-          this.baoZhangItemData.remark = this.loadData.remark;
+          let mapId = this.baoZhangFormData.mapId;
+          this.baoZhangFormData = Object.assign({},this.$options.data()['baoZhangFormData']);
+          this.baoZhangFormData.mapId = mapId;
         },
         //保障点位设置弹窗的左上角关闭
         closeSetDialog(){
@@ -574,15 +659,22 @@
           this.initFeatures=source.getFeatures();
           // source=null;
           source.clear();
-          console.log('saveMap baoZhangItemData', this.baoZhangItemData);
+          console.log('this.allBaoZhangData', this.allBaoZhangData);
 
+          let sourceData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+          sourceData.teamPersonList.forEach(baoZhangTeamItem => {
+            baoZhangTeamItem.teamPersonData.map(baozhang => {
+              let data = this.allBaoZhangData.find(item => item.positionId===baozhang.positionId);
+              baozhang.mapId = data.mapId;
+              baozhang.mapType = data.mapType;
+              baozhang.remark = data.remark;
+            });
+          });
           this.disableEdit = false;
-          let data = {
-            baoZhangItemData: this.baoZhangItemData,
-            drawFeatures: this.drawFeatures
-          }
-          this.$emit('saveDrawData',data);
+          this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',sourceData);
+          this.$emit('saveDrawData',this.drawFeatures);
           this.mapDialogVisible = false;
+          // map.on('dblclick', this.mapClickHandler);
         },
         //重置视图
         resetMap(){
@@ -599,12 +691,17 @@
           this.infoOverlay&&this.infoOverlay.setPosition(undefined)
           this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
           if(!this.hasSave) {
+            this.allBaoZhangData = [];
             if (draw) {
               mapManager.inactivateDraw(draw);
             }
             source&&source.clear();
             this.drawFeatures= _.cloneDeep(this.tempDrawFeature);
             console.log('关闭this.drawFeatures',this.drawFeatures);
+            // this.deleteFeature=false;
+            // if (vectorLayer) {
+            //   vectorLayer.getSource().clear();
+            // }
           }
           this.mapDialogVisible = false;
       },

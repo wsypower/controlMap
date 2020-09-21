@@ -6,7 +6,7 @@
     class="add-edit-dialog"
     width="100%"
     style="paddingBottom: 0px;margin: 0px;height: 100%;top:0px"
-    :bodyStyle="{ height: 'calc(100% - 108px)', padding: '10px 20px 0px 20px' }"
+    :bodyStyle="{ height: 'calc(100% - 108px)', padding: '10px 20px 10px 20px' }"
     :mask="false"
     :maskClosable="false"
     :destroyOnClose="true"
@@ -84,6 +84,7 @@
                 :peopleList="peopleListForTeam"
                 @setSubmitBtnShow="setSubmitBtnShow"
                 @reviewTeam="reviewTeam"
+                @getGisData="getGisData"
               ></team-people>
               <group-people
                 :optType="optType"
@@ -98,12 +99,12 @@
                 @getResult="getHouQinBaoZhangResultData"
               ></group-people>
             </a-collapse-panel>
-            <a-collapse-panel key="3">
-              <template slot="header">
-                <div class="collapse__header"><a-icon type="profile" theme="twoTone" />保障视图</div>
-              </template>
-              <a-button type="primary" @click="openBaoZhangMapDialog">保障视图</a-button>
-            </a-collapse-panel>
+<!--            <a-collapse-panel key="3">-->
+<!--              <template slot="header">-->
+<!--                <div class="collapse__header"><a-icon type="profile" theme="twoTone" />保障视图</div>-->
+<!--              </template>-->
+<!--              <a-button type="primary" @click="openBaoZhangMapDialog">保障视图</a-button>-->
+<!--            </a-collapse-panel>-->
           </a-collapse>
         </div>
       </my-scroll>
@@ -161,14 +162,8 @@
         >驳回</a-button
       >
     </template>
-    <new-bao-zhang-map-dialog v-if="optType === 'add'" :visible.sync="mapDialogVisible"></new-bao-zhang-map-dialog>
-    <bao-zhang-map-dialog
-      v-else
-      :visible.sync="mapDialogVisible"
-      :optType="optType"
-      :peopleList="peopleList"
-      @saveDrawData="saveDraw"
-    ></bao-zhang-map-dialog>
+<!--    <new-bao-zhang-map-dialog v-if="optType === 'add'" :visible.sync="mapDialogVisible"></new-bao-zhang-map-dialog>-->
+
 
     <a-modal
       title="驳回理由"
@@ -198,8 +193,8 @@ import TeamPeople from './components/TeamPeople'
 import TeamPeopleForAdd from './components/TeamPeopleForAdd'
 import GroupPeople from './components/GroupPeople'
 import GroupPeopleTwo from './components/GroupPeopleTwo'
-import BaoZhangMapDialog from './components/BaoZhangMapDialog'
-import NewBaoZhangMapDialog from './components/NewBaoZhangMapDialog'
+// import BaoZhangMapDialog from './components/BaoZhangMapDialog'
+// import NewBaoZhangMapDialog from './components/NewBaoZhangMapDialog'
 import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
 
   export default {
@@ -211,9 +206,7 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
       TeamPeople,
       TeamPeopleForAdd,
       GroupPeople,
-      GroupPeopleTwo,
-      NewBaoZhangMapDialog,
-      BaoZhangMapDialog
+      GroupPeopleTwo
     },
     props:{
       visible:{
@@ -337,7 +330,6 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
 
         //保障视图弹窗
         mapDialogVisible: false,
-        sourcePeopleList: [],
         drawFeatures: [],
 
         //审核驳回弹窗
@@ -537,19 +529,12 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
       getJiJianDuChaResultData(data){
         this.jiJianDuChaData = JSON.parse(JSON.stringify(data));
       },
-      /****************保障视图操作区域 start******************/
-      //开启保障视图弹窗
-      openBaoZhangMapDialog(){
-        this.mapDialogVisible = true;
-      },
-
-      //保存地图数据
-      saveDraw(data){
+      //保障视图数据
+      getGisData(data){
         console.log("==保存===",data);
+        //这里只有单条数据了
         this.drawFeatures = data;
       },
-
-      /****************保障视图操作区域 end******************/
 
       //在保存数据之前对数据进行处理
       changeEventDataForSave(){

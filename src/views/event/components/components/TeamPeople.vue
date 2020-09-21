@@ -62,6 +62,16 @@
                         <span>{{record.zhiyuan}}</span>
                     </div>
                 </template>
+                <template slot="mapId" slot-scope="text, record, index">
+                    <div key="mapId">
+                        <cg-icon-svg
+                                name="pin"
+                                class="icon_pin"
+                                :class="{disabled:!(record.positionId&&record.positionId.length>0)}"
+                                @click="openBaoZhangMapDialog(record)"
+                        ></cg-icon-svg>
+                    </div>
+                </template>
                 <span slot="action" slot-scope="text, record, index"></span>
             </a-table>
             <a-table v-else :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
@@ -77,7 +87,7 @@
                                 v-model="record.leaderId"
                                 placeholder="请选择"
                                 option-filter-prop="children"
-                                style="width: 200px"
+                                style="width: 100px"
                                 :filter-option="filterOption"
                         >
                             <a-select-option :value="people.id" v-for="people in peopleList" :key="people.id">
@@ -102,6 +112,15 @@
                                     allow-clear
                                     :autosize="{ minRows: 2, maxRows: 2 }"/>
                     </div>
+                </template>
+                <template slot="mapId" slot-scope="text, record, index">
+                    <span key="mapId" @click="openBaoZhangMapDialog(record)">
+                        <cg-icon-svg
+                                name="pin"
+                                class="icon_pin"
+                                :class="{disabled:!(record.positionId&&record.positionId.length>0)}"
+                        ></cg-icon-svg>
+                    </span>
                 </template>
                 <span slot="action" slot-scope="text, record, index">
                   <a-popconfirm
@@ -128,6 +147,13 @@
             :defaultCheckedPeopleIds="defaultCheckedPeopleIds"
             @choosePeople="choosePeople"
         ></choose-people-dialog>
+        <bao-zhang-map-dialog
+                :visible.sync="mapDialogVisible"
+                :optType="optType"
+                :peopleList="peopleList"
+                :loadData="loadData"
+                @saveDrawData="saveDraw"
+        ></bao-zhang-map-dialog>
         <a-modal title="驳回理由"
                 :visible="backVisible"
                 :confirm-loading="confirmLoading"
@@ -142,6 +168,7 @@
 
 <script type="text/ecmascript-6">
   import ChoosePeopleDialog from './ChoosePeopleDialog'
+  import BaoZhangMapDialog from './BaoZhangMapDialog'
   import { mapActions } from 'vuex'
   const groupColumns = [
     {
@@ -156,7 +183,7 @@
       dataIndex: 'leaderId',
       key: 'leaderId',
       scopedSlots: { customRender: 'leaderId' },
-      width: '120px'
+      width: '140px'
     },
     {
       title: '执勤人',
@@ -169,19 +196,27 @@
       dataIndex: 'zhiyuan',
       key: 'zhiyuan',
       scopedSlots: { customRender: 'zhiyuan' },
-      width: '340px'
+      width: '300px'
+    },
+    {
+      title: '保障视图',
+      dataIndex: 'mapId',
+      key: 'mapId',
+      scopedSlots: { customRender: 'mapId' },
+      width: '90px'
     },
     {
       title: '操作',
       key: 'action',
       dataIndex: 'action',
       scopedSlots: { customRender: 'action' },
-      width: '100px'
+      width: '80px'
     }];
    export default {
      name: 'teamPeople',
      components:{
        ChoosePeopleDialog,
+       BaoZhangMapDialog
      },
      props:{
        eventId:{
@@ -198,23 +233,6 @@
            return []
          }
        },
-       // groupData:{
-       //   type: Object,
-       //   default(){
-       //     return{
-       //       groupName: 'dundianquandao',
-       //       leaderPosition: 1,
-       //       personPosition: 1,
-       //       teamPersonList:[]
-       //     }
-       //   }
-       // },
-       // reviewData:{
-       //   type: Object,
-       //   default() {
-       //     return {}
-       //   }
-       // }
      },
      data(){
        return {
@@ -236,7 +254,12 @@
          teamId: '',
          teamInfoTitle: '',
 
-         address: []
+         address: [],
+
+         //保障视图相关
+         mapDialogVisible: false,
+         loadData: {},
+         drawFeatures: [],
        }
      },
      computed:{
@@ -389,7 +412,7 @@
      watch:{
        groupResultData:{
          handler: function(value){
-           console.log('88888888',value);
+           //console.log('88888888',value);
            let changeValue = JSON.parse(JSON.stringify(value));
            if(this.userType === 'zybm'&&this.optType==='edit'){
              // 人员修改时，需要带上视图数据保存到store中
@@ -406,9 +429,7 @@
              });
              changeValue.teamPersonList[0].teamPersonData = resultTeamPersonData;
            }
-
            this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',changeValue);
-
          },
          deep: true
        }
@@ -500,6 +521,21 @@
          let i = this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.indexOf(person);
          this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.splice(i,1);
          this.teamPersonList[this.teamIndex].teamPersonData[index].personList.splice(i,1);
+       },
+       //开启保障视图弹窗
+       openBaoZhangMapDialog(load){
+         this.loadData = load;
+         this.mapDialogVisible = true;
+       },
+       //保存地图数据
+       saveDraw(data){
+         console.log("==需要保存的数据===",data);
+         let baoZhangItemData = data.baoZhangItemData;
+         let index = this.groupResultData.teamPersonList[0].teamPersonData.findIndex(item => baoZhangItemData.positionId===item.positionId);
+         this.groupResultData.teamPersonList[0].teamPersonData[index].mapId = baoZhangItemData.mapId;
+         this.groupResultData.teamPersonList[0].teamPersonData[index].mapType = baoZhangItemData.mapType;
+         this.groupResultData.teamPersonList[0].teamPersonData[index].remark = baoZhangItemData.remark;
+         this.$emit('getGisData',data.drawFeatures);
        },
        //进入中队预览
        lookTeamPeopleSet(team){
@@ -685,9 +721,19 @@
         font-size: 18px;
         cursor: pointer;
         color: #00a4fe;
+        margin-right: 0px;
     }
     .icon_add {
-        margin-left: 10px;
+        margin-left: 5px;
+    }
+    .icon_pin{
+        font-size: 24px;
+        color: #00a4fe;
+        cursor: pointer;
+        &.disabled{
+            color:#cccccc;
+            cursor: not-allowed;
+        }
     }
 }
 </style>
