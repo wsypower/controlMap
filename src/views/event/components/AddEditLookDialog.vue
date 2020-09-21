@@ -926,95 +926,110 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
       //保存gis数据输入数据库
       saveDataToGis(){
         if(this.drawFeatures) {
-          if (this.drawFeatures.Point&&this.drawFeatures.Point.add.length > 0) {
+          if (this.drawFeatures.Point && (this.drawFeatures.Point.add.length > 0
+                  || this.drawFeatures.Point.update.length > 0
+                  || this.drawFeatures.Point.delete.length > 0)) {
             const features = this.drawFeatures.Point.add;
-            let searchPointId;
-            searchPointId = '('
-            for (let i = 0; i < features.length; i++) {
-              searchPointId += "'" + features[i].get('id') + "'"
-              if (i + 1 < features.length) {
-                searchPointId += ','
-              }
-            }
-            searchPointId += ')'
-            getEmergencyFeatures(searchPointId, 'Point').then(data => {
-              data.forEach(f => {
-                // features = features.forEach(d=>d.get('id')!=f.get('id'));
-                for (let i = 0; i < features.length; i++) {
-                  if (features[i].get('id') == f.get('id')) {
-                    features.splice(i, 1);
-                    i--;
-                  }
+            if(features.length>0){
+              let searchPointId;
+              searchPointId = '('
+              for (let i = 0; i < features.length; i++) {
+                searchPointId += "'" + features[i].get('id') + "'"
+                if (i + 1 < features.length) {
+                  searchPointId += ','
                 }
-              })
-              if (this.drawFeatures.Point && (this.drawFeatures.Point.add.length > 0
-                || this.drawFeatures.Point.update.length > 0
-                || this.drawFeatures.Point.delete.length > 0)) {
+              }
+              searchPointId += ')'
+              getEmergencyFeatures(searchPointId, 'Point').then(data => {
+                data.forEach(f => {
+                  // features = features.forEach(d=>d.get('id')!=f.get('id'));
+                  for (let i = 0; i < features.length; i++) {
+                    if (features[i].get('id') == f.get('id')) {
+                      features.splice(i, 1);
+                      i--;
+                    }
+                  }
+                })
                 postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
                   console.log('==点数据==', res);
                 });
-              }
-            })
-          }
-          if (this.drawFeatures.LineString&&this.drawFeatures.LineString.add.length > 0) {
-            const features = this.drawFeatures.LineString.add;
-            let searchPointId;
-            searchPointId = '('
-            for (let i = 0; i < features.length; i++) {
-              searchPointId += "'" + features[i].get('id') + "'"
-              if (i + 1 < features.length) {
-                searchPointId += ','
-              }
-            }
-            searchPointId += ')'
-            getEmergencyFeatures(searchPointId, 'LineString').then(data => {
-              data.forEach(f => {
-                // features = features.forEach(d=>d.get('id')!=f.get('id'));
-                for (let i = 0; i < features.length; i++) {
-                  if (features[i].get('id') == f.get('id')) {
-                    features.splice(i, 1);
-                    i--;
-                  }
-                }
               })
-              if (this.drawFeatures.LineString && (this.drawFeatures.LineString.add.length > 0
-                || this.drawFeatures.LineString.update.length > 0
-                || this.drawFeatures.LineString.delete.length > 0)) {
+            }
+            else{
+              postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
+                console.log('==点数据==', res);
+              });
+            }
+          }
+          if (this.drawFeatures.LineString && (this.drawFeatures.LineString.add.length > 0
+                  || this.drawFeatures.LineString.update.length > 0
+                  || this.drawFeatures.LineString.delete.length > 0)) {
+            const features = this.drawFeatures.LineString.add;
+            if(features.length>0){
+              let searchPointId;
+              searchPointId = '('
+              for (let i = 0; i < features.length; i++) {
+                searchPointId += "'" + features[i].get('id') + "'"
+                if (i + 1 < features.length) {
+                  searchPointId += ','
+                }
+              }
+              searchPointId += ')'
+              getEmergencyFeatures(searchPointId, 'LineString').then(data => {
+                data.forEach(f => {
+                  // features = features.forEach(d=>d.get('id')!=f.get('id'));
+                  for (let i = 0; i < features.length; i++) {
+                    if (features[i].get('id') == f.get('id')) {
+                      features.splice(i, 1);
+                      i--;
+                    }
+                  }
+                })
                 postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
                   console.log('==点数据==', res);
                 });
-              }
-            })
-          }
-          if (this.drawFeatures.Polygon&&this.drawFeatures.Polygon.add.length > 0) {
-            const features = this.drawFeatures.Polygon.add;
-            let searchPointId;
-            searchPointId = '('
-            for (let i = 0; i < features.length; i++) {
-              searchPointId += "'" + features[i].get('id') + "'"
-              if (i + 1 < features.length) {
-                searchPointId += ','
-              }
-            }
-            searchPointId += ')'
-            getEmergencyFeatures(searchPointId, 'Polygon').then(data => {
-              data.forEach(f => {
-                // features = features.forEach(d=>d.get('id')!=f.get('id'));
-                for (let i = 0; i < features.length; i++) {
-                  if (features[i].get('id') == f.get('id')) {
-                    features.splice(i, 1);
-                    i--;
-                  }
-                }
               })
-              if (this.drawFeatures.Polygon && (this.drawFeatures.Polygon.add.length > 0
-                || this.drawFeatures.Polygon.update.length > 0
-                || this.drawFeatures.Polygon.delete.length > 0)) {
+            }
+            else{
+              postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
+                console.log('==线数据==', res);
+              });
+            }
+          }
+          if (this.drawFeatures.Polygon && (this.drawFeatures.Polygon.add.length > 0
+                  || this.drawFeatures.Polygon.update.length > 0
+                  || this.drawFeatures.Polygon.delete.length > 0)) {
+            const features = this.drawFeatures.Polygon.add;
+            if(features.length>0){
+              let searchPointId;
+              searchPointId = '('
+              for (let i = 0; i < features.length; i++) {
+                searchPointId += "'" + features[i].get('id') + "'"
+                if (i + 1 < features.length) {
+                  searchPointId += ','
+                }
+              }
+              searchPointId += ')'
+              getEmergencyFeatures(searchPointId, 'Polygon').then(data => {
+                data.forEach(f => {
+                  // features = features.forEach(d=>d.get('id')!=f.get('id'));
+                  for (let i = 0; i < features.length; i++) {
+                    if (features[i].get('id') == f.get('id')) {
+                      features.splice(i, 1);
+                      i--;
+                    }
+                  }
+                })
                 postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
                   console.log('==点数据==', res);
                 });
-              }
-            })
+              })
+            }
+            else{
+              postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
+                console.log('==面数据==', res);
+              });
+            }
           }
         }
       },
