@@ -200,7 +200,7 @@
           tempSource:null,
           tempFeatures:null,
           selectedFeature:null,
-          deleteFeature:false,
+          // deleteFeature:false,
 
           form: null,
           //一条保障点位的数据
@@ -272,10 +272,11 @@
       methods:{
         init(){
           this.initFinish=false;
-          this.deleteFeature=false;
+          // this.deleteFeature=false;
           this.clearInitData();
           source&&source.clear();
           if(this.initFeatures.length>0){
+            source.getFeatures();
             source.addFeatures(this.initFeatures);
           }
           this.tempDrawFeature = _.cloneDeep(this.drawFeatures);
@@ -468,15 +469,15 @@
             e.preventDefault();
             _this.tempChangeFeature=e.feature;
           });
-          source.on('removefeature', function(e) {
-            e.preventDefault();
-            if(_this.initFinish&&_this.deleteFeature){
-              const type=e.feature.getGeometry().getType();
-              if(!_this.drawFeatures[type].add.includes(e.feature)){
-                _this.drawFeatures[type].delete.push(e.feature);
-              }
-            }
-          });
+          // source.on('removefeature', function(e) {
+          //   e.preventDefault();
+          //   if(_this.initFinish&&_this.deleteFeature){
+          //     const type=e.feature.getGeometry().getType();
+          //     if(!_this.drawFeatures[type].add.includes(e.feature)){
+          //       _this.drawFeatures[type].delete.push(e.feature);
+          //     }
+          //   }
+          // });
         },
         //获取随机绘制图形id
         getMapId(){
@@ -500,7 +501,7 @@
         },
         //清除选中的图形
         clearSelectGeometry() {
-          this.deleteFeature=true;
+          // this.deleteFeature=true;
           Array.prototype.indexOf = function (val) {
             for (var i = 0; i < this.length; i++) {
               if (this[i] == val) return i;
@@ -516,6 +517,10 @@
           let deleteData;
           if (source) {
             source.removeFeature(this.selectedFeature);
+            const type=this.selectedFeature.getGeometry().getType();
+            if(!this.drawFeatures[type].add.includes(this.selectedFeature)){
+              this.drawFeatures[type].delete.push(this.selectedFeature);
+            }
             // vectorLayer.getSource()
             map.removeInteraction(select);
             for(let i=0;i<this.allBaoZhangData.length;i++){
@@ -606,7 +611,7 @@
         //保存图形数据
         saveMap() {
           this.hasSave=true;
-          this.deleteFeature=false;
+          // this.deleteFeature=false;
           this.infoOverlay&&this.infoOverlay.setPosition(undefined)
           this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
           this.pointFeatures = [];
