@@ -38,7 +38,7 @@
                 >{{ person.name }}</a-tag>
                 <a-button type="primary" size="small" @click="openTeamDialog(index)">中队选择</a-button>
             </span>
-            <span v-if="groupData.groupName!=='zongzhihui'" slot="action" slot-scope="text, record, index">
+            <span slot="action" slot-scope="text, record, index">
               <a-popconfirm
                       v-if="groupTeam.length > 1"
                       theme="filled"
