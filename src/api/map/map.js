@@ -6,7 +6,6 @@
 
 import request from '@/plugins/axios/axios'
 
-
 let baseApi = URL_CONFIG.baseURL
 /**
  * @description: 获取点数据接口
@@ -15,7 +14,7 @@ let baseApi = URL_CONFIG.baseURL
  */
 export function getPointFeatures(mapIdList, mapType) {
   return request({
-    url: URL_CONFIG.gisApi+`${URL_CONFIG.featurePre}/ows`,
+    url: URL_CONFIG.gisApi + `${URL_CONFIG.featurePre}/ows`,
     method: 'get',
     params: {
       service: 'WFS',
@@ -113,5 +112,16 @@ export function getPeopleListApi() {
   return request({
     url: 'http://60.191.224.129:83/api/gps/onlineUser',
     method: 'get'
+  })
+}
+/**
+ * @description:天地图搜索接口
+ * @author:sijianting
+ * @createDate:2020/9/23 9:33
+ */
+export function getAddressApi(keyword) {
+  return request({
+    url: `http://api.tianditu.gov.cn/search?postStr={"keyWord":"${keyword}","level":"11","mapBound":"119.56160545698368, 29.044618600019025,119.70854760613294, 29.11992072753492","queryType":"1","count":"20","start":"0"}&type=query&tk=9aa6b247976a8f9d3d16b3acbff09636`,
+    method: 'get',
   })
 }

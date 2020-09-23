@@ -9,12 +9,13 @@ import {
   getVideoListApi,
   getResourceListApi,
   getEquipListApi,
-  getPeopleListApi
+  getPeopleListApi,
+  getAddressApi
 } from '@/api/map/map'
 import GeoJSON from 'ol/format/GeoJSON'
 import WFS from 'ol/format/WFS'
-import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
+import Feature from 'ol/Feature'
+import Point from 'ol/geom/Point'
 
 /**
  * @description：获取不同类型点位数据
@@ -31,7 +32,7 @@ export async function getTypePoint(type) {
  * @author:sijianting
  * @createDate:2019/7/22 15:26
  */
-export async function getEmergencyFeatures(mapIdList,mapType) {
+export async function getEmergencyFeatures(mapIdList, mapType) {
   let featureType
   switch (mapType) {
     case 'Point':
@@ -81,24 +82,24 @@ export async function postEmergencyFeatures(drawType, feature) {
     featurePrefix: URL_CONFIG.featurePre, //工作空间名称0
     featureType: featureType //图层名称
   }
-  let addFeature=null;
-  let updateFeature=null;
-  let deleteFeature=null;
-  if(feature.add){
-    addFeature=feature.add;
+  let addFeature = null
+  let updateFeature = null
+  let deleteFeature = null
+  if (feature.add) {
+    addFeature = feature.add
   }
-  if(feature.update){
-    updateFeature=feature.update;
+  if (feature.update) {
+    updateFeature = feature.update
   }
-  if(feature.delete){
-    deleteFeature=feature.delete;
+  if (feature.delete) {
+    deleteFeature = feature.delete
   }
   xml = format.writeTransaction(addFeature, updateFeature, deleteFeature, obj)
-  const serializer = new XMLSerializer();
+  const serializer = new XMLSerializer()
   //将参数转换为xml格式数据
   const featString = serializer.serializeToString(xml)
   const result = await postFeature(featString)
-  return result;
+  return result
 }
 
 /**
@@ -164,18 +165,18 @@ export async function getTypeEquip(type) {
  * @createDate:2019/8/15 14:46
  */
 export async function getAllVideo() {
-  const result = await getVideoListApi();
+  const result = await getVideoListApi()
   const data = result.data.map(r => {
     if (r.longitude.length > 0 && r.latitude.length > 0) {
       r.position = [parseFloat(r.longitude), parseFloat(r.latitude)]
-      let feature = new Feature(new Point(r.position));
-      feature.setId(r.mpid);
-      feature.set('id',r.mpid);
-      feature.set('type','video');
-      return feature;
+      let feature = new Feature(new Point(r.position))
+      feature.setId(r.mpid)
+      feature.set('id', r.mpid)
+      feature.set('type', 'video')
+      return feature
     }
   })
-  return data;
+  return data
 }
 
 /**
@@ -184,17 +185,37 @@ export async function getAllVideo() {
  * @createDate:2019/8/15 15:26
  */
 export async function getAllPeople() {
-  const result = await getPeopleListApi();
-  console.log('取数据',result);
+  const result = await getPeopleListApi()
+  console.log('取数据', result)
   const data = result.map(r => {
     if (r.x.length > 0 && r.y.length > 0) {
       r.position = [parseFloat(r.x), parseFloat(r.y)]
-      let feature = new Feature(new Point(r.position));
-      feature.setId(r.userid);
-      feature.set('id',r.userid);
-      feature.set('type','people');
-      return feature;
+      let feature = new Feature(new Point(r.position))
+      feature.setId(r.userid)
+      feature.set('id', r.userid)
+      feature.set('type', 'people')
+      return feature
     }
   })
-  return data;
+  return data
+}
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2020/9/23 9:46
+ */
+export async function getAddress(keyword) {
+  const { pois } = await getAddressApi(keyword)
+  if (pois.length > 0) {
+    const list = pois.map(p => {
+      const xy = p.lonlat.split(' ')
+      return {
+        name: p.name,
+        coord: [parseFloat(xy[0]), parseFloat(xy[1])]
+      }
+    })
+    return list
+  } else {
+    return null
+  }
 }
