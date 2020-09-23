@@ -26,7 +26,12 @@
             <cg-container scroll>
               <a-form :form="form" style="margin:10px">
                 <a-form-item label="具体路段：" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
-                  <a-select placeholder="请选择道路" @change="handleChange" v-model="baoZhangFormData.positionId">
+                  <a-select placeholder="请选择道路"
+                            show-search
+                            @change="handleChange"
+                            v-model="baoZhangFormData.positionId"
+                            option-filter-prop="children"
+                            :filter-option="filterOption">
                     <a-select-option v-for="baoZhang in baoZhangArr" :key="baoZhang.positionId">
                       {{ baoZhang.load }}
                     </a-select-option>
@@ -393,6 +398,12 @@
           else{
             this.disableEdit = false;
           }
+        },
+        //选择过滤道路
+        filterOption(input, option) {
+          return (
+             option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          );
         },
         //地图点击事件处理器
         mapClickHandler({ pixel, coordinate }) {
