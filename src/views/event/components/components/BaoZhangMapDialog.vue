@@ -1,7 +1,7 @@
 <template>
   <a-modal
     ref="baoZhangDialog"
-    title="保障视图"
+    :title="'保障视图 (' + baoZhangItemData.load + ')'"
     v-model="mapDialogVisible"
     :maskClosable="false"
     @cancel="handleCancel"
@@ -230,7 +230,7 @@
       computed:{
         //保障视图是新增还是编辑操作
         mapOperateType:function(){
-          return this.baoZhangData.length>0?'edit':'add'
+          return this.baoZhangItemData.mapId&&this.baoZhangItemData.mapId.length>0?'edit':'add'
         },
         userType:function(){
           return this.$store.getters['cgadmin/user/type']
@@ -436,17 +436,14 @@
           draw.on('drawend', function(e) {
             const id=_this.getMapId();
             e.feature.set('id',id);
-            _this.showSetDialog(id,e.feature.getGeometry().getType());
+            _this.baoZhangItemData.mapId = id;
+            _this.baoZhangItemData.mapType = e.feature.getGeometry().getType();
+            //_this.showSetDialog(id,e.feature.getGeometry().getType());
             _this.infoOverlay.setPosition(e.feature.getGeometry().getLastCoordinate());
           });
         },
         editMapFeatures(){
           const _this=this;
-          // modify = mapManager.activeModify(source);
-          // modify.on("modifyend",function (e) {
-          //   const type=_this.tempChangeFeature.getGeometry().getType();
-          //   _this.drawFeatures[type].update.push(_this.tempChangeFeature);
-          // });
           source.on('addfeature', function(e) {
             e.preventDefault();
             if(_this.initFinish){
@@ -629,28 +626,28 @@
           }
           this.mapDialogVisible = false;
       },
-        afterClose(){
-          this.disableEdit = false;
-          console.log('关闭了')
-        },
-        // 地图搜索
-        handleSearchMap(value){
-          getAddress(value).then(res=>{
-            if(res){
-              this.data=res;
-              console.log('地址搜索==',res);
-            }
-          })
-        },
-        handleSearchChange(index) {
-          const item = this.data[index];
-          this.value = item.name;
-          map.getView().animate({
-            center: item.coord,
-            zoom: 15,
-            duration: 500
-          })
-        },
+      // 地图搜索
+      handleSearchMap(value){
+        getAddress(value).then(res=>{
+          if(res){
+            this.data=res;
+            console.log('地址搜索==',res);
+          }
+        })
+      },
+      handleSearchChange(index) {
+        const item = this.data[index];
+        this.value = item.name;
+        map.getView().animate({
+          center: item.coord,
+          zoom: 15,
+          duration: 500
+        })
+      },
+      afterClose(){
+        this.disableEdit = false;
+        console.log('关闭了')
+      }
     }
 }
 </script>

@@ -41,6 +41,11 @@
                 </div>
             </div>
             <a-table v-if="nowOptType==='look'||userType==='qxsl'" :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
+                <template slot="indexStr" slot-scope="text, record, index">
+                    <div key="indexStr">
+                        <span>{{index+1}}</span>
+                    </div>
+                </template>
                 <template slot="loadPosition" slot-scope="text, record, index">
                     <div key="loadPosition">
                         <span>{{record.addressName}}</span>
@@ -75,6 +80,11 @@
                 <span slot="action" slot-scope="text, record, index"></span>
             </a-table>
             <a-table v-else :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
+                <template slot="indexStr" slot-scope="text, record, index">
+                    <div key="indexStr">
+                        <span>{{index+1}}</span>
+                    </div>
+                </template>
                 <template slot="loadPosition" slot-scope="text, record, index">
                     <div key="loadPosition">
                         <a-cascader :options="address" placeholder="请选择" v-model="record.addressIds" @change="(value, selectedOptions)=>{changeAddress(teamIndex,value,selectedOptions,record.key)}" style="width: 100%"/>
@@ -172,6 +182,14 @@
   import { mapActions } from 'vuex'
   const groupColumns = [
     {
+      title: '序号',
+      dataIndex: 'indexStr',
+      key: 'indexStr',
+      scopedSlots: { customRender: 'indexStr' },
+      width: '70px',
+      align: 'center'
+    },
+    {
       title: '道路--道路分段--具体路段',
       dataIndex: 'loadPosition',
       key: 'loadPosition',
@@ -196,21 +214,23 @@
       dataIndex: 'zhiyuan',
       key: 'zhiyuan',
       scopedSlots: { customRender: 'zhiyuan' },
-      width: '300px'
+      width: '280px'
     },
     {
       title: '保障视图',
       dataIndex: 'mapId',
       key: 'mapId',
       scopedSlots: { customRender: 'mapId' },
-      width: '90px'
+      width: '90px',
+      align: 'center'
     },
     {
       title: '操作',
       key: 'action',
       dataIndex: 'action',
       scopedSlots: { customRender: 'action' },
-      width: '80px'
+      width: '80px',
+      align: 'center'
     }];
    export default {
      name: 'teamPeople',
@@ -739,7 +759,7 @@
             cursor: not-allowed;
         }
         &.down {
-            color: #4AF2A1;
+            color: #22ac38;
         }
     }
 }
