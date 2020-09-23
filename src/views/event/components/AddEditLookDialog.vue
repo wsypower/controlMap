@@ -533,7 +533,11 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
       getGisData(data){
         console.log("==保存===",data);
         //这里只有单条数据了
-        this.drawFeatures = data;
+        let index = this.drawFeatures.findIndex(feature => feature.positionId===data.positionId)
+        if(index>=0){
+          this.drawFeatures.splice(index,1);
+        }
+        this.drawFeatures.push(data);
       },
 
       //在保存数据之前对数据进行处理
@@ -912,6 +916,7 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
       },
       //保存gis数据输入数据库
       saveDataToGis(){
+        //todo：这里的数据格式和以前不一样了，请修改
         if(this.drawFeatures) {
           if (this.drawFeatures.Point && (this.drawFeatures.Point.add.length > 0
                   || this.drawFeatures.Point.update.length > 0

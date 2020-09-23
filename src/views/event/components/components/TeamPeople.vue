@@ -118,7 +118,7 @@
                         <cg-icon-svg
                                 name="pin"
                                 class="icon_pin"
-                                :class="{disabled:!(record.positionId&&record.positionId.length>0)}"
+                                :class="{disabled:!(record.positionId&&record.positionId.length>0),down:record.mapId&&record.mapId.length>0}"
                         ></cg-icon-svg>
                     </span>
                 </template>
@@ -535,7 +535,11 @@
          this.groupResultData.teamPersonList[0].teamPersonData[index].mapId = baoZhangItemData.mapId;
          this.groupResultData.teamPersonList[0].teamPersonData[index].mapType = baoZhangItemData.mapType;
          this.groupResultData.teamPersonList[0].teamPersonData[index].remark = baoZhangItemData.remark;
-         this.$emit('getGisData',data.drawFeatures);
+         let pData = {
+           positionId: baoZhangItemData.positionId,
+           drawFeatures: data.drawFeatures
+         }
+         this.$emit('getGisData',pData);
        },
        //进入中队预览
        lookTeamPeopleSet(team){
@@ -730,9 +734,12 @@
         font-size: 24px;
         color: #00a4fe;
         cursor: pointer;
-        &.disabled{
+        &.disabled {
             color:#cccccc;
             cursor: not-allowed;
+        }
+        &.down {
+            color: #4AF2A1;
         }
     }
 }
