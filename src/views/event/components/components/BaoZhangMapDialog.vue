@@ -80,6 +80,24 @@
           </div>
         </div>
       </div>
+      <div class="search-map">
+        <a-select
+          show-search
+          :value="value"
+          placeholder="请输入搜索地点"
+          style="width: 300px"
+          :default-active-first-option="false"
+          :show-arrow="false"
+          :filter-option="false"
+          :not-found-content="null"
+          @search="handleSearchMap"
+          @change="handleSearchChange"
+        >
+          <a-select-option v-for="(d, index) in data" :key="index">
+            {{ d.name }}
+          </a-select-option>
+        </a-select>
+      </div>
       <div v-if="nowOptType === 'edit' && !disableEdit" class="operate-panel">
         <a-dropdown>
           <a-menu slot="overlay" @click="handleOperateClick">
@@ -118,7 +136,7 @@
   import VectorSource from 'ol/source/Vector'
   import Select from 'ol/interaction/Select.js';
   import { Circle as CircleStyle,Fill, Stroke, Style} from 'ol/style.js';
-  import { getEmergencyFeatures } from '@/api/map/service'
+  import { getEmergencyFeatures,getAddress } from '@/api/map/service'
   import Draw from 'ol/interaction/Draw.js'
   import { deepClone } from '@/utils/util.tool'
   let map;
@@ -156,6 +174,8 @@
       },
       data(){
         return {
+          data: [],//地址搜索返回数据
+          value: undefined,// 地址搜索点击数据
           mapDialogVisible: false,
           //此环境中数据修改使用
           baoZhangItemData: {},
@@ -364,6 +384,7 @@
         },
         //地图点击事件处理器
         mapClickHandler({ pixel, coordinate }) {
+          console.log('经纬度',coordinate);
           const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
           if(feature&&feature.get('id')){
             this.showSetDialog(feature.get('id'));
@@ -608,10 +629,28 @@
           }
           this.mapDialogVisible = false;
       },
-      afterClose(){
-        this.disableEdit = false;
-        console.log('关闭了')
-      }
+        afterClose(){
+          this.disableEdit = false;
+          console.log('关闭了')
+        },
+        // 地图搜索
+        handleSearchMap(value){
+          getAddress(value).then(res=>{
+            if(res){
+              this.data=res;
+              console.log('地址搜索==',res);
+            }
+          })
+        },
+        handleSearchChange(index) {
+          const item = this.data[index];
+          this.value = item.name;
+          map.getView().animate({
+            center: item.coord,
+            zoom: 15,
+            duration: 500
+          })
+        },
     }
 }
 </script>
@@ -628,6 +667,11 @@
     button {
       margin-left: 10px;
     }
+  }
+  .search-map {
+    position: absolute;
+    top: 20px;
+    left: 60px;
   }
   .show-set-button {
     position: absolute;
