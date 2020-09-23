@@ -121,7 +121,7 @@ export function getPeopleListApi() {
  */
 export function getAddressApi(keyword) {
   return request({
-    url: `http://api.tianditu.gov.cn/search?postStr={"keyWord":"${keyword}","level":"11","mapBound":"119.56160545698368, 29.044618600019025,119.70854760613294, 29.11992072753492","queryType":"1","count":"20","start":"0"}&type=query&tk=9aa6b247976a8f9d3d16b3acbff09636`,
+    url: `http://api.tianditu.gov.cn/search?postStr={"keyWord":"${keyword}","level":"11","mapBound":"${URL_CONFIG.searchExtent}","queryType":"1","count":"20","start":"0"}&type=query&tk=9aa6b247976a8f9d3d16b3acbff09636`,
     method: 'get',
   })
 }

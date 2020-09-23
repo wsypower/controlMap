@@ -206,7 +206,7 @@ export async function getAllPeople() {
  */
 export async function getAddress(keyword) {
   const { pois } = await getAddressApi(keyword)
-  if (pois.length > 0) {
+  if (pois && pois.length > 0) {
     const list = pois.map(p => {
       const xy = p.lonlat.split(' ')
       return {
