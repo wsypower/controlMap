@@ -932,7 +932,8 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
       saveDataToGis(){
         //todo：这里的数据格式和以前不一样了，请修改 去vuex里面获取数据
         const data = this.$store.getters['event/baoZhangData/baoZhangData'];
-        console.log('==需要保存的数据===',data);
+        console.log('==需要保存的数据saveDataToGis===',data);
+
         let pointFeature=[];
         let lineFeature=[];
         let polygonFeature=[];

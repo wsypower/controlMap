@@ -487,23 +487,23 @@ const groupColumns = [
    watch:{
      groupResultData:{
        handler: function(value){
-         //console.log('88888888',value);
+         console.log('88888888',value);
          let changeValue = JSON.parse(JSON.stringify(value));
-         if(this.userType === 'zybm'&&this.optType==='edit'){
-           // 人员修改时，需要带上视图数据保存到store中
-           let dunDianQuanDaoInfo = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-           let sourceData = dunDianQuanDaoInfo.teamPersonList[0].teamPersonData;
-           let resultTeamPersonData = changeValue.teamPersonList[0].teamPersonData.map(teamPerson => {
-             let needData = sourceData.find(source=>source.positionId===teamPerson.positionId);
-             if(needData){
-               teamPerson.mapId = needData.mapId;
-               teamPerson.mapType = needData.mapType;
-               teamPerson.remark = needData.remark;
-             }
-             return teamPerson
-           });
-           changeValue.teamPersonList[0].teamPersonData = resultTeamPersonData;
-         }
+         // if(this.userType === 'zybm'&&this.optType==='edit'){
+         //   // 人员修改时，需要带上视图数据保存到store中
+         //   let dunDianQuanDaoInfo = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+         //   let sourceData = dunDianQuanDaoInfo.teamPersonList[0].teamPersonData;
+         //   let resultTeamPersonData = changeValue.teamPersonList[0].teamPersonData.map(teamPerson => {
+         //     let needData = sourceData.find(source=>source.positionId===teamPerson.positionId);
+         //     if(needData){
+         //       teamPerson.mapId = needData.mapId;
+         //       teamPerson.mapType = needData.mapType;
+         //       teamPerson.remark = needData.remark;
+         //     }
+         //     return teamPerson
+         //   });
+         //   changeValue.teamPersonList[0].teamPersonData = resultTeamPersonData;
+         // }
          this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',changeValue);
        },
        deep: true
@@ -647,11 +647,10 @@ const groupColumns = [
      //保存地图数据
      saveDraw(data){
        console.log("==需要保存的数据===",data);
-       let baoZhangItemData = data.baoZhangItemData;
-       let index = this.groupResultData.teamPersonList[0].teamPersonData.findIndex(item => baoZhangItemData.positionId===item.positionId);
-       this.groupResultData.teamPersonList[0].teamPersonData[index].mapId = baoZhangItemData.mapId;
-       this.groupResultData.teamPersonList[0].teamPersonData[index].mapType = baoZhangItemData.mapType;
-       this.groupResultData.teamPersonList[0].teamPersonData[index].remark = baoZhangItemData.remark;
+       let index = this.groupResultData.teamPersonList[0].teamPersonData.findIndex(item => data.positionId===item.positionId);
+       this.groupResultData.teamPersonList[0].teamPersonData[index].mapId = data.mapId;
+       this.groupResultData.teamPersonList[0].teamPersonData[index].mapType = data.mapType;
+       this.groupResultData.teamPersonList[0].teamPersonData[index].remark = data.remark;
        //以下数据不需要，直接从vuex里面获取
        // let pData = {
        //   positionId: baoZhangItemData.positionId,

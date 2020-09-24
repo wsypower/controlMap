@@ -500,6 +500,7 @@
 </script>
 <style lang="scss" scoped>
 .yuan_dialog_body {
+  /*height: 570px;*/
   height: 90%;
   width: 100%;
   position: relative;
