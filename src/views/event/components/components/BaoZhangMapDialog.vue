@@ -292,6 +292,7 @@
                 source.addFeature(feature);
               }else if(currentData.mapId.length>0){
                 getSingleFeature(currentData.mapId, currentData.mapType).then(data => {
+                  this.drawFeature[currentData.mapType].add=data[0];
                   source.addFeatures(data);
                 });
               }
