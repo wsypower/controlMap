@@ -951,24 +951,25 @@ import { filterMapId } from '@/utils/util.map.manage'
           count:0,
           feature:[]
         }
+        debugger
         Object.keys(data).forEach(key => {
           if(data[key].mapId.length>0){
             if(data[key].mapType=='Point'){
-              searchPoint.id += "'" + data[key].mapId + "',";
-              searchPoint.count+=1;
               if(data[key].drawFeature){
-                searchPoint.feature.push(data[key].drawFeature['Point'].add);
+                  searchPoint.id += "'" + data[key].mapId + "',";
+                  searchPoint.count+=1;
+                  searchPoint.feature.push(data[key].drawFeature['Point'].add);
               }
             }else if(data[key].mapType=='LineString'){
-              searchLine.id += "'" + data[key].mapId + "',";
-              searchLine.count+=1;
               if(data[key].drawFeature) {
+                searchLine.id += "'" + data[key].mapId + "',";
+                searchLine.count+=1;
                 searchLine.feature.push(data[key].drawFeature['LineString'].add);
               }
           }else {
-              searchPolygon.id += "'" + data[key].mapId + "',";
-              searchPolygon.count+=1;
               if(data[key].drawFeature) {
+                searchPolygon.id += "'" + data[key].mapId + "',";
+                searchPolygon.count+=1;
                 searchPolygon.feature.push(data[key].drawFeature['Polygon'].add);
               }
             }
@@ -990,6 +991,7 @@ import { filterMapId } from '@/utils/util.map.manage'
         }
         if(searchLine.count>0){
           searchLine.id =  searchLine.id.substring(0,searchPoint.id.length-1);
+          searchLine.id+=')';
           getEmergencyFeatures(searchLine.id, 'LineString').then(data => {
             console.log('==查询点数据==', data);
             if(data.length>0){
@@ -1003,6 +1005,7 @@ import { filterMapId } from '@/utils/util.map.manage'
         }
         if(searchPolygon.count>0){
           searchPolygon.id =  searchPolygon.id.substring(0,searchPoint.id.length-1);
+          searchPolygon.id+=')';
           getEmergencyFeatures(searchPolygon.id, 'Polygon').then(data => {
             console.log('==查询点数据==', data);
             if(data.length>0){
@@ -1022,14 +1025,14 @@ import { filterMapId } from '@/utils/util.map.manage'
           });
         }
         if(searchLine.feature.length>0){
-          postEmergencyFeatures('Point', {
+          postEmergencyFeatures('LineString', {
             add:searchLine.feature
           }).then(res => {
             console.log('==点数据==', res);
           });
         }
         if(searchPolygon.feature.length>0){
-          postEmergencyFeatures('Point', {
+          postEmergencyFeatures('Polygon', {
             add:searchPolygon.feature
           }).then(res => {
             console.log('==点数据==', res);
