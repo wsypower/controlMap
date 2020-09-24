@@ -931,118 +931,147 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
       //保存gis数据输入数据库
       saveDataToGis(){
         //todo：这里的数据格式和以前不一样了，请修改 去vuex里面获取数据
-        if(this.drawFeatures) {
-          if (this.drawFeatures.Point && (this.drawFeatures.Point.add.length > 0
-                  || this.drawFeatures.Point.update.length > 0
-                  || this.drawFeatures.Point.delete.length > 0)) {
-            const features = this.drawFeatures.Point.add;
-            if(features.length>0){
-              let searchPointId;
-              searchPointId = '('
-              for (let i = 0; i < features.length; i++) {
-                searchPointId += "'" + features[i].get('id') + "'"
-                if (i + 1 < features.length) {
-                  searchPointId += ','
-                }
-              }
-              searchPointId += ')'
-              getEmergencyFeatures(searchPointId, 'Point').then(data => {
-                data.forEach(f => {
-                  // features = features.forEach(d=>d.get('id')!=f.get('id'));
-                  for (let i = 0; i < features.length; i++) {
-                    if (features[i].get('id') == f.get('id')) {
-                      features.splice(i, 1);
-                      i--;
-                    }
-                  }
-                })
-                postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
-                  console.log('==点数据==', res);
-                });
-              })
-            }
-            else{
-              postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
-                console.log('==点数据==', res);
-              });
+        const data = this.$store.getters['event/baoZhangData/baoZhangData'];
+        console.log('==需要保存的数据===',data);
+        let pointFeature=[];
+        let lineFeature=[];
+        let polygonFeature=[];
+        Object.keys(data).forEach(key => {
+          if(data[key].drawFeature){
+            if(data[key].mapType=='Point'){
+              pointFeature.push(data[key].drawFeature['Point'].add)
+            }else if(data[key].mapType=='LineString'){
+              lineFeature.push(data[key].drawFeature['LineString'].add)
+            }else{
+              polygonFeature.push(data[key].drawFeature['Polygon'].add)
             }
           }
-          if (this.drawFeatures.LineString && (this.drawFeatures.LineString.add.length > 0
-                  || this.drawFeatures.LineString.update.length > 0
-                  || this.drawFeatures.LineString.delete.length > 0)) {
-            const features = this.drawFeatures.LineString.add;
-            if(features.length>0){
-              let searchPointId;
-              searchPointId = '('
-              for (let i = 0; i < features.length; i++) {
-                searchPointId += "'" + features[i].get('id') + "'"
-                if (i + 1 < features.length) {
-                  searchPointId += ','
-                }
-              }
-              searchPointId += ')'
-              getEmergencyFeatures(searchPointId, 'LineString').then(data => {
-                data.forEach(f => {
-                  // features = features.forEach(d=>d.get('id')!=f.get('id'));
-                  for (let i = 0; i < features.length; i++) {
-                    if (features[i].get('id') == f.get('id')) {
-                      features.splice(i, 1);
-                      i--;
-                    }
-                  }
-                })
-                postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
-                  console.log('==点数据==', res);
-                });
-              })
-            }
-            else{
-              postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
-                console.log('==线数据==', res);
-              });
-            }
-          }
-          if (this.drawFeatures.Polygon && (this.drawFeatures.Polygon.add.length > 0
-                  || this.drawFeatures.Polygon.update.length > 0
-                  || this.drawFeatures.Polygon.delete.length > 0)) {
-            const features = this.drawFeatures.Polygon.add;
-            if(features.length>0){
-              let searchPointId;
-              searchPointId = '('
-              for (let i = 0; i < features.length; i++) {
-                searchPointId += "'" + features[i].get('id') + "'"
-                if (i + 1 < features.length) {
-                  searchPointId += ','
-                }
-              }
-              searchPointId += ')'
-              getEmergencyFeatures(searchPointId, 'Polygon').then(data => {
-                data.forEach(f => {
-                  // features = features.forEach(d=>d.get('id')!=f.get('id'));
-                  for (let i = 0; i < features.length; i++) {
-                    if (features[i].get('id') == f.get('id')) {
-                      features.splice(i, 1);
-                      i--;
-                    }
-                  }
-                })
-                postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
-                  console.log('==点数据==', res);
-                });
-              })
-            }
-            else{
-              postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
-                console.log('==面数据==', res);
-              });
-            }
-          }
+        })
+        if(pointFeature.length>0){
+          postEmergencyFeatures('Point', {
+            delete:pointFeature,
+          }).then(res => {
+            postEmergencyFeatures('Point', {
+              add:pointFeature,
+            }).then(res => {
+              console.log('==点数据==', res);
+            });
+            console.log('==点数据==', res);
+          });
         }
+        // if(this.drawFeatures) {
+        //   if (this.drawFeatures.Point && (this.drawFeatures.Point.add.length > 0
+        //           || this.drawFeatures.Point.update.length > 0
+        //           || this.drawFeatures.Point.delete.length > 0)) {
+        //     const features = this.drawFeatures.Point.add;
+        //     if(features.length>0){
+        //       let searchPointId;
+        //       searchPointId = '('
+        //       for (let i = 0; i < features.length; i++) {
+        //         searchPointId += "'" + features[i].get('id') + "'"
+        //         if (i + 1 < features.length) {
+        //           searchPointId += ','
+        //         }
+        //       }
+        //       searchPointId += ')'
+        //       getEmergencyFeatures(searchPointId, 'Point').then(data => {
+        //         data.forEach(f => {
+        //           // features = features.forEach(d=>d.get('id')!=f.get('id'));
+        //           for (let i = 0; i < features.length; i++) {
+        //             if (features[i].get('id') == f.get('id')) {
+        //               features.splice(i, 1);
+        //               i--;
+        //             }
+        //           }
+        //         })
+        //         postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
+        //           console.log('==点数据==', res);
+        //         });
+        //       })
+        //     }
+        //     else{
+        //       postEmergencyFeatures('Point', this.drawFeatures['Point']).then(res => {
+        //         console.log('==点数据==', res);
+        //       });
+        //     }
+        //   }
+        //   if (this.drawFeatures.LineString && (this.drawFeatures.LineString.add.length > 0
+        //           || this.drawFeatures.LineString.update.length > 0
+        //           || this.drawFeatures.LineString.delete.length > 0)) {
+        //     const features = this.drawFeatures.LineString.add;
+        //     if(features.length>0){
+        //       let searchPointId;
+        //       searchPointId = '('
+        //       for (let i = 0; i < features.length; i++) {
+        //         searchPointId += "'" + features[i].get('id') + "'"
+        //         if (i + 1 < features.length) {
+        //           searchPointId += ','
+        //         }
+        //       }
+        //       searchPointId += ')'
+        //       getEmergencyFeatures(searchPointId, 'LineString').then(data => {
+        //         data.forEach(f => {
+        //           // features = features.forEach(d=>d.get('id')!=f.get('id'));
+        //           for (let i = 0; i < features.length; i++) {
+        //             if (features[i].get('id') == f.get('id')) {
+        //               features.splice(i, 1);
+        //               i--;
+        //             }
+        //           }
+        //         })
+        //         postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
+        //           console.log('==点数据==', res);
+        //         });
+        //       })
+        //     }
+        //     else{
+        //       postEmergencyFeatures('LineString', this.drawFeatures['LineString']).then(res => {
+        //         console.log('==线数据==', res);
+        //       });
+        //     }
+        //   }
+        //   if (this.drawFeatures.Polygon && (this.drawFeatures.Polygon.add.length > 0
+        //           || this.drawFeatures.Polygon.update.length > 0
+        //           || this.drawFeatures.Polygon.delete.length > 0)) {
+        //     const features = this.drawFeatures.Polygon.add;
+        //     if(features.length>0){
+        //       let searchPointId;
+        //       searchPointId = '('
+        //       for (let i = 0; i < features.length; i++) {
+        //         searchPointId += "'" + features[i].get('id') + "'"
+        //         if (i + 1 < features.length) {
+        //           searchPointId += ','
+        //         }
+        //       }
+        //       searchPointId += ')'
+        //       getEmergencyFeatures(searchPointId, 'Polygon').then(data => {
+        //         data.forEach(f => {
+        //           // features = features.forEach(d=>d.get('id')!=f.get('id'));
+        //           for (let i = 0; i < features.length; i++) {
+        //             if (features[i].get('id') == f.get('id')) {
+        //               features.splice(i, 1);
+        //               i--;
+        //             }
+        //           }
+        //         })
+        //         postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
+        //           console.log('==点数据==', res);
+        //         });
+        //       })
+        //     }
+        //     else{
+        //       postEmergencyFeatures('Polygon', this.drawFeatures['Polygon']).then(res => {
+        //         console.log('==面数据==', res);
+        //       });
+        //     }
+        //   }
+        // }
         //清理drawFeature数据，使得数据从gis库里面去取
-        this.$store.commit('event/baoZhangData/clearSelfData');
+        // this.$store.commit('event/baoZhangData/clearSelfData');
       },
       //整个事件预览
       reviewEvent(){
+        debugger;
         let userId = util.cookies.get('userId');
         if(this.optType==='look'){
           window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.eventId, '事件详情', 'width=1000,height=800');

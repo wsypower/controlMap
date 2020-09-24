@@ -10,12 +10,12 @@ export default {
   },
   mutations: {
     // 更新一条保障视图数据
-    updateBaoZhangItemData(state, baoZhangItemData) {
-      state.baoZhangData[baoZhangItemData.keyPositionId] = baoZhangItemData;
+    updateBaoZhangMapItemData(state, baoZhangMapItemData) {
+      state.baoZhangData[baoZhangMapItemData.keyPositionId] = baoZhangMapItemData;
     },
 
     // 删除一条保障视图数据
-    deleteBaoZhangItemData(state, keyPositionId) {
+    deleteBaoZhangMapItemData(state, keyPositionId) {
       let index = Object.keys(state.baoZhangData).findIndex(key => keyPositionId);
       if(index>=0){
         delete state.baoZhangData[keyPositionId]

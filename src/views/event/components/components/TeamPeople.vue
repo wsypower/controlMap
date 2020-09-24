@@ -1,838 +1,890 @@
 <template>
-    <div class="team-people-panel">
-        <div class="team-people-panel-header" flex="cross:center main:justify">
-            <span><i style="color:#d60000;">*</i>蹲点劝导组：</span>
-        </div>
-        <div class="team-people-panel-method" flex="dir:left cross:center">
-            <div class="" flex="dir:left cross:center">
-                <label>负责人定位方式：</label>
-                <a-radio-group v-if="userType==='qxsl'&&optType!=='look'" name="radioGroup" v-model="groupResultData.leaderPosition">
-                    <a-radio value="1">单兵设备</a-radio>
-                    <a-radio value="2">手机</a-radio>
-                </a-radio-group>
-                <span v-else>{{leaderPositionName}}</span>
-            </div>
-            <div class="" flex="dir:left cross:center">
-                <label>执勤人定位方式：</label>
-                <a-radio-group v-if="userType==='qxsl'&&optType!=='look'" name="radioGroup" v-model="groupResultData.personPosition">
-                    <a-radio value="1">单兵设备</a-radio>
-                    <a-radio value="2">手机</a-radio>
-                </a-radio-group>
-                <span v-else>{{personPositionName}}</span>
-            </div>
-        </div>
-        <div class="team-people-panel-item" v-for="(team, teamIndex) in teamPersonList" :key="team.teamId">
-            <div class="team-item-header" flex="dir:left cross:center main:justify">
-                <span class="team-item-header-left">{{team.teamName}}</span>
-                <div class="team-item-header-right" flex="dir:left cross:center">
-                    <div>
-                        <span v-if="team.checkStatusId==='1'||btnOptType==='look'"
-                              class="team-item_status"
-                              :class="{red:team.checkStatusId==='4', blue:team.checkStatusId==='1', yellow:team.checkStatusId==='2',green:team.checkStatusId==='3'}">
-                            {{team.checkStatusName}}
-                        </span>
-                        <span class="btn btn_review" @click="lookTeamPeopleSet(team)">预览</span>
-                        <span v-if="btnOptType==='edit'&&(team.checkStatusId==='2'||team.checkStatusId==='4')" class="btn btn_pass" @click="passTeamPeopleSet(teamIndex,team.teamId)">确认</span>
-                        <span v-if="btnOptType==='edit'&&team.checkStatusId==='3'" class="btn btn_pass_text">已确认</span>
-                        <span v-if="btnOptType==='edit'&&(team.checkStatusId==='2'||team.checkStatusId==='3')" class="btn btn_back" @click="openBackModal(teamIndex)">驳回</span>
-                        <span v-if="btnOptType==='edit'&&team.checkStatusId==='4'" class="btn btn_back_text">已驳回</span>
-                    </div>
-                    <a-icon class="btn_hide" :class="{open: teamIndex>0}" type="up" />
-                </div>
-            </div>
-            <a-table v-if="nowOptType==='look'||userType==='qxsl'" :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
-                <template slot="indexStr" slot-scope="text, record, index">
-                    <div key="indexStr">
-                        <span>{{index+1}}</span>
-                    </div>
-                </template>
-                <template slot="loadPosition" slot-scope="text, record, index">
-                    <div key="loadPosition">
-                        <span>{{record.addressName}}</span>
-                    </div>
-                </template>
-                <template slot="leaderId" slot-scope="text, record, index">
-                    <div key="leaderId">
-                        <span>{{record.leaderName}}</span>
-                    </div>
-                </template>
-                <span slot="personList" slot-scope="text, record, index">
-                    <a-tag v-for="person in record.personList"
-                            color="blue"
-                            :key="person.id"
-                    >{{ person.name }}</a-tag>
-                </span>
-                <template slot="zhiyuan" slot-scope="text, record, index">
-                    <div key="zhiyuan">
-                        <span>{{record.zhiyuan}}</span>
-                    </div>
-                </template>
-                <template slot="mapId" slot-scope="text, record, index">
-                    <div key="mapId">
-                        <cg-icon-svg
-                                name="pin"
-                                class="icon_pin"
-                                :class="{disabled:!(record.positionId&&record.positionId.length>0)}"
-                                @click="openBaoZhangMapDialog(record)"
-                        ></cg-icon-svg>
-                    </div>
-                </template>
-                <span slot="action" slot-scope="text, record, index"></span>
-            </a-table>
-            <a-table v-else :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
-                <template slot="indexStr" slot-scope="text, record, index">
-                    <div key="indexStr">
-                        <span>{{index+1}}</span>
-                    </div>
-                </template>
-                <template slot="loadPosition" slot-scope="text, record, index">
-                    <div key="loadPosition">
-                        <a-cascader :options="address" placeholder="请选择" v-model="record.addressIds" @change="(value, selectedOptions)=>{changeAddress(teamIndex,value,selectedOptions,record.key)}" style="width: 100%"/>
-                    </div>
-                </template>
-                <template slot="leaderId" slot-scope="text, record, index">
-                    <div key="leaderId">
-                        <a-select
-                                show-search
-                                v-model="record.leaderId"
-                                placeholder="请选择"
-                                option-filter-prop="children"
-                                style="width: 100px"
-                                :filter-option="filterOption"
-                        >
-                            <a-select-option :value="people.id" v-for="people in peopleList" :key="people.id">
-                                {{people.name}}
-                            </a-select-option>
-                        </a-select>
-                    </div>
-                </template>
-                <span slot="personList" slot-scope="text, record, index">
-                    <a-tag v-for="person in record.personObjList"
-                           color="blue"
-                           :key="person.id"
-                           closable
-                           @close="($event) => closeTag(person, index,$event)"
-                    >{{ person.name }}</a-tag>
-                    <a-button type="primary" size="small" @click="openPeopleDialog(teamIndex,index)">人员选择</a-button>
-                </span>
-                <template slot="zhiyuan" slot-scope="text, record, index">
-                    <div key="zhiyuan">
-                        <a-textarea v-model="record.zhiyuan"
-                                    placeholder="请输入支援人员详情"
-                                    allow-clear
-                                    :autosize="{ minRows: 2, maxRows: 2 }"/>
-                    </div>
-                </template>
-                <template slot="mapId" slot-scope="text, record, index">
-                    <span key="mapId" @click="openBaoZhangMapDialog(record)">
-                        <cg-icon-svg
-                                name="pin"
-                                class="icon_pin"
-                                :class="{disabled:!(record.positionId&&record.positionId.length>0),down:record.mapId&&record.mapId.length>0}"
-                        ></cg-icon-svg>
-                    </span>
-                </template>
-                <span slot="action" slot-scope="text, record, index">
-                  <a-popconfirm
-                          v-if="team.teamPersonData.length > 1"
-                          theme="filled"
-                          title="确定删除这个组吗？"
-                          @confirm="() => deleteGroup(index,teamIndex)"
-                  >
-                    <a-icon type="minus-circle" class="icon_delete" />
-                  </a-popconfirm>
-                  <a-icon
-                          v-if="index === team.teamPersonData.length - 1"
-                          theme="filled"
-                          type="plus-circle"
-                          class="icon_add"
-                          @click="addGroup(record, index,teamIndex)"
-                  />
-                </span>
-            </a-table>
-        </div>
-        <choose-people-dialog
-            :rangeId="rangeId"
-            :visible.sync="choosePeopleDialogVisible"
-            :defaultCheckedPeopleIds="defaultCheckedPeopleIds"
-            @choosePeople="choosePeople"
-        ></choose-people-dialog>
-        <bao-zhang-map-dialog
-                :visible.sync="mapDialogVisible"
-                :optType="optType"
-                :peopleList="peopleList"
-                :loadData="loadData"
-                @saveDrawData="saveDraw"
-        ></bao-zhang-map-dialog>
-        <a-modal title="驳回理由"
-                :visible="backVisible"
-                :confirm-loading="confirmLoading"
-                 :maskClosable="false"
-                @ok="backTeamPeopleSet"
-                @cancel="()=>{this.backVisible=false;this.backReason='';}"
-        >
-            <a-textarea v-model="backReason" placeholder="请输入驳回理由" allow-clear/>
-        </a-modal>
+  <div class="team-people-panel">
+    <div class="team-people-panel-header" flex="cross:center main:justify">
+      <span><i style="color:#d60000;">*</i>蹲点劝导组：</span>
     </div>
+    <div class="team-people-panel-method" flex="dir:left cross:center">
+      <div class="" flex="dir:left cross:center">
+        <label>负责人定位方式：</label>
+        <a-radio-group
+          v-if="userType === 'qxsl' && optType !== 'look'"
+          name="radioGroup"
+          v-model="groupResultData.leaderPosition"
+        >
+          <a-radio value="1">单兵设备</a-radio>
+          <a-radio value="2">手机</a-radio>
+        </a-radio-group>
+        <span v-else>{{ leaderPositionName }}</span>
+      </div>
+      <div class="" flex="dir:left cross:center">
+        <label>执勤人定位方式：</label>
+        <a-radio-group
+          v-if="userType === 'qxsl' && optType !== 'look'"
+          name="radioGroup"
+          v-model="groupResultData.personPosition"
+        >
+          <a-radio value="1">单兵设备</a-radio>
+          <a-radio value="2">手机</a-radio>
+        </a-radio-group>
+        <span v-else>{{ personPositionName }}</span>
+      </div>
+    </div>
+    <div class="team-people-panel-item" v-for="(team, teamIndex) in teamPersonList" :key="team.teamId">
+      <div class="team-item-header" flex="dir:left cross:center main:justify">
+        <span class="team-item-header-left">{{ team.teamName }}</span>
+        <div class="team-item-header-right" flex="dir:left cross:center">
+          <div>
+            <span
+              v-if="team.checkStatusId === '1' || btnOptType === 'look'"
+              class="team-item_status"
+              :class="{
+                red: team.checkStatusId === '4',
+                blue: team.checkStatusId === '1',
+                yellow: team.checkStatusId === '2',
+                green: team.checkStatusId === '3'
+              }"
+            >
+              {{ team.checkStatusName }}
+            </span>
+            <span class="btn btn_review" @click="lookTeamPeopleSet(team)">预览</span>
+            <span
+              v-if="btnOptType === 'edit' && (team.checkStatusId === '2' || team.checkStatusId === '4')"
+              class="btn btn_pass"
+              @click="passTeamPeopleSet(teamIndex, team.teamId)"
+              >确认</span
+            >
+            <span v-if="btnOptType === 'edit' && team.checkStatusId === '3'" class="btn btn_pass_text">已确认</span>
+            <span
+              v-if="btnOptType === 'edit' && (team.checkStatusId === '2' || team.checkStatusId === '3')"
+              class="btn btn_back"
+              @click="openBackModal(teamIndex)"
+              >驳回</span
+            >
+            <span v-if="btnOptType === 'edit' && team.checkStatusId === '4'" class="btn btn_back_text">已驳回</span>
+          </div>
+          <a-icon class="btn_hide" :class="{ open: teamIndex > 0 }" type="up" />
+        </div>
+      </div>
+      <a-table
+        v-if="nowOptType === 'look' || userType === 'qxsl'"
+        :columns="columns"
+        :dataSource="team.teamPersonData"
+        :pagination="false"
+        bordered
+      >
+        <template slot="indexStr" slot-scope="text, record, index">
+          <div key="indexStr">
+            <span>{{ index + 1 }}</span>
+          </div>
+        </template>
+        <template slot="loadPosition" slot-scope="text, record, index">
+          <div key="loadPosition">
+            <span>{{ record.addressName }}</span>
+          </div>
+        </template>
+        <template slot="leaderId" slot-scope="text, record, index">
+          <div key="leaderId">
+            <span>{{ record.leaderName }}</span>
+          </div>
+        </template>
+        <span slot="personList" slot-scope="text, record, index">
+          <a-tag v-for="person in record.personList" color="blue" :key="person.id">{{ person.name }}</a-tag>
+        </span>
+        <template slot="zhiyuan" slot-scope="text, record, index">
+          <div key="zhiyuan">
+            <span>{{ record.zhiyuan }}</span>
+          </div>
+        </template>
+        <template slot="mapId" slot-scope="text, record, index">
+          <div key="mapId">
+            <cg-icon-svg
+              name="pin"
+              class="icon_pin"
+              :class="{ disabled: !(record.positionId && record.positionId.length > 0) }"
+              @click="openBaoZhangMapDialog(record)"
+            ></cg-icon-svg>
+          </div>
+        </template>
+        <span slot="action" slot-scope="text, record, index"></span>
+      </a-table>
+      <a-table v-else :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
+        <template slot="indexStr" slot-scope="text, record, index">
+          <div key="indexStr">
+            <span>{{ index + 1 }}</span>
+          </div>
+        </template>
+        <template slot="loadPosition" slot-scope="text, record, index">
+          <div key="loadPosition">
+            <a-cascader
+              :options="address"
+              placeholder="请选择"
+              v-model="record.addressIds"
+              @change="
+                (value, selectedOptions) => {
+                  changeAddress(teamIndex, value, selectedOptions, record.key)
+                }
+              "
+              style="width: 100%"
+            />
+          </div>
+        </template>
+        <template slot="leaderId" slot-scope="text, record, index">
+          <div key="leaderId">
+            <a-select
+              show-search
+              v-model="record.leaderId"
+              placeholder="请选择"
+              option-filter-prop="children"
+              style="width: 100px"
+              :filter-option="filterOption"
+            >
+              <a-select-option :value="people.id" v-for="people in peopleList" :key="people.id">
+                {{ people.name }}
+              </a-select-option>
+            </a-select>
+          </div>
+        </template>
+        <span slot="personList" slot-scope="text, record, index">
+          <a-tag
+            v-for="person in record.personObjList"
+            color="blue"
+            :key="person.id"
+            closable
+            @close="$event => closeTag(person, index, $event)"
+            >{{ person.name }}</a-tag
+          >
+          <a-button type="primary" size="small" @click="openPeopleDialog(teamIndex, index)">人员选择</a-button>
+        </span>
+        <template slot="zhiyuan" slot-scope="text, record, index">
+          <div key="zhiyuan">
+            <a-textarea
+              v-model="record.zhiyuan"
+              placeholder="请输入支援人员详情"
+              allow-clear
+              :autosize="{ minRows: 2, maxRows: 2 }"
+            />
+          </div>
+        </template>
+        <template slot="mapId" slot-scope="text, record, index">
+          <span key="mapId" @click="openBaoZhangMapDialog(record)">
+            <cg-icon-svg
+              name="pin"
+              class="icon_pin"
+              :class="{
+                disabled: !(record.positionId && record.positionId.length > 0),
+                down: record.mapId && record.mapId.length > 0
+              }"
+            ></cg-icon-svg>
+          </span>
+        </template>
+        <span slot="action" slot-scope="text, record, index">
+          <a-popconfirm
+            v-if="team.teamPersonData.length > 1"
+            theme="filled"
+            title="确定删除这个组吗？"
+            @confirm="() => deleteGroup(index, teamIndex)"
+          >
+            <a-icon type="minus-circle" class="icon_delete" />
+          </a-popconfirm>
+          <a-icon
+            v-if="index === team.teamPersonData.length - 1"
+            theme="filled"
+            type="plus-circle"
+            class="icon_add"
+            @click="addGroup(record, index, teamIndex)"
+          />
+        </span>
+      </a-table>
+    </div>
+    <choose-people-dialog
+      :rangeId="rangeId"
+      :visible.sync="choosePeopleDialogVisible"
+      :defaultCheckedPeopleIds="defaultCheckedPeopleIds"
+      @choosePeople="choosePeople"
+    ></choose-people-dialog>
+    <bao-zhang-map-dialog
+      :visible.sync="mapDialogVisible"
+      :optType="optType"
+      :peopleList="peopleList"
+      :loadData="loadData"
+      @saveDrawData="saveDraw"
+    ></bao-zhang-map-dialog>
+    <a-modal
+      title="驳回理由"
+      :visible="backVisible"
+      :confirm-loading="confirmLoading"
+      :maskClosable="false"
+      @ok="backTeamPeopleSet"
+      @cancel="
+        () => {
+          this.backVisible = false
+          this.backReason = ''
+        }
+      "
+    >
+      <a-textarea v-model="backReason" placeholder="请输入驳回理由" allow-clear />
+    </a-modal>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import ChoosePeopleDialog from './ChoosePeopleDialog'
-  import BaoZhangMapDialog from './BaoZhangMapDialog'
-  import { mapActions } from 'vuex'
-  const groupColumns = [
-    {
-      title: '序号',
-      dataIndex: 'indexStr',
-      key: 'indexStr',
-      scopedSlots: { customRender: 'indexStr' },
-      width: '70px',
-      align: 'center'
-    },
-    {
-      title: '道路--道路分段--具体路段',
-      dataIndex: 'loadPosition',
-      key: 'loadPosition',
-      scopedSlots: { customRender: 'loadPosition' },
-      width: '360px'
-    },
-    {
-      title: '负责人',
-      dataIndex: 'leaderId',
-      key: 'leaderId',
-      scopedSlots: { customRender: 'leaderId' },
-      width: '140px'
-    },
-    {
-      title: '执勤人',
-      dataIndex: 'personList',
-      key: 'personList',
-      scopedSlots: { customRender: 'personList' }
-    },
-    {
-      title: '支援人员',
-      dataIndex: 'zhiyuan',
-      key: 'zhiyuan',
-      scopedSlots: { customRender: 'zhiyuan' },
-      width: '280px'
-    },
-    {
-      title: '保障视图',
-      dataIndex: 'mapId',
-      key: 'mapId',
-      scopedSlots: { customRender: 'mapId' },
-      width: '90px',
-      align: 'center'
-    },
-    {
-      title: '操作',
-      key: 'action',
-      dataIndex: 'action',
-      scopedSlots: { customRender: 'action' },
-      width: '80px',
-      align: 'center'
-    }];
-   export default {
-     name: 'teamPeople',
-     components:{
-       ChoosePeopleDialog,
-       BaoZhangMapDialog
+import ChoosePeopleDialog from './ChoosePeopleDialog'
+import BaoZhangMapDialog from './BaoZhangMapDialog'
+import { mapActions } from 'vuex'
+const groupColumns = [
+  {
+    title: '序号',
+    dataIndex: 'indexStr',
+    key: 'indexStr',
+    scopedSlots: { customRender: 'indexStr' },
+    width: '70px',
+    align: 'center'
+  },
+  {
+    title: '道路--道路分段--具体路段',
+    dataIndex: 'loadPosition',
+    key: 'loadPosition',
+    scopedSlots: { customRender: 'loadPosition' },
+    width: '360px'
+  },
+  {
+    title: '负责人',
+    dataIndex: 'leaderId',
+    key: 'leaderId',
+    scopedSlots: { customRender: 'leaderId' },
+    width: '140px'
+  },
+  {
+    title: '执勤人',
+    dataIndex: 'personList',
+    key: 'personList',
+    scopedSlots: { customRender: 'personList' }
+  },
+  {
+    title: '支援人员',
+    dataIndex: 'zhiyuan',
+    key: 'zhiyuan',
+    scopedSlots: { customRender: 'zhiyuan' },
+    width: '280px'
+  },
+  {
+    title: '保障视图',
+    dataIndex: 'mapId',
+    key: 'mapId',
+    scopedSlots: { customRender: 'mapId' },
+    width: '90px',
+    align: 'center'
+  },
+  {
+    title: '操作',
+    key: 'action',
+    dataIndex: 'action',
+    scopedSlots: { customRender: 'action' },
+    width: '80px',
+    align: 'center'
+  }];
+ export default {
+   name: 'teamPeople',
+   components:{
+     ChoosePeopleDialog,
+     BaoZhangMapDialog
+   },
+   props:{
+     eventId:{
+       type: String,
+       default: ''
      },
-     props:{
-       eventId:{
-         type: String,
-         default: ''
-       },
-       optType:{
-         type: String,
-         default: 'add'
-       },
-       peopleList:{
-         type: Array,
-         default(){
-           return []
-         }
-       },
+     optType:{
+       type: String,
+       default: 'add'
      },
-     data(){
-       return {
-         columns: groupColumns,
-         groupResultData:{},
-         baoZhangData: {},
-         teamPersonList: [],
-         teamIndex: 0,
-
-         choosePeopleDialogVisible: false,
-         rangeId: '',
-         rowIndex: 0,
-         defaultCheckedPeopleIds: [],
-
-         backVisible: false,
-         confirmLoading: false,
-         backReason: '',
-
-         teamInfoDialogVisible: false,
-         teamId: '',
-         teamInfoTitle: '',
-
-         address: [],
-
-         //保障视图相关
-         mapDialogVisible: false,
-         loadData: {},
-         drawFeatures: [],
+     peopleList:{
+       type: Array,
+       default(){
+         return []
        }
      },
-     computed:{
-       userType:function(){
-         return this.$store.getters['cgadmin/user/type']
-       },
-       nowOptType:function(){
-         let type = '';
-         if(this.userType === 'qxsl' && (this.optType === 'add'||this.optType === 'edit')){
-           type = 'add';
-         }
-         else if(this.userType === 'zybm' && this.optType === 'edit'){
-           type = 'edit';
-         }
-         else{
-           type = 'look';
-         }
-         return type
-       },
-       btnOptType: function(){
-         let type = '';
-         if(this.optType==='look'||(this.userType==='jld'||this.userType==='zybm')){
-           type = 'look';
-         }
-         else{
-           type = 'edit';
-         }
-         return type
-       },
-       leaderPositionName:function(){
-         return this.groupResultData.leaderPosition==='1' ? '单兵设备' : '手机'
-       },
-       personPositionName:function(){
-        return this.groupResultData.personPosition==='1' ? '单兵设备' : '手机'
-       }
-     },
-     mounted() {
-       this.groupResultData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-       if(this.userType === 'qxsl'||this.userType === 'jld'||(this.userType === 'zybm'&&this.optType==='look')){
-         this.teamPersonList = JSON.parse(JSON.stringify(this.groupResultData.teamPersonList));
-         let teamPersonTempList = this.teamPersonList.reduce((teamPersonList,teamItem) => {
-           let teamPersonTempData = teamItem.teamPersonData.reduce((teamPersonData,item) => {
+   },
+   data(){
+     return {
+       columns: groupColumns,
+       groupResultData:{},
+       baoZhangData: {},
+       teamPersonList: [],
+       teamIndex: 0,
 
-             if(item.leaderId===''){
-               item.leaderName = '';
+       choosePeopleDialogVisible: false,
+       rangeId: '',
+       rowIndex: 0,
+       defaultCheckedPeopleIds: [],
+
+       backVisible: false,
+       confirmLoading: false,
+       backReason: '',
+
+       teamInfoDialogVisible: false,
+       teamId: '',
+       teamInfoTitle: '',
+
+       address: [],
+
+       //保障视图相关
+       mapDialogVisible: false,
+       loadData: {},
+       drawFeatures: [],
+     }
+   },
+   computed:{
+     userType:function(){
+       return this.$store.getters['cgadmin/user/type']
+     },
+     nowOptType:function(){
+       let type = '';
+       if(this.userType === 'qxsl' && (this.optType === 'add'||this.optType === 'edit')){
+         type = 'add';
+       }
+       else if(this.userType === 'zybm' && this.optType === 'edit'){
+         type = 'edit';
+       }
+       else{
+         type = 'look';
+       }
+       return type
+     },
+     btnOptType: function(){
+       let type = '';
+       if(this.optType==='look'||(this.userType==='jld'||this.userType==='zybm')){
+         type = 'look';
+       }
+       else{
+         type = 'edit';
+       }
+       return type
+     },
+     leaderPositionName:function(){
+       return this.groupResultData.leaderPosition==='1' ? '单兵设备' : '手机'
+     },
+     personPositionName:function(){
+      return this.groupResultData.personPosition==='1' ? '单兵设备' : '手机'
+     }
+   },
+   mounted() {
+     this.groupResultData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+     if(this.userType === 'qxsl'||this.userType === 'jld'||(this.userType === 'zybm'&&this.optType==='look')){
+       this.teamPersonList = JSON.parse(JSON.stringify(this.groupResultData.teamPersonList));
+       let teamPersonTempList = this.teamPersonList.reduce((teamPersonList,teamItem) => {
+         let teamPersonTempData = teamItem.teamPersonData.reduce((teamPersonData,item) => {
+
+           if(item.leaderId===''){
+             item.leaderName = '';
+           }
+           else{
+             let personTemp = this.peopleList.find(person => person.id === item.leaderId);
+             if(personTemp){
+               item.leaderName = personTemp.name;
              }
              else{
-               let personTemp = this.peopleList.find(person => person.id === item.leaderId);
-               if(personTemp){
-                 item.leaderName = personTemp.name;
-               }
-               else{
-                 item.leaderName = '未知';
-               }
+               item.leaderName = '未知';
              }
+           }
 
-             item.addressName = item.address.reduce((acc,ad) => {
-               acc =  acc + '--' + ad.name
-               return acc
-             },'').substring(2);
-             let ids = [...item.personList];
-             item.personList = [];
-             ids.map(id => {
-               let pTemp = this.peopleList.find(p=> p.id === id);
-               if(pTemp){
-                 item.personList.push(pTemp);
-               }
-               else{
-                 item.personList.push({id:id,name: '未知'});
-               }
-             })
-             teamPersonData.push(item);
-             return teamPersonData
-           },[]);
-           teamItem.teamPersonData = teamPersonTempData;
-           teamPersonList.push(teamItem);
-           return teamPersonList
+           item.addressName = item.address.reduce((acc,ad) => {
+             acc =  acc + '--' + ad.name
+             return acc
+           },'').substring(2);
+           let ids = [...item.personList];
+           item.personList = [];
+           ids.map(id => {
+             let pTemp = this.peopleList.find(p=> p.id === id);
+             if(pTemp){
+               item.personList.push(pTemp);
+             }
+             else{
+               item.personList.push({id:id,name: '未知'});
+             }
+           })
+           teamPersonData.push(item);
+           return teamPersonData
          },[]);
-         this.teamPersonList = teamPersonTempList;
+         teamItem.teamPersonData = teamPersonTempData;
+         teamPersonList.push(teamItem);
+         return teamPersonList
+       },[]);
+       this.teamPersonList = teamPersonTempList;
+       let num = this.teamPersonList.reduce((total,item) => {
+         if(item.checkStatusId === '3'){
+           total = total +1;
+         }
+         return total
+       },0);
+       this.$emit('setSubmitBtnShow',num);
+     }
+     else{
+       //当编辑时会改变groupResultData值，从而改变store里面的数据
+       this.teamPersonList = this.groupResultData.teamPersonList;
+       let temp = this.teamPersonList.reduce((needArr,teamItem)=> {
+         let needTeamItem = teamItem.teamPersonData.reduce((needTeam,item) => {
+           item.addressIds = item.address.reduce((acc,ad) => {
+             acc.push(ad.id);
+             return acc
+           },[]);
+           item.positionId = item.addressIds[2];
+           let ids = [...item.personList];
+           item.personObjList = [];
+           ids.map(id => {
+             let pTemp = this.peopleList.find(p=> p.id === id);
+             if(pTemp){
+               item.personObjList.push(pTemp);
+             }
+             else{
+               item.personObjList.push({id:id,name: '未知'});
+             }
+           })
+           needTeam.push(item);
+           return needTeam
+         },[]);
+         teamItem.teamPersonData = needTeamItem;
+         needArr.push(teamItem);
+         return needArr
+       },[]);
+       //当是中队时，编辑时如果没有数据，则增加一条新数据
+       if(this.userType==='zybm'){
+         //获取所有道路数据
+         this.getLoadTreeData().then( res => {
+           this.address = res;
+         });
+         let changeTemp = temp.reduce((acc,teamItem) => {
+           if(teamItem.teamPersonData.length===0){
+             let additem = {
+               key: '@@@',
+               addressIds: [],
+               leaderId: '',
+               personList: [],
+               personObjList: [],
+               positionId: '',
+               zhiyuan: '',
+               mapId: '',
+               mapType: '',
+               remark: '',
+             }
+             teamItem.teamPersonData.push(additem);
+           }
+           acc.push(teamItem)
+           return acc
+         },[]);
+         this.teamPersonList = changeTemp;
+       }
+       else{
+         this.teamPersonList = temp;
+       }
+
+     }
+     console.log('this.teamPersonList', this.teamPersonList);
+
+     //获取保障视图数据
+     this.baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
+   },
+   watch:{
+     groupResultData:{
+       handler: function(value){
+         //console.log('88888888',value);
+         let changeValue = JSON.parse(JSON.stringify(value));
+         if(this.userType === 'zybm'&&this.optType==='edit'){
+           // 人员修改时，需要带上视图数据保存到store中
+           let dunDianQuanDaoInfo = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
+           let sourceData = dunDianQuanDaoInfo.teamPersonList[0].teamPersonData;
+           let resultTeamPersonData = changeValue.teamPersonList[0].teamPersonData.map(teamPerson => {
+             let needData = sourceData.find(source=>source.positionId===teamPerson.positionId);
+             if(needData){
+               teamPerson.mapId = needData.mapId;
+               teamPerson.mapType = needData.mapType;
+               teamPerson.remark = needData.remark;
+             }
+             return teamPerson
+           });
+           changeValue.teamPersonList[0].teamPersonData = resultTeamPersonData;
+         }
+         this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',changeValue);
+       },
+       deep: true
+     }
+   },
+   methods:{
+     ...mapActions('event/event', ['checkEvent']),
+     ...mapActions('event/common', ['getLoadTreeData']),
+     //选择道路(修改道路后，保障视图清空，再选这条道路，则需要重新画)
+     changeAddress(teamIndex, value, selectedOptions, key){
+       console.log(teamIndex, value, selectedOptions, key);
+       let arr = this.teamPersonList[teamIndex].teamPersonData;
+       const newData = [...arr];
+       const target = newData.filter(item => key === item.key)[0];
+       if (target) {
+         target['addressIds'] = value;
+         let address = [];
+         if(value.length!==0){
+           address = [{id: selectedOptions[0].value, name: selectedOptions[0].label},
+             {id: selectedOptions[1].value, name: selectedOptions[1].label},
+             {id: selectedOptions[2].value, name: selectedOptions[2].label}];
+           target['positionId'] = selectedOptions[2].value;
+           //如果有选过这个路段，则拿这个路段的信息，如果没有选过，则设置为空
+           let hasData = this.hasBaoZhangItemData(selectedOptions[2].value);
+           if(!hasData){
+             target['mapId'] = '';
+             let data = {
+               keyPositionId: arr.key + '_' + selectedOptions[2].value,
+               positionId: selectedOptions[2].value,
+               mapId: '',
+               mapType:'',
+               drawFeature: null
+             }
+             this.$store.commit('event/baoZhangData/updateBaoZhangMapItemData', data);
+           }
+           else{
+             let item = this.getBaoZhangItemData(selectedOptions[2].value);
+             target['mapId'] = item.mapId;
+             let data  = {
+               keyPositionId: arr.key + '_' + selectedOptions[2].value,
+               positionId: selectedOptions[2].value,
+               mapId: item.mapId,
+               mapType:item.mapType,
+               drawFeature: item.drawFeature
+             }
+             this.$store.commit('event/baoZhangData/updateBaoZhangMapItemData', data);
+           }
+         }
+         else{
+           target['positionId'] = '';
+           target['mapId'] = '';
+           this.$store.commit('event/baoZhangData/deleteBaoZhangMapItemData',arr.key + '_' +arr.positionId);
+         }
+         target['address'] = address;
+         this.teamPersonList[teamIndex].teamPersonData = newData;
+       }
+     },
+     //选择过滤责任人
+     filterOption(input, option) {
+       return (
+         option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+       );
+     },
+     //新增一行
+     addGroup(item, index,teamIndex){
+       console.log('addGroup',item, index, teamIndex)
+       let additem = {
+         key: '@@@' + new Date().getTime(),
+         addressIds: [],
+         leaderId: '',
+         personList: [],
+         personObjList: [],
+         positionId: '',
+         zhiyuan: '',
+         mapId: '',
+         mapType: '',
+         remark: '',
+       }
+       this.teamPersonList[teamIndex].teamPersonData.push(additem);
+     },
+     //删除一行
+     deleteGroup(index,teamIndex){
+       let data = this.teamPersonList[teamIndex].teamPersonData[index];
+       this.$store.commit('event/baoZhangData/deleteBaoZhangMapItemData',data.key + '_' + data.positionId);
+       this.teamPersonList[teamIndex].teamPersonData.splice(index,1);
+     },
+     //打开选择人员窗口
+     openPeopleDialog(teamIndex,index){
+       this.rowIndex = index;
+       this.teamIndex = teamIndex;
+       this.defaultCheckedPeopleIds = this.teamPersonList[teamIndex].teamPersonData[index].personObjList.reduce((acc,item) => {
+         acc.push(item.id);
+         return acc
+       },[]);
+       this.teamPersonList[teamIndex].teamPersonData[index].personList = this.defaultCheckedPeopleIds;
+       if(this.userType === 'zybm'){
+         this.rangeId = this.teamPersonList[teamIndex].teamId;
+       }
+       this.choosePeopleDialogVisible = true;
+     },
+     //重新设置执勤人
+     choosePeople(data){
+       this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personList = data;
+       this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personObjList = [];
+       data.forEach((item)=>{
+         let name, personTemp = this.peopleList.find(person => person.id === item);
+         if(personTemp){
+           name = personTemp.name;
+         }
+         else{
+           name = "未知";
+         }
+         this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personObjList.push({ id: item, name: name });
+       });
+     },
+     //删除执勤人
+     closeTag (person,index,e) {
+       console.log(person,index);
+       let i = this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.indexOf(person);
+       this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.splice(i,1);
+       this.teamPersonList[this.teamIndex].teamPersonData[index].personList.splice(i,1);
+     },
+     //开启保障视图弹窗
+     openBaoZhangMapDialog(load){
+       //如果视图里面有数据，则不处理，如果没有则增加一条
+       let hasData = this.hasLoadBaoZhangItemData(load.key + '_' + load.positionId);
+       if(!hasData){
+         let data = {
+           keyPositionId: load.key + '_'+load.positionId,
+           positionId: load.positionId,
+           mapId: '',
+           mapType:'',
+           drawFeature: null
+         };
+         this.$store.commit('event/baoZhangData/updateBaoZhangMapItemData', data);
+       }
+
+       this.loadData = load;
+       this.mapDialogVisible = true;
+     },
+     //保存地图数据
+     saveDraw(data){
+       console.log("==需要保存的数据===",data);
+       let baoZhangItemData = data.baoZhangItemData;
+       let index = this.groupResultData.teamPersonList[0].teamPersonData.findIndex(item => baoZhangItemData.positionId===item.positionId);
+       this.groupResultData.teamPersonList[0].teamPersonData[index].mapId = baoZhangItemData.mapId;
+       this.groupResultData.teamPersonList[0].teamPersonData[index].mapType = baoZhangItemData.mapType;
+       this.groupResultData.teamPersonList[0].teamPersonData[index].remark = baoZhangItemData.remark;
+       //以下数据不需要，直接从vuex里面获取
+       // let pData = {
+       //   positionId: baoZhangItemData.positionId,
+       //   drawFeatures: data.drawFeatures
+       // }
+       // this.$emit('getGisData',pData);
+     },
+     //进入中队预览
+     lookTeamPeopleSet(team){
+       console.log('进入中队预览');
+       this.teamId= team.teamId;
+       let data ={
+         teamId: team.teamId,
+         teamName: team.teamName
+       }
+       this.$emit('reviewTeam',data)
+       //先保存
+     },
+     //中心确认中队通过
+     passTeamPeopleSet(teamIndex, teamId){
+      console.log('eventId teamId operate backReason');
+      let params = {
+        eventId: this.eventId,
+        teamId: teamId,
+        operate: '3',
+        backReason: ''
+      }
+      this.checkEvent(params).then( res => {
+        this.teamPersonList[teamIndex].checkStatusId = '3';
+        let num = this.teamPersonList.reduce((total,item) => {
+          if(item.checkStatusId === '3'){
+            total = total +1;
+          }
+          return total
+        },0);
+        this.$emit('setSubmitBtnShow',num)
+      })
+     },
+     openBackModal(teamIndex){
+       this.teamIndex = teamIndex;
+       this.backVisible = true;
+     },
+     //中心确认中队驳回
+     backTeamPeopleSet(){
+       let teamId = this.teamPersonList[this.teamIndex].teamId;
+       let params =  {
+         eventId: this.eventId,
+         teamId: teamId,
+         operate: '4',
+         backReason: this.backReason
+       }
+       this.confirmLoading = true;
+       this.checkEvent(params).then( res => {
+         this.confirmLoading = false;
+         this.backReason = '';
+         this.backVisible = false;
+         this.teamPersonList[this.teamIndex].checkStatusId = '4';
          let num = this.teamPersonList.reduce((total,item) => {
            if(item.checkStatusId === '3'){
              total = total +1;
            }
            return total
          },0);
-         this.$emit('setSubmitBtnShow',num);
+         this.$emit('setSubmitBtnShow',num)
+       })
+     },
+     //是否有这个道路保障信息
+     hasBaoZhangItemData(positionId) {
+       let baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
+       let index = Object.keys(baoZhangData).findIndex(key => key.split('_')[1] === positionId);
+       if(index>=0){
+         return true
        }
        else{
-         //当编辑时会改变groupResultData值，从而改变store里面的数据
-         this.teamPersonList = this.groupResultData.teamPersonList;
-         let temp = this.teamPersonList.reduce((needArr,teamItem)=> {
-           let needTeamItem = teamItem.teamPersonData.reduce((needTeam,item) => {
-             item.addressIds = item.address.reduce((acc,ad) => {
-               acc.push(ad.id);
-               return acc
-             },[]);
-             item.positionId = item.addressIds[2];
-             let ids = [...item.personList];
-             item.personObjList = [];
-             ids.map(id => {
-               let pTemp = this.peopleList.find(p=> p.id === id);
-               if(pTemp){
-                 item.personObjList.push(pTemp);
-               }
-               else{
-                 item.personObjList.push({id:id,name: '未知'});
-               }
-             })
-             needTeam.push(item);
-             return needTeam
-           },[]);
-           teamItem.teamPersonData = needTeamItem;
-           needArr.push(teamItem);
-           return needArr
-         },[]);
-         //当是中队时，编辑时如果没有数据，则增加一条新数据
-         if(this.userType==='zybm'){
-           //获取所有道路数据
-           this.getLoadTreeData().then( res => {
-             this.address = res;
-           });
-           let changeTemp = temp.reduce((acc,teamItem) => {
-             if(teamItem.teamPersonData.length===0){
-               let additem = {
-                 key: '@@@',
-                 addressIds: [],
-                 leaderId: '',
-                 personList: [],
-                 personObjList: [],
-                 positionId: '',
-                 zhiyuan: '',
-                 mapId: '',
-                 mapType: '',
-                 remark: '',
-               }
-               teamItem.teamPersonData.push(additem);
-             }
-             acc.push(teamItem)
-             return acc
-           },[]);
-           this.teamPersonList = changeTemp;
-         }
-         else{
-           this.teamPersonList = temp;
-         }
-
-       }
-       console.log('this.teamPersonList', this.teamPersonList);
-
-       //获取保障视图数据
-       this.baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
-     },
-     watch:{
-       groupResultData:{
-         handler: function(value){
-           //console.log('88888888',value);
-           let changeValue = JSON.parse(JSON.stringify(value));
-           if(this.userType === 'zybm'&&this.optType==='edit'){
-             // 人员修改时，需要带上视图数据保存到store中
-             let dunDianQuanDaoInfo = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-             let sourceData = dunDianQuanDaoInfo.teamPersonList[0].teamPersonData;
-             let resultTeamPersonData = changeValue.teamPersonList[0].teamPersonData.map(teamPerson => {
-               let needData = sourceData.find(source=>source.positionId===teamPerson.positionId);
-               if(needData){
-                 teamPerson.mapId = needData.mapId;
-                 teamPerson.mapType = needData.mapType;
-                 teamPerson.remark = needData.remark;
-               }
-               return teamPerson
-             });
-             changeValue.teamPersonList[0].teamPersonData = resultTeamPersonData;
-           }
-           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',changeValue);
-         },
-         deep: true
+         return false
        }
      },
-     methods:{
-       ...mapActions('event/event', ['checkEvent']),
-       ...mapActions('event/common', ['getLoadTreeData']),
-       //选择道路(修改道路后，保障视图清空，再选这条道路，则需要重新画)
-       changeAddress(teamIndex, value, selectedOptions, key){
-         console.log(teamIndex, value, selectedOptions, key);
-         let arr = this.teamPersonList[teamIndex].teamPersonData;
-         const newData = [...arr];
-         const target = newData.filter(item => key === item.key)[0];
-         if (target) {
-           target['addressIds'] = value;
-           let address = [];
-           if(value.length!==0){
-             address = [{id: selectedOptions[0].value, name: selectedOptions[0].label},
-               {id: selectedOptions[1].value, name: selectedOptions[1].label},
-               {id: selectedOptions[2].value, name: selectedOptions[2].label}];
-             target['positionId'] = selectedOptions[2].value;
-             //如果有选过这个路段，则拿这个路段的信息，如果没有选过，则设置为空
-             let hasData = this.hasBaoZhangItemData(selectedOptions[2].value);
-             if(!hasData){
-               target['mapId'] = '';
-               let data = {
-                 keyPositionId: arr.key + '_' + selectedOptions[2].value,
-                 positionId: selectedOptions[2].value,
-                 mapId: '',
-                 drawFeature: null
-               }
-               this.$store.commit('event/baoZhangData/updateBaoZhangItemData', data);
-             }
-             else{
-               let item = this.getBaoZhangItemData(selectedOptions[2].value);
-               target['mapId'] = item.mapId;
-               let data  = {
-                 keyPositionId: arr.key + '_' + selectedOptions[2].value,
-                 positionId: selectedOptions[2].value,
-                 mapId: item.mapId,
-                 drawFeature: item.drawFeature
-               }
-               this.$store.commit('event/baoZhangData/updateBaoZhangItemData', data);
-             }
-           }
-           else{
-             target['positionId'] = '';
-             target['mapId'] = '';
-             this.$store.commit('event/baoZhangData/deleteBaoZhangItemData',arr.key + '_' +arr.positionId);
-           }
-           target['address'] = address;
-           this.teamPersonList[teamIndex].teamPersonData = newData;
-         }
-       },
-       //选择过滤责任人
-       filterOption(input, option) {
-         return (
-           option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-         );
-       },
-       //新增一行
-       addGroup(item, index,teamIndex){
-         console.log('addGroup',item, index, teamIndex)
-         let additem = {
-           key: '@@@' + new Date().getTime(),
-           addressIds: [],
-           leaderId: '',
-           personList: [],
-           personObjList: [],
-           positionId: '',
-           zhiyuan: '',
-           mapId: '',
-           mapType: '',
-           remark: '',
-         }
-         this.teamPersonList[teamIndex].teamPersonData.push(additem);
-       },
-       //删除一行
-       deleteGroup(index,teamIndex){
-         let data = this.teamPersonList[teamIndex].teamPersonData[index];
-         this.$store.commit('event/baoZhangData/deleteBaoZhangItemData',data.key + '_' + data.positionId);
-         this.teamPersonList[teamIndex].teamPersonData.splice(index,1);
-       },
-       //打开选择人员窗口
-       openPeopleDialog(teamIndex,index){
-         this.rowIndex = index;
-         this.teamIndex = teamIndex;
-         this.defaultCheckedPeopleIds = this.teamPersonList[teamIndex].teamPersonData[index].personObjList.reduce((acc,item) => {
-           acc.push(item.id);
-           return acc
-         },[]);
-         this.teamPersonList[teamIndex].teamPersonData[index].personList = this.defaultCheckedPeopleIds;
-         if(this.userType === 'zybm'){
-           this.rangeId = this.teamPersonList[teamIndex].teamId;
-         }
-         this.choosePeopleDialogVisible = true;
-       },
-       //重新设置执勤人
-       choosePeople(data){
-         this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personList = data;
-         this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personObjList = [];
-         data.forEach((item)=>{
-           let name, personTemp = this.peopleList.find(person => person.id === item);
-           if(personTemp){
-             name = personTemp.name;
-           }
-           else{
-             name = "未知";
-           }
-           this.teamPersonList[this.teamIndex].teamPersonData[this.rowIndex].personObjList.push({ id: item, name: name });
-         });
-       },
-       //删除执勤人
-       closeTag (person,index,e) {
-         console.log(person,index);
-         let i = this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.indexOf(person);
-         this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.splice(i,1);
-         this.teamPersonList[this.teamIndex].teamPersonData[index].personList.splice(i,1);
-       },
-       //开启保障视图弹窗
-       openBaoZhangMapDialog(load){
-         //如果视图里面有数据，则不处理，如果没有则增加一条
-         let hasData = this.hasLoadBaoZhangItemData(load.key + '_' + load.positionId);
-         if(!hasData){
-           let data = {
-             keyPositionId: load.key + '_'+load.positionId,
-             positionId: load.positionId,
-             mapId: '',
-             drawFeature: null
-           };
-           this.$store.commit('event/baoZhangData/updateBaoZhangItemData', data);
-         }
-
-         this.loadData = load;
-         this.mapDialogVisible = true;
-       },
-       //保存地图数据
-       saveDraw(data){
-         console.log("==需要保存的数据===",data);
-         let baoZhangItemData = data.baoZhangItemData;
-         let index = this.groupResultData.teamPersonList[0].teamPersonData.findIndex(item => baoZhangItemData.positionId===item.positionId);
-         this.groupResultData.teamPersonList[0].teamPersonData[index].mapId = baoZhangItemData.mapId;
-         this.groupResultData.teamPersonList[0].teamPersonData[index].mapType = baoZhangItemData.mapType;
-         this.groupResultData.teamPersonList[0].teamPersonData[index].remark = baoZhangItemData.remark;
-         //以下数据不需要，直接从vuex里面获取
-         // let pData = {
-         //   positionId: baoZhangItemData.positionId,
-         //   drawFeatures: data.drawFeatures
-         // }
-         // this.$emit('getGisData',pData);
-       },
-       //进入中队预览
-       lookTeamPeopleSet(team){
-         console.log('进入中队预览');
-         this.teamId= team.teamId;
-         let data ={
-           teamId: team.teamId,
-           teamName: team.teamName
-         }
-         this.$emit('reviewTeam',data)
-         //先保存
-       },
-       //中心确认中队通过
-       passTeamPeopleSet(teamIndex, teamId){
-        console.log('eventId teamId operate backReason');
-        let params = {
-          eventId: this.eventId,
-          teamId: teamId,
-          operate: '3',
-          backReason: ''
-        }
-        this.checkEvent(params).then( res => {
-          this.teamPersonList[teamIndex].checkStatusId = '3';
-          let num = this.teamPersonList.reduce((total,item) => {
-            if(item.checkStatusId === '3'){
-              total = total +1;
-            }
-            return total
-          },0);
-          this.$emit('setSubmitBtnShow',num)
-        })
-       },
-       openBackModal(teamIndex){
-         this.teamIndex = teamIndex;
-         this.backVisible = true;
-       },
-       //中心确认中队驳回
-       backTeamPeopleSet(){
-         let teamId = this.teamPersonList[this.teamIndex].teamId;
-         let params =  {
-           eventId: this.eventId,
-           teamId: teamId,
-           operate: '4',
-           backReason: this.backReason
-         }
-         this.confirmLoading = true;
-         this.checkEvent(params).then( res => {
-           this.confirmLoading = false;
-           this.backReason = '';
-           this.backVisible = false;
-           this.teamPersonList[this.teamIndex].checkStatusId = '4';
-           let num = this.teamPersonList.reduce((total,item) => {
-             if(item.checkStatusId === '3'){
-               total = total +1;
-             }
-             return total
-           },0);
-           this.$emit('setSubmitBtnShow',num)
-         })
-       },
-       //是否有这个道路保障信息
-       hasBaoZhangItemData(positionId) {
-         let baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
-         let index = Object.keys(baoZhangData).findIndex(key => key.split('_')[1] === positionId);
-         if(index>=0){
-           return true
-         }
-         else{
-           return false
-         }
-       },
-       //是否存在这一行
-       hasLoadBaoZhangItemData(keyPositionId) {
-         let baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
-         let index = Object.keys(baoZhangData).findIndex(key => key === keyPositionId);
-         if(index>=0){
-           return true
-         }
-         else{
-           return false
-         }
-       },
-       //获取保障视图信息
-       getBaoZhangItemData(positionId) {
-         let baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
-         let item = Object.keys(baoZhangData).find(key => key.split('_')[1] === positionId);
-         return item[0]
-       },
-     }
+     //是否存在这一行
+     hasLoadBaoZhangItemData(keyPositionId) {
+       let baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
+       let index = Object.keys(baoZhangData).findIndex(key => key === keyPositionId);
+       if(index>=0){
+         return true
+       }
+       else{
+         return false
+       }
+     },
+     //获取保障视图信息
+     getBaoZhangItemData(positionId) {
+       let baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
+       let item = Object.keys(baoZhangData).find(key => key.split('_')[1] === positionId);
+       return item[0]
+     },
    }
+ }
 </script>
 <style lang="scss" scoped>
-.team-people-panel{
-    width: 100%;
-    padding-bottom: 10px;
-    .team-people-panel-header{
-        span{
-            font-family: PingFang-SC-Bold;
-            font-size: 14px;
-            line-height: 30px;
-            color: #4d4d4d;
-            font-weight: 600;
-        }
-        .team-people-panel-header-right{
-
-        }
+.team-people-panel {
+  width: 100%;
+  padding-bottom: 10px;
+  .team-people-panel-header {
+    span {
+      font-family: PingFang-SC-Bold;
+      font-size: 14px;
+      line-height: 30px;
+      color: #4d4d4d;
+      font-weight: 600;
     }
-    .team-people-panel-method{
-        margin-bottom: 10px;
-        >div{
-            &:last-child{
-                margin-left: 60px;
-            }
-            label{
-                font-family: PingFang-SC-Medium;
-                font-size: 14px;
-                font-weight: normal;
-                font-stretch: normal;
-                line-height: 20px;
-                letter-spacing: 0px;
-                color: #666666;
-            }
-        }
+    .team-people-panel-header-right {
     }
-    .team-people-panel-item{
-        margin-top: 10px;
-        &:first-child{
-            margin-top: 0px;
-        }
-        .team-item-header{
-            .team-item-header-left{
-                height: 40px;
-                font-family: PingFang-SC-Bold;
-                font-size: 14px;
-                font-weight: normal;
-                font-stretch: normal;
-                line-height: 40px;
-                letter-spacing: 0px;
-                color: #00a4fe;
-            }
-            .team-item-header-right{
-                .team-item_status{
-                    color: #00a4fe;
-                    &.red{
-                        color: #d30616;
-                    }
-                    &.green{
-                        color: #22ac38;
-                    }
-                    &.yellow{
-                        color: #e7d10e;
-                    }
-                }
-                .btn{
-                    display:inline-block;
-                    margin-left: 5px;
-                    width: 50px;
-                    height: 26px;
-                    border-radius: 4px;
-                    font-family: PingFang-SC-Medium;
-                    font-size: 14px;
-                    font-weight: normal;
-                    font-stretch: normal;
-                    line-height: 26px;
-                    letter-spacing: 0px;
-                    color: #ffffff;
-                    text-align: center;
-                    &.btn_review{
-                        background-color: #22ac38;
-                        cursor: pointer;
-                    }
-                    &.btn_pass{
-                        background-color: #00a4fe;
-                        cursor: pointer;
-                    }
-                    &.btn_back{
-                        background-color: #d30616;
-                        cursor: pointer;
-                    }
-                    &.btn_pass_text{
-                        background-color: #bfbfbf;
-                    }
-                    &.btn_back_text{
-                        background-color: #bfbfbf;
-                    }
-                }
-
-
-                .btn_hide{
-                    margin-left: 10px;
-                    cursor: pointer;
-                    &.open{
-                        transform:rotate(180deg);
-                        -ms-transform:rotate(180deg); 	/* IE 9 */
-                        -moz-transform:rotate(180deg); 	/* Firefox */
-                        -webkit-transform:rotate(180deg); /* Safari 和 Chrome */
-                        -o-transform:rotate(180deg); 	/* Opera */
-                    }
-                }
-            }
-        }
+  }
+  .team-people-panel-method {
+    margin-bottom: 10px;
+    > div {
+      &:last-child {
+        margin-left: 60px;
+      }
+      label {
+        font-family: PingFang-SC-Medium;
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        line-height: 20px;
+        letter-spacing: 0px;
+        color: #666666;
+      }
     }
-    /deep/.ant-table-thead > tr > th{
-        padding: 10px 16px;
+  }
+  .team-people-panel-item {
+    margin-top: 10px;
+    &:first-child {
+      margin-top: 0px;
     }
-    /deep/.ant-table-tbody > tr > td{
-        padding: 10px 16px;
-    }
-    .icon_delete,
-    .icon_add {
-        font-size: 18px;
-        cursor: pointer;
+    .team-item-header {
+      .team-item-header-left {
+        height: 40px;
+        font-family: PingFang-SC-Bold;
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        line-height: 40px;
+        letter-spacing: 0px;
         color: #00a4fe;
-        margin-right: 0px;
-    }
-    .icon_add {
-        margin-left: 5px;
-    }
-    .icon_pin{
-        font-size: 24px;
-        color: #00a4fe;
-        cursor: pointer;
-        &.disabled {
-            color:#cccccc;
-            cursor: not-allowed;
-        }
-        &.down {
+      }
+      .team-item-header-right {
+        .team-item_status {
+          color: #00a4fe;
+          &.red {
+            color: #d30616;
+          }
+          &.green {
             color: #22ac38;
+          }
+          &.yellow {
+            color: #e7d10e;
+          }
         }
+        .btn {
+          display: inline-block;
+          margin-left: 5px;
+          width: 50px;
+          height: 26px;
+          border-radius: 4px;
+          font-family: PingFang-SC-Medium;
+          font-size: 14px;
+          font-weight: normal;
+          font-stretch: normal;
+          line-height: 26px;
+          letter-spacing: 0px;
+          color: #ffffff;
+          text-align: center;
+          &.btn_review {
+            background-color: #22ac38;
+            cursor: pointer;
+          }
+          &.btn_pass {
+            background-color: #00a4fe;
+            cursor: pointer;
+          }
+          &.btn_back {
+            background-color: #d30616;
+            cursor: pointer;
+          }
+          &.btn_pass_text {
+            background-color: #bfbfbf;
+          }
+          &.btn_back_text {
+            background-color: #bfbfbf;
+          }
+        }
+
+        .btn_hide {
+          margin-left: 10px;
+          cursor: pointer;
+          &.open {
+            transform: rotate(180deg);
+            -ms-transform: rotate(180deg); /* IE 9 */
+            -moz-transform: rotate(180deg); /* Firefox */
+            -webkit-transform: rotate(180deg); /* Safari 和 Chrome */
+            -o-transform: rotate(180deg); /* Opera */
+          }
+        }
+      }
     }
+  }
+  /deep/.ant-table-thead > tr > th {
+    padding: 10px 16px;
+  }
+  /deep/.ant-table-tbody > tr > td {
+    padding: 10px 16px;
+  }
+  .icon_delete,
+  .icon_add {
+    font-size: 18px;
+    cursor: pointer;
+    color: #00a4fe;
+    margin-right: 0px;
+  }
+  .icon_add {
+    margin-left: 5px;
+  }
+  .icon_pin {
+    font-size: 24px;
+    color: #00a4fe;
+    cursor: pointer;
+    &.disabled {
+      color: #cccccc;
+      cursor: not-allowed;
+    }
+    &.down {
+      color: #22ac38;
+    }
+  }
 }
 </style>

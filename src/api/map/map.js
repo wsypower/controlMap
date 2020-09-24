@@ -43,7 +43,7 @@ export function getSingleFeatureAPI(mapId,mapType) {
       typeName: `${URL_CONFIG.featurePre}:${mapType}`,
       outputFormat: 'application/json',
       srsname: 'EPSG:4326',
-      cql_filter: `"id" = ${mapId}`
+      cql_filter: `"id" = '${mapId}'`
     }
   })
 }
