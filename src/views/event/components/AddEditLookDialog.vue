@@ -452,12 +452,25 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
               teamPerson.teamPersonData = [];
             })
           }
-
+          //保存保障视图初始数据
+          let baoZhangData = {}
           this.dunDianQuanDaoData.teamPersonList.forEach(teamPerson => {
             teamPerson.teamPersonData.forEach(loadItem => {
               loadItem.positionId = loadItem.address.length>0?loadItem.address[2].id:'';
+              //初始进入处置页，默认全部是数据库查保障视图数据
+              if(loadItem.positionId.length>0){
+                baoZhangData[loadItem.key + '_'+loadItem.positionId] = {
+                  keyPositionId: loadItem.key + '_'+loadItem.positionId,
+                  positionId: loadItem.positionId,
+                  mapId: loadItem.mapId,
+                  drawFeature: null
+                };
+              }
             })
           })
+          //把数据保存到vuex中
+          console.log('vuex baoZhangData',baoZhangData);
+          this.$store.commit('event/baoZhangData/updateBaoZhangData',baoZhangData);
 
           this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',this.dunDianQuanDaoData);
           //如果进来的数据所有的中队已经全部确认了，那么提交审核按钮会出现
@@ -776,6 +789,7 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
       //中队--保存数据之后各个情况处理
       addTeamPerson(isNeedSubmit,isReview,teamInfo){
         this.saveDataToGis();
+
         this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
         console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
         let teamPersonData  = this.dunDianQuanDaoData.teamPersonList[0].teamPersonData.reduce((acc, teamPerson) => {
@@ -916,7 +930,7 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
       },
       //保存gis数据输入数据库
       saveDataToGis(){
-        //todo：这里的数据格式和以前不一样了，请修改
+        //todo：这里的数据格式和以前不一样了，请修改 去vuex里面获取数据
         if(this.drawFeatures) {
           if (this.drawFeatures.Point && (this.drawFeatures.Point.add.length > 0
                   || this.drawFeatures.Point.update.length > 0
@@ -1024,6 +1038,8 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
             }
           }
         }
+        //清理drawFeature数据，使得数据从gis库里面去取
+        this.$store.commit('event/baoZhangData/clearSelfData');
       },
       //整个事件预览
       reviewEvent(){

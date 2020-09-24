@@ -258,6 +258,7 @@
        return {
          columns: groupColumns,
          groupResultData:{},
+         baoZhangData: {},
          teamPersonList: [],
          teamIndex: 0,
 
@@ -428,6 +429,9 @@
 
        }
        console.log('this.teamPersonList', this.teamPersonList);
+
+       //获取保障视图数据
+       this.baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
      },
      watch:{
        groupResultData:{
@@ -457,7 +461,7 @@
      methods:{
        ...mapActions('event/event', ['checkEvent']),
        ...mapActions('event/common', ['getLoadTreeData']),
-       //选择道路
+       //选择道路(修改道路后，保障视图清空，再选这条道路，则需要重新画)
        changeAddress(teamIndex, value, selectedOptions, key){
          console.log(teamIndex, value, selectedOptions, key);
          let arr = this.teamPersonList[teamIndex].teamPersonData;
@@ -471,9 +475,34 @@
                {id: selectedOptions[1].value, name: selectedOptions[1].label},
                {id: selectedOptions[2].value, name: selectedOptions[2].label}];
              target['positionId'] = selectedOptions[2].value;
+             //如果有选过这个路段，则拿这个路段的信息，如果没有选过，则设置为空
+             let hasData = this.$store.commit('event/baoZhangData/hasBaoZhangItemData',selectedOptions[2].value);
+             if(!hasData){
+               target['mapId'] = '';
+               let data = {
+                 keyPositionId: arr.key + '_' + selectedOptions[2].value,
+                 positionId: selectedOptions[2].value,
+                 mapId: '',
+                 drawFeature: null
+               }
+               this.$store.commit('event/baoZhangData/updateBaoZhangItemData', data);
+             }
+             else{
+               let item = this.$store.commit('event/baoZhangData/getBaoZhangItemData', selectedOptions[2].value);
+               target['mapId'] = item.mapId;
+               let data  = {
+                 keyPositionId: arr.key + '_' + selectedOptions[2].value,
+                 positionId: selectedOptions[2].value,
+                 mapId: item.mapId,
+                 drawFeature: item.drawFeature
+               }
+               this.$store.commit('event/baoZhangData/updateBaoZhangItemData', data);
+             }
            }
            else{
              target['positionId'] = '';
+             target['mapId'] = '';
+             this.$store.commit('event/baoZhangData/deleteBaoZhangItemData',arr.key + '_' +arr.positionId);
            }
            target['address'] = address;
            this.teamPersonList[teamIndex].teamPersonData = newData;
@@ -504,6 +533,8 @@
        },
        //删除一行
        deleteGroup(index,teamIndex){
+         let data = this.teamPersonList[teamIndex].teamPersonData[index];
+         this.$store.commit('event/baoZhangData/deleteBaoZhangItemData',data.key + '_' + data.positionId);
          this.teamPersonList[teamIndex].teamPersonData.splice(index,1);
        },
        //打开选择人员窗口
@@ -544,6 +575,18 @@
        },
        //开启保障视图弹窗
        openBaoZhangMapDialog(load){
+         //如果视图里面有数据，则不处理，如果没有则增加一条
+         let hasData = this.$store.commit('event/baoZhangData/hasLoadBaoZhangItemData', load.key + '_' + load.positionId);
+         if(!hasData){
+           let data = {
+             keyPositionId: load.key + '_'+load.positionId,
+             positionId: load.positionId,
+             mapId: '',
+             drawFeature: null
+           };
+         }
+         this.$store.commit('event/baoZhangData/updateBaoZhangItemData', data);
+
          this.loadData = load;
          this.mapDialogVisible = true;
        },
@@ -555,11 +598,12 @@
          this.groupResultData.teamPersonList[0].teamPersonData[index].mapId = baoZhangItemData.mapId;
          this.groupResultData.teamPersonList[0].teamPersonData[index].mapType = baoZhangItemData.mapType;
          this.groupResultData.teamPersonList[0].teamPersonData[index].remark = baoZhangItemData.remark;
-         let pData = {
-           positionId: baoZhangItemData.positionId,
-           drawFeatures: data.drawFeatures
-         }
-         this.$emit('getGisData',pData);
+         //以下数据不需要，直接从vuex里面获取
+         // let pData = {
+         //   positionId: baoZhangItemData.positionId,
+         //   drawFeatures: data.drawFeatures
+         // }
+         // this.$emit('getGisData',pData);
        },
        //进入中队预览
        lookTeamPeopleSet(team){
