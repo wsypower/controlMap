@@ -651,12 +651,6 @@ const groupColumns = [
        this.groupResultData.teamPersonList[0].teamPersonData[index].mapId = data.mapId;
        this.groupResultData.teamPersonList[0].teamPersonData[index].mapType = data.mapType;
        this.groupResultData.teamPersonList[0].teamPersonData[index].remark = data.remark;
-       //以下数据不需要，直接从vuex里面获取
-       // let pData = {
-       //   positionId: baoZhangItemData.positionId,
-       //   drawFeatures: data.drawFeatures
-       // }
-       // this.$emit('getGisData',pData);
      },
      //进入中队预览
      lookTeamPeopleSet(team){

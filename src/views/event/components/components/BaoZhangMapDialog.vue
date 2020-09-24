@@ -435,7 +435,7 @@
           }
           if(this.baoZhangItemData.mapId.length>0){
             let data = {
-              keyPositionId: this.baoZhangItemData.keyPositionId,
+              keyPositionId: this.baoZhangItemData.key+ '_' +this.baoZhangItemData.positionId,
               positionId: this.baoZhangItemData.positionId,
               mapId: this.baoZhangItemData.mapId,
               mapType:this.baoZhangItemData.mapType,

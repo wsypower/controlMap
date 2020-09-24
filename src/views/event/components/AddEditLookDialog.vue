@@ -463,6 +463,7 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
                   keyPositionId: loadItem.key + '_'+loadItem.positionId,
                   positionId: loadItem.positionId,
                   mapId: loadItem.mapId,
+                  mapType: loadItem.mapType,
                   drawFeature: null
                 };
               }
@@ -1067,8 +1068,9 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
         //     }
         //   }
         // }
+
         //清理drawFeature数据，使得数据从gis库里面去取
-        // this.$store.commit('event/baoZhangData/clearSelfData');
+        this.$store.commit('event/baoZhangData/clearSelfData');
       },
       //整个事件预览
       reviewEvent(){
