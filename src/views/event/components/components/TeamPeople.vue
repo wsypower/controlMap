@@ -489,21 +489,6 @@ const groupColumns = [
        handler: function(value){
          console.log('88888888',value);
          let changeValue = JSON.parse(JSON.stringify(value));
-         // if(this.userType === 'zybm'&&this.optType==='edit'){
-         //   // 人员修改时，需要带上视图数据保存到store中
-         //   let dunDianQuanDaoInfo = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
-         //   let sourceData = dunDianQuanDaoInfo.teamPersonList[0].teamPersonData;
-         //   let resultTeamPersonData = changeValue.teamPersonList[0].teamPersonData.map(teamPerson => {
-         //     let needData = sourceData.find(source=>source.positionId===teamPerson.positionId);
-         //     if(needData){
-         //       teamPerson.mapId = needData.mapId;
-         //       teamPerson.mapType = needData.mapType;
-         //       teamPerson.remark = needData.remark;
-         //     }
-         //     return teamPerson
-         //   });
-         //   changeValue.teamPersonList[0].teamPersonData = resultTeamPersonData;
-         // }
          this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',changeValue);
        },
        deep: true
@@ -628,25 +613,12 @@ const groupColumns = [
      },
      //开启保障视图弹窗
      openBaoZhangMapDialog(load){
-       //如果视图里面有数据，则不处理，如果没有则增加一条
-       // let hasData = this.hasLoadBaoZhangItemData(load.key + '_' + load.positionId);
-       // if(!hasData){
-       //   let data = {
-       //     keyPositionId: load.key + '_'+load.positionId,
-       //     positionId: load.positionId,
-       //     mapId: '',
-       //     mapType:'',
-       //     drawFeature: null
-       //   };
-       //   this.$store.commit('event/baoZhangData/updateBaoZhangMapItemData', data);
-       // }
-
        this.loadData = load;
        this.mapDialogVisible = true;
      },
      //保存地图数据
      saveDraw(data){
-       console.log("==需要保存的数据===",data);
+       console.log("==需要保存的数据 saveDraw ===",data);
        let index = this.groupResultData.teamPersonList[0].teamPersonData.findIndex(item => data.positionId===item.positionId);
        this.groupResultData.teamPersonList[0].teamPersonData[index].mapId = data.mapId;
        this.groupResultData.teamPersonList[0].teamPersonData[index].mapType = data.mapType;
