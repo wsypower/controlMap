@@ -433,9 +433,11 @@
           if (draw) {
             map.removeInteraction(draw);
           }
+          console.log('saveMap before', this.$store.getters['event/baoZhangData/baoZhangData']);
+
           if(this.baoZhangItemData.mapId.length>0){
             let data = {
-              keyPositionId: this.baoZhangItemData.key+ '_' +this.baoZhangItemData.positionId,
+              keyPositionId: this.baoZhangItemData.keyPositionId,
               positionId: this.baoZhangItemData.positionId,
               mapId: this.baoZhangItemData.mapId,
               mapType:this.baoZhangItemData.mapType,
@@ -443,6 +445,8 @@
             };
             console.log('saveMap baoZhangMapItemData', data);
             this.$store.commit('event/baoZhangData/updateBaoZhangMapItemData', data);
+
+            console.log('saveMap after', this.$store.getters['event/baoZhangData/baoZhangData']);
           }
           // this.updateBaoZhangMapItemData(data);
           console.log('saveMap baoZhangItemData', this.baoZhangItemData);

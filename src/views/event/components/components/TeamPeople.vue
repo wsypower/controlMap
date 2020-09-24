@@ -531,7 +531,7 @@ const groupColumns = [
            if(!hasData){
              target['mapId'] = '';
              let data = {
-               keyPositionId: arr.key + '_' + selectedOptions[2].value,
+               keyPositionId: key + '_' + selectedOptions[2].value,
                positionId: selectedOptions[2].value,
                mapId: '',
                mapType:'',
@@ -543,7 +543,7 @@ const groupColumns = [
              let item = this.getBaoZhangItemData(selectedOptions[2].value);
              target['mapId'] = item.mapId;
              let data  = {
-               keyPositionId: arr.key + '_' + selectedOptions[2].value,
+               keyPositionId: key + '_' + selectedOptions[2].value,
                positionId: selectedOptions[2].value,
                mapId: item.mapId,
                mapType:item.mapType,
@@ -629,17 +629,17 @@ const groupColumns = [
      //开启保障视图弹窗
      openBaoZhangMapDialog(load){
        //如果视图里面有数据，则不处理，如果没有则增加一条
-       let hasData = this.hasLoadBaoZhangItemData(load.key + '_' + load.positionId);
-       if(!hasData){
-         let data = {
-           keyPositionId: load.key + '_'+load.positionId,
-           positionId: load.positionId,
-           mapId: '',
-           mapType:'',
-           drawFeature: null
-         };
-         this.$store.commit('event/baoZhangData/updateBaoZhangMapItemData', data);
-       }
+       // let hasData = this.hasLoadBaoZhangItemData(load.key + '_' + load.positionId);
+       // if(!hasData){
+       //   let data = {
+       //     keyPositionId: load.key + '_'+load.positionId,
+       //     positionId: load.positionId,
+       //     mapId: '',
+       //     mapType:'',
+       //     drawFeature: null
+       //   };
+       //   this.$store.commit('event/baoZhangData/updateBaoZhangMapItemData', data);
+       // }
 
        this.loadData = load;
        this.mapDialogVisible = true;
