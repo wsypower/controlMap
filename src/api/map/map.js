@@ -27,6 +27,26 @@ export function getPointFeatures(mapIdList, mapType) {
     }
   })
 }
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2020/9/24 11:14
+ */
+export function getSingleFeatureAPI(mapId,mapType) {
+  return request({
+    url: URL_CONFIG.gisApi + `${URL_CONFIG.featurePre}/ows`,
+    method: 'get',
+    params: {
+      service: 'WFS',
+      version: '1.0.0',
+      request: 'GetFeature',
+      typeName: `${URL_CONFIG.featurePre}:${mapType}`,
+      outputFormat: 'application/json',
+      srsname: 'EPSG:4326',
+      cql_filter: `"id" = ${mapId}`
+    }
+  })
+}
 
 /*
  * @description: 保存数据到gis数据库接口

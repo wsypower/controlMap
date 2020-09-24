@@ -10,7 +10,8 @@ import {
   getResourceListApi,
   getEquipListApi,
   getPeopleListApi,
-  getAddressApi
+  getAddressApi,
+  getSingleFeatureAPI
 } from '@/api/map/map'
 import GeoJSON from 'ol/format/GeoJSON'
 import WFS from 'ol/format/WFS'
@@ -49,6 +50,30 @@ export async function getEmergencyFeatures(mapIdList, mapType) {
       break
   }
   const data = await getPointFeatures(mapIdList, featureType)
+  return new GeoJSON().readFeatures(data)
+}
+/**
+ * @description:
+ * @author:sijianting
+ * @createDate:2020/9/24 11:16
+ */
+export async function getSingleFeature(mapId, mapType) {
+  let featureType
+  switch (mapType) {
+    case 'Point':
+      featureType = 'yj_point'
+      break
+    case 'LineString':
+      featureType = 'yj_line'
+      break
+    case 'Polygon':
+      featureType = 'yj_polygon'
+      break
+    default:
+      featureType = 'yj_point'
+      break
+  }
+  const data = await getSingleFeatureAPI(mapId, featureType)
   return new GeoJSON().readFeatures(data)
 }
 

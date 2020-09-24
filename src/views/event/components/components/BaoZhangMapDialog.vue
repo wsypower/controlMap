@@ -111,8 +111,8 @@
           </a-button>
         </a-dropdown>
         <!--<a-button type="primary" @click="editMapFeatures" v-if="this.baoZhangData.length>0">编辑</a-button>-->
-        <a-button type="primary" @click="selectGeometry">选择</a-button>
-        <a-button type="primary" @click="clearSelectGeometry">删除选择</a-button>
+        <!--<a-button type="primary" @click="selectGeometry">选择</a-button>-->
+        <a-button type="primary" @click="clearSelectGeometry">删除</a-button>
       </div>
     </div>
     <template slot="footer">
@@ -131,20 +131,17 @@
 </template>
 <script type="text/ecmascript-6">
   import LayoutMap from '@/views/map/olMap.vue'
-  import { MapManager,filterMapId } from '@/utils/util.map.manage'
+  import { MapManager } from '@/utils/util.map.manage'
   import VectorLayer from 'ol/layer/Vector'
   import VectorSource from 'ol/source/Vector'
-  import Select from 'ol/interaction/Select.js';
   import { Circle as CircleStyle,Fill, Stroke, Style} from 'ol/style.js';
-  import { getEmergencyFeatures,getAddress } from '@/api/map/service'
+  import { getSingleFeature,getAddress } from '@/api/map/service'
   import Draw from 'ol/interaction/Draw.js'
-  import { deepClone } from '@/utils/util.tool'
   let map;
   let mapManager;
-  let draw,modify;
+  let draw;
   let source;
   let vectorLayer;
-  let select;
     export default{
       name: 'baoZhangMapDialog',
       components: {
@@ -183,9 +180,6 @@
           disableEdit:false,
 
           infoOverlay:null,
-          pointFeatures:[],
-          lineFeatures:[],
-          polygonFeatures:[],
           drawFeatures:{
             'Point': {
               add:[],
@@ -203,28 +197,10 @@
               delete:[]
             }
           },
-          tempDrawFeature:null,
-          editFeatures:{
-            add:[],
-            update:[],
-            delete:[]
-          },
-          tempChangeFeature:null,
-          tempSource:null,
-          tempFeatures:null,
-          selectedFeature:null,
-          // deleteFeature:false,
-
           form: null,
-
           // //识别编辑/新增某个保障点位
           opType: 'add',
-
-          hasSave:false,
           reviewInfoOverlay:null,
-          initFeatures:[],
-          initFinish:false,
-          firstOpen:true,
         }
       },
       computed:{
@@ -267,22 +243,14 @@
         this.form = this.$form.createForm(this);
       },
       mounted() {
-        console.log(111)
+        console.log('loadData',this.loadData);
       },
       methods:{
         init(){
-          this.initFinish=false;
           // this.deleteFeature=false;
           this.clearInitData();
           source&&source.clear();
-          if(this.initFeatures.length>0){
-            source.getFeatures();
-            source.addFeatures(this.initFeatures);
-          }
-          this.tempDrawFeature = _.cloneDeep(this.drawFeatures);
-          this.initFinish=true;
           this.$nextTick().then(() => {
-            if(this.firstOpen||!this.hasSave) {
               map = this.$refs.olMap.getMap();
               mapManager = new MapManager(map);
               //初始化地图弹框
@@ -292,62 +260,36 @@
               this.reviewInfoOverlay = mapManager.addOverlay({
                 element: this.$refs.reviewInfoOverlay
               });
-              // source=null;
               //绑定地图双击事件
               map.on('dblclick', this.mapClickHandler);
               //编辑状态下通过图形id获取已保存的图形数据
-              // 只要设置了组，这里数据一直是大于0
-                const idList = filterMapId(this.baoZhangItemData);
-                if (!source) {
-                  source = new VectorSource({ wrapX: false });
-                  vectorLayer = new VectorLayer({
-                    source: source,
-                    style: new Style({
+              if (!source) {
+                source = new VectorSource({ wrapX: false });
+                vectorLayer = new VectorLayer({
+                  source: source,
+                  style: new Style({
+                    fill: new Fill({
+                      color: 'rgba(255, 255, 255, 0.3)'
+                    }),
+                    stroke: new Stroke({
+                      color: '#fc7012',
+                      width: 5
+                    }),
+                    image: new CircleStyle({
+                      radius: 7,
                       fill: new Fill({
-                        color: 'rgba(255, 255, 255, 0.3)'
-                      }),
-                      stroke: new Stroke({
-                        color: '#fc7012',
-                        width: 5
-                      }),
-                      image: new CircleStyle({
-                        radius: 7,
-                        fill: new Fill({
-                          color: '#fc7012'
-                        })
+                        color: '#fc7012'
                       })
                     })
-                  });
-                }
-                if (idList[0]) {
-                  getEmergencyFeatures(idList[0], 'Point').then(data => {
-                    console.log('查询点', data);
-                    source.addFeatures(data);
-                  });
-                }
-                if (idList[1]) {
-                  getEmergencyFeatures(idList[1], 'LineString').then(data => {
-                    console.log('查询线', data);
-                    source.addFeatures(data);
-                  });
-                }
-                if (idList[2]) {
-                  getEmergencyFeatures(idList[2], 'Polygon').then(data => {
-                    console.log('查询面', data);
-                    source.addFeatures(data);
-                  });
-                }
-                const _this = this;
-                setTimeout(() => {
-                  _this.tempSource = source;
-                  if (this.nowOptType != 'look') {
-                    _this.editMapFeatures();
-                  }
-                  _this.firstOpen=false;
-                  map.addLayer(vectorLayer);
-                }, 500)
-
-            }
+                  })
+                });
+              }
+              getSingleFeature(this.baoZhangItemData.mapId, this.baoZhangItemData.mapType).then(data => {
+                source.addFeatures(data);
+              });
+              setTimeout(() => {
+                map.addLayer(vectorLayer);
+              }, 500)
           })
         },
         clearInitData(){
@@ -400,9 +342,6 @@
         handleOperateClick(value){
           map.un('dblclick', this.mapClickHandler);
           console.log('handleMenuClick',value);
-          if(select){
-            map.removeInteraction(select);
-          }
           if(!source){
             source = new VectorSource({ wrapX: false });
             vectorLayer = new VectorLayer({
@@ -431,59 +370,18 @@
             type: value.key
           })
           map.addInteraction(draw);
-          // draw = mapManager.activateDraw(draw,value.key,source);
           const _this=this;
           draw.on('drawend', function(e) {
             const id=_this.getMapId();
             e.feature.set('id',id);
             _this.baoZhangItemData.mapId = id;
             _this.baoZhangItemData.mapType = e.feature.getGeometry().getType();
-            //_this.showSetDialog(id,e.feature.getGeometry().getType());
             _this.infoOverlay.setPosition(e.feature.getGeometry().getLastCoordinate());
           });
-        },
-        editMapFeatures(){
-          const _this=this;
-          source.on('addfeature', function(e) {
-            e.preventDefault();
-            if(_this.initFinish){
-              const type=e.feature.getGeometry().getType();
-              _this.drawFeatures[type].add.push(e.feature);
-            }
-          });
-          source.on('changefeature', function(e) {
-            e.preventDefault();
-            _this.tempChangeFeature=e.feature;
-          });
-          // source.on('removefeature', function(e) {
-          //   e.preventDefault();
-          //   if(_this.initFinish&&_this.deleteFeature){
-          //     const type=e.feature.getGeometry().getType();
-          //     if(!_this.drawFeatures[type].add.includes(e.feature)){
-          //       _this.drawFeatures[type].delete.push(e.feature);
-          //     }
-          //   }
-          // });
         },
         //获取随机绘制图形id
         getMapId(){
           return Number(Math.random().toString().substr(3,6) + Date.now()).toString(36);
-        },
-        //选择任一图形要素
-        selectGeometry(){
-          console.log(this.$refs.infoOverlay.$el);
-          map.removeInteraction(modify);
-          map.on('dblclick', this.mapClickHandler);
-          if(draw){
-            map.removeInteraction(draw);
-          }
-          select = new Select();
-          map.addInteraction(select);
-          const _this=this;
-          select.on('select', function(e) {
-            console.log(e.selected[0]);
-            _this.selectedFeature=e.selected[0];
-          });
         },
         //清除选中的图形
         clearSelectGeometry() {
@@ -500,19 +398,16 @@
               this.splice(index, 1);
             }
           };
-          let deleteData;
           if (source) {
-            source.removeFeature(this.selectedFeature);
-            const type=this.selectedFeature.getGeometry().getType();
-            if(!this.drawFeatures[type].add.includes(this.selectedFeature)){
-              this.drawFeatures[type].delete.push(this.selectedFeature);
-            }
-            // vectorLayer.getSource()
-            map.removeInteraction(select);
+            source.clear();
+            // if(!this.drawFeatures[type].add.includes(this.selectedFeature)){
+            //   this.drawFeatures[type].delete.push(this.selectedFeature);
+            // }
+            // map.removeInteraction(select);
             this.baoZhangItemData.mapId = '';
             this.baoZhangItemData.mapType = '';
             this.baoZhangItemData.remark = '';
-            console.log('==removemapip==',this.selectedFeature.get('id'));
+            // console.log('==removemapip==',this.selectedFeature.get('id'));
           }
         },
         //双击区域后触发此方法，带出mapId
@@ -543,63 +438,19 @@
         },
         //保存图形数据
         saveMap() {
-          this.hasSave=true;
-          // this.deleteFeature=false;
           this.infoOverlay&&this.infoOverlay.setPosition(undefined)
           this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
-          this.pointFeatures = [];
-          this.lineFeatures = [];
-          this.polygonFeatures = [];
           if (draw) {
-            // mapManager.inactivateDraw(draw);
             map.removeInteraction(draw);
           }
-          console.log('新增还是编辑：mapOperateType', this.mapOperateType);
-          if(this.mapOperateType=='add'){
-            const features = vectorLayer.getSource().getFeatures();
-            for (let i = 0; i < features.length; i++) {
-              if (features[i].getGeometry().getType() == 'Point') {
-                this.pointFeatures.push(features[i])
-              }
-              else if (features[i].getGeometry().getType() == 'LineString') {
-                this.lineFeatures.push(features[i])
-              }
-              else {
-                this.polygonFeatures.push(features[i])
-              }
-            }
-            this.drawFeatures={
-              'Point': {
-                add:this.pointFeatures,
-                update:null,
-                delete:null
-              },
-              'LineString':{
-                add: this.lineFeatures,
-                update:null,
-                delete:null
-              },
-              'Polygon':{
-                add: this.polygonFeatures,
-                update:null,
-                delete:null
-              }
-            };
-          }
-          if(this.mapOperateType=='edit'){
-            console.log('==drawFeature==',this.drawFeatures)
-          }
-          this.initFeatures=source.getFeatures();
-          // source=null;
-          source.clear();
           console.log('saveMap baoZhangItemData', this.baoZhangItemData);
 
           this.disableEdit = false;
-          let data = {
-            baoZhangItemData: this.baoZhangItemData,
-            drawFeatures: this.drawFeatures
-          }
-          this.$emit('saveDrawData',data);
+          // let data = {
+          //   baoZhangItemData: this.baoZhangItemData,
+          //   drawFeatures: this.drawFeatures
+          // }
+          // this.$emit('saveDrawData',data);
           this.mapDialogVisible = false;
         },
         //重置视图
@@ -616,14 +467,13 @@
           this.disableEdit = false;
           this.infoOverlay&&this.infoOverlay.setPosition(undefined)
           this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
-          if(!this.hasSave) {
-            if (draw) {
-              mapManager.inactivateDraw(draw);
-            }
-            source&&source.clear();
-            this.drawFeatures= _.cloneDeep(this.tempDrawFeature);
-            console.log('关闭this.drawFeatures',this.drawFeatures);
-          }
+          // if(!this.hasSave) {
+          //   if (draw) {
+          //     mapManager.inactivateDraw(draw);
+          //   }
+          //   source&&source.clear();
+          //   console.log('关闭this.drawFeatures',this.drawFeatures);
+          // }
           this.mapDialogVisible = false;
       },
       // 地图搜索
