@@ -50,6 +50,7 @@ export async function getEmergencyFeatures(mapIdList, mapType) {
       break
   }
   const data = await getPointFeatures(mapIdList, featureType)
+  console.log('sijtttt',new GeoJSON().readFeatures(data))
   return new GeoJSON().readFeatures(data)
 }
 /**
