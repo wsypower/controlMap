@@ -476,7 +476,7 @@
                {id: selectedOptions[2].value, name: selectedOptions[2].label}];
              target['positionId'] = selectedOptions[2].value;
              //如果有选过这个路段，则拿这个路段的信息，如果没有选过，则设置为空
-             let hasData = this.$store.commit('event/baoZhangData/hasBaoZhangItemData',selectedOptions[2].value);
+             let hasData = this.hasBaoZhangItemData(selectedOptions[2].value);
              if(!hasData){
                target['mapId'] = '';
                let data = {
@@ -488,7 +488,7 @@
                this.$store.commit('event/baoZhangData/updateBaoZhangItemData', data);
              }
              else{
-               let item = this.$store.commit('event/baoZhangData/getBaoZhangItemData', selectedOptions[2].value);
+               let item = this.getBaoZhangItemData(selectedOptions[2].value);
                target['mapId'] = item.mapId;
                let data  = {
                  keyPositionId: arr.key + '_' + selectedOptions[2].value,
@@ -576,7 +576,7 @@
        //开启保障视图弹窗
        openBaoZhangMapDialog(load){
          //如果视图里面有数据，则不处理，如果没有则增加一条
-         let hasData = this.$store.commit('event/baoZhangData/hasLoadBaoZhangItemData', load.key + '_' + load.positionId);
+         let hasData = this.hasLoadBaoZhangItemData(load.key + '_' + load.positionId);
          if(!hasData){
            let data = {
              keyPositionId: load.key + '_'+load.positionId,
@@ -584,8 +584,8 @@
              mapId: '',
              drawFeature: null
            };
+           this.$store.commit('event/baoZhangData/updateBaoZhangItemData', data);
          }
-         this.$store.commit('event/baoZhangData/updateBaoZhangItemData', data);
 
          this.loadData = load;
          this.mapDialogVisible = true;
@@ -663,7 +663,35 @@
            },0);
            this.$emit('setSubmitBtnShow',num)
          })
-       }
+       },
+       //是否有这个道路保障信息
+       hasBaoZhangItemData(positionId) {
+         let baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
+         let index = Object.keys(baoZhangData).findIndex(key => key.split('_')[1] === positionId);
+         if(index>=0){
+           return true
+         }
+         else{
+           return false
+         }
+       },
+       //是否存在这一行
+       hasLoadBaoZhangItemData(keyPositionId) {
+         let baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
+         let index = Object.keys(baoZhangData).findIndex(key => key === keyPositionId);
+         if(index>=0){
+           return true
+         }
+         else{
+           return false
+         }
+       },
+       //获取保障视图信息
+       getBaoZhangItemData(positionId) {
+         let baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
+         let item = Object.keys(baoZhangData).find(key => key.split('_')[1] === positionId);
+         return item[0]
+       },
      }
    }
 </script>
