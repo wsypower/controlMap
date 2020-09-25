@@ -949,8 +949,11 @@ import { filterMapId } from '@/utils/util.map.manage'
       //保存gis数据输入数据库
       saveDataToGis(){
         const data = this.$store.getters['event/baoZhangData/baoZhangData'];
-        console.log('saveDataToGis baoZhangData',data);
-        return false;
+
+        //测试用的，忽略下面两行代码
+        // console.log('saveDataToGis baoZhangData',data);
+        // return false;
+
         // 删除已经存在数据库中的数据
         let searchPoint={
           id:'(',
