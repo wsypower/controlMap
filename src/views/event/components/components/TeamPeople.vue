@@ -46,7 +46,7 @@
             >
               {{ team.checkStatusName }}
             </span>
-            <span class="btn btn_review" @click="lookTeamPeopleSet(team)">预览</span>
+            <span class="btn btn_review" @click="lookTeamPeopleSet(team)">{{nowOptType === 'look' || userType === 'qxsl'? '预览':'保存及预览'}}</span>
             <span
               v-if="btnOptType === 'edit' && (team.checkStatusId === '2' || team.checkStatusId === '4')"
               class="btn btn_pass"
@@ -107,7 +107,7 @@
         </template>
         <span slot="action" slot-scope="text, record, index"></span>
       </a-table>
-      <a-table v-else :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered>
+      <a-table v-else :columns="columns" :dataSource="team.teamPersonData" :pagination="false" bordered v-show="team.show">
         <template slot="indexStr" slot-scope="text, record, index">
           <div key="indexStr">
             <span>{{ index + 1 }}</span>
@@ -429,7 +429,7 @@ const groupColumns = [
      else{
        //当编辑时会改变groupResultData值，从而改变store里面的数据
        this.teamPersonList = this.groupResultData.teamPersonList;
-       let temp = this.teamPersonList.reduce((needArr,teamItem)=> {
+       let temp = this.teamPersonList.reduce((needArr,teamItem,index)=> {
          let needTeamItem = teamItem.teamPersonData.reduce((needTeam,item) => {
            item.addressIds = item.address.reduce((acc,ad) => {
              acc.push(ad.id);
@@ -451,6 +451,12 @@ const groupColumns = [
            return needTeam
          },[]);
          teamItem.teamPersonData = needTeamItem;
+         if(index===0){
+           teamItem.show = true;
+         }
+         else{
+           teamItem.show = false;
+         }
          needArr.push(teamItem);
          return needArr
        },[]);
@@ -792,7 +798,8 @@ const groupColumns = [
         .btn {
           display: inline-block;
           margin-left: 5px;
-          width: 50px;
+          /*width: 50px;*/
+          padding: 0px 8px;
           height: 26px;
           border-radius: 4px;
           font-family: PingFang-SC-Medium;
