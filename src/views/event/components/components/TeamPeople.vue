@@ -463,7 +463,7 @@ const groupColumns = [
          let changeTemp = temp.reduce((acc,teamItem) => {
            if(teamItem.teamPersonData.length===0){
              let additem = {
-               key: '@@@',
+               key: '@@@' + new Date().getTime(),
                addressIds: [],
                leaderId: '',
                personList: [],
@@ -545,6 +545,7 @@ const groupColumns = [
            }
          }
          else{
+           target['addressIds'] = [];
            target['positionId'] = '';
            target['mapId'] = '';
            this.$store.commit('event/baoZhangData/deleteBaoZhangMapItemData',arr.key + '_' +arr.positionId);
@@ -715,8 +716,8 @@ const groupColumns = [
      //获取保障视图信息
      getBaoZhangItemData(positionId) {
        let baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
-       let item = Object.keys(baoZhangData).find(key => key.split('_')[1] === positionId);
-       return item[0]
+       let key = Object.keys(baoZhangData).find(key => key.split('_')[1] === positionId);
+       return baoZhangData[key]
      },
      //
      isShowTable(teamIndex, team){
