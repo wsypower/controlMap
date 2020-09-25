@@ -802,7 +802,6 @@ import { filterMapId } from '@/utils/util.map.manage'
       },
       //中队--保存数据之后各个情况处理
       addTeamPerson(isNeedSubmit,isReview,teamInfo){
-        this.saveDataToGis();
 
         this.dunDianQuanDaoData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
         console.log('zybm dunDianQuanDaoData', this.dunDianQuanDaoData);
@@ -849,6 +848,11 @@ import { filterMapId } from '@/utils/util.map.manage'
           this.checkLoading = false;
           return;
         }
+
+        if(!this.saveDataToGis()){
+          this.reviewLoading = false;
+          return;
+        };
 
         let params = {
           eventId: this.eventId,
@@ -945,6 +949,8 @@ import { filterMapId } from '@/utils/util.map.manage'
       //保存gis数据输入数据库
       saveDataToGis(){
         const data = this.$store.getters['event/baoZhangData/baoZhangData'];
+        console.log('saveDataToGis baoZhangData',data);
+        return false;
         // 删除已经存在数据库中的数据
         let searchPoint={
           id:'(',
@@ -1037,7 +1043,7 @@ import { filterMapId } from '@/utils/util.map.manage'
               console.log('===保存成功====');
             }else{
               this.modalMapVisible=true;
-              return;
+              return false;
             }
           });
         }
@@ -1052,7 +1058,7 @@ import { filterMapId } from '@/utils/util.map.manage'
               console.log('===保存成功====');
             }else{
               this.modalMapVisible=true;
-              return;
+              return false;
             }
           });
         }
@@ -1067,12 +1073,13 @@ import { filterMapId } from '@/utils/util.map.manage'
               console.log('===保存成功====');
             }else{
               this.modalMapVisible=true;
-              return;
+              return false;
             }
           });
         }
         //清理drawFeature数据，使得数据从gis库里面去取
         this.$store.commit('event/baoZhangData/clearSelfData');
+        return true
       },
       //整个事件预览
       reviewEvent(){

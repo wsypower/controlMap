@@ -545,10 +545,10 @@ const groupColumns = [
            }
          }
          else{
+           this.$store.commit('event/baoZhangData/deleteBaoZhangMapItemData',target.key + '_' + target.positionId);
            target['addressIds'] = [];
            target['positionId'] = '';
            target['mapId'] = '';
-           this.$store.commit('event/baoZhangData/deleteBaoZhangMapItemData',arr.key + '_' +arr.positionId);
          }
          target['address'] = address;
          this.teamPersonList[teamIndex].teamPersonData = newData;
