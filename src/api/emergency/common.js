@@ -12,7 +12,7 @@ import request from '@/plugins/axios/axios'
  * @param {String} userId 请求参数 :用户唯一标识符默认参数）
  */
 export const getUserInfo = data => {
-  console.log('api:getUserInfo',data);
+  // console.log('api:getUserInfo',data);
   return request({
     url: `plan/getUserInfo`,
     method: 'get',
@@ -31,7 +31,7 @@ export const getUserInfo = data => {
  * }}
  */
 export function getStatusDataList(data){
-    console.log('api:getStatusDataList',data);
+    // console.log('api:getStatusDataList',data);
     return request({
         url: 'plan/getStatusDataList?_t='+ new Date().getTime(),
         method: 'get',
@@ -50,7 +50,7 @@ export function getStatusDataList(data){
  * }}
  */
 export function getYuAnTypeDataList(data){
-    console.log('api:getYuAnTypeDataList',data);
+    // console.log('api:getYuAnTypeDataList',data);
     return request({
         url: 'plan/getYuAnTypeDataList?_t='+ new Date().getTime(),
         method: 'get',
@@ -69,7 +69,7 @@ export function getYuAnTypeDataList(data){
  */
 
 export function getAllPeopleDataList(data){
-  console.log('api:getAllPeopleDataList',data);
+  // console.log('api:getAllPeopleDataList',data);
   return request({
     url: 'plan/getPeopleDataList?_t='+ new Date().getTime(),
     method: 'get',
@@ -89,7 +89,7 @@ export function getAllPeopleDataList(data){
  */
 
 export function getReviewPeopleDataList(data){
-  console.log('api:getReviewPeopleDataList',data);
+  // console.log('api:getReviewPeopleDataList',data);
   return request({
     url: 'plan/getReviewPeopleDataList?_t='+ new Date().getTime(),
     method: 'get',

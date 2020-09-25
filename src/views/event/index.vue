@@ -164,12 +164,12 @@
         let pageSize = this.query.pageSize;
         this.query = Object.assign({}, this.$options.data().query);
         this.query.pageSize = pageSize;
-        console.log('resetQuery',this.query);
+        // console.log('resetQuery',this.query);
       },
       //获取事件数据
       getEventDataList(){
         this.dataLoading = true;
-        console.log('this.query',this.query);
+        // console.log('this.query',this.query);
         this.getEventList(this.query).then((res)=>{
           this.dataLoading = false;
           res.list.map(item => {
@@ -190,7 +190,7 @@
           statusId: '1'
         }
         this.getToHandleCountData(params).then((res)=>{
-          console.log('view ToHandleCount', res.count);
+          // console.log('view ToHandleCount', res.count);
           this.countForMyToHandle = res.count;
         });
       },
@@ -238,7 +238,7 @@
       },
       //换页触发
       onPageNoChange(pageNO,pageSize){
-        console.log('onPageNoChange',pageNO,pageSize);
+        // console.log('onPageNoChange',pageNO,pageSize);
         this.query.pageNo = pageNO;
         this.getEventDataList();
       },
@@ -251,7 +251,7 @@
       },
       //点击某一行的复选框触发--实现与表头全选的联动
       checkHandle(item){
-        console.log('checkHandle',item);
+        // console.log('checkHandle',item);
         item.checked = !item.checked;
         if(!item.checked){
           this.checkedAll = false;
@@ -279,7 +279,7 @@
           }
           return acc
         },[]);
-        console.log('需要删除的事件有：' , checkedIds);
+        // console.log('需要删除的事件有：' , checkedIds);
         let _this = this;
         if(checkedIds.length === 0){
           this.$message.warning('请选择需要删除的事件');
@@ -318,7 +318,7 @@
             }
             return acc
           },[]);
-          console.log('需要导出的事件有：' , checkedIds);
+          // console.log('需要导出的事件有：' , checkedIds);
           if(checkedIds.length === 0){
             this.$message.warning('请选择需要导出的事件');
           }
@@ -327,7 +327,7 @@
           }
         }
         else{
-          console.log('导出全部事件');
+          // console.log('导出全部事件');
           //window.open(URL_CONFIG.baseURL + '/emergencyplan/exportEventByIds?id=' + id);
         }
       },
@@ -350,7 +350,7 @@
       },
       //新增事件
       addNewEvent(){
-        console.log('addNewEvent click');
+        // console.log('addNewEvent click');
         this.eventId = '';
         this.optType = 'add';
         this.dialogTitle = '新增事件';

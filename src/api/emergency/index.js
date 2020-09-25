@@ -12,7 +12,7 @@ import request from '@/plugins/axios/axios'
  */
 
 export function getCountForMyToCheck(data){
-  console.log('api:getCountForMyToCheck',data);
+  // console.log('api:getCountForMyToCheck',data);
   return request({
     url: 'plan/getCountForMyToCheck',
     method: 'get',
@@ -46,7 +46,7 @@ export function getCountForMyToCheck(data){
  */
 
 export function getEmergencyYuAnList(data){
-    console.log('api：getEmergencyYuAnList',data);
+    // console.log('api：getEmergencyYuAnList',data);
     return request({
         url: `plan/getEmergencyYuAnList`,
         method: 'post',
@@ -79,7 +79,7 @@ export function getEmergencyYuAnList(data){
  */
 
 export function addNewEmergencyYuAn(data){
-    console.log('api:addNewEmergencyYuAn',data);
+    // console.log('api:addNewEmergencyYuAn',data);
     return request({
         url: 'plan/addNewEmergencyYuAn',
         method: 'post',
@@ -99,7 +99,7 @@ export function addNewEmergencyYuAn(data){
  */
 
 export function deleteEmergencyYuAn(data){
-    console.log('api:deleteEmergencyYuAn',data);
+    // console.log('api:deleteEmergencyYuAn',data);
     return request({
         url: 'plan/deleteEmergencyYuAn',
         method: 'post',
@@ -124,7 +124,7 @@ export function deleteEmergencyYuAn(data){
  */
 
 export function getEmergencyYuAnById(data){
-    console.log('api:getEmergencyYuAnById',data);
+    // console.log('api:getEmergencyYuAnById',data);
     return request({
         url: 'plan/getEmergencyYuAnById?_t='+ new Date().getTime(),
         method: 'get',
@@ -147,7 +147,7 @@ export function getEmergencyYuAnById(data){
  */
 
 export function setEmergencyYuAnToPass(data){
-  console.log('api:setEmergencyYuAnToPass',data);
+  // console.log('api:setEmergencyYuAnToPass',data);
   return request({
     url: 'plan/setEmergencyYuAnToPass',
     method: 'post',
@@ -171,7 +171,7 @@ export function setEmergencyYuAnToPass(data){
  */
 
 export function setEmergencyYuAnToBack(data){
-  console.log('api:setEmergencyYuAnToBack',data);
+  // console.log('api:setEmergencyYuAnToBack',data);
   return request({
     url: 'plan/setEmergencyYuAnToBack',
     method: 'post',
@@ -193,7 +193,7 @@ export function setEmergencyYuAnToBack(data){
  */
 
 export function setEmergencyYuAnToFinishReview(data){
-  console.log('api:setEmergencyYuAnToFinishReview',data);
+  // console.log('api:setEmergencyYuAnToFinishReview',data);
   return request({
     url: 'plan/setEmergencyYuAnToFinishReview',
     method: 'post',
@@ -215,7 +215,7 @@ export function setEmergencyYuAnToFinishReview(data){
  */
 
 export function setEmergencyYuAnToTemplate(data){
-  console.log('api:setEmergencyYuAnToTemplate',data);
+  // console.log('api:setEmergencyYuAnToTemplate',data);
   return request({
     url: 'plan/setEmergencyYuAnToTemplate',
     method: 'post',
@@ -237,7 +237,7 @@ export function setEmergencyYuAnToTemplate(data){
  */
 
 export function getTemplateYuAnDataList(data){
-  console.log('api:getTemplateYuAnDataList',data);
+  // console.log('api:getTemplateYuAnDataList',data);
   return request({
     url: 'plan/getTemplateYuAnDataList?_t='+ new Date().getTime(),
     method: 'get',
@@ -264,7 +264,7 @@ export function getTemplateYuAnDataList(data){
  */
 
 export function getRunningYuAnList(data){
-  console.log('api：getRunningYuAnList',data);
+  // console.log('api：getRunningYuAnList',data);
   return request({
     url: `plan/getRunningYuAnList`,
     method: 'get',

@@ -169,7 +169,7 @@
        }
      },
      mounted() {
-       console.log('peoplelist', this.peopleList);
+       // console.log('peoplelist', this.peopleList);
        this.groupResultData = JSON.parse(JSON.stringify(this.groupData));
        this.groupPerson = this.groupResultData.groupPerson;
        if(this.groupPerson.length===0){
@@ -199,7 +199,7 @@
           })
         });
 
-       console.log('333333',this.groupPerson);
+       // console.log('333333',this.groupPerson);
      },
      watch:{
        groupResultData:{

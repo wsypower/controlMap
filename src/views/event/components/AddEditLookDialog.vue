@@ -84,7 +84,6 @@
                 :peopleList="peopleListForTeam"
                 @setSubmitBtnShow="setSubmitBtnShow"
                 @reviewTeam="reviewTeam"
-                @getGisData="getGisData"
               ></team-people>
               <group-people
                 :optType="optType"
@@ -380,7 +379,7 @@ import { filterMapId } from '@/utils/util.map.manage'
       ...mapActions('event/event', ['getTemplateEventDataList','getMessageByEventId','addNewEvent','updateEvent','addTeamPersonForNewEvent','submitEventToCheck','checkEvent','submitEvent','submitTeamPersonToCheck']),
       ...mapActions('event/common', ['getPeopleDataList']),
       init(){
-        console.log('into addeditlookdialog');
+        // console.log('into addeditlookdialog');
         this.getTemplateEventDataList().then((res)=>{
           this.templateList = res;
         });
@@ -556,16 +555,6 @@ import { filterMapId } from '@/utils/util.map.manage'
       getJiJianDuChaResultData(data){
         this.jiJianDuChaData = JSON.parse(JSON.stringify(data));
       },
-      //保障视图数据
-      getGisData(data){
-        console.log("==保存===",data);
-        //这里只有单条数据了
-        let index = this.drawFeatures.findIndex(feature => feature.positionId===data.positionId)
-        if(index>=0){
-          this.drawFeatures.splice(index,1);
-        }
-        this.drawFeatures.push(data);
-      },
 
       //在保存数据之前对数据进行处理
       changeEventDataForSave(){
@@ -703,7 +692,7 @@ import { filterMapId } from '@/utils/util.map.manage'
         }
         if(this.optType!=='add'){
           this.updateEvent(params).then((res)=>{
-            console.log('updateEvent',res);
+            // console.log('updateEvent',res);
             this.saveLoading = false;
             if(res.eventId){
               this.$notification['success']({
@@ -727,7 +716,7 @@ import { filterMapId } from '@/utils/util.map.manage'
         }
         else{
           this.addNewEvent(params).then((res)=>{
-            console.log('addNewEvent',res);
+            // console.log('addNewEvent',res);
             this.saveLoading = false;
             if(res.eventId) {
               this.$notification['success']({
@@ -770,10 +759,10 @@ import { filterMapId } from '@/utils/util.map.manage'
             jiJianDuChaData: this.jiJianDuChaData
           })
         }
-        console.log('发起流程',params);
+        // console.log('发起流程',params);
         if(this.baseInfo.id!==''){
           this.updateEvent(params).then((res)=>{
-            console.log('updateEvent eventId',res.eventId);
+            // console.log('updateEvent eventId',res.eventId);
             if(res.eventId) {
               this.submitEvent({ id: res.eventId }).then(res => {
                 this.submitLoading = false;
@@ -789,7 +778,7 @@ import { filterMapId } from '@/utils/util.map.manage'
         }
         else{
           this.addNewEvent(params).then((res)=>{
-            console.log('addNewEvent eventId',res.eventId);
+            // console.log('addNewEvent eventId',res.eventId);
             this.submitEvent({id: res.eventId}).then(res => {
               this.submitLoading = false;
               this.reset();
@@ -861,7 +850,7 @@ import { filterMapId } from '@/utils/util.map.manage'
         }
         console.log('addTeamPersonForNewEvent',params);
         this.addTeamPersonForNewEvent(params).then(res => {
-          console.log('addTeamPersonForNewEvent',res);
+          // console.log('addTeamPersonForNewEvent',res);
           if(res.code&&res.code==='1'){
             this.$message.error(res.msg);
           }
@@ -917,7 +906,7 @@ import { filterMapId } from '@/utils/util.map.manage'
           })
         }
         this.updateEvent(params).then((res)=>{
-          console.log('updateEvent eventId',res.eventId);
+          // console.log('updateEvent eventId',res.eventId);
           this.submitEventToCheck({id: res.eventId}).then(res => {
             this.checkLoading = false;
             this.reset();
@@ -937,7 +926,7 @@ import { filterMapId } from '@/utils/util.map.manage'
       },
       //打开提交审核按钮
       setSubmitBtnShow(data){
-        console.log('666 setSubmitBtnShow');
+        // console.log('666 setSubmitBtnShow');
         let length = this.dunDianQuanDaoData.teamPersonList.length;
         if(data===length){
           this.showSubmit = true;
@@ -1011,12 +1000,12 @@ import { filterMapId } from '@/utils/util.map.manage'
           searchLine.id =  searchLine.id.substring(0,searchPoint.id.length-1);
           searchLine.id+=')';
           getEmergencyFeatures(searchLine.id, 'LineString').then(data => {
-            console.log('==查询点数据==', data);
+            console.log('==查询线数据==', data);
             if(data.length>0){
               postEmergencyFeatures('LineString', {
                 delete:data
               }).then(res => {
-                console.log('==点数据==', res);
+                console.log('==线数据==', res);
               });
             }
           })
@@ -1025,12 +1014,12 @@ import { filterMapId } from '@/utils/util.map.manage'
           searchPolygon.id =  searchPolygon.id.substring(0,searchPoint.id.length-1);
           searchPolygon.id+=')';
           getEmergencyFeatures(searchPolygon.id, 'Polygon').then(data => {
-            console.log('==查询点数据==', data);
+            console.log('==查询面数据==', data);
             if(data.length>0){
               postEmergencyFeatures('Polygon', {
                 delete:data
               }).then(res => {
-                console.log('==点数据==', res);
+                console.log('==面数据==', res);
               });
             }
           })
@@ -1054,7 +1043,7 @@ import { filterMapId } from '@/utils/util.map.manage'
           postEmergencyFeatures('LineString', {
             add:searchLine.feature
           }).then(res => {
-            console.log('==点数据==', res);
+            console.log('==线数据==', res);
             var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
             var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
             if(insertNum==searchLine.feature.length){
@@ -1069,7 +1058,7 @@ import { filterMapId } from '@/utils/util.map.manage'
           postEmergencyFeatures('Polygon', {
             add:searchPolygon.feature
           }).then(res => {
-            console.log('==点数据==', res);
+            console.log('==面数据==', res);
             var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
             var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
             if(insertNum==searchPolygon.feature.length){
@@ -1109,13 +1098,13 @@ import { filterMapId } from '@/utils/util.map.manage'
             }
             if (this.baseInfo.id !== '') {
               this.updateEvent(params).then((res) => {
-                console.log('updateEvent', res);
+                // console.log('updateEvent', res);
                 this.reviewLoading = false;
                 window.open(URL_CONFIG.eventInfoURL + 'eventInfo/' + userId + '_' + this.baseInfo.id, '事件详情', 'width=1000,height=800');
               });
             } else {
               this.addNewEvent(params).then((res) => {
-                console.log('addNewEvent', res);
+                // console.log('addNewEvent', res);
                 this.reviewLoading = false;
                 this.baseInfo.id = res.eventId;
                 this.optType = 'edit';

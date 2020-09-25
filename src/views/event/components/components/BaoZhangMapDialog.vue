@@ -214,7 +214,6 @@
         //只有中队可以编辑，其他角色不可编辑
         nowOptType:function(){
           let type = '';
-          console.log('optType',this.optType);
           if(this.userType === 'zybm' && this.optType === 'edit'){
             type = 'edit';
           }
@@ -243,7 +242,7 @@
         this.form = this.$form.createForm(this);
       },
       mounted() {
-        console.log('loadData',this.loadData);
+        // console.log('loadData',this.loadData);
       },
       methods:{
         // ...mapActions('event/baoZhangData', ['updateBaoZhangMapItemData']),
@@ -304,7 +303,7 @@
           })
         },
         clearInitData(){
-          console.log('loadData',this.loadData);
+          // console.log('loadData',this.loadData);
           this.baoZhangItemData = JSON.parse(JSON.stringify(this.loadData));
           if(this.baoZhangItemData.address){
             let personTemp = null;
@@ -442,7 +441,7 @@
           if (draw) {
             map.removeInteraction(draw);
           }
-          console.log('saveMap before', this.$store.getters['event/baoZhangData/baoZhangData']);
+          // console.log('saveMap before', this.$store.getters['event/baoZhangData/baoZhangData']);
 
           if(this.baoZhangItemData.mapId.length>0){
             let data = {
@@ -452,13 +451,13 @@
               mapType:this.baoZhangItemData.mapType,
               drawFeature: this.drawFeature
             };
-            console.log('saveMap baoZhangMapItemData', data);
+            // console.log('saveMap baoZhangMapItemData', data);
             this.$store.commit('event/baoZhangData/updateBaoZhangMapItemData', data);
 
-            console.log('saveMap after', this.$store.getters['event/baoZhangData/baoZhangData']);
+            // console.log('saveMap after', this.$store.getters['event/baoZhangData/baoZhangData']);
           }
           // this.updateBaoZhangMapItemData(data);
-          console.log('saveMap baoZhangItemData', this.baoZhangItemData);
+          // console.log('saveMap baoZhangItemData', this.baoZhangItemData);
           this.disableEdit = false;
           this.mapDialogVisible = false;
           this.$emit('saveDrawData',this.baoZhangItemData)

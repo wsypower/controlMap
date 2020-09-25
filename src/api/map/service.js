@@ -50,7 +50,7 @@ export async function getEmergencyFeatures(mapIdList, mapType) {
       break
   }
   const data = await getPointFeatures(mapIdList, featureType)
-  console.log('sijtttt',new GeoJSON().readFeatures(data))
+  // console.log('sijtttt',new GeoJSON().readFeatures(data))
   return new GeoJSON().readFeatures(data)
 }
 /**
@@ -212,7 +212,7 @@ export async function getAllVideo() {
  */
 export async function getAllPeople() {
   const result = await getPeopleListApi()
-  console.log('取数据', result)
+  // console.log('取数据', result)
   const data = result.map(r => {
     if (r.x.length > 0 && r.y.length > 0) {
       r.position = [parseFloat(r.x), parseFloat(r.y)]

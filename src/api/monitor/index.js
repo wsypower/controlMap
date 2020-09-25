@@ -13,7 +13,7 @@ import request from '@/plugins/axios/axios'
  */
 
 export function getMonitorInfoById(data){
-    console.log('api:getMonitorInfoById',data);
+    // console.log('api:getMonitorInfoById',data);
     return request({
         url: '@test/getMonitorInfoById?_t='+ new Date().getTime(),
         method: 'get',

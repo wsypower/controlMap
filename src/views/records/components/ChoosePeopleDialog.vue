@@ -90,7 +90,7 @@
           this.getAllPeopleDataList().then((res)=>{
             this.setDisabledKeyToTree(res,this.disablePeopleKey);
             this.getPeopleList(res,this.peopleList);
-            console.log('this.peopleList',this.peopleList);
+            // console.log('this.peopleList',this.peopleList);
             this.treeData = res;
           });
         },

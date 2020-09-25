@@ -486,7 +486,7 @@ const groupColumns = [
        }
 
      }
-     console.log('this.teamPersonList', this.teamPersonList);
+     // console.log('this.teamPersonList', this.teamPersonList);
 
      //获取保障视图数据
      this.baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
@@ -494,7 +494,7 @@ const groupColumns = [
    watch:{
      groupResultData:{
        handler: function(value){
-         console.log('88888888',value);
+         // console.log('88888888',value);
          let changeValue = JSON.parse(JSON.stringify(value));
          this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',changeValue);
        },
@@ -506,7 +506,7 @@ const groupColumns = [
      ...mapActions('event/common', ['getLoadTreeData']),
      //选择道路(修改道路后，保障视图清空，再选这条道路，则需要重新画)
      changeAddress(teamIndex, value, selectedOptions, key){
-       console.log(teamIndex, value, selectedOptions, key);
+       // console.log(teamIndex, value, selectedOptions, key);
        let arr = this.teamPersonList[teamIndex].teamPersonData;
        const newData = [...arr];
        const target = newData.filter(item => key === item.key)[0];
@@ -562,7 +562,7 @@ const groupColumns = [
      },
      //新增一行
      addGroup(item, index,teamIndex){
-       console.log('addGroup',item, index, teamIndex)
+       // console.log('addGroup',item, index, teamIndex)
        let additem = {
          key: '@@@' + new Date().getTime(),
          addressIds: [],
@@ -614,7 +614,7 @@ const groupColumns = [
      },
      //删除执勤人
      closeTag (person,index,e) {
-       console.log(person,index);
+       // console.log(person,index);
        let i = this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.indexOf(person);
        this.teamPersonList[this.teamIndex].teamPersonData[index].personObjList.splice(i,1);
        this.teamPersonList[this.teamIndex].teamPersonData[index].personList.splice(i,1);
@@ -634,7 +634,7 @@ const groupColumns = [
      },
      //进入中队预览
      lookTeamPeopleSet(team){
-       console.log('进入中队预览');
+       // console.log('进入中队预览');
        this.teamId= team.teamId;
        let data ={
          teamId: team.teamId,
@@ -645,7 +645,7 @@ const groupColumns = [
      },
      //中心确认中队通过
      passTeamPeopleSet(teamIndex, teamId){
-      console.log('eventId teamId operate backReason');
+      // console.log('eventId teamId operate backReason');
       let params = {
         eventId: this.eventId,
         teamId: teamId,

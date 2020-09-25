@@ -16,7 +16,7 @@ import request from '@/plugins/axios/axios2'
  */
 
 export function getAllCameraDataList(data) {
-  console.log('api:getAllCameraData', data)
+  // console.log('api:getAllCameraData', data)
   return request({
     url: 'ge/camera/list.json?token=fa9f4750224743d2d26435636e16956a&_t=' + new Date().getTime(),
     method: 'get',

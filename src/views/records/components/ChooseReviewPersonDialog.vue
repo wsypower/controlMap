@@ -77,7 +77,7 @@
             });
           }
           else{
-            console.log('reviewPerson',this.reviewPerson);
+            // console.log('reviewPerson',this.reviewPerson);
             this.$emit('choosePerson',this.reviewPerson);
             this.reviewPerson = '';
             this.chooseReViewPersonDialogVisible = false;

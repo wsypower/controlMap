@@ -194,7 +194,7 @@
          }
        }
 
-       console.log('222222',this.groupTeam);
+       // console.log('222222',this.groupTeam);
      },
      watch:{
        groupResultData:{
