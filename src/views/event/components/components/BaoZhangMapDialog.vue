@@ -357,7 +357,7 @@
         },
         //根据选择绘制图形
         handleOperateClick(value){
-          map.un('dblclick', this.mapClickHandler);
+          // map.un('dblclick', this.mapClickHandler);
           console.log('handleMenuClick',value);
           draw&&map.removeInteraction(draw);
           draw = new Draw({
