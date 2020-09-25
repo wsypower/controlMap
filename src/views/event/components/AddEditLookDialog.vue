@@ -179,6 +179,16 @@
     >
       <a-textarea v-model="backReason" placeholder="请输入驳回理由" allow-clear />
     </a-modal>
+    <a-modal
+            v-model="modalMapVisible"
+            title="警告"
+            centered
+            @ok="() => (modalMapVisible = false)"
+            width="200"
+            :footer="null"
+    >
+      <p style="font-size: 18px">图形保存错误，请重新保存！！！</p>
+    </a-modal>
   </a-modal>
 </template>
 <script type="text/ecmascript-6">
@@ -340,6 +350,8 @@ import { filterMapId } from '@/utils/util.map.manage'
 
         //在信息指挥中心处置下提交审核按钮是否显示（显示）
         showSubmit: false,
+        // 图形保存提示
+        modalMapVisible:false,
       }
     },
     computed:{
@@ -932,9 +944,7 @@ import { filterMapId } from '@/utils/util.map.manage'
       },
       //保存gis数据输入数据库
       saveDataToGis(){
-        //todo：这里的数据格式和以前不一样了，请修改 去vuex里面获取数据
         const data = this.$store.getters['event/baoZhangData/baoZhangData'];
-        console.log('==需要保存的数据===',data);
         // 删除已经存在数据库中的数据
         let searchPoint={
           id:'(',
@@ -951,7 +961,6 @@ import { filterMapId } from '@/utils/util.map.manage'
           count:0,
           feature:[]
         }
-        debugger
         Object.keys(data).forEach(key => {
           if(data[key].mapId.length>0){
             if(data[key].mapType=='Point'){
@@ -1022,6 +1031,14 @@ import { filterMapId } from '@/utils/util.map.manage'
             add:searchPoint.feature
           }).then(res => {
             console.log('==点数据==', res);
+            var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
+            var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
+            if(insertNum==searchPoint.feature.length){
+              console.log('===保存成功====');
+            }else{
+              this.modalMapVisible=true;
+              return;
+            }
           });
         }
         if(searchLine.feature.length>0){
@@ -1029,6 +1046,14 @@ import { filterMapId } from '@/utils/util.map.manage'
             add:searchLine.feature
           }).then(res => {
             console.log('==点数据==', res);
+            var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
+            var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
+            if(insertNum==searchLine.feature.length){
+              console.log('===保存成功====');
+            }else{
+              this.modalMapVisible=true;
+              return;
+            }
           });
         }
         if(searchPolygon.feature.length>0){
@@ -1036,6 +1061,14 @@ import { filterMapId } from '@/utils/util.map.manage'
             add:searchPolygon.feature
           }).then(res => {
             console.log('==点数据==', res);
+            var xmlDoc = (new DOMParser()).parseFromString(res,'text/xml');
+            var insertNum = xmlDoc.getElementsByTagName('wfs:totalInserted')[0].textContent;
+            if(insertNum==searchPolygon.feature.length){
+              console.log('===保存成功====');
+            }else{
+              this.modalMapVisible=true;
+              return;
+            }
           });
         }
         //清理drawFeature数据，使得数据从gis库里面去取
