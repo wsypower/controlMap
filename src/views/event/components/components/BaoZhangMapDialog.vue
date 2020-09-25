@@ -311,9 +311,15 @@
             if(this.baoZhangItemData.leaderId){
               personTemp = this.peopleList.find(person => person.id === this.baoZhangItemData.leaderId);
             }
-            let perName = this.baoZhangItemData.personList.reduce((arr, id) => {
-              let person = this.peopleList.find(p => p.id === id);
-              arr.push(person.name);
+
+            let perName = this.baoZhangItemData.personList.reduce((arr, personObj) => {
+              if(personObj.name){
+                arr.push(personObj.name);
+              }
+              else{
+                let person = this.peopleList.find(p => p.id === personObj);
+                arr.push(person.name);
+              }
               return arr
             },[]);
             let addressName = this.baoZhangItemData.address.reduce((acc, it) => {
@@ -341,11 +347,11 @@
           const feature = map.forEachFeatureAtPixel(pixel, feature => feature)
           if(feature&&feature.get('id')){
             // this.showSetDialog(feature.get('id'));
-            // if(this.nowOptType!='edit'){
-            //   this.reviewInfoOverlay.setPosition(coordinate);
-            // }else{
-            //   this.infoOverlay.setPosition(coordinate);
-            // }
+            if(this.nowOptType!='edit'){
+              this.reviewInfoOverlay.setPosition(coordinate);
+            }else{
+              this.infoOverlay.setPosition(coordinate);
+            }
             console.log('==点击feature==',feature);
           }
         },
@@ -550,6 +556,12 @@
           color: #343434;
         }
       }
+    }
+    /deep/.ant-form-item-label{
+      line-height: 24px;
+    }
+    /deep/.ant-form-item-control{
+      line-height: 24px;
     }
     .set-baozhang-dialog-footer {
       height: 40px;

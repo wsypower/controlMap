@@ -62,11 +62,12 @@
             >
             <span v-if="btnOptType === 'edit' && team.checkStatusId === '4'" class="btn btn_back_text">已驳回</span>
           </div>
-          <a-icon class="btn_hide" :class="{ open: teamIndex > 0 }" type="up" />
+          <a-icon class="btn_hide" :class="{ open: team.show }" type="up" @click="isShowTable(teamIndex, team)"/>
         </div>
       </div>
       <a-table
         v-if="nowOptType === 'look' || userType === 'qxsl'"
+        v-show="team.show"
         :columns="columns"
         :dataSource="team.teamPersonData"
         :pagination="false"
@@ -96,12 +97,11 @@
           </div>
         </template>
         <template slot="mapId" slot-scope="text, record, index">
-          <div key="mapId">
+          <div key="mapId" @click="openBaoZhangMapDialog(record)">
             <cg-icon-svg
               name="pin"
               class="icon_pin"
-              :class="{ disabled: !(record.positionId && record.positionId.length > 0) }"
-              @click="openBaoZhangMapDialog(record)"
+              :class="{ disabled: !(record.positionId && record.positionId.length > 0),down: record.mapId && record.mapId.length > 0 }"
             ></cg-icon-svg>
           </div>
         </template>
@@ -372,7 +372,7 @@ const groupColumns = [
      this.groupResultData = this.$store.getters['event/dunDianQuanDaoData/dunDianQuanDaoInfo'];
      if(this.userType === 'qxsl'||this.userType === 'jld'||(this.userType === 'zybm'&&this.optType==='look')){
        this.teamPersonList = JSON.parse(JSON.stringify(this.groupResultData.teamPersonList));
-       let teamPersonTempList = this.teamPersonList.reduce((teamPersonList,teamItem) => {
+       let teamPersonTempList = this.teamPersonList.reduce((teamPersonList,teamItem,index) => {
          let teamPersonTempData = teamItem.teamPersonData.reduce((teamPersonData,item) => {
 
            if(item.leaderId===''){
@@ -407,6 +407,12 @@ const groupColumns = [
            return teamPersonData
          },[]);
          teamItem.teamPersonData = teamPersonTempData;
+         if(index===0){
+           teamItem.show = true;
+         }
+         else{
+           teamItem.show = false;
+         }
          teamPersonList.push(teamItem);
          return teamPersonList
        },[]);
@@ -417,6 +423,7 @@ const groupColumns = [
          }
          return total
        },0);
+
        this.$emit('setSubmitBtnShow',num);
      }
      else{
@@ -711,6 +718,11 @@ const groupColumns = [
        let item = Object.keys(baoZhangData).find(key => key.split('_')[1] === positionId);
        return item[0]
      },
+     //
+     isShowTable(teamIndex, team){
+       team.show = !team.show;
+       this.$set(this.teamPersonList, teamIndex, team);
+     }
    }
  }
 </script>
@@ -752,6 +764,7 @@ const groupColumns = [
       margin-top: 0px;
     }
     .team-item-header {
+      border-bottom: 1px solid #eeeeee;
       .team-item-header-left {
         height: 40px;
         font-family: PingFang-SC-Bold;
@@ -812,6 +825,13 @@ const groupColumns = [
         .btn_hide {
           margin-left: 10px;
           cursor: pointer;
+          transition: transform 0.3s;
+          -moz-transition: transform 0.3s;
+          -webkit-transition: transform 0.3s;
+          -o-transition: transform 0.3s;
+          &:hover{
+            color: #00a4fe;
+          }
           &.open {
             transform: rotate(180deg);
             -ms-transform: rotate(180deg); /* IE 9 */
