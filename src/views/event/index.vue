@@ -9,12 +9,7 @@
           <a-button class="templateBtn" :class="{active: searchType==='template_1'}" icon="schedule" @click="searchEventData('template_1')">模板</a-button>
         </div>
         <div class="operate_panel" flex="dir:left cross:center">
-<!--          <a-select v-model="query.statusId" @select="handleSelectChange">-->
-<!--            <a-select-option value="">全部</a-select-option>-->
-<!--            <a-select-option v-for="(item,index) in statusList" :value="item.id" :key="index">{{item.name}}</a-select-option>-->
-<!--          </a-select>-->
           <a-input-search v-model="query.searchContent" placeholder="请输入关键字" @search="searchDataByContent"/>
-<!--          <a-button type="primary" icon="user" @click="searchEventData('myEvent_true')" flex="cross:center">我的事件</a-button>-->
           <a-button type="primary" icon="file-sync" class="review" :class="{active: searchType==='myStatus_1'}" @click="searchEventData('myStatus_1')">
             <a-badge :count="countForMyToHandle" show-zero>
               <span class="text">待处理</span>
@@ -27,11 +22,10 @@
         <a-spin tip="数据加载中..."></a-spin>
       </div>
       <div class="event_list_content" v-if="!dataLoading&&eventDataList.length>0" flex="dir:top">
-          <div class="event_list_content-operate" flex="dir:left cross:center main:right">
-              <a-button v-if="userType!=='zybm'" class="btn_opt btn_delete" @click="deleteEvents"><a-icon type="delete"/>批量删除</a-button>
-              <a-button class="btn_opt btn_export" @click="exportEvents('part')"><a-icon type="export"/>批量导出</a-button>
-<!--              <a-button class="btn_opt btn_export" @click="exportEvents('all')"><a-icon type="export"/>全部导出</a-button>-->
+          <div v-if="userType!=='zybm'" class="event_list_content-operate" flex="dir:left cross:center main:right">
+              <a-button class="btn_opt btn_delete" @click="deleteEvents"><a-icon type="delete"/>批量删除</a-button>
           </div>
+          <div v-else class="event_list_content" style="height:13px;"></div>
           <div class="main-table-panel">
               <ul class="main-table-header">
                   <li flex="cross:center">
@@ -110,9 +104,11 @@
     },
     data() {
       return {
-        statusList:[],
+        //待处理事件个数
         countForMyToHandle: 0,
+        //数据加载的动态效果
         dataLoading: false,
+        //事件数据的查询条件
         query:{
           typeId:'',
           statusId: '',
@@ -121,7 +117,6 @@
           pageNo: 1,
           pageSize: 12
         },
-          // isMyEvent: false,
         //查询类型
         searchType: '',
         eventDataList:[],
@@ -130,10 +125,13 @@
         needFixedRowNum: 0,
         //全选
         checkedAll: false,
-
+        //打开新增/编辑事件弹窗
         addEventDialogVisible: false,
+        //对于事件弹窗的处理类型
         optType: 'add',
+        //事件弹窗标题
         dialogTitle: '新增事件',
+        //事件ID
         eventId: '',
       }
     },
@@ -147,11 +145,9 @@
     },
     created(){},
     mounted(){
-      // this.getStatusDataList().then((res)=>{
-      //   console.log('getStatusDataList',res);
-      //   this.statusList = res;
-      // });
+      //获取当前用户待处理的事件个数
       this.getToHandleCount();
+      //获取事件表格数据
       this.getEventDataList();
 
     },
@@ -164,12 +160,10 @@
         let pageSize = this.query.pageSize;
         this.query = Object.assign({}, this.$options.data().query);
         this.query.pageSize = pageSize;
-        // console.log('resetQuery',this.query);
       },
       //获取事件数据
       getEventDataList(){
         this.dataLoading = true;
-        // console.log('this.query',this.query);
         this.getEventList(this.query).then((res)=>{
           this.dataLoading = false;
           res.list.map(item => {
@@ -178,7 +172,8 @@
           });
           this.eventDataList = res.list;
           this.totalSize = res.total;
-          if(res.list.length<12){
+          //对于当前查询结果没有query.pageSize条数据的，则补齐剩余的，保证一次结果满query.pageSize条数据
+          if(res.list.length<this.query.pageSize){
             this.needFixedRowNum = this.query.pageSize - res.list.length;
           }
         })
@@ -190,7 +185,6 @@
           statusId: '1'
         }
         this.getToHandleCountData(params).then((res)=>{
-          // console.log('view ToHandleCount', res.count);
           this.countForMyToHandle = res.count;
         });
       },
@@ -238,7 +232,6 @@
       },
       //换页触发
       onPageNoChange(pageNO,pageSize){
-        // console.log('onPageNoChange',pageNO,pageSize);
         this.query.pageNo = pageNO;
         this.getEventDataList();
       },
@@ -251,7 +244,6 @@
       },
       //点击某一行的复选框触发--实现与表头全选的联动
       checkHandle(item){
-        // console.log('checkHandle',item);
         item.checked = !item.checked;
         if(!item.checked){
           this.checkedAll = false;
@@ -286,49 +278,25 @@
         }
         else{
           let checkedIdsStr = checkedIds.join(',');
-            this.$confirm({
-              title: '確定删除这些事件吗?',
-              content: '删除后不可恢复',
-              okText: '确定',
-              okType: 'danger',
-              cancelText: '取消',
-              onOk() {
-                _this.deleteEventByIds({ids:checkedIdsStr}).then(res =>{
-                  if(res.msg.indexOf('成功')>=0){
-                    _this.$message.success('删除成功');
-                    _this.getEventDataList();
-                  }
-                  else{
-                    _this.$message.error(res.errmsg);
-                  }
-                });
-              },
-              onCancel() {
-
-              },
-            });
-        }
-      },
-      //导出事件
-      exportEvents(type){
-        if(type === 'part'){
-          let checkedIds = this.eventDataList.reduce((acc, item)=>{
-            if(item.checked){
-              acc.push(item.id);
-            }
-            return acc
-          },[]);
-          // console.log('需要导出的事件有：' , checkedIds);
-          if(checkedIds.length === 0){
-            this.$message.warning('请选择需要导出的事件');
-          }
-          else{
-            //window.open(URL_CONFIG.baseURL + '/emergencyplan/exportEventByIds?id=' + id);
-          }
-        }
-        else{
-          // console.log('导出全部事件');
-          //window.open(URL_CONFIG.baseURL + '/emergencyplan/exportEventByIds?id=' + id);
+          this.$confirm({
+            title: '確定删除这些事件吗?',
+            content: '删除后不可恢复',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+              _this.deleteEventByIds({ids:checkedIdsStr}).then(res =>{
+                if(res.msg.indexOf('成功')>=0){
+                  _this.$message.success('删除成功');
+                  _this.getEventDataList();
+                }
+                else{
+                  _this.$message.error(res.errmsg);
+                }
+              });
+            },
+            onCancel() {},
+          });
         }
       },
       //设置某个事件是否为模版
@@ -350,7 +318,6 @@
       },
       //新增事件
       addNewEvent(){
-        // console.log('addNewEvent click');
         this.eventId = '';
         this.optType = 'add';
         this.dialogTitle = '新增事件';
