@@ -313,19 +313,18 @@ const groupColumns = [
        teamPersonList: [],
        teamIndex: 0,
 
+       //人员选择弹窗
        choosePeopleDialogVisible: false,
        rangeId: '',
        rowIndex: 0,
        defaultCheckedPeopleIds: [],
 
+       //驳回弹窗
        backVisible: false,
        confirmLoading: false,
        backReason: '',
 
-       teamInfoDialogVisible: false,
-       teamId: '',
-       teamInfoTitle: '',
-
+       //获取的所有道路
        address: [],
 
        //保障视图相关
@@ -374,7 +373,6 @@ const groupColumns = [
        this.teamPersonList = JSON.parse(JSON.stringify(this.groupResultData.teamPersonList));
        let teamPersonTempList = this.teamPersonList.reduce((teamPersonList,teamItem,index) => {
          let teamPersonTempData = teamItem.teamPersonData.reduce((teamPersonData,item) => {
-
            if(item.leaderId===''){
              item.leaderName = '';
            }
@@ -407,6 +405,7 @@ const groupColumns = [
            return teamPersonData
          },[]);
          teamItem.teamPersonData = teamPersonTempData;
+         //第一个中队展开，后面的中队收起
          if(index===0){
            teamItem.show = true;
          }
@@ -417,6 +416,7 @@ const groupColumns = [
          return teamPersonList
        },[]);
        this.teamPersonList = teamPersonTempList;
+       //如果所有中队都已经通过审批，则可以直接显示提交审核按钮
        let num = this.teamPersonList.reduce((total,item) => {
          if(item.checkStatusId === '3'){
            total = total +1;
@@ -490,17 +490,13 @@ const groupColumns = [
        else{
          this.teamPersonList = temp;
        }
-
      }
-     // console.log('this.teamPersonList', this.teamPersonList);
-
      //获取保障视图数据
      this.baoZhangData = this.$store.getters['event/baoZhangData/baoZhangData'];
    },
    watch:{
      groupResultData:{
        handler: function(value){
-         // console.log('88888888',value);
          let changeValue = JSON.parse(JSON.stringify(value));
          this.$store.commit('event/dunDianQuanDaoData/updateDunDianQuanDaoInfo',changeValue);
        },
@@ -551,6 +547,7 @@ const groupColumns = [
            }
          }
          else{
+           //当前行的道路清空时，则对应的保障视图会被清，重新选择需要重新画
            this.$store.commit('event/baoZhangData/deleteBaoZhangMapItemData',target.key + '_' + target.positionId);
            target['addressIds'] = [];
            target['positionId'] = '';
@@ -627,8 +624,11 @@ const groupColumns = [
      },
      //开启保障视图弹窗
      openBaoZhangMapDialog(load){
-       this.loadData = load;
-       this.mapDialogVisible = true;
+       //有道路时，保障视图弹窗才开启
+       if(load.positionId){
+         this.loadData = load;
+         this.mapDialogVisible = true;
+       }
      },
      //保存地图数据
      saveDraw(data){
@@ -640,14 +640,11 @@ const groupColumns = [
      },
      //进入中队预览
      lookTeamPeopleSet(team){
-       // console.log('进入中队预览');
-       this.teamId= team.teamId;
        let data ={
          teamId: team.teamId,
          teamName: team.teamName
        }
        this.$emit('reviewTeam',data)
-       //先保存
      },
      //中心确认中队通过
      passTeamPeopleSet(teamIndex, teamId){
@@ -669,6 +666,7 @@ const groupColumns = [
         this.$emit('setSubmitBtnShow',num)
       })
      },
+     //打开中心驳回中队弹窗
      openBackModal(teamIndex){
        this.teamIndex = teamIndex;
        this.backVisible = true;
@@ -688,6 +686,7 @@ const groupColumns = [
          this.backReason = '';
          this.backVisible = false;
          this.teamPersonList[this.teamIndex].checkStatusId = '4';
+         //当全部中队都确认之后之后，触发setSubmitBtnShow提交按钮显示
          let num = this.teamPersonList.reduce((total,item) => {
            if(item.checkStatusId === '3'){
              total = total +1;
@@ -725,7 +724,7 @@ const groupColumns = [
        let key = Object.keys(baoZhangData).find(key => key.split('_')[1] === positionId);
        return baoZhangData[key]
      },
-     //
+     //展开收起某个中队填写的道路信息
      isShowTable(teamIndex, team){
        team.show = !team.show;
        this.$set(this.teamPersonList, teamIndex, team);

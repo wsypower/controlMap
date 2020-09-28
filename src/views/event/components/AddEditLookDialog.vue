@@ -62,6 +62,7 @@
                 :groupData="fuZhiHuiData"
                 @getResult="getFuZhiHuiResultData"
               ></group-team>
+              <!-- group-people-two 临时给综合协调组以及纪检督查组使用 -->
               <group-people-two
                 :optType="optType"
                 :groupData="zongHeXieTiaoData"
@@ -72,8 +73,9 @@
                 :groupData="jiJianDuChaData"
                 @getResult="getJiJianDuChaResultData"
               ></group-people-two>
+              <!-- 当中心为发起流程时，使用team-people-for-add，其余情况使用team-people -->
               <team-people-for-add
-                v-if="(userType === 'qxsl' && baseInfo.processId === '1' && optType !== 'look') || optType === 'add'"
+                v-if="userType === 'qxsl' && (optType === 'add' || (optType === 'edit' && baseInfo.processId === '1'))"
                 :groupData="dunDianQuanDaoData"
                 @getResult="geTunDianQuanDaoResultData"
               ></team-people-for-add>
@@ -98,17 +100,12 @@
                 @getResult="getHouQinBaoZhangResultData"
               ></group-people>
             </a-collapse-panel>
-            <!--            <a-collapse-panel key="3">-->
-            <!--              <template slot="header">-->
-            <!--                <div class="collapse__header"><a-icon type="profile" theme="twoTone" />保障视图</div>-->
-            <!--              </template>-->
-            <!--              <a-button type="primary" @click="openBaoZhangMapDialog">保障视图</a-button>-->
-            <!--            </a-collapse-panel>-->
           </a-collapse>
         </div>
       </my-scroll>
     </div>
     <template slot="footer">
+      <!-- 预览只有查看或者角色是局领导的时候才有，其余情况都是保存及预览 -->
       <a-button
         v-if="userType === 'jld' || optType === 'look'"
         type="primary"
@@ -117,7 +114,8 @@
         >预览</a-button
       >
       <a-button v-else type="primary" :loading="reviewLoading" @click="reviewEvent">保存及预览</a-button>
-      <!-- 信息指挥中心视角 保存只有在新建的时候才有 -->
+
+      <!-- 信息指挥中心新增或者处置时会有这个按钮 -->
       <a-button
         v-if="userType === 'qxsl' && (optType === 'add' || optType === 'edit')"
         type="primary"
@@ -125,7 +123,7 @@
         @click="saveDraft"
         >保存草稿</a-button
       >
-      <!-- 发起流程只有在新建的时候才有 -->
+      <!-- 发起流程：指挥中心新增或者处置时状态为未发起流程时才有 -->
       <a-button
         v-if="userType === 'qxsl' && optType !== 'look' && (optType === 'add' || baseInfo.processId === '1')"
         type="primary"
@@ -133,7 +131,7 @@
         @click="submitData"
         >发起流程</a-button
       >
-      <!-- 中队视角：提交审核直接有  信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
+      <!-- 信息指挥中心视角：中队全部确认之后才显示提交审核按钮-->
       <a-button
         v-if="userType === 'qxsl' && optType === 'edit' && showSubmit"
         type="primary"
@@ -141,6 +139,7 @@
         @click="submitCheck('qxsl')"
         >提交审核</a-button
       >
+      <!-- 中队视角：提交审核直接有 -->
       <a-button
         v-if="userType === 'zybm' && optType === 'edit'"
         type="primary"
@@ -161,8 +160,7 @@
         >驳回</a-button
       >
     </template>
-    <!--    <new-bao-zhang-map-dialog v-if="optType === 'add'" :visible.sync="mapDialogVisible"></new-bao-zhang-map-dialog>-->
-
+    <!-- 驳回时，弹出框输入驳回理由 -->
     <a-modal
       title="驳回理由"
       :visible="backVisible"
@@ -178,6 +176,7 @@
     >
       <a-textarea v-model="backReason" placeholder="请输入驳回理由" allow-clear />
     </a-modal>
+    <!-- 当图形保存错误时，弹出提示 -->
     <a-modal
             v-model="modalMapVisible"
             title="警告"
@@ -192,7 +191,6 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
-import moment from 'moment';
 import util from '@/utils/util'
 import Log from './components/Log'
 import BaseInfo  from './components/BaseInfo'
@@ -201,11 +199,7 @@ import TeamPeople from './components/TeamPeople'
 import TeamPeopleForAdd from './components/TeamPeopleForAdd'
 import GroupPeople from './components/GroupPeople'
 import GroupPeopleTwo from './components/GroupPeopleTwo'
-// import BaoZhangMapDialog from './components/BaoZhangMapDialog'
-// import NewBaoZhangMapDialog from './components/NewBaoZhangMapDialog'
 import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
-import { filterMapId } from '@/utils/util.map.manage'
-
 
   export default {
     name: 'addEditDialog',
@@ -244,12 +238,15 @@ import { filterMapId } from '@/utils/util.map.manage'
         templateList: [],
         //使用的模版ID
         templateId: '',
+        //当模版更改提示出来后，用户选择选择了取消，则需要还原之前的模版ID
         oldTemplateId: '',
+        //是否使用了模版
         isUseTemplate: false,
         //加载数据过渡效果
         dataLoading: false,
         activeKey: '1',
         peopleList: [],
+        //对于中队来说，人员是该中队以及机动中队与科室
         peopleListForTeam: [],
         //基本信息
         baseInfo:{
@@ -321,15 +318,16 @@ import { filterMapId } from '@/utils/util.map.manage'
             personList: []
           }]
         },
+        //综合协调组
         zongHeXieTiaoData:{
           groupName: 'zonghexietiao',
           description: ''
         },
+        //纪检督查组
         jiJianDuChaData:{
           groupName: 'jijianducha',
           description: ''
         },
-        baoZhangData: [],
         //各个按钮的点击效果
         reviewLoading:false,
         saveLoading: false,
@@ -338,13 +336,10 @@ import { filterMapId } from '@/utils/util.map.manage'
         passLoading: false,
         backLoading: false,
 
-        //保障视图弹窗
-        mapDialogVisible: false,
-        drawFeatures: [],
-
         //审核驳回弹窗
         backVisible: false,
         confirmLoading: false,
+        //驳回理由
         backReason: '',
 
         //在信息指挥中心处置下提交审核按钮是否显示（显示）
@@ -379,13 +374,12 @@ import { filterMapId } from '@/utils/util.map.manage'
       ...mapActions('event/event', ['getTemplateEventDataList','getMessageByEventId','addNewEvent','updateEvent','addTeamPersonForNewEvent','submitEventToCheck','checkEvent','submitEvent','submitTeamPersonToCheck']),
       ...mapActions('event/common', ['getPeopleDataList']),
       init(){
-        // console.log('into addeditlookdialog');
         this.getTemplateEventDataList().then((res)=>{
           this.templateList = res;
         });
         this.getPeopleDataList({id:''}).then(res => {
           this.peopleList = res;
-          //中队填写：人员信息通过peopleListForTeam
+          //中队填写：人员信息通过peopleListForTeam输入
           this.peopleListForTeam = res;
         });
 
@@ -1405,7 +1399,6 @@ import { filterMapId } from '@/utils/util.map.manage'
         this.templateList = [];
         this.peopleList = [];
         this.peopleListForTeam = [];
-        this.drawFeatures=null;
         this.activeKey = '1';
         this.templateId = '';
         this.oldTemplateId = '';

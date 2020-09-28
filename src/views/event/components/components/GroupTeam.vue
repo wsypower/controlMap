@@ -183,9 +183,10 @@
          });
        }
        else{
+         //如果没有数据，则自增一条新的
          if(this.groupTeam.length==0){
            let additem = {
-             key: "@@@",
+             key: "@@@" + new Date().getTime(),
              leaderId: '',
              teamList: [],
              teamObjList: []
@@ -193,8 +194,6 @@
            this.groupTeam.push(additem);
          }
        }
-
-       // console.log('222222',this.groupTeam);
      },
      watch:{
        groupResultData:{

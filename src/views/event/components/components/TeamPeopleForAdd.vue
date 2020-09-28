@@ -96,7 +96,7 @@
        return {
          columns: groupColumns,
          groupResultData:{},
-
+         //选择组弹窗相关
          chooseTeamDialogVisible: false,
          defaultCheckedTeamIds: []
        }
@@ -124,6 +124,7 @@
        }
      },
      methods:{
+       //打开组选择框
        openTeamDialog(){
          this.defaultCheckedTeamIds = this.groupResultData.teamPersonList.reduce((acc,item) => {
            acc.push(item.teamId);
@@ -131,6 +132,7 @@
          },[]);
          this.chooseTeamDialogVisible = true;
        },
+       //选择的组
        chooseTeam(data){
          this.groupResultData.teamPersonList = [];
          data.forEach((item)=>{
@@ -141,6 +143,7 @@
            this.groupResultData.teamPersonList.push(temp);
          });
        },
+       //删除某个已选择的组
        closeTeamTag (person,e) {
          console.log(person);
          let i = this.groupResultData.teamPersonList.findIndex(teamPerson => teamPerson.teamId===person.teamId);

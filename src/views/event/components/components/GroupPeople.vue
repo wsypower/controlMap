@@ -144,7 +144,7 @@
          columns: groupColumns,
          groupResultData:{},
          groupPerson: [],
-
+         //选择人员弹窗相关
          choosePeopleDialogVisible: false,
          range: '',
          rowIndex: 0,
@@ -169,12 +169,12 @@
        }
      },
      mounted() {
-       // console.log('peoplelist', this.peopleList);
        this.groupResultData = JSON.parse(JSON.stringify(this.groupData));
        this.groupPerson = this.groupResultData.groupPerson;
+       //当没有一条数据时，增加一条新数据
        if(this.groupPerson.length===0){
          let additem = {
-           key: '@@@',
+           key: '@@@' + new Date().getTime(),
            leaderId: '',
            personList: []
          }
@@ -198,8 +198,6 @@
             }
           })
         });
-
-       // console.log('333333',this.groupPerson);
      },
      watch:{
        groupResultData:{

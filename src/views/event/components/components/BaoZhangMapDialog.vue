@@ -242,12 +242,9 @@
         this.form = this.$form.createForm(this);
       },
       mounted() {
-        // console.log('loadData',this.loadData);
       },
       methods:{
-        // ...mapActions('event/baoZhangData', ['updateBaoZhangMapItemData']),
         init(){
-          // this.deleteFeature=false;
           this.clearInitData();
           source&&source.clear();
           vectorLayer&&map.removeLayer(vectorLayer);
@@ -302,8 +299,8 @@
               }, 500)
           })
         },
+        //获取进入保障视图弹窗的初始数据
         clearInitData(){
-          // console.log('loadData',this.loadData);
           this.baoZhangItemData = JSON.parse(JSON.stringify(this.loadData));
           if(this.baoZhangItemData.address){
             let personTemp = null;
@@ -408,10 +405,6 @@
             this.baoZhangItemData.remark = '';
           }
         },
-        //双击区域后触发此方法，带出mapId
-        // showSetDialog(mapId,mapType){
-        //
-        // },
         //保存保障点位设置
         saveBaoZhangInfo(){
           //只是对备注的修改
@@ -428,6 +421,7 @@
           this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
           this.reset();
         },
+        //关闭保障视图
         closeDialog(){
           source=null;
           this.infoOverlay&&this.infoOverlay.setPosition(undefined)
@@ -441,8 +435,7 @@
           if (draw) {
             map.removeInteraction(draw);
           }
-          // console.log('saveMap before', this.$store.getters['event/baoZhangData/baoZhangData']);
-
+          //先更新保障视图数据
           if(this.baoZhangItemData.mapId.length>0){
             let data = {
               keyPositionId: this.baoZhangItemData.keyPositionId,
@@ -451,15 +444,11 @@
               mapType:this.baoZhangItemData.mapType,
               drawFeature: this.drawFeature
             };
-            // console.log('saveMap baoZhangMapItemData', data);
             this.$store.commit('event/baoZhangData/updateBaoZhangMapItemData', data);
-
-            // console.log('saveMap after', this.$store.getters['event/baoZhangData/baoZhangData']);
           }
-          // this.updateBaoZhangMapItemData(data);
-          // console.log('saveMap baoZhangItemData', this.baoZhangItemData);
           this.disableEdit = false;
           this.mapDialogVisible = false;
+          //触发更新道路表格数据
           this.$emit('saveDrawData',this.baoZhangItemData)
         },
         //重置视图
@@ -476,13 +465,6 @@
           this.disableEdit = false;
           this.infoOverlay&&this.infoOverlay.setPosition(undefined)
           this.reviewInfoOverlay&&this.reviewInfoOverlay.setPosition(undefined)
-          // if(!this.hasSave) {
-          //   if (draw) {
-          //     mapManager.inactivateDraw(draw);
-          //   }
-          //   source&&source.clear();
-          //   console.log('关闭this.drawFeatures',this.drawFeatures);
-          // }
           this.mapDialogVisible = false;
       },
       // 地图搜索
