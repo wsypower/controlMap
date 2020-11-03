@@ -7,7 +7,6 @@
 <script>
 import { mapState } from 'vuex'
 import AlarmSearch from './components/AlarmSearch.vue'
-import AlarmStatistics from './components/AlarmStatistics.vue'
 import VideoDistribute from './components/VideoDistribute.vue'
 export default {
   name: 'alarmVideo',
@@ -24,11 +23,6 @@ export default {
           name: '监控分布',
           component: VideoDistribute,
           hasScroll: false
-        },
-        {
-          name: '告警统计',
-          component: AlarmStatistics,
-          hasScroll: true
         }
       ]
     }

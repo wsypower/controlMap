@@ -116,7 +116,7 @@ export default{
       width: 100%;
       height: 100%;
     }
-    /deep/.swiper-container {
+    ::v-deep.swiper-container {
       height: 100%;
       margin: 0px 15px;
       .swiper-slide {

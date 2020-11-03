@@ -239,7 +239,7 @@ export default {
   width: 100%;
   .search-panel {
     padding: 20px 20px 0px 20px;
-    /deep/.ant-radio-wrapper {
+    ::v-deep.ant-radio-wrapper {
       width: 70px;
     }
   }

@@ -53,9 +53,9 @@ export default {
         target: 'map',
         view: new View({
           projection: 'EPSG:4326',
-          center: [119.642882, 29.081101],
-          zoom: 13,
-          maxZoom: 20,
+          center: [120.316322, 32.868927],
+          zoom: 12,
+          maxZoom: 18,
           minZoom: 7
         }),
         layers: this.getBaseLayers(),
@@ -102,7 +102,7 @@ export default {
        */
       const tdtGrid = new WMTSTileGrid({
         origin: getTopLeft(projectionExtent),
-        resolutions: tdtResolutions.slice(0, 12),
+        resolutions: tdtResolutions.slice(0, 13),
         matrixIds: matrixIds
       })
       const tdtGridzj = new WMTSTileGrid({
@@ -169,7 +169,7 @@ export default {
         minResolution: 0.0000013411045074462890625,
         maxResolution: 0.0000858306884765625
       })
-      return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
+      return [wmtsVecLayer, wmtsAnnoLayer]
     },
       //切换时清除地图上的内容
     layerClear(){

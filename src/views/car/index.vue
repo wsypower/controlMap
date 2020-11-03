@@ -1,29 +1,21 @@
 <template>
   <div class="page">
-    <content-tabs :tabData="tabData"></content-tabs>
+    <div class="page-title">
+      车辆管控
+    </div>
+    <car-manage></car-manage>
+
   </div>
 </template>
 <script>
-import StatisticalAnalysis from './components/StatisticalAnalysis.vue'
 import CarManage from './components/CarManage.vue'
 export default {
   name: 'car',
+  components:{
+    CarManage
+  },
   data() {
-    return {
-      //tab标签
-      tabData: [
-        {
-          name: '车辆管控',
-          component: CarManage,
-          hasScroll: false
-        },
-        {
-          name: '统计分析',
-          component: StatisticalAnalysis,
-          hasScroll: true
-        }
-      ]
-    }
+    return {}
   },
   mounted() {},
   methods: {}
@@ -34,5 +26,17 @@ export default {
 .page {
   width: 100%;
   height: 100%;
+  background-color: #ffffff;
+  position: relative;
+  .page-title {
+    height: 50px;
+    width: 100%;
+    padding-left: 20px;
+    line-height: 50px;
+    background-color: #f5f7f8;
+    color: #2b90f3;
+    font-size: 18px;
+    text-align: left;
+  }
 }
 </style>

@@ -29,8 +29,8 @@ import { gridStyle } from '@/utils/util.map.style';
 import { listToFeatures } from '@/utils/util.map.manage';
 import RecordInfo from '@/views/records/components/RecordInfo.vue';
 import util from '@/utils/util'
-let selectLayer = ['区县', '街道', '社区', '监督网格', '单元网格', '人员', '车辆', '视频', '案卷'];
-let gridLayer = ['区县', '街道', '社区', '监督网格', '单元网格'];
+let selectLayer = ['区', '街道', '社区', '监督网格', '单元网格', '人员', '车辆', '视频', '案卷'];
+let gridLayer = ['区', '街道', '社区', '监督网格', '单元网格'];
 export default {
   name: "LayersSwitch",
   props: {
@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       allLayers: [{
-        name: '区县',
+        name: '区',
         color: '#800000',
         icon: require('@/assets/mapImage/qx.png'),
         lyr: null
