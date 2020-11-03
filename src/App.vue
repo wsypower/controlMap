@@ -1,7 +1,15 @@
 <template>
+<<<<<<< Updated upstream
   <div id="app">
     <router-view></router-view>
   </div>
+=======
+  <a-locale-provider :locale="locale">
+    <div id="app">
+      <router-view></router-view>
+    </div>
+  </a-locale-provider>
+>>>>>>> Stashed changes
 </template>
 
 <script>

@@ -108,6 +108,11 @@ export default {
 .container__aside--bottom,
 .container__aside--top {
   .container__aside__item {
+<<<<<<< Updated upstream
+=======
+    z-index:99;
+    padding:0;
+>>>>>>> Stashed changes
     :nth-last-child() {
       margin-bottom: 0;
     }
