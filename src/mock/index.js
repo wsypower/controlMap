@@ -8,7 +8,19 @@ if (process.env.NODE_ENV !== 'production') {
   // 使用同步加载依赖
   // 防止 vuex 中的 GetInfo 早于 mock 运行，导致无法 mock 请求返回结果
   require('./services/user')
+  require('./services/common')
+  require('./services/yuan')
+  require('./services/emergencyDataList')
   require('./services/add')
+  require('./services/common')
+  require('./section/statistical')
+  require('./section/manage')
+  require('./car/statistical')
+  require('./car/manage')
+  require('./records/manage')
+  require('./records/statistical')
+  require('./video/manage')
+  require('./video/statistical')
   Mock.setup({
     timeout: 800 // setter delay time
   })

@@ -20,15 +20,27 @@ process.env.VUE_APP_BUILD_TIME = require('dayjs')().format('YYYY-M-D HH:mm:ss')
 let publicPath = './'
 
 module.exports = {
-  /*
-   ** 项目部署基础
-   ** 默认情况下，我们假设你的应用将被部署在域的根目录下,
-   ** 例如：https://www.my-app.com/
-   ** 默认：'/'
-   ** 如果您的应用程序部署在子路径中，则需要在这指定子路径
-   ** 例如：https://www.foobar.com/my-app/
-   ** 需要将它改为'/my-app/'
-   */
+  // devServer: {
+  //   proxy: {
+  //     '/jkapi': {
+  //       target: 'http://zhcg.xzzfj.jinhua.gov.cn/api/',
+  //       changeOrigin: true,
+  //       secure: false,
+  //       pathRewrite: {
+  //         '^/jkapi': ''   //需要rewrite的,
+  //       }
+  //     }
+  //   },
+  // },
+    /*
+     ** 项目部署基础
+     ** 默认情况下，我们假设你的应用将被部署在域的根目录下,
+     ** 例如：https://www.my-app.com/
+     ** 默认：'/'
+     ** 如果您的应用程序部署在子路径中，则需要在这指定子路径
+     ** 例如：https://www.foobar.com/my-app/
+     ** 需要将它改为'/my-app/'
+     */
   publicPath, // 根据你的实际情况更改这里
   outputDir: 'dist', //当运行 vue-cli-service build 时生成的生产环境构建文件的目录.
   assetsDir: 'assets', //放置生成的静态资源 (js、css、img、fonts) 的 (相对于 outputDir 的) 目录.
@@ -49,6 +61,7 @@ module.exports = {
   },
   // 默认设置: https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-service/lib/config/base.js
   chainWebpack: config => {
+
     /**
      * 删除懒加载模块的 prefetch preload，降低带宽压力
      * https://cli.vuejs.org/zh/guide/html-and-static-assets.html#prefetch
@@ -104,6 +117,15 @@ module.exports = {
       .end()
     // 重新设置 alias
     config.resolve.alias.set('@', resolve('src')).set('@img', resolve('src/assets/images'))
+
+    config.module
+      .rule("swf")
+      .test(/\.swf$/)
+      .use("url-loader")
+      .loader("url-loader")
+      .options({
+        limit: 10000
+      });
   },
   devServer: {
     open: true

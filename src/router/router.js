@@ -1,7 +1,7 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-14 15:44:35
- * @Last Modified by: wei.yafei 
+ * @Last Modified by: wei.yafei
  * @Last Modified time: 2019-07-19 19:04:34
  */
 
@@ -26,43 +26,20 @@ const frameIn = [
   {
     path: '/',
     name: 'layoutHeaderAside',
-    // redirect: { path: '/section' },
+    redirect: { path: '/section' },
     component: layoutHeaderAside,
     meta: {
       title: '管控平台'
     },
     children: [
-      //测试 => page1
       {
         path: '/section',
-        name: 'section',
+        name: 'people',
         meta: {
           title: '人员管控',
           role: ['admin', 'super_editor']
         },
-        component: _import('section/page1.vue'),
-        redirect: { path: '/section/warnList' },
-        children: [
-          {
-            name: 'warnList',
-            path: '/section/warnList',
-            meta: {
-              title: '人员管控列表',
-              role: ['admin', 'super_editor'],
-              cache: true
-            },
-            component: _import('section/list.vue')
-          },
-          //列表详情
-          {
-            path: '/section/warnDetails',
-            meta: {
-              title: '人员管控详情',
-              role: ['admin', 'super_editor']
-            },
-            component: _import('section/details.vue')
-          }
-        ]
+        component: _import('section/index.vue')
       },
       //测试 => page2
       {
@@ -72,39 +49,27 @@ const frameIn = [
           title: '车辆管控',
           role: ['admin', 'super_editor']
         },
-        component: _import('car/page2.vue')
+        component: _import('car/index.vue')
       },
       //测试 => page3
       {
         path: '/records',
         name: 'records',
         meta: {
-          title: '案卷',
+          title: '案卷管控',
           role: ['admin', 'super_editor']
         },
-        component: _import('records/page3.vue')
+        component: _import('records/index.vue')
       },
-      //测试 => page4
-      {
-        path: '/special',
-        name: 'special',
-        meta: {
-          title: '视频',
-          role: ['admin', 'super_editor']
-        },
-        component: _import('special/page4.vue')
-      },
-      //测试 => page5
       {
         path: '/video',
         name: 'video',
         meta: {
-          title: '专题服务',
+          title: '视频管控',
           role: ['admin', 'super_editor']
         },
-        component: _import('video/page5.vue')
+        component: _import('video/index.vue')
       },
-      //测试 => page6
       {
         path: '/emergency',
         name: 'emergency',
@@ -113,6 +78,33 @@ const frameIn = [
           role: ['admin', 'super_editor']
         },
         component: _import('emergency/page6.vue')
+      },
+      {
+        path: '/manhole',
+        name: 'manhole',
+        meta: {
+          title: '智能井盖',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('manhole/index.vue')
+      },
+      {
+        path: '/dustbin',
+        name: 'dustbin',
+        meta: {
+          title: '智能垃圾桶',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('dustbin/index.vue')
+      },
+      {
+        path: '/water',
+        name: 'water',
+        meta: {
+          title: '智能水位计',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('water/index.vue')
       },
       // 刷新页面 必须保留
       {

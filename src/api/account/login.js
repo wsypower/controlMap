@@ -1,7 +1,7 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-06-27 21:26:07
- * @Last Modified by: wei.yafei 
+ * @Last Modified by: wei.yafei
  * @Last Modified time: 2019-07-19 17:05:33
  */
 
@@ -18,9 +18,9 @@ import request from '@/plugins/axios/axios'
  */
 export const AccountLogin = data => {
   return request({
-    url: `@test/login`,
-    method: 'post',
-    data
+    url: 'userInfo/getUserInfo?_t='+ new Date().getTime(),
+    method: 'get',
+    params: data
   })
 }
 

@@ -18,9 +18,5 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
-<<<<<<< Updated upstream
-*.sw?
-=======
 *.sw?
 .svn
->>>>>>> Stashed changes

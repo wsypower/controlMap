@@ -22,9 +22,9 @@ Vue.use(VueRouter)
 =============================================*/
 
 const router = new VueRouter({
-  routes,
-  //切换页面滚动到头部
-  scrollBehavior: () => ({ y: 0 })
+    routes,
+    //切换页面滚动到头部
+    scrollBehavior: () => ({ y: 0 })
 })
 
 /*=============================================
@@ -54,19 +54,19 @@ const router = new VueRouter({
 //   }
 // })
 router.beforeEach((to, from, next) => {
-  console.log('走新页面')
-  // 进度条
-  NProgress.start()
-  next()
+    console.log('走新页面')
+    // 进度条
+    NProgress.start()
+    next()
 })
 
 router.afterEach(to => {
-  // 进度条
-  NProgress.done()
-  // 打开新的页面
-  store.dispatch('cgadmin/page/open', to)
-  // 更改标题
-  util.title(to.meta.title)
+    // 进度条
+    NProgress.done()
+    // 打开新的页面
+    store.dispatch('cgadmin/page/open', to)
+    // 更改标题
+    util.title(to.meta.title)
 })
 
 /*=============================================
