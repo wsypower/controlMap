@@ -15,11 +15,11 @@ export default {
     return {
       //tab标签
       tabData: [
-        {
-          name: '告警查询',
-          component: AlarmSearch,
-          hasScroll: false
-        },
+        // {
+        //   name: '告警查询',
+        //   component: AlarmSearch,
+        //   hasScroll: false
+        // },
         {
           name: '监控分布',
           component: VideoDistribute,
