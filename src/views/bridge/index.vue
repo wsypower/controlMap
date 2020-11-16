@@ -32,12 +32,26 @@
     <div class="camera-panel" @click="toReportProblem">
       <cg-icon-svg name="camera" class="camera__icon"></cg-icon-svg>
     </div>
+    <div style="position:fixed;right:100px;top:100px;">
+      <tip-modal
+        ref="bridgeOverlay"
+        :modalWidth="modalWidth"
+        :modalHeight="modalHeight"
+        :iconName="iconName"
+        :title="modalTitle"
+        :subTitle="subTitle"
+        :componentId="tipComponentId"
+        :info="infoData"
+        @closeDialog="closeOverlay"
+      ></tip-modal>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import { mapState,mapActions } from 'vuex'
 import util from '@/utils/util';
 import {mixins} from '@/mixins/index'
+import BridgeInfo from './components/BridgeInfo'
 import MyVideoPlayer from "./MyVideoPlayer.vue";
 import {videoPointStyle} from '@/utils/util.map.style'
 import {pointToFeature} from '@/utils/util.map.manage'
@@ -67,7 +81,22 @@ export default {
       selectLayer: null,
 
       //跳转案卷上报用
-      videoInfo: null
+      videoInfo: null,
+
+      //信息窗的宽度
+      modalWidth: 300,
+      //信息窗的高度
+      modalHeight: 180,
+      //tipModal弹窗标题上的icon
+      iconName: 'menu-bridge',
+      //tipModal弹窗标题
+      modalTitle: '',
+      //tipModal弹窗副标题
+      subTitle: '',
+      //tipModal弹窗body内组件
+      tipComponentId: {},
+      //tipModal组件内组件的原始数据
+      infoData: {},
     }
   },
   computed:{
@@ -164,6 +193,20 @@ export default {
           this.showVideo(needData);
           this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
         }
+        else{
+          if(selectedKeys[0]!=='dept_001'){
+            this.tipComponentId = BridgeInfo;
+            let needData = e.selectedNodes[0].data.props;
+            console.log('------------------------',needData);
+            this.modalTitle = needData.bridgeName;
+            this.infoData = {
+              bridgeName: needData.bridgeName,
+              bridgeStructure: needData.bridgeStructure,
+              bridgeAddr: needData.bridgeAddr,
+              completeTime: needData.completeTime
+            }
+          }
+        }
       }
     },
     // 展示视频播放
@@ -199,6 +242,9 @@ export default {
     },
     toReportProblem(){
       window.open(URL_CONFIG.winOpenUrl + "/index/slxt?from=sp&address=&longitude="+ this.videoInfo.x +"&latitude="+ this.videoInfo.y);
+    },
+    closeOverlay() {
+
     }
   }
 }
