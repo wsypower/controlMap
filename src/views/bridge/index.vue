@@ -27,12 +27,17 @@
       </div>
     </div>
     <div class="player-panel active">
-      <my-video-player :videoSrc.sync="videoSrc" :videoName.sync="videoName" :videoId.sync="videoId" :multiple="true"></my-video-player>
+      <my-video-player
+        :videoSrc.sync="videoSrc"
+        :videoName.sync="videoName"
+        :videoId.sync="videoId"
+        :multiple="true"
+      ></my-video-player>
     </div>
     <div class="camera-panel" @click="toReportProblem">
       <cg-icon-svg name="camera" class="camera__icon"></cg-icon-svg>
     </div>
-    <div style="position:fixed;right:100px;top:100px;">
+    <div hidden>
       <tip-modal
         ref="bridgeOverlay"
         :modalWidth="modalWidth"
@@ -53,8 +58,10 @@ import util from '@/utils/util';
 import {mixins} from '@/mixins/index'
 import BridgeInfo from './components/BridgeInfo'
 import MyVideoPlayer from "./MyVideoPlayer.vue";
-import {videoPointStyle} from '@/utils/util.map.style'
-import {pointToFeature} from '@/utils/util.map.manage'
+import {videoPointStyle, bridgeStyle} from '@/utils/util.map.style';
+import {pointToFeature} from '@/utils/util.map.manage';
+import GeoJSON from 'ol/format/GeoJSON';
+import {getCenter} from 'ol/extent';
 const userId = util.cookies.get('userId');
 export default {
   name: 'BridgeVideo',
@@ -74,11 +81,15 @@ export default {
       videoSrc: '',
 
       //地图相关
-      bridgeFeatures: [],
-      bridgeLayer: null,
+      bridgeVideoFeatures: [],
+      bridgeVideoLayer: null,
       isLoadData: false,
       clusterLayer:null,
       selectLayer: null,
+      bridgeLayer:null,
+      bridgeFeatures:null,
+      bridgeOverlay:null,
+      mapData:null,
 
       //跳转案卷上报用
       videoInfo: null,
@@ -104,7 +115,7 @@ export default {
     //获得展示的数据与属性
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
-      this.bridgeFeatures=[];
+      this.bridgeVideoFeatures=[];
       this.changeTreeData(data,'');
       this.isLoadData=!this.isLoadData;
       return data;
@@ -112,21 +123,27 @@ export default {
   },
   watch:{
     isLoadData:function() {
-      if(this.bridgeFeatures.length>0){
-        if(this.bridgeLayer){
-          this.bridgeLayer.getSource().getSource().clear();
-          this.bridgeLayer.getSource().getSource().addFeatures(this.bridgeFeatures);
+      if(this.bridgeVideoFeatures.length>0){
+        if(this.bridgeVideoLayer){
+          this.bridgeVideoLayer.getSource().getSource().clear();
+          this.bridgeVideoLayer.getSource().getSource().addFeatures(this.bridgeVideoFeatures);
         } else {
-          this.bridgeLayer = this.mapManager.addClusterLayerByFeatures(this.bridgeFeatures);
-          this.bridgeLayer.set('featureType','bridge');
+          this.bridgeVideoLayer = this.mapManager.addClusterLayerByFeatures(this.bridgeVideoFeatures);
+          this.bridgeVideoLayer.set('featureType','bridge');
         }
-        const extent=this.bridgeLayer.getSource().getSource().getExtent();
+        const extent=this.bridgeVideoLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
     }
   },
   mounted(){
     this.map = this.mapManager.getMap();
+    this.bridgeOverlay = this.mapManager.addOverlay({
+      id:'bridgeOverlay',
+      offset:[0,-20],
+      positioning: 'bottom-center',
+      element: this.$refs.bridgeOverlay.$el,
+    });
     this.map.on('click', this.videoMapClickHandler);
     this.getAllCameraForBridge();
   },
@@ -138,6 +155,7 @@ export default {
     },
     // 获取所有桥梁监控
     getAllCameraForBridge(){
+      this.bridgeOverlay.setPosition(undefined);
       this.showLoading = true;
       //入参：城市范围、桥梁名称，用户ID
       let params = {
@@ -148,7 +166,21 @@ export default {
       this.getAllCameraTreeDataForBridge(params).then(res=>{
         this.sourceData = res.treeData;
         this.totalSize = res.total;
+        this.mapData=res.mapData;
         this.showLoading = false;
+        let features=[];
+        res.gs.forEach((g) => {
+          features = features.concat(new GeoJSON().readFeatures(g));
+        });
+        features.forEach(f=>{
+          f.setId(f.get('id'));
+        })
+        this.bridgeFeatures=features;
+        if(this.bridgeLayer) {
+          this.bridgeLayer.getSource().addFeatures(this.bridgeFeatures);
+        }else{
+          this.bridgeLayer = this.mapManager.addVectorLayerByFeatures(this.bridgeFeatures, bridgeStyle(), 2);
+        }
       });
     },
     //给后端的数据增加一些前端展示与判断需要的属性
@@ -169,7 +201,7 @@ export default {
             feature.set('icon','bridge');
             feature.set('props',item);
             feature.set('type','bridge');
-            _this.bridgeFeatures.push(feature);
+            _this.bridgeVideoFeatures.push(feature);
           }
         }
         else{
@@ -191,7 +223,6 @@ export default {
         if(selectedKeys[0].indexOf('dept_')<0){
           let needData = e.selectedNodes[0].data.props;
           this.showVideo(needData);
-          this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
         }
         else{
           if(selectedKeys[0]!=='dept_001'){
@@ -204,6 +235,15 @@ export default {
               bridgeStructure: needData.bridgeStructure,
               bridgeAddr: needData.bridgeAddr,
               completeTime: needData.completeTime
+            }
+            const feature=this.bridgeLayer.getSource().getFeatureById(needData.locationId);
+            if(feature){
+              const extent=feature.getGeometry().getExtent();
+              const center=getCenter(extent);
+              this.bridgeOverlay.setPosition(center);
+              this.mapManager.locateTo(center);
+            }else{
+              this.$message.warning('当前桥梁无图形信息！！！');
             }
           }
         }
@@ -225,18 +265,34 @@ export default {
                 this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),4);
                 this.selectLayer.set('featureType','bridge');
             }
-            // this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
+            this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
         }
     },
     videoMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-      if(feature.get('features')) {
-        const clickFeature = feature.get('features')[0];
-        // const coordinates=clickFeature.getGeometry().getCoordinates();
-        if (clickFeature && clickFeature.get('type') == 'bridge') {
-          const videoInfoData = clickFeature.get('props');
-          this.videoInfo = videoInfoData;
-          this.showVideo(videoInfoData);
+      if(feature){
+        if(feature.get('features')) {
+          const clickFeature = feature.get('features')[0];
+          // const coordinates=clickFeature.getGeometry().getCoordinates();
+          if (clickFeature && clickFeature.get('type') == 'bridge') {
+            const videoInfoData = clickFeature.get('props');
+            this.videoInfo = videoInfoData;
+            this.showVideo(videoInfoData);
+          }
+        }
+        else{
+          this.tipComponentId = BridgeInfo;
+          let needData = this.mapData[feature.get('id')];
+          console.log('------------------------',needData);
+          this.modalTitle = needData.bridgeName;
+          this.infoData = {
+            bridgeName: needData.bridgeName,
+            bridgeStructure: needData.bridgeStructure,
+            bridgeAddr: needData.bridgeAddr,
+            completeTime: needData.completeTime
+          }
+          this.bridgeOverlay.setPosition(coordinate);
+          console.log('桥梁');
         }
       }
     },
@@ -244,7 +300,7 @@ export default {
       window.open(URL_CONFIG.winOpenUrl + "/index/slxt?from=sp&address=&longitude="+ this.videoInfo.x +"&latitude="+ this.videoInfo.y);
     },
     closeOverlay() {
-
+      this.bridgeOverlay.setPosition(undefined);
     }
   }
 }
@@ -312,7 +368,7 @@ export default {
       display: block;
     }
   }
-  .camera-panel{
+  .camera-panel {
     position: fixed;
     top: 10px;
     right: 10px;
@@ -322,7 +378,7 @@ export default {
     background-color: #ffffff;
     border-radius: 8px;
     padding-top: 10px;
-    .camera__icon{
+    .camera__icon {
       width: 20px;
       height: 20px;
       color: #00a4fe;
