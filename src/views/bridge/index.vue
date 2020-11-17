@@ -253,7 +253,7 @@ export default {
     showVideo(info){
         this.videoId = info.id;
         this.videoName = info.name;
-        this.videoSrc = info.videoUrl;
+        this.videoSrc = info.cameraUrl;
         this.selectLayer && this.selectLayer.getSource().clear();
         if(!info.x||!info.y){
             this.$message.warning('当前视频无点位信息！！！');
