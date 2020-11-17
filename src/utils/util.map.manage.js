@@ -115,6 +115,7 @@ export class MapManager {
       name: 'Cluster',
       source: clusterSource,
       animationDuration: 700,
+      zIndex: 5,
       style: getClusterStyle
     })
     this.map.addLayer(clusterLayer)

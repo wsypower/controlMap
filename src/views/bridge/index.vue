@@ -262,7 +262,7 @@ export default {
             if(this.selectLayer) {
                 this.selectLayer.getSource().addFeatures([feature]);
             }else{
-                this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),4);
+                this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),6);
                 this.selectLayer.set('featureType','bridge');
             }
             this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
