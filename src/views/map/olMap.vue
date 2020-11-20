@@ -3,7 +3,7 @@
   </div>
 </template>
 <script>
-import { mapMutations,mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import 'ol/ol.css'
 import { Map, View } from 'ol'
 import { defaults as defaultControls } from 'ol/control'
@@ -13,26 +13,24 @@ import WMTS from 'ol/source/WMTS'
 import WMTSTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent'
 import { MapManager } from '@/utils/util.map.manage'
-
-const namespace = 'map'
-let mapManager
 export default {
   data() {
     return {
-      mockPoints: []
+      mockPoints: [],
+      mapManager: null
     }
   },
-  watch:{
+  watch: {
     //监听从而实现动画效果
-    current: function(current){
-      if(current){
-          this.layerClear();
+    current: function(current) {
+      if (current) {
+        this.layerClear();
       }
     },
-    activeModule:function (activeModule) {
-        if(activeModule){
-            this.layerClear();
-        }
+    activeModule: function(activeModule) {
+      if (activeModule) {
+        this.layerClear();
+      }
     }
   },
   mounted() {
@@ -42,7 +40,7 @@ export default {
     })
   },
   methods: {
-    ...mapMutations(namespace, [
+    ...mapMutations('map', [
       'setMapManager',
       'setPageLayers'
     ]),
@@ -61,9 +59,9 @@ export default {
         layers: this.getBaseLayers(),
         controls: defaultControls({ attribution: false, rotate: false, zoom: false }) // 默认控件配置
       })
-      mapManager = new MapManager(this.map)
+      this.mapManager = new MapManager(this.map)
       // 将mapManager状态存至vuex
-      this.setMapManager(mapManager)
+      this.setMapManager(this.mapManager)
     },
     getBaseLayers() {
       /**
@@ -121,6 +119,7 @@ export default {
           matrixSet: 'c',
           format: 'tiles',
           url: 'http://t{0-6}.tianditu.com/vec_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          // url: `${GIS_CONFIG.proxyURL}?http://t{0-6}.tianditu.gov.cn/vec_c/wmts?tk=beeeb128c8eb1ec75f73494e27e2d9e9`,
           tileGrid: tdtGrid,
           wrapX: true
         })
@@ -133,6 +132,7 @@ export default {
           matrixSet: 'c',
           format: 'tiles',
           url: 'http://t{0-6}.tianditu.com/cva_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          // url: `${GIS_CONFIG.proxyURL}?http://t{0-6}.tianditu.gov.cn/cva_c/wmts?tk=beeeb128c8eb1ec75f73494e27e2d9e9`,
           tileGrid: tdtGrid,
           wrapX: true
         })
@@ -147,7 +147,7 @@ export default {
           layer: 'emap',
           matrixSet: 'default028mm',
           format: 'image/jpgpng',
-          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap/2020_S2/oss',
+          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap/default/oss',
           tileGrid: tdtGridzj,
           wrapX: true
         }),
@@ -162,7 +162,7 @@ export default {
           layer: 'emap_lab',
           matrixSet: 'default028mm',
           format: 'image/jpgpng',
-          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap_lab/2020_S2/oss',
+          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap_lab/default/oss',
           tileGrid: tdtGridzj,
           wrapX: true
         }),
@@ -171,31 +171,32 @@ export default {
       })
       return [wmtsVecLayer, wmtsAnnoLayer]
     },
-      //切换时清除地图上的内容
-    layerClear(){
-        this.pageLayers.map(layer=>{
-            this.map.removeLayer(layer)
-        });
-        this.setPageLayers([]);
-        this.map.un('click',this.clickHandler);
-        console.log(this.yuanOverlay);
-        this.map.removeOverlay(this.yuanOverlay);
-        //管控的地图清除
-        this.map.removeOverlay(this.map.getOverlayById('carPositionOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));
-        const layers=this.map.getLayers().array_;
-        layers.forEach(l=>{
-            if(l.get('featureType')){
-                this.map.removeLayer(l);
-            }
-        });
+    //切换时清除地图上的内容
+    layerClear() {
+      this.pageLayers.map(layer => {
+        this.map.removeLayer(layer)
+      });
+      this.setPageLayers([]);
+      this.map.un('click', this.clickHandler);
+      console.log(this.yuanOverlay);
+      this.map.removeOverlay(this.yuanOverlay);
+      //管控的地图清除
+      this.map.removeOverlay(this.map.getOverlayById('eventPositionOverlay'));
+      this.map.removeOverlay(this.map.getOverlayById('carPositionOverlay'));
+      this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
+      this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
+      this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));
+      const layers = this.map.getLayers().array_;
+      layers.forEach(l => {
+        if (l.get('featureType')) {
+          this.map.removeLayer(l);
+        }
+      });
     }
   },
-  computed:{
+  computed: {
     ...mapState('cgadmin/page', ['current']),
-    ...mapState('map', ['pageLayers','clickHandler','yuanOverlay']),
+    ...mapState('map', ['pageLayers', 'clickHandler', 'yuanOverlay']),
   }
 }
 </script>
