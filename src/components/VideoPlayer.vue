@@ -3,17 +3,19 @@
     <div v-if="videoSrc === ''" class="no-video">
       暂未播放视频
     </div>
-    <video-player
+    <!-- <video-player
       v-else
       class="video-player vjs-custom-skin"
       ref="videoPlayer"
       :playsinline="true"
       :options="playerOptions"
     >
-    </video-player>
+    </video-player> -->
+    <video v-else class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" autoplay="autoplay" data-setup="{}" ref="videoPlayer">
+      <source :src='videoSrc' type='rtmp/flv' />
+    </video>
   </div>
 </template>
-
 <script>
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
@@ -62,30 +64,38 @@ export default {
           },
           swf: SWF_URL
         },
-        sources: [
-          {
-            type: "rtmp/flv",
-            src: "" // 视频地址-改变它的值播放的视频会改变
-          }
-        ],
+        sources: [{
+          type: "rtmp/flv",
+          src: "" // 视频地址-改变它的值播放的视频会改变
+        }],
         notSupportedMessage: "此视频暂无法播放，请稍后再试" // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
-      }
+      },
+      player: null
     };
   },
   mounted() {
     this.videoSrc = this.videoUrl
-    this.playerOptions.sources[0].src = this.videoUrl;
+    // this.playerOptions.sources[0].src = this.videoUrl;
+    this.$nextTick(() => {
+      this.player = videojs(this.$refs.videoPlayer);
+      this.player.play();
+    });
   },
-  watch:{
-    videoUrl: function(val){
-      console.log('videoUrl',val);
+  watch: {
+    videoUrl: function(val) {
+      console.log('videoUrl', val);
       this.videoSrc = val
       this.playerOptions.sources[0].src = val;
+    }
+  },
+  destroyed() {
+    if (this.player != null) {
+      this.player.dispose();
+      this.player = null;
     }
   }
 };
 </script>
-
 <style scoped lang="scss">
 .video-js {
   width: 100%;

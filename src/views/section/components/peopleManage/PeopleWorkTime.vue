@@ -132,7 +132,8 @@ export default {
           this.query.userDisplayId = temp.userDisplayId;
         }
         else{
-          this.query.userDisplayId = '';
+          this.query.userDisplayId = this.peopleDataList[0].userDisplayId;
+          // this.query.userDisplayId = '';
         }
 
         let day = moment(new Date()).format('YYYY-MM-DD');

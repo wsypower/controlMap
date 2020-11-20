@@ -142,7 +142,8 @@ export default {
         }
         else{
           this.query.userId = userId;
-          this.query.userDisplayId = '';
+          this.query.userDisplayId = this.peopleDataList[0].userDisplayId;
+          // this.query.userDisplayId = '';
         }
 
 
