@@ -87,8 +87,8 @@ export default {
         // this.carLayer = this.mapManager.addVectorLayerByFeatures(this.carFeatures,carPointStyle(),3);
         //加载聚类车辆图层
         if (this.carLayer) {
-          this.carLayer.getSource().clear();
-          this.carLayer.getSource().addFeatures(this.carFeatures);
+          this.carLayer.getSource().getSource().clear();
+          this.carLayer.getSource().getSource().addFeatures(this.carFeatures);
         } else {
           this.carLayer = this.mapManager.addClusterLayerByFeatures(this.carFeatures);
           this.carLayer.set('featureType', 'CarPosition');

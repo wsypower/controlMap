@@ -9,7 +9,7 @@
       </div>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
         <label style="width: 90px;">查询时间：</label>
-        <a-range-picker v-model="dayRange" format="YYYY-MM-DD" style="width: 100%" />
+        <a-range-picker v-model="dayRange" :show-time="{ format: 'HH:mm' }" format="YYYY-MM-DD HH:mm" style="width: 100%" />
       </div>
       <a-button type="primary" style="width: 100%" @click="onSearch">查询</a-button>
     </div>
@@ -138,11 +138,12 @@ export default {
       // this.query.userDisplayId = '';
     }
 
-
-    let day = moment(new Date()).format('YYYY-MM-DD');
-    this.dayRange = [moment(day, 'YYYY-MM-DD'), moment(day, 'YYYY-MM-DD')];
-    this.query.startTime = new Date(day).getTime();
-    this.query.endTime = new Date(day).getTime();
+    // let day = moment(new Date()).format('YYYY-MM-DD HH:mm');
+    this.dayRange = [moment().startOf('day').format('YYYY-MM-DD HH:mm'), moment().endOf('day').format('YYYY-MM-DD HH:mm')];
+    // this.query.startTime = new Date(day).getTime();
+    // this.query.endTime = new Date(day).getTime();
+    this.query.startTime = moment().startOf('day').valueOf() ;
+    this.query.endTime = moment().endOf('day').valueOf();
     this.getDataList();
   },
   watch: {
@@ -153,10 +154,12 @@ export default {
         this.query.userId = val;
         this.query.userDisplayId = temp.userDisplayId;
       }
-      let day = moment(new Date()).format('YYYY-MM-DD');
-      this.dayRange = [moment(day, 'YYYY-MM-DD'), moment(day, 'YYYY-MM-DD')];
-      this.query.startTime = new Date(day).getTime();
-      this.query.endTime = new Date(day).getTime();
+      // let day = moment(new Date()).format('YYYY-MM-DD HH:mm');
+      this.dayRange = [moment().startOf('day').format('YYYY-MM-DD HH:mm'), moment().endOf('day').format('YYYY-MM-DD HH:mm')];
+      // this.query.startTime = new Date(day).getTime();
+      // this.query.endTime = new Date(day).getTime();
+      this.query.startTime = moment().startOf('day').valueOf();
+      this.query.endTime = moment().endOf('day').valueOf();
       this.getDataList();
     }
   },
@@ -342,22 +345,35 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+.ant-calendar-picker-input.ant-input {
+  padding: 4px 1px !important;
+}
+
+.ant-calendar-range-picker-input {
+  width: 46% !important;
+}
+
 .people-trail {
   height: 100%;
   width: 100%;
+
   .search-panel {
     padding: 20px 0px;
   }
+
   .table_header {
     margin-bottom: 8px;
-    > div {
+
+    >div {
       display: inline-block;
       width: 100px;
       text-align: center;
+
       .sort-icon {
         display: inline-block;
         margin-left: 5px;
+
         .svg_icon_up,
         .svg_icon_down {
           display: block;
@@ -365,26 +381,31 @@ export default {
           height: 8px;
           color: #cccecf;
           cursor: pointer;
+
           &.active {
             color: #333333;
           }
         }
       }
-      > * {
+
+      >* {
         vertical-align: middle;
       }
     }
-    > span {
+
+    >span {
       display: inline-block;
       width: 80px;
       text-align: center;
       vertical-align: middle;
     }
   }
+
   .content_body {
     background-color: #f5f5f5;
     height: calc(100% - 70px);
     position: relative;
+
     .item {
       width: 100%;
       height: 68px;
@@ -392,14 +413,17 @@ export default {
       border-right: solid 1px #f5f5f5;
       border-left: solid 1px #f5f5f5;
       border-bottom: 1px solid #dddddd;
+
       &:hover {
         background-color: #e9f6ff;
         border: solid 1px #2b90f3;
       }
-      > div {
+
+      >div {
         &:first-child {
           width: 74px;
           height: 100%;
+
           span {
             color: #ffffff;
             font-size: 14px;
@@ -410,37 +434,46 @@ export default {
             text-align: center;
           }
         }
+
         &:nth-child(2) {
           border-left: 1px dashed #dddddd;
           margin: 20px 0px 20px -30px;
+
           p {
             margin-bottom: 5px;
             margin-left: -4px;
+
             &:first-child {
               margin-top: -10px;
             }
           }
+
           .dot {
             display: inline-block;
             width: 8px;
             height: 8px;
             border-radius: 8px;
             margin-right: 15px;
+
             &.green {
               background-color: #50cf3f;
             }
+
             &.red {
               background-color: #f07171;
             }
           }
         }
+
         &:last-child {
           width: 66px;
           height: 100%;
+
           i {
             color: #2bbdf3;
             font-size: 26px;
             cursor: pointer;
+
             &:hover {
               color: #2b90f3;
             }
@@ -448,10 +481,12 @@ export default {
         }
       }
     }
+
     .pagination-panel {
       text-align: right;
       padding: 20px 20px 0px 0px;
     }
+
     .nodata-panel,
     .spin-panel {
       width: 100%;

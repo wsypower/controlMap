@@ -186,12 +186,17 @@ export default {
       this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
       this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
       this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));
-      const layers = this.map.getLayers().array_;
-      layers.forEach(l => {
-        if (l.get('featureType')) {
-          this.map.removeLayer(l);
+      const layers = this.map.getLayers().getArray();
+      // layers.forEach(l => {
+      //   if (l.get('featureType')) {
+      //     this.map.removeLayer(l);
+      //   }
+      // });
+      for (let i = layers.length - 1; i >= 0; i--) {
+        if (layers[i].get('featureType')) {
+          this.map.removeLayer(layers[i]);
         }
-      });
+      }
     }
   },
   computed: {
@@ -206,20 +211,38 @@ export default {
   height: 100%;
   position: relative;
 }
+
 .draw {
   position: absolute;
-  top: 1.333rem  /* 100/75 */;
-  right: 1.333rem  /* 100/75 */;
-  width: 0.8rem  /* 60/75 */;
-  height: 0.533rem  /* 40/75 */;
+  top: 1.333rem
+    /* 100/75 */
+  ;
+  right: 1.333rem
+    /* 100/75 */
+  ;
+  width: 0.8rem
+    /* 60/75 */
+  ;
+  height: 0.533rem
+    /* 40/75 */
+  ;
   z-index: 999;
 }
+
 .draw1 {
   position: absolute;
-  top: 2.667rem  /* 200/75 */;
-  right: 1.333rem  /* 100/75 */;
-  width: 0.8rem  /* 60/75 */;
-  height: 0.533rem  /* 40/75 */;
+  top: 2.667rem
+    /* 200/75 */
+  ;
+  right: 1.333rem
+    /* 100/75 */
+  ;
+  width: 0.8rem
+    /* 60/75 */
+  ;
+  height: 0.533rem
+    /* 40/75 */
+  ;
   z-index: 999;
 }
 </style>
