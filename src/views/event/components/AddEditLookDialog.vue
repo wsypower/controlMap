@@ -258,6 +258,8 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
           templateName: '',
           processId: '1',
           processName: '',
+          x84: '',
+          y84: '',
           startDayTime: '',
           endDayTime: '',
           description: '',
@@ -1142,6 +1144,18 @@ import {postEmergencyFeatures,getEmergencyFeatures} from '@/api/map/service'
         if(this.baseInfo.typeId===''){
           this.$notification['error']({
             message: '事件类型必选',
+            description: '请检查',
+            style: {
+              width: '350px',
+              marginLeft: `50px`,
+              fontSize: '14px'
+            }
+          });
+          return false
+        }
+        if(this.baseInfo.x84===''||this.baseInfo.y84===''){
+          this.$notification['error']({
+            message: '事件位置必选',
             description: '请检查',
             style: {
               width: '350px',

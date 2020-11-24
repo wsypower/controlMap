@@ -24,6 +24,15 @@
         </a-row>
         <a-row>
             <a-col :span="4">
+                <label><i style="color:#d60000;">*</i>事件位置：</label>
+            </a-col>
+            <a-col :span="20">
+                <a-button v-if="nowOptType" type="primary" @click="choosePosition">位置选择</a-button>
+                <a-button v-else type="primary" @click="lookPosition">查看位置</a-button>
+            </a-col>
+        </a-row>
+        <a-row>
+            <a-col :span="4">
                 <label><i style="color:#d60000;">*</i>保障时间：</label>
             </a-col>
             <a-col :span="20">
@@ -105,14 +114,25 @@
                 <span v-else>{{submitForm.jobRequirements}}</span>
             </a-col>
         </a-row>
+        <position-map-dialog
+                :visible.sync="positionDialogVisible"
+                :optType="nowOptType"
+                :positionData="positionData"
+                @savePositionData="savePosition"
+        ></position-map-dialog>
     </div>
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
 import moment from 'moment'
 
+import PositionMapDialog from './PositionMapDialog'
+
 export default {
   name: 'baseInfo',
+  components:{
+    PositionMapDialog
+  },
   props:{
     optType:{
       type: String,
@@ -130,6 +150,8 @@ export default {
           templateName: '',
           processId: '',
           processName: '',
+          x84: '',
+          y84: '',
           startDayTime: '',
           endDayTime: '',
           description: '',
@@ -145,6 +167,10 @@ export default {
     return {
       // form: null,
       eventTypeList: [],
+      //事件位置弹窗显示控制
+      positionDialogVisible: false,
+      //事件位置信息
+      positionData: {x84: '', y84: ''},
       submitForm: {
         id: '',
         name: '',
@@ -154,6 +180,8 @@ export default {
         templateName: '',
         processId: '',
         processName: '',
+        x84: '',
+        y84: '',
         startDayTime: '',
         endDayTime: '',
         description: '',
@@ -212,6 +240,19 @@ export default {
     },
     timeChange(dates,dateStrings){
       this.submitForm.dayRange = dates;
+    },
+    choosePosition(){
+      this.positionData.x84 = this.submitForm.x84;
+      this.positionData.y84 = this.submitForm.y84;
+      this.positionDialogVisible = true;
+    },
+    lookPosition(){
+      this.positionData.x84 = this.submitForm.x84;
+      this.positionData.y84 = this.submitForm.y84;
+      this.positionDialogVisible = true;
+    },
+    savePosition(){
+
     }
   }
 }
