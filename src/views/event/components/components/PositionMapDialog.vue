@@ -17,24 +17,24 @@
       <LayoutMap ref="olMap"></LayoutMap>
     </div>
     <template slot="footer">
-      <a-button v-if="optType === 'look'" @click="mapDialogVisible = false">关闭</a-button>
-      <a-button v-if="optType === 'edit'" type="primary" @click="savePositionData">确定</a-button>
-      <a-button v-if="optType === 'edit'" type="primary" @click="resetPosition">重置</a-button>
+      <a-button v-if="!optType" @click="mapDialogVisible = false">关闭</a-button>
+      <a-button v-if="optType" type="primary" @click="savePositionData">确定</a-button>
+      <a-button v-if="optType" type="primary" @click="resetPosition">重置</a-button>
     </template>
   </a-modal>
 </template>
 <script type="text/ecmascript-6">
-  import { mapState, mapActions } from 'vuex'
-  import LayoutMap from '@/views/map/olMap.vue'
-  import { MapManager } from '@/utils/util.map.manage'
-  import VectorLayer from 'ol/layer/Vector'
-  import VectorSource from 'ol/source/Vector'
-  import { Circle as CircleStyle,Fill, Stroke, Style} from 'ol/style.js';
-  import { getSingleFeature,getAddress } from '@/api/map/service'
-  import Draw from 'ol/interaction/Draw.js'
+  import LayoutMap from '@/views/map/olMap.vue';
+  import { MapManager } from '@/utils/util.map.manage';
+  import VectorLayer from 'ol/layer/Vector';
+  import VectorSource from 'ol/source/Vector';
+  import { Style} from 'ol/style.js';
+  import Icon from 'ol/style/Icon';
+  import Draw from 'ol/interaction/Draw.js';
+  import Feature from 'ol/Feature';
+  import Point from 'ol/geom/Point';
   let map;
   let mapManager;
-  let draw;
   let source;
   let vectorLayer;
     export default{
@@ -48,7 +48,7 @@
             default: false
         },
         optType: {
-          type: String,
+          type: Boolean,
           default: ''
         },
         positionData: {
@@ -67,7 +67,9 @@
           value: undefined,// 地址搜索点击数据
           positionDialogVisible: false,
           //编辑edit或者查看look位置
-          opType: 'edit',
+          // optType: 'edit',
+          draw:null,
+          xyData:[],
         }
       },
       computed:{},
@@ -90,24 +92,58 @@
       mounted() {},
       methods:{
         init(){
-
+          this.$nextTick().then(() => {
+            map = this.$refs.olMap.getMap();
+            mapManager = new MapManager(map);
+            if(!source){
+              source = new VectorSource({ wrapX: false });
+              vectorLayer = new VectorLayer({
+                source: source,
+                style: new Style({
+                  image: new Icon({
+                    src: require('@/assets/mapImage/flag.png')
+                  }),
+                })
+              });
+              map.addLayer(vectorLayer);
+            }
+            if(this.positionData.length>0){
+              source.addFeature(new Feature(new Point(this.positionData)))
+            }
+            if(this.optType){
+              this.draw = new Draw({
+                source: source,
+                type: 'Point'
+              })
+              map.addInteraction(this.draw);
+              this.draw.on('drawstart', function() {
+                source&&source.clear();
+              });
+              this.draw.on('drawend', (e)=> {
+                const feature=e.feature;
+                this.xyData = feature.getGeometry().getCoordinates();
+                console.log('经纬度1：',this.xyData)
+              });
+            }
+          })
         },
         //确定位置数据
         savePositionData() {
           this.positionDialogVisible = false;
           //触发更新道路表格数据
-          this.$emit('savePositionData')
+          this.$emit('savePositionData',this.xyData)
         },
         //重置视图
         resetPosition(){
-
+          source&&source.clear();
+          this.xyData=[];
         },
         //关闭视图弹窗
         handleCancel(){
           this.positionDialogVisible = false;
         },
         afterClose(){
-          this.disableEdit = false;
+          // this.disableEdit = false;
           console.log('关闭了')
         }
     }

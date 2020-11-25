@@ -251,8 +251,8 @@ export default {
       this.positionData.y84 = this.submitForm.y84;
       this.positionDialogVisible = true;
     },
-    savePosition(){
-
+    savePosition(data){
+      console.log('经纬度：',data);
     }
   }
 }
