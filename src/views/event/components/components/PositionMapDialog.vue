@@ -108,7 +108,7 @@
               map.addLayer(vectorLayer);
             }
             if(this.positionData.length>0){
-              source.addFeature(new Feature(new Point(this.positionData)))
+              source.addFeature(new Feature(new Point(parseFloat(this.positionData.x84),parseFloat(this.positionData.y84))))
             }
             if(this.optType){
               this.draw = new Draw({
@@ -122,7 +122,7 @@
               this.draw.on('drawend', (e)=> {
                 const feature=e.feature;
                 this.xyData = feature.getGeometry().getCoordinates();
-                console.log('经纬度1：',this.xyData)
+                console.log('经纬度1：',this.xyData);
               });
             }
           })
