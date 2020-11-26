@@ -107,7 +107,7 @@
               });
               map.addLayer(vectorLayer);
             }
-            if(this.positionData.length>0){
+            if(this.positionData.x84.length>0&&this.positionData.y84.length>0){
               source.addFeature(new Feature(new Point(parseFloat(this.positionData.x84),parseFloat(this.positionData.y84))))
             }
             if(this.optType){

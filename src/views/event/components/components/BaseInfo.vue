@@ -253,6 +253,8 @@ export default {
     },
     savePosition(data){
       console.log('经纬度：',data);
+      this.submitForm.x84 = data[0];
+      this.submitForm.y84 = data[1];
     }
   }
 }
