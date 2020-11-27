@@ -108,7 +108,9 @@
               map.addLayer(vectorLayer);
             }
             if(this.positionData.x84.length>0&&this.positionData.y84.length>0){
-              source.addFeature(new Feature(new Point(parseFloat(this.positionData.x84),parseFloat(this.positionData.y84))))
+              this.xyData=[parseFloat(this.positionData.x84),parseFloat(this.positionData.y84)];
+              source.addFeature(new Feature(new Point(this.xyData)));
+              mapManager.locateTo(this.xyData);
             }
             if(this.optType){
               this.draw = new Draw({
