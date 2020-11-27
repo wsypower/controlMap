@@ -95,21 +95,20 @@
           this.$nextTick().then(() => {
             map = this.$refs.olMap.getMap();
             mapManager = new MapManager(map);
-            if(!source){
-              source = new VectorSource({ wrapX: false });
-              vectorLayer = new VectorLayer({
-                source: source,
-                style: new Style({
-                  image: new Icon({
-                    src: require('@/assets/mapImage/flag.png')
-                  }),
-                })
-              });
-              map.addLayer(vectorLayer);
-            }
+            source = new VectorSource({ wrapX: false });
+            vectorLayer = new VectorLayer({
+              source: source,
+              style: new Style({
+                image: new Icon({
+                  src: require('@/assets/mapImage/flag.png')
+                }),
+              })
+            });
+            map.addLayer(vectorLayer);
             if(this.positionData.x84.length>0&&this.positionData.y84.length>0){
               this.xyData=[parseFloat(this.positionData.x84),parseFloat(this.positionData.y84)];
-              source.addFeature(new Feature(new Point(this.xyData)));
+              const feature=new Feature(new Point(this.xyData));
+              source.addFeature(feature);
               mapManager.locateTo(this.xyData);
             }
             if(this.optType){
@@ -142,6 +141,7 @@
         },
         //关闭视图弹窗
         handleCancel(){
+          // source&&source.clear();
           this.positionDialogVisible = false;
         },
         afterClose(){

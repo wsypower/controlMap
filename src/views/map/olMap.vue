@@ -1,6 +1,5 @@
 <template>
-  <div id="map">
-  </div>
+  <div id="map"></div>
 </template>
 <script>
 import 'ol/ol.css'
@@ -31,11 +30,11 @@ export default {
         target: 'map',
         //设置地图鼠标事件，默认的双击改成false
         interactions: interactionDefaults({
-          doubleClickZoom: false,
+          doubleClickZoom: false
         }),
         view: new View({
           projection: 'EPSG:4326',
-          center: [119.641628,29.083339],
+          center: [119.641628, 29.083339],
           zoom: 13,
           maxZoom: 20,
           minZoom: 7
@@ -123,10 +122,11 @@ export default {
         source: new WMTS({
           style: 'default',
           version: '1.0.0',
-          layer: 'ZJEMAP',
-          matrixSet: 'TileMatrixSet0',
-          format: 'image/png',
-          url: 'http://srv.zjditu.cn/ZJEMAP_2D/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          layer: 'emap',
+          // matrixSet: 'esritilematirx',
+          format: 'image/jpgpng',
+          matrixSet: 'esritilematirx',
+          url: 'https://ditu.zjzwfw.gov.cn/services/wmts/emap/default/oss?token=2c92920471b56e640171be7444540073',
           tileGrid: tdtGridzj,
           wrapX: true
         }),
@@ -138,10 +138,11 @@ export default {
         source: new WMTS({
           style: 'default',
           version: '1.0.0',
-          layer: 'ZJEMAPANNO',
-          matrixSet: 'TileMatrixSet0',
-          format: 'image/png',
-          url: 'http://srv.zjditu.cn/ZJEMAPANNO_2D/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          layer: 'emap_lab',
+          matrixSet: 'esritilematirx',
+          // matrixSet: 'TileMatrixSet0',
+          format: 'image/jpgpng',
+          url: 'https://ditu.zjzwfw.gov.cn/services/wmts/emap_lab/default/oss?token=2c92920471b56e640171be7537bd0074',
           tileGrid: tdtGridzj,
           wrapX: true
         }),
@@ -151,7 +152,7 @@ export default {
       return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
     },
     getMap() {
-      return this.map;
+      return this.map
     }
   }
 }
