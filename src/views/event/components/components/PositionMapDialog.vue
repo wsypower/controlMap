@@ -17,7 +17,7 @@
       <LayoutMap ref="olMap"></LayoutMap>
     </div>
     <template slot="footer">
-      <a-button v-if="!optType" @click="mapDialogVisible = false">关闭</a-button>
+      <a-button v-if="!optType" @click="positionDialogVisible = false">关闭</a-button>
       <a-button v-if="optType" type="primary" @click="savePositionData">确定</a-button>
       <a-button v-if="optType" type="primary" @click="resetPosition">重置</a-button>
     </template>
