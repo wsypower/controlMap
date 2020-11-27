@@ -1,5 +1,5 @@
 <template>
-  <div id="map"></div>
+  <div ref="basemap" class="basemap"></div>
 </template>
 <script>
 import 'ol/ol.css'
@@ -27,7 +27,7 @@ export default {
       /* 添加影像地图 */
       this.map = new Map({
         loadTilesWhileAnimating: true,
-        target: 'map',
+        target: this.$refs.basemap,
         //设置地图鼠标事件，默认的双击改成false
         interactions: interactionDefaults({
           doubleClickZoom: false
@@ -158,7 +158,7 @@ export default {
 }
 </script>
 <style scoped>
-#map {
+.basemap {
   width: 100%;
   height: 100%;
 }
