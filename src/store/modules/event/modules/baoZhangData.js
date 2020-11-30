@@ -11,7 +11,20 @@ export default {
   mutations: {
     // 更新一条保障视图数据
     updateBaoZhangMapItemData(state, baoZhangMapItemData) {
-      state.baoZhangData[baoZhangMapItemData.keyPositionId] = baoZhangMapItemData;
+      state.baoZhangData[baoZhangMapItemData.keyPositionId] = {
+        keyPositionId: '',
+        positionId: '',
+        mapId: '',
+        mapType: '',
+        drawFeature: null
+      };
+      state.baoZhangData[baoZhangMapItemData.keyPositionId].keyPositionId = baoZhangMapItemData.keyPositionId;
+      state.baoZhangData[baoZhangMapItemData.keyPositionId].positionId = baoZhangMapItemData.positionId;
+      state.baoZhangData[baoZhangMapItemData.keyPositionId].mapId = baoZhangMapItemData.mapId;
+      state.baoZhangData[baoZhangMapItemData.keyPositionId].mapType = baoZhangMapItemData.mapType;
+      state.baoZhangData[baoZhangMapItemData.keyPositionId].drawFeature = baoZhangMapItemData.drawFeature;
+
+      // state.baoZhangData[baoZhangMapItemData.keyPositionId] = JSON.parse(JSON.stringify(baoZhangMapItemData));
     },
 
     // 删除一条保障视图数据

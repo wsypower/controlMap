@@ -229,6 +229,20 @@
             this.init();
           }
           else{
+            this.drawFeature = {
+              'Point': {
+                add:null,
+                delete:null
+              },
+              'LineString':{
+                add: null,
+                delete:null
+              },
+              'Polygon':{
+                add: null,
+                delete:null
+              }
+            };
             this.$emit('update:visible', false);
           }
         },
