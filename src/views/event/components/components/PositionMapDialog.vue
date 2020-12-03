@@ -130,9 +130,22 @@
         },
         //确定位置数据
         savePositionData() {
-          this.positionDialogVisible = false;
-          //触发更新道路表格数据
-          this.$emit('savePositionData',this.xyData)
+          if(this.xyData.length===0){
+            this.$notification['error']({
+              message: '事件位置必选',
+              description: '请检查',
+              style: {
+                width: '350px',
+                marginLeft: `50px`,
+                fontSize: '14px'
+              }
+            });
+          }
+          else{
+            this.positionDialogVisible = false;
+            //触发更新道路表格数据
+            this.$emit('savePositionData',this.xyData)
+          }
         },
         //重置视图
         resetPosition(){
