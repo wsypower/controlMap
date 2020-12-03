@@ -168,19 +168,19 @@ export default {
         this.totalSize = res.total;
         this.mapData=res.mapData;
         this.showLoading = false;
-        let features=[];
-        res.gs.forEach((g) => {
-          features = features.concat(new GeoJSON().readFeatures(g));
-        });
-        features.forEach(f=>{
-          f.setId(f.get('id'));
-        })
-        this.bridgeFeatures=features;
-        if(this.bridgeLayer) {
-          this.bridgeLayer.getSource().addFeatures(this.bridgeFeatures);
-        }else{
-          this.bridgeLayer = this.mapManager.addVectorLayerByFeatures(this.bridgeFeatures, bridgeStyle(), 2);
-        }
+        // let features=[];
+        // res.gs.forEach((g) => {
+        //   features = features.concat(new GeoJSON().readFeatures(g));
+        // });
+        // features.forEach(f=>{
+        //   f.setId(f.get('id'));
+        // })
+        // this.bridgeFeatures=features;
+        // if(this.bridgeLayer) {
+        //   this.bridgeLayer.getSource().addFeatures(this.bridgeFeatures);
+        // }else{
+        //   this.bridgeLayer = this.mapManager.addVectorLayerByFeatures(this.bridgeFeatures, bridgeStyle(), 2);
+        // }
       });
     },
     //给后端的数据增加一些前端展示与判断需要的属性
@@ -253,7 +253,7 @@ export default {
     showVideo(info){
         this.videoId = info.id;
         this.videoName = info.name;
-        this.videoSrc = info.cameraUrl;
+        this.videoSrc = info.videoUrl;
         this.selectLayer && this.selectLayer.getSource().clear();
         if(!info.x||!info.y){
             this.$message.warning('当前视频无点位信息！！！');
