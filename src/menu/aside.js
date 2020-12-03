@@ -67,5 +67,13 @@ export default [
     active: false,
     role: ['admin'],
     hash: ['site']
+  },
+  {
+    path: '/streetVideo',
+    title: '街道摄像头监控',
+    icon: 'menu-street',
+    active: false,
+    role: ['admin'],
+    hash: ['streetVideo']
   }
 ]

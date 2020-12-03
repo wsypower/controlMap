@@ -95,6 +95,15 @@ const frameIn = [
         },
         component: _import('car/index.vue')
       },
+      {
+        path: '/streetVideo',
+        name: 'streetVideo',
+        meta: {
+          title: '桥梁监控',
+          role: ['admin']
+        },
+        component: _import('streetvideo/index.vue')
+      },
       // 刷新页面 必须保留
       {
         path: 'refresh',
