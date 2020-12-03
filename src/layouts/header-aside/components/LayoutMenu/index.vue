@@ -36,7 +36,7 @@ export default {
       // 根据hash来打开对应的页面
       let hash = this.getUrlHash();
       //streetlight  // bridge
-      if(hash === 'streetlight' || hash === 'bridge'){
+      if(hash === 'streetlight' || hash === 'street-video'){
         this.menuItemClick(0,newValue[0]);
       }
     }

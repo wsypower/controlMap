@@ -1,15 +1,15 @@
 <template>
   <div class="video-manage" flex="dir:top">
     <div class="left-message-title">
-      桥梁管控
+      街道摄像头管控
     </div>
     <div class="search-panel">
-      <my-address @getAddressData="getAddressData"></my-address>
-      <div flex="fir:left cross:center" style="margin:10px 0px;">
-        <label>桥梁名称：</label>
-        <a-input placeholder="输入桥梁名称" v-model="bridgeName" style="flex:1" />
+      <!--<my-address @getAddressData="getAddressData"></my-address>-->
+      <div flex="fir:left cross:center">
+        <label>摄像头名称：</label>
+        <a-input placeholder="输入摄像头名称" v-model="cname" style="flex:1" />
       </div>
-      <a-button type="primary" style="width: 100%;margin-bottom:5px;" @click="onSearch">查询</a-button>
+      <a-button type="primary" style="width: 100%;margin:10px 0px 5px 0px;" @click="onSearch">查询</a-button>
       <div>共计{{ totalSize }}个查询结果</div>
     </div>
     <div class="yuan_dialog_body">
@@ -18,7 +18,7 @@
       </div>
       <cg-container scroll v-if="!showLoading && treeData.length > 0">
         <a-tree class="tree-panel" showIcon showLine :treeData="treeData" @select="onSelect">
-          <img slot="dept" src="~@img/bridge.png" />
+          <img slot="dept" src="~@img/street.png" />
           <img slot="camera" src="~@img/globel-eye.png" />
         </a-tree>
       </cg-container>
@@ -34,9 +34,9 @@
         :multiple="true"
       ></my-video-player>
     </div>
-    <div class="camera-panel" @click="toReportProblem">
-      <cg-icon-svg name="camera" class="camera__icon"></cg-icon-svg>
-    </div>
+    <!--<div class="camera-panel" @click="toReportProblem">-->
+      <!--<cg-icon-svg name="camera" class="camera__icon"></cg-icon-svg>-->
+    <!--</div>-->
     <div hidden>
       <tip-modal
         ref="bridgeOverlay"
@@ -64,15 +64,15 @@ import GeoJSON from 'ol/format/GeoJSON';
 import {getCenter} from 'ol/extent';
 const userId = util.cookies.get('userId');
 export default {
-  name: 'BridgeVideo',
+  name: 'streetVideo',
   mixins: [mixins],
   components:{
     MyVideoPlayer
   },
   data(){
     return {
-      //桥梁名称
-      bridgeName: '',
+      //查询条件的摄像头名称
+      cname: '',
       //摄像头唯一标识
       videoId: '',
       //摄像头名称
@@ -149,19 +149,19 @@ export default {
   },
   methods:{
     ...mapActions('bridge/manage', ['getAllCameraTreeDataForBridge']),
-    getAddressData(val){
-      console.log('selected city data',val);
-      this.selectedCity = val;
-    },
-    // 获取所有桥梁监控
+    // getAddressData(val){
+    //   console.log('selected city data',val);
+    //   this.selectedCity = val;
+    // },
+    // 获取所有街道监控
     getAllCameraForBridge(){
       this.bridgeOverlay.setPosition(undefined);
       this.showLoading = true;
-      //入参：城市范围、桥梁名称，用户ID
+      //入参：摄像头名称，用户ID
       let params = {
         userId: userId,
-        area: this.selectedCity,
-        bridgeName: this.bridgeName
+        // area: this.selectedCity,
+        cname: this.cname
       }
       this.getAllCameraTreeDataForBridge(params).then(res=>{
         this.sourceData = res.treeData;
@@ -225,27 +225,27 @@ export default {
           this.showVideo(needData);
         }
         else{
-          if(selectedKeys[0]!=='dept_001'){
-            this.tipComponentId = BridgeInfo;
-            let needData = e.selectedNodes[0].data.props;
-            console.log('------------------------',needData);
-            this.modalTitle = needData.bridgeName;
-            this.infoData = {
-              bridgeName: needData.bridgeName,
-              bridgeStructure: needData.bridgeStructure,
-              bridgeAddr: needData.bridgeAddr,
-              completeTime: needData.completeTime
-            }
-            const feature=this.bridgeLayer.getSource().getFeatureById(needData.locationId);
-            if(feature){
-              const extent=feature.getGeometry().getExtent();
-              const center=getCenter(extent);
-              this.bridgeOverlay.setPosition(center);
-              this.mapManager.locateTo(center);
-            }else{
-              this.$message.warning('当前桥梁无图形信息！！！');
-            }
-          }
+          // if(selectedKeys[0]!=='dept_001'){
+          //   this.tipComponentId = BridgeInfo;
+          //   let needData = e.selectedNodes[0].data.props;
+          //   console.log('------------------------',needData);
+          //   this.modalTitle = needData.bridgeName;
+          //   this.infoData = {
+          //     bridgeName: needData.bridgeName,
+          //     bridgeStructure: needData.bridgeStructure,
+          //     bridgeAddr: needData.bridgeAddr,
+          //     completeTime: needData.completeTime
+          //   }
+          //   const feature=this.bridgeLayer.getSource().getFeatureById(needData.locationId);
+          //   if(feature){
+          //     const extent=feature.getGeometry().getExtent();
+          //     const center=getCenter(extent);
+          //     this.bridgeOverlay.setPosition(center);
+          //     this.mapManager.locateTo(center);
+          //   }else{
+          //     this.$message.warning('当前桥梁无图形信息！！！');
+          //   }
+          // }
         }
       }
     },

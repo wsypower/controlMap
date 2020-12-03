@@ -20,7 +20,7 @@ import request from '@/plugins/axios/axios'
 export function getAllCameraTreeDataForBridge(data) {
   console.log('api:getAllCameraTreeDataForBridge', data)
   return request({
-    url: 'municipal/getAllCameraTreeDataForBridge?_t=' + new Date().getTime(),
+    url: 'municipal/getAllCameraTreeDataForStreet?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
