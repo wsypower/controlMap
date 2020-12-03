@@ -1,6 +1,5 @@
 <template>
-  <div id="map">
-  </div>
+  <div id="map"></div>
 </template>
 <script>
 import { mapMutations, mapState } from 'vuex'
@@ -52,7 +51,7 @@ export default {
           projection: 'EPSG:4326',
           center: [116.48, 31.76],
           zoom: 13,
-          maxZoom: 20,
+          maxZoom: 18,
           minZoom: 7
         }),
         layers: this.getBaseLayers(),
@@ -93,20 +92,20 @@ export default {
        * @desc 与分辨率信息需要每层严格对应起来
        */
       const matrixIds = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-      const matrixIdszj = [15, 16, 17, 18, 19, 20]
+      // const matrixIdszj = [15, 16, 17, 18, 19, 20]
       /**
        * @desc 天地图格网信息
        */
       const tdtGrid = new WMTSTileGrid({
         origin: getTopLeft(projectionExtent),
-        resolutions: tdtResolutions.slice(0, 12),
+        resolutions: tdtResolutions.slice(0, 15),
         matrixIds: matrixIds
       })
-      const tdtGridzj = new WMTSTileGrid({
-        origin: getTopLeft(projectionExtent),
-        resolutions: tdtResolutions.slice(9, 15),
-        matrixIds: matrixIdszj
-      })
+      // const tdtGridzj = new WMTSTileGrid({
+      //   origin: getTopLeft(projectionExtent),
+      //   resolutions: tdtResolutions.slice(9, 15),
+      //   matrixIds: matrixIdszj
+      // })
       /**
        * @desc 国家天地图图层
        */
@@ -137,36 +136,36 @@ export default {
       /**
        * @desc 浙江天地图图层
        */
-      const zJVecLayer = new TileLayer({
-        source: new WMTS({
-          style: 'default',
-          version: '1.0.0',
-          layer: 'ZJEMAP',
-          matrixSet: 'TileMatrixSet0',
-          format: 'image/png',
-          url: 'http://srv.zjditu.cn/ZJEMAP_2D/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
-          tileGrid: tdtGridzj,
-          wrapX: true
-        }),
-        minResolution: 0.0000013411045074462890625,
-        maxResolution: 0.0000858306884765625
-      })
+      // const zJVecLayer = new TileLayer({
+      //   source: new WMTS({
+      //     style: 'default',
+      //     version: '1.0.0',
+      //     layer: 'ZJEMAP',
+      //     matrixSet: 'TileMatrixSet0',
+      //     format: 'image/png',
+      //     url: 'http://srv.zjditu.cn/ZJEMAP_2D/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+      //     tileGrid: tdtGridzj,
+      //     wrapX: true
+      //   }),
+      //   minResolution: 0.0000013411045074462890625,
+      //   maxResolution: 0.0000858306884765625
+      // })
 
-      const zJAnnoLayer = new TileLayer({
-        source: new WMTS({
-          style: 'default',
-          version: '1.0.0',
-          layer: 'ZJEMAPANNO',
-          matrixSet: 'TileMatrixSet0',
-          format: 'image/png',
-          url: 'http://srv.zjditu.cn/ZJEMAPANNO_2D/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
-          tileGrid: tdtGridzj,
-          wrapX: true
-        }),
-        minResolution: 0.0000013411045074462890625,
-        maxResolution: 0.0000858306884765625
-      })
-      return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
+      // const zJAnnoLayer = new TileLayer({
+      //   source: new WMTS({
+      //     style: 'default',
+      //     version: '1.0.0',
+      //     layer: 'ZJEMAPANNO',
+      //     matrixSet: 'TileMatrixSet0',
+      //     format: 'image/png',
+      //     url: 'http://srv.zjditu.cn/ZJEMAPANNO_2D/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+      //     tileGrid: tdtGridzj,
+      //     wrapX: true
+      //   }),
+      //   minResolution: 0.0000013411045074462890625,
+      //   maxResolution: 0.0000858306884765625
+      // })
+      return [wmtsVecLayer, wmtsAnnoLayer]
     },
     //切换时清除地图上的内容
     layerClear() {
