@@ -99,7 +99,7 @@ const frameIn = [
         path: '/streetVideo',
         name: 'streetVideo',
         meta: {
-          title: '桥梁监控',
+          title: '街道视频监控',
           role: ['admin']
         },
         component: _import('streetvideo/index.vue')
