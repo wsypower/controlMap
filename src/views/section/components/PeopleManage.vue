@@ -64,7 +64,10 @@ export default {
           if (val == '1') { //人员定位
             if (l.get('featureType') == 'PeoplePosition') {
               l.setVisible(true);
-              this.map.getView().fit(l.getSource().getExtent());
+              // this.map.getView().fit(l.getSource().getExtent());
+              const view = this.map.getView();
+              view.setCenter([120.30322, 32.860927]);
+              view.setZoom(13);
             } else {
               l.setVisible(false);
             }

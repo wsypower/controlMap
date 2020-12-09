@@ -16,7 +16,7 @@ import request from '@/plugins/axios/axios'
 export function getPoint(type = '全部视频') {
   type = type == '全部视频' ? '视频' : type;
   return request({
-    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix+'/ows',
+    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix + '/ows',
     method: 'get',
     params: {
       service: 'WFS',
@@ -34,7 +34,7 @@ export function getPoint(type = '全部视频') {
  */
 export function getEmergencyArea(type = '预案区域') {
   return request({
-    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix+'/ows',
+    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix + '/ows',
     method: 'get',
     params: {
       service: 'WFS',
@@ -53,7 +53,7 @@ export function getEmergencyArea(type = '预案区域') {
  * */
 export function postFeature(data) {
   return request({
-    url: GIS_CONFIG.baseURL +GIS_CONFIG.featurePrefix +'/wfs',
+    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix + '/wfs',
     method: 'post',
     headers: { 'Content-Type': 'text/xml ' },
     transformRequest: [
@@ -80,10 +80,10 @@ export function getVideoListApi() {
 
 const apiMapping = {
   manager: 'getManageList',
-  equip:'',
-  terminal:'getArmGPSList',
-  gps:'getHKCarGPSList',
-  car:'getCarGpsList'
+  equip: '',
+  terminal: 'getArmGPSList',
+  gps: 'getHKCarGPSList',
+  car: 'getCarGpsList'
 }
 /**
  * @description:获取应急资源接口
@@ -118,4 +118,43 @@ export function getAddressByXY(xy) {
     url: `http://api.tianditu.gov.cn/geocoder?postStr={'lon':${xy[0]},'lat':${xy[1]},'ver':1}&type=geocode&tk=8f70b78b9e06a59ad7e97a162f54ac0c`,
     method: 'post'
   });
+}
+
+export function getDescribeLayer(type) {
+  return request({
+    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix + '/ows',
+    method: 'get',
+    params: {
+      service: 'WMS',
+      version: '1.1.1',
+      request: 'DescribeLayer',
+      layers: `${GIS_CONFIG.featurePrefix}:${type}`,
+      outputFormat: 'application/json'
+    }
+  })
+}
+
+export function getPartFeatureInfo(params) {
+  return request({
+    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix + '/ows',
+    method: 'get',
+    params: {
+      service: 'WMS',
+      version: '1.1.1',
+      request: 'GetFeatureInfo',
+      layers: params.layers,
+      INFO_FORMAT: 'application/json',
+      FORMAT: 'image/png',
+      TRANSPARENT: 'true',
+      QUERY_LAYERS: params.layers,
+      SRS: 'EPSG:4490',
+      STYLES: '',
+      BBOX: params.bbox,
+      FEATURE_COUNT: 1,
+      X: params.x,
+      Y: params.y,
+      WIDTH: params.width,
+      HEIGHT: params.height
+    }
+  })
 }

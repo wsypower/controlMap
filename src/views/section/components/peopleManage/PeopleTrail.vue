@@ -293,8 +293,10 @@ export default {
     },
     //查询(默认显示当天，当前登入的用户)
     onSearch() {
-      this.query.startTime = this.dayRange[0] ? this.dayRange[0]._d.getTime() : '';
-      this.query.endTime = this.dayRange[1] ? this.dayRange[1]._d.getTime() : '';
+      this.query.startTime = this.dayRange[0] ? new Date(this.dayRange[0]).getTime() : '';
+      this.query.endTime = this.dayRange[1] ? new Date(this.dayRange[1]).getTime() : '';
+      // this.query.startTime = this.dayRange[0] ? this.dayRange[0]._d.getTime() : '';
+      // this.query.endTime = this.dayRange[1] ? this.dayRange[1]._d.getTime() : '';
       let dates = Math.floor((this.query.endTime - this.query.startTime)) / (1000 * 60 * 60 * 24);
       if (dates > 3) {
         this.$message.warning('查询时间不可超过3天！！！');

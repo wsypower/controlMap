@@ -1,7 +1,8 @@
 <template>
   <div class="ctrl-panel">
     <div class="ctrl-panel-b">
-      <ul style="padding-left: 10px">
+      <ul style="padding-left: 10px;">
+      <!-- <ul style="padding-left: 10px;height: 300px;overflow-y: auto;"> -->
         <li class="ctrl-panel-item" v-for="(layer,index) in allLayers" :key="index">
           <p class="ctrl-panel-item-checkbox" @click="toggleService(layer)">
             <img :src="getSelectState(layer.name)">
@@ -21,13 +22,17 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from 'vuex';
-import selectedImg from '@/assets/mapImage/selected.png';
-import unselectedImg from '@/assets/mapImage/unselected.png';
-import { getTypePoint } from '@/api/map/service';
-import { gridStyle } from '@/utils/util.map.style';
-import { listToFeatures } from '@/utils/util.map.manage';
-import RecordInfo from '@/views/records/components/RecordInfo.vue';
+import { mapActions, mapState } from 'vuex'
+import ImageLayer from 'ol/layer/Image'
+import ImageWMS from 'ol/source/ImageWMS'
+import LayerGroup from 'ol/layer/Group'
+import selectedImg from '@/assets/mapImage/selected.png'
+import unselectedImg from '@/assets/mapImage/unselected.png'
+import { getTypePoint } from '@/api/map/service'
+import { getDescribeLayer, getPartFeatureInfo } from '@/api/map/map'
+import { gridStyle } from '@/utils/util.map.style'
+import { listToFeatures } from '@/utils/util.map.manage'
+import RecordInfo from '@/views/records/components/RecordInfo.vue'
 import util from '@/utils/util'
 let selectLayer = ['区', '街道', '社区', '监督网格', '单元网格', '人员', '车辆', '视频', '案卷'];
 let gridLayer = ['区', '街道', '社区', '监督网格', '单元网格'];
@@ -86,7 +91,8 @@ export default {
         lyr: null
       }, ],
       selectLayer: [],
-      code: ''
+      code: '',
+      partSelectLayer: []
     }
   },
   computed: {
@@ -154,6 +160,7 @@ export default {
           }
         }
       });
+      // this.getPartLayers();
       this.map = this.mapManager.getMap();
       this.map.on('click', this.mapClickHandler);
       this.detailOverlay = this.mapManager.addOverlay({
@@ -184,9 +191,14 @@ export default {
           this.selectLayer.push(layer.name)
         }
         if (!this.selectLayer.includes(layer.name)) {
-          layer.lyr.setVisible(false)
+          layer.lyr.setVisible(false);
+          const index = this.partSelectLayer.indexOf(`${GIS_CONFIG.featurePrefix}:${layer.name}`);
+          if (index !== -1) {
+            this.partSelectLayer.splice(index, 1)
+          }
         } else {
-          layer.lyr.setVisible(true)
+          layer.lyr.setVisible(true);
+          this.partSelectLayer.push(`${GIS_CONFIG.featurePrefix}:${layer.name}`);
         }
       }
     },
@@ -203,7 +215,51 @@ export default {
           this.detailOverlay.setPosition(coordinate);
         }
       }
+      if (this.partSelectLayer.length > 0) {
+        getPartFeatureInfo({
+          layers: this.partSelectLayer.toString(),
+          bbox: this.map.getView().calculateExtent(this.map.getSize()).toString(),
+          x: pixel[0],
+          y: pixel[1],
+          width: this.map.getSize()[0],
+          height: this.map.getSize()[1]
+        }).then(data => {
+          console.log(data.features);
+        });
+      }
     },
+    getPartLayers() {
+      getDescribeLayer('dongtaibujian').then(data => {
+        const partLayers = [];
+        data.layerDescriptions.forEach(layer => {
+          let name = layer.layerName.indexOf(':') != -1 ? layer.layerName.split(':')[1] : layer.layerName;
+          let wmsLayer = new ImageLayer({
+            title: name,
+            layerType: 'part',
+            visible: false,
+            source: new ImageWMS({
+              url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix + '/ows',
+              params: {
+                'LAYERS': layer.layerName,
+                'VERSION': '1.1.0'
+              },
+              serverType: 'geoserver'
+            })
+          });
+          this.allLayers.push({
+            name: name,
+            icon: require('@/assets/mapImage/qx.png'),
+            lyr: wmsLayer
+          });
+          partLayers.push(wmsLayer);
+        });
+        let partLayerGroup = new LayerGroup({
+          title: '部件图层',
+          layers: partLayers
+        });
+        this.map.addLayer(partLayerGroup);
+      });
+    }
   },
   destroyed() {
     this.allLayers.forEach(layer => {

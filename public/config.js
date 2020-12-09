@@ -13,11 +13,11 @@ const URL_CONFIG = {
 };
 const GIS_CONFIG = {
   baseURL: "http://218.206.153.37:10000/geoserver/", //正式外网服务器
-  // baseURL:"http://192.168.1.10:8080/geoserver/",//本地测试服务器
-  // featureNS:"http://gis.dongtai.com",//正式预案区域图层所在工作空间的url
-  featureNS: "http://gis.dongtai.com", //测试预案区域图层所在工作空间的url
-  // featurePrefix:"dongtai",//正式工作空间名称
-  featurePrefix: "dongtai", //测试工作空间名称
+  // baseURL:"http://172.16.40.10:8080/geoserver/",//本地测试服务器
+  featureNS:"http://gis.dongtai.com",//正式预案区域图层所在工作空间的url
+  // featureNS: "http://gis.dongtai.com", //测试预案区域图层所在工作空间的url
+  featurePrefix:"dongtai",//正式工作空间名称
+  // featurePrefix: "dongtai", //测试工作空间名称
   // proxyURL: "http://172.16.24.192:8082/proxy/proxy.jsp"
 }
 // const IP_CONFIG = {
