@@ -12,18 +12,22 @@
           <img slot="dept" src="~@img/avatar_dept.png" />
           <img slot="camera" src="~@img/globel-eye.png" />
           <template slot="title" slot-scope="{ title }">
-            <span v-if="title.indexOf(searchValue) > -1">
+            <!-- <span v-if="title.indexOf(searchValue) > -1">
               {{ title.substr(0, title.indexOf(searchValue)) }}
               <span style="color: #f50">{{ searchValue }}</span>
               {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
             </span>
-            <span v-else>{{ title }}</span>
+            <span v-else>{{ title }}</span> -->
+            <span>{{ title }}</span>
           </template>
         </a-tree>
       </cg-container>
       <div v-if="(!showLoading && treeData.length == 0) || !showTree" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
       </div>
+    </div>
+    <div v-if="totalSize > 0" class="pagination-panel">
+      <a-pagination size="small" :total="totalSize" :showTotal="total => `共 ${total} 条`" :pageSize="20" :current="query.pageNum" @change="changePagination" />
     </div>
     <div class="player-panel active" v-if="playerMethod === 'browser'">
       <my-video-player :videoSrc.sync="videoSrc" :multiple="true"></my-video-player>
@@ -67,7 +71,13 @@ export default {
       //地图相关
       videoLayer: null,
       isLoadData: false,
-      clusterLayer: null
+      clusterLayer: null,
+      query: {
+        userId: userId,
+        pageNum: 1,
+        name: ''
+      },
+      totalSize: 0
     }
   },
   computed: {
@@ -87,29 +97,40 @@ export default {
       if (this.videoFeatures.length > 0) {
         if (this.videoLayer) {
           this.videoLayer.getSource().clear();
-          this.videoLayer.getSource().addFeatures(this.carFeatures);
+          this.videoLayer.getSource().addFeatures(this.videoFeatures);
         } else {
-          this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
+          // this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
+          this.videoLayer = this.mapManager.addVectorLayerByFeatures(this.videoFeatures, videoPointStyle());
           this.videoLayer.set('featureType', 'videoDistribute');
         }
-        const extent = this.videoLayer.getSource().getSource().getExtent();
+        const extent = this.videoLayer.getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
     }
   },
   mounted() {
-    this.showLoading = true;
+    // this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
-    this.getAllCameraTreeData({ userId: userId }).then(res => {
-      console.log('getAllCameraTreeData', res);
-      this.sourceData = res.data[0].children;
-      this.showLoading = false;
-    });
+    // this.getAllCameraTreeData({ userId: userId }).then(res => {
+    //   console.log('getAllCameraTreeData', res);
+    //   this.sourceData = res.data[0].children;
+    //   this.showLoading = false;
+    // });
+    this.getDataList();
   },
   methods: {
     ...mapActions('video/manage', ['getAllCameraTreeData', 'getCameraUrl']),
     //给后端的数据增加一些前端展示与判断需要的属性
+    getDataList() {
+      this.showLoading = true;
+      this.getAllCameraTreeData(this.query).then(res => {
+        console.log('getAllCameraTreeData', res);
+        this.sourceData = res.data[0].children;
+        this.totalSize = res.data[0].count;
+        this.showLoading = false;
+      });
+    },
     changeTreeData(arr, deptName) {
       const _this = this;
       arr.forEach(item => {
@@ -127,9 +148,9 @@ export default {
           this.allCameraData.push(temp);
           // 通过经纬度生成点位加到地图上
           if (item.x && item.x.length > 0 && item.x != 'null' && item.y && item.y.length > 0 && item.y != 'null') {
-            if (parseFloat(item.x) < 120 || parseFloat(item.y) < 28) {
-              console.log(item.puid);
-            }
+            // if (parseFloat(item.x) < 120 || parseFloat(item.y) < 28) {
+            //   console.log(item.puid);
+            // }
             const feature = _this.mapManager.xyToFeature(item.x, item.y);
             feature.set('icon', 'carmera_online');
             feature.set('props', item);
@@ -144,20 +165,29 @@ export default {
         }
       })
     },
+    changePagination(pageNo, pageSize) {
+      console.log('changePagination', pageNo, pageSize);
+      this.query.pageNum = pageNo;
+      this.getDataList();
+    },
     onSearch(val) {
       this.expandedKeys = [];
       this.searchValue = val;
-      this.allCameraData.forEach(item => {
-        if (item.title.indexOf(val) >= 0) {
-          this.expandedKeys.push(item.key);
-        }
-      });
-      this.autoExpandParent = true;
-      if (this.expandedKeys.length === 0) {
-        this.showTree = false;
-      } else {
-        this.showTree = true;
-      }
+      this.searchValue.trim();
+      this.query.name = this.searchValue;
+      this.query.pageNum = 1;
+      this.getDataList();
+      // this.allCameraData.forEach(item => {
+      //   if (item.title.indexOf(val) >= 0) {
+      //     this.expandedKeys.push(item.key);
+      //   }
+      // });
+      // this.autoExpandParent = true;
+      // if (this.expandedKeys.length === 0) {
+      //   this.showTree = false;
+      // } else {
+      //   this.showTree = true;
+      // }
     },
     onExpand(expandedKeys) {
       this.expandedKeys = expandedKeys;
@@ -174,8 +204,10 @@ export default {
     },
     videoMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-      if (feature && feature.get('features')) {
-        const clickFeature = feature.get('features')[0];
+      // if (feature && feature.get('features')) {
+      if (feature) {
+        const clickFeature = feature;
+        // const clickFeature = feature.get('features')[0];
         // const coordinates=clickFeature.getGeometry().getCoordinates();
         if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
           const videoInfoData = clickFeature.get('props');
@@ -189,7 +221,7 @@ export default {
         // this.videoSrc = 'rtmp://58.200.131.2:1935/livetv/hunantv';
         //打开摄像头播放
         // this.getCameraUrl({ userId: userId, mpId: mpid }).then(res => {
-          // this.videoSrc = res.mediaURL;
+        // this.videoSrc = res.mediaURL;
         // });
       } else {
         //打开C端工具播放
@@ -271,6 +303,11 @@ export default {
         display: none;
       }
     }
+  }
+
+  .pagination-panel {
+    text-align: right;
+    padding: 5px 20px 5px 0px;
   }
 
   .player-panel {

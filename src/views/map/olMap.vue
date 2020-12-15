@@ -185,12 +185,17 @@ export default {
       this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
       this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
       this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));
-      const layers = this.map.getLayers().array_;
-      layers.forEach(l => {
-        if (l.get('featureType')) {
-          this.map.removeLayer(l);
+      const layers = this.map.getLayers().getArray();
+      // layers.forEach(l => {
+      //   if (l.get('featureType')) {
+      //     this.map.removeLayer(l);
+      //   }
+      // });
+      for (let i = layers.length - 1; i >= 0; i--) {
+        if (layers[i].get('featureType')) {
+          this.map.removeLayer(layers[i]);
         }
-      });
+      }
     }
   },
   computed: {

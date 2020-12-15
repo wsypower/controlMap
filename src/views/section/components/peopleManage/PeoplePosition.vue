@@ -89,8 +89,8 @@ export default {
     isLoadData: function() {
       if (this.peopleFeatures.length > 0) {
         if (this.peopleLayer) {
-          this.peopleLayer.getSource().clear();
-          this.peopleLayer.getSource().addFeatures(this.peopleFeatures);
+          this.peopleLayer.getSource().getSource().clear();
+          this.peopleLayer.getSource().getSource().addFeatures(this.peopleFeatures);
         } else {
           this.peopleLayer = this.mapManager.addClusterLayerByFeatures(this.peopleFeatures);
           this.peopleLayer.set('featureType', 'PeoplePosition');
