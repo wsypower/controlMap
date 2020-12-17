@@ -5,8 +5,7 @@
  * @Last Modified time: 2019-07-05 19:24:54
  */
 // 菜单 侧边栏
-export default [
-  {
+export default [{
     path: '/section',
     title: '人员管控',
     icon: 'menu-section',
@@ -34,6 +33,20 @@ export default [
     active: false,
     role: ['admin']
   },
+  // {
+  //   path: '/light',
+  //   title: '智慧路灯',
+  //   icon: 'ludeng',
+  //   active: false,
+  //   role: ['admin']
+  // },
+  {
+    path: '/part',
+    title: '部件',
+    icon: 'bujian',
+    active: false,
+    role: ['admin']
+  }
   // {
   //   path: '/special',
   //   title: '专题服务',

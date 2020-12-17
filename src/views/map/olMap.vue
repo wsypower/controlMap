@@ -58,17 +58,17 @@ export default {
         }),
         layers: this.getBaseLayers(),
         controls: defaultControls({ attribution: false, rotate: false, zoom: false }) // 默认控件配置
-      })
-      this.mapManager = new MapManager(this.map)
+      });
+      this.mapManager = new MapManager(this.map);
       // 将mapManager状态存至vuex
-      this.setMapManager(this.mapManager)
+      this.setMapManager(this.mapManager);
     },
     getBaseLayers() {
       /**
        * @desc 定义坐标系统与范围
        */
-      const projection = projGet('EPSG:4326') // 4326坐标
-      const projectionExtent = projection.getExtent()
+      const projection = projGet('EPSG:4326'); // 4326坐标
+      const projectionExtent = projection.getExtent();
       /**
        * @desc 去掉第0层的天地图分辨率信息，不会出现缩放到最后是空白的现象
        */
@@ -88,13 +88,13 @@ export default {
         0.00000536441802978515625,
         0.000002682209014892578125,
         0.0000013411045074462890625
-      ]
+      ];
 
       /**
        * @desc 与分辨率信息需要每层严格对应起来
        */
-      const matrixIds = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-      const matrixIdszj = [15, 16, 17, 18, 19, 20]
+      const matrixIds = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+      const matrixIdszj = [15, 16, 17, 18, 19, 20];
       /**
        * @desc 天地图格网信息
        */
@@ -102,12 +102,12 @@ export default {
         origin: getTopLeft(projectionExtent),
         resolutions: tdtResolutions.slice(0, 13),
         matrixIds: matrixIds
-      })
+      });
       const tdtGridzj = new WMTSTileGrid({
         origin: getTopLeft(projectionExtent),
         resolutions: tdtResolutions.slice(9, 15),
         matrixIds: matrixIdszj
-      })
+      });
       /**
        * @desc 国家天地图图层
        */
@@ -118,12 +118,12 @@ export default {
           version: '1.0.0',
           matrixSet: 'c',
           format: 'tiles',
-          url: 'http://t{0-6}.tianditu.com/vec_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
-          // url: `${GIS_CONFIG.proxyURL}?http://t{0-6}.tianditu.gov.cn/vec_c/wmts?tk=beeeb128c8eb1ec75f73494e27e2d9e9`,
+          // url: 'http://t{0-6}.tianditu.gov.cn/vec_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          url: `${GIS_CONFIG.proxyURL}?http://t{0-6}.tianditu.gov.cn:81/vec_c/wmts?tk=efdcf2e86ad8639b547e711e1bba12d5`,
           tileGrid: tdtGrid,
           wrapX: true
         })
-      })
+      });
       const wmtsAnnoLayer = new TileLayer({
         source: new WMTS({
           layer: 'cva',
@@ -131,50 +131,18 @@ export default {
           version: '1.0.0',
           matrixSet: 'c',
           format: 'tiles',
-          url: 'http://t{0-6}.tianditu.com/cva_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
-          // url: `${GIS_CONFIG.proxyURL}?http://t{0-6}.tianditu.gov.cn/cva_c/wmts?tk=beeeb128c8eb1ec75f73494e27e2d9e9`,
+          // url: 'http://t{0-6}.tianditu.gov.cn/cva_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          url: `${GIS_CONFIG.proxyURL}?http://t{0-6}.tianditu.gov.cn:81/cva_c/wmts?tk=efdcf2e86ad8639b547e711e1bba12d5`,
           tileGrid: tdtGrid,
           wrapX: true
         })
-      })
-      /**
-       * @desc 浙江天地图图层
-       */
-      const zJVecLayer = new TileLayer({
-        source: new WMTS({
-          style: 'default',
-          version: '1.0.0',
-          layer: 'emap',
-          matrixSet: 'default028mm',
-          format: 'image/jpgpng',
-          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap/default/oss',
-          tileGrid: tdtGridzj,
-          wrapX: true
-        }),
-        minResolution: 0.0000013411045074462890625,
-        maxResolution: 0.0000858306884765625
-      })
-
-      const zJAnnoLayer = new TileLayer({
-        source: new WMTS({
-          style: 'default',
-          version: '1.0.0',
-          layer: 'emap_lab',
-          matrixSet: 'default028mm',
-          format: 'image/jpgpng',
-          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap_lab/default/oss',
-          tileGrid: tdtGridzj,
-          wrapX: true
-        }),
-        minResolution: 0.0000013411045074462890625,
-        maxResolution: 0.0000858306884765625
-      })
-      return [wmtsVecLayer, wmtsAnnoLayer]
+      });
+      return [wmtsVecLayer, wmtsAnnoLayer];
     },
     //切换时清除地图上的内容
     layerClear() {
       this.pageLayers.map(layer => {
-        this.map.removeLayer(layer)
+        this.map.removeLayer(layer);
       });
       this.setPageLayers([]);
       this.map.un('click', this.clickHandler);

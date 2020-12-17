@@ -106,6 +106,24 @@ const frameIn = [
         },
         component: _import('water/index.vue')
       },
+      {
+        path: '/light',
+        name: 'light',
+        meta: {
+          title: '智能路灯',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('light/index.vue')
+      },
+      {
+        path: '/part',
+        name: 'part',
+        meta: {
+          title: '部件',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('part/index.vue')
+      },
       // 刷新页面 必须保留
       {
         path: 'refresh',

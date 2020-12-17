@@ -407,6 +407,7 @@ export default {
     background-color: #f5f5f5;
     height: calc(100% - 70px);
     position: relative;
+    margin-bottom: 25px;
 
     .item {
       width: 100%;

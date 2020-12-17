@@ -19,6 +19,9 @@
     <div hidden>
       <record-info ref="recordInfo" :code="code" @closeTip="closeTip"></record-info>
     </div>
+    <div hidden>
+      <part-info ref="partInfo" :partData="partData" @closeTip="closePartTip"></part-info>
+    </div>
   </div>
 </template>
 <script>
@@ -32,7 +35,8 @@ import { getTypePoint } from '@/api/map/service'
 import { getDescribeLayer, getPartFeatureInfo } from '@/api/map/map'
 import { gridStyle } from '@/utils/util.map.style'
 import { listToFeatures } from '@/utils/util.map.manage'
-import RecordInfo from '@/views/records/components/RecordInfo.vue'
+import RecordInfo from '@/views/records/components/RecordInfo'
+import PartInfo from '@/views/part/components/PartInfo'
 import util from '@/utils/util'
 let selectLayer = ['区', '街道', '社区', '监督网格', '单元网格', '人员', '车辆', '视频', '案卷'];
 let gridLayer = ['区', '街道', '社区', '监督网格', '单元网格'];
@@ -44,7 +48,8 @@ export default {
     },
   },
   components: {
-    RecordInfo
+    RecordInfo,
+    PartInfo
   },
   data() {
     return {
@@ -92,7 +97,8 @@ export default {
       }, ],
       selectLayer: [],
       code: '',
-      partSelectLayer: []
+      partSelectLayer: [],
+      partData: {}
     }
   },
   computed: {
@@ -117,7 +123,7 @@ export default {
       this.allLayers.forEach(layer => {
         if (gridLayer.includes(layer.name)) {
           getTypePoint(layer.name).then(data => {
-            console.log('区县数据====', data);
+            console.log('区县数据====', data.length);
             layer.lyr = _this.mapManager.addVectorLayerByFeatures(data, gridStyle(layer.color), 33);
             layer.lyr.setVisible(false);
           });
@@ -126,21 +132,21 @@ export default {
           if (layer.name == '人员') {
             _this.getAllPeopleDataList({ userId: userId }).then(res => {
               const features = listToFeatures(res, '人员');
-              console.log('所有人员数据=====', features);
+              console.log('所有人员数据=====', features.length);
               layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
               layer.lyr.setVisible(false);
             });
           } else if (layer.name == '车辆') {
             _this.getAllCarDataList({ userId: userId }).then(res => {
               const features = listToFeatures(res, '车辆');
-              console.log('所有人员数据=====', features);
+              console.log('所有车辆数据=====', features.length);
               layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
               layer.lyr.setVisible(false);
             });
           } else if (layer.name == '视频') {
             _this.getAllCameraDataList({ userId: userId }).then(res => {
               const features = listToFeatures(res.data, '视频');
-              console.log('所有视频数据=====', features);
+              console.log('所有视频数据=====', features.length);
               layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
               layer.lyr.setVisible(false);
             });
@@ -152,7 +158,7 @@ export default {
               curpage: 1,
               pagesize: 10000
             }).then(res => {
-              console.log('所有案件数据=====', res);
+              console.log('所有案件数据=====', res.length);
               const features = listToFeatures(res.data, '案卷');
               layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
               layer.lyr.setVisible(false);
@@ -169,6 +175,12 @@ export default {
         positioning: 'bottom-center',
         element: this.$refs.recordInfo.$el
       });
+      // this.partOverlay = this.mapManager.addOverlay({
+      //   id: 'partOverlay',
+      //   offset: [0, -20],
+      //   positioning: 'bottom-center',
+      //   element: this.$refs.partInfo.$el
+      // });
     },
     toggleService(layer) {
       if (layer.name === '全部图层') {
@@ -224,7 +236,11 @@ export default {
           width: this.map.getSize()[0],
           height: this.map.getSize()[1]
         }).then(data => {
-          console.log(data.features);
+          if (data.features.length > 0) {
+            const clickFeature = data.features[0];
+            this.partData = clickFeature.properties;
+            this.partOverlay.setPosition(clickFeature.geometry.coordinates);
+          }
         });
       }
     },
@@ -232,8 +248,8 @@ export default {
       getDescribeLayer('dongtaibujian').then(data => {
         const partLayers = [];
         data.layerDescriptions.forEach(layer => {
-          let name = layer.layerName.indexOf(':') != -1 ? layer.layerName.split(':')[1] : layer.layerName;
-          let wmsLayer = new ImageLayer({
+          const name = layer.layerName.indexOf(':') != -1 ? layer.layerName.split(':')[1] : layer.layerName;
+          const wmsLayer = new ImageLayer({
             title: name,
             layerType: 'part',
             visible: false,
@@ -248,7 +264,7 @@ export default {
           });
           this.allLayers.push({
             name: name,
-            icon: require('@/assets/mapImage/qx.png'),
+            icon: require('@/assets/mapImage/layer.png'),
             lyr: wmsLayer
           });
           partLayers.push(wmsLayer);
@@ -259,7 +275,10 @@ export default {
         });
         this.map.addLayer(partLayerGroup);
       });
-    }
+    },
+    closePartTip() {
+      this.partOverlay.setPosition(undefined);
+    },
   },
   destroyed() {
     this.allLayers.forEach(layer => {

@@ -158,3 +158,11 @@ export function getPartFeatureInfo(params) {
     }
   })
 }
+
+export function getEventTypeTreeData(data) {
+  return request({
+    url: `eventtype/getEventTypeTreeData`,
+    method: 'get',
+    params: data
+  });
+}
