@@ -29,7 +29,14 @@ export default {
           watchPlaceList: []
         }
     },
-    computed:{},
+    computed:{
+      day: function(){
+        let y = new Date().getFullYear();
+        let M = new Date().getMonth() + 1;
+        let d = new Date().getDate();
+        return y + '-' + M + '-' + d
+      }
+    },
     mounted(){
       this.getAllWatchPlaceData({userId:userId}).then( res => {
         this.watchPlaceList = res;
@@ -41,7 +48,9 @@ export default {
       ...mapActions('drainoffwater/statistical', ['getWaterLevelTrendData']),
       //获取全部数据
       getChartData(){
-          this.getWaterLevelTrendData({userId: userId, watchPlaceId: this.watchPlaceId}).then(res=>{
+        let startTime = new Date(this.day + ' 00:00:00').getTime();
+        let endTime = new Date(this.day + ' 23:59:59').getTime();
+          this.getWaterLevelTrendData({userId: userId, watchPlaceId: this.watchPlaceId, startTime:startTime, endTime: endTime}).then(res=>{
               console.log('getWaterLevelTrendData',res);
               let xArr = [];
               let yArr = [];
