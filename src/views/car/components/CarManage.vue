@@ -7,9 +7,9 @@
       <a-tab-pane tab="轨迹查询" key="2">
         <car-trail :carDataList="carDataList" :infoId="infoId"></car-trail>
       </a-tab-pane>
-      <a-tab-pane tab="违规查询" key="3">
+      <!-- <a-tab-pane tab="违规查询" key="3">
         <violate-rules></violate-rules>
-      </a-tab-pane>
+      </a-tab-pane> -->
     </a-tabs>
   </div>
 </template>
@@ -127,7 +127,7 @@ export default {
     .ant-tabs-nav {
       width: 100%;
       .ant-tabs-tab {
-        width: 33.3% !important;
+        width: 50% !important;
         text-align: center;
         margin: 0px;
       }
