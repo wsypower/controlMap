@@ -8,7 +8,7 @@
         <div flex="fir:left cross:center">
           <label>监测场景：</label>
           <a-select v-model="watchPlaceId" @change="onChange" style="flex:1">
-            <a-select-option value="all">全部</a-select-option>
+            <a-select-option value="">全部</a-select-option>
             <a-select-option v-for="(item, index) in watchPlaceList" :value="item.id" :key="index">{{item.name}}</a-select-option>
           </a-select>
         </div>
@@ -25,7 +25,7 @@ export default {
     name: 'WaterTrend',
     data(){
         return {
-          watchPlaceId: 'all',
+          watchPlaceId: '',
           watchPlaceList: []
         }
     },

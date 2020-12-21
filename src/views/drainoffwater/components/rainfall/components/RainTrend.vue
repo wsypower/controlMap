@@ -50,8 +50,8 @@ export default {
       console.log('getChartData dayRange',this.dayRange);
       let params = {
         userId:userId,
-        startTime: new Date(this.dayRange[0]._i).getTime(),
-        endTime: new Date(this.dayRange[1]._i).getTime()
+        startTime: new Date(this.dayRange[0]._i).getTime().toString(),
+        endTime: new Date(this.dayRange[1]._i).getTime().toString()
       }
       this.getRainTrendData(params).then(res=>{
         console.log('getRainTrendData',res);

@@ -1,8 +1,8 @@
 <template>
   <div class="video-manage" flex="dir:top">
     <div class="search-panel">
-      <my-address @getAddressData="getAddressData"></my-address>
-      <div flex="fir:left cross:center" style="margin:10px 0px;">
+      <!--<my-address @getAddressData="getAddressData"></my-address>-->
+      <div flex="fir:left cross:center" style="margin-bottom: 10px">
         <label>监测点名称：</label>
         <a-input placeholder="输入监测点名称" v-model="watchPointName" style="flex:1" />
       </div>
@@ -34,7 +34,7 @@ import { mapState,mapActions } from 'vuex'
 import util from '@/utils/util';
 import {mixins} from '@/mixins/index'
 import {videoPointStyle} from '@/utils/util.map.style'
-import DetailInfo from '../common/DetailInfo.vue'
+import DetailInfo from './components/DetailInfo.vue'
 const userId = util.cookies.get('userId');
 export default {
   name: 'manage',
@@ -92,16 +92,16 @@ export default {
   },
   methods:{
     ...mapActions('gas/manage', ['getAllGasMacTreeData','getOneGasMacData','getGasTrendDataForOneMac']),
-    getAddressData(val){
-      console.log('selected city data',val);
-      this.selectedCity = val;
-    },
+    // getAddressData(val){
+    //   console.log('selected city data',val);
+    //   this.selectedCity = val;
+    // },
     // 获取所有燃气监测设备
     getAllGasMac(){
       //入参：城市范围、监测点名称，用户ID
       let params = {
         userId:userId,
-        area: this.selectedCity,
+        // area: this.selectedCity,
         watchPointName: this.watchPointName
       }
       this.showLoading = true;

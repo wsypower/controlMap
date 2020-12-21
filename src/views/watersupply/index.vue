@@ -1,11 +1,12 @@
 <template>
   <div class="page">
-    <content-tabs :tabData="tabData"></content-tabs>
+    <content-tabs :tabData="tabData" @changeTab="changeTab"></content-tabs>
   </div>
 </template>
 <script>
-import Manage from './Manage.vue'
-import StatisticalAnalysis from './StatisticalAnalysis.vue'
+import waterQuality from './components/waterquality/index.vue';
+import pressure from './components/pressure/index.vue'
+import flow from './components/flow/index.vue'
 export default {
   name: 'waterSupply',
   data() {
@@ -14,19 +15,28 @@ export default {
       tabData: [
         {
           name: '水质监测',
-          component: Manage,
+          component: waterQuality,
           hasScroll: false
         },
         {
-          name: '统计分析',
-          component: StatisticalAnalysis,
+          name: '压力监测',
+          component: pressure,
+          hasScroll: false
+        },
+        {
+          name: '流量监测',
+          component: flow,
           hasScroll: false
         }
       ]
     }
   },
   mounted() {},
-  methods: {}
+  methods: {
+    changeTab(val) {
+
+    }
+  }
 }
 </script>
 

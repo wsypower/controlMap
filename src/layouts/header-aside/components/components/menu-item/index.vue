@@ -1,13 +1,13 @@
 <template>
-  <!--<a-tooltip placement="right">-->
-    <!--<template slot="title">-->
-      <!--<span>{{title}}</span>-->
-    <!--</template>-->
+  <a-tooltip placement="right" overlayClassName="defaultClass">
+    <template slot="title">
+      <span>{{title}}</span>
+    </template>
     <div class="menu__item" flex="main:center cross:center" @click="$emit('handlerClick')">
       <div v-if="title==='sso'" class="sso"></div>
       <cg-icon-svg v-else :name="icon" class="menu__item__icon"></cg-icon-svg>
     </div>
-  <!--</a-tooltip>-->
+  </a-tooltip>
 </template>
 
 <script>
@@ -27,7 +27,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-//menu-item
 .menu__item {
   width: 60px;
   height: 60px;
@@ -45,17 +44,11 @@ export default {
     font-size: $fs-menu-item-icon;
     color: $color-menu-item;
   }
-  .sso{
+  .sso {
     width: 40px;
     height: 40px;
     background: url('~@/assets/images/sso_logo.png') no-repeat;
     background-size: 100% 100%;
   }
 }
-  /*::v-deep.ant-tooltip-placement-right .ant-tooltip-arrow{*/
-    /*border-right-color: rgb(0, 116, 237);*/
-  /*}*/
-  /*::v-deep.ant-tooltip-inner{*/
-    /*background-color: rgb(0, 104, 233);*/
-  /*}*/
 </style>

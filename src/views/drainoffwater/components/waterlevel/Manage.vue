@@ -1,11 +1,11 @@
 <template>
   <div class="video-manage" flex="dir:top">
     <div class="search-panel">
-      <my-address @getAddressData="getAddressData"></my-address>
+      <!--<my-address @getAddressData="getAddressData"></my-address>-->
       <div flex="fir:left cross:center" style="margin-top:10px">
         <label>监测场景：</label>
         <a-select v-model="watchPlaceId" style="flex:1">
-          <a-select-option value="all">全部</a-select-option>
+          <a-select-option value="">全部</a-select-option>
           <a-select-option v-for="(item, index) in watchPlaceList" :value="item.id" :key="index">{{
             item.name
           }}</a-select-option>
@@ -43,7 +43,7 @@ import { mapState,mapActions } from 'vuex'
 import util from '@/utils/util';
 import {mixins} from '@/mixins/index'
 import {videoPointStyle} from '@/utils/util.map.style'
-import DetailInfo from '../../../common/DetailInfo.vue'
+import DetailInfo from './components/DetailInfo.vue'
 const userId = util.cookies.get('userId');
 export default {
   name: 'manage',
@@ -56,7 +56,7 @@ export default {
       //监测场景list
       watchPlaceList: [],
       //监测场景key
-      watchPlaceId: 'all',
+      watchPlaceId: '',
       //地图相关
       levelFeatures: [],
       levelLayer: null,
@@ -108,10 +108,10 @@ export default {
   },
   methods:{
     ...mapActions('drainoffwater/manage', ['getAllWatchPlaceData', 'getAllWaterLevelMacTreeData','getOneWaterLevelMacData','getWaterLevelTrendDataForOneMac']),
-    getAddressData(val){
-      console.log('selected city data',val);
-      this.selectedCity = val;
-    },
+    // getAddressData(val){
+    //   console.log('selected city data',val);
+    //   this.selectedCity = val;
+    // },
     // 获取水位监测设备
     getAllWaterLevelMac(){
       this.showLoading = true;
@@ -119,7 +119,7 @@ export default {
       console.log('area: ',this.selectedCity,'watchPlaceId:' + this.watchPlaceId,'watchPointName: ' + this.watchPointName, 'userId: ' + userId);
       let params = {
         userId: userId,
-        area: this.selectedCity,
+        // area: this.selectedCity,
         watchPlaceId: this.watchPlaceId,
         watchPointName: this.watchPointName
       }
@@ -189,14 +189,12 @@ export default {
       //地图上的点位放大居中显示
       // 获取详情数据
       this.detailInfoData.detailMessage.name = info.dept + '-' +info.name;
-      this.detailInfoData.detailMessage.value = info.value;
       this.detailInfoData.detailMessage.unit = info.unit;
       this.detailInfoData.detailMessage.flagName = '水位';
       this.detailInfoData.type = 'water';
       console.log('macId: ' + info.id, 'userId: ' + userId);
       this.getOneWaterLevelMacData({userId: userId,macId: info.id}).then(res=>{
-          this.detailInfoData.detailMessage.yty = res.yty;
-          this.detailInfoData.detailMessage.mtm = res.mtm;
+        this.detailInfoData.detailMessage.value = res.waterLevel;
       });
       this.getWaterLevelTrendDataForOneMac({userId: userId,macId: info.id}).then(res=>{
           let needData = res.reduce((acc,item) => {

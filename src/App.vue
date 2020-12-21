@@ -29,4 +29,10 @@ export default {
   height: 100%;
   // min-height: 500px;
 }
+.defaultClass.ant-tooltip-placement-right .ant-tooltip-arrow{
+  border-right-color: rgba(0, 102, 232, 0.75);
+}
+.defaultClass .ant-tooltip-inner{
+  background-color: rgba(0, 102, 232, 0.75)
+}
 </style>

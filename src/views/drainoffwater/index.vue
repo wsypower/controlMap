@@ -5,7 +5,7 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import VideoDistribute from './components/video/VideoDistribute.vue'
+import PumpStation from './components/pump/index.vue'
 import Rainfall from './components/rainfall/index.vue'
 import WaterLevel from './components/waterlevel/index.vue'
 import Manhole from './components/manhole/index.vue'
@@ -16,11 +16,6 @@ export default {
       //tab标签
       tabData: [
         {
-          name: '视频监控',
-          component: VideoDistribute,
-          hasScroll: false
-        },
-        {
           name: '雨量监测',
           component: Rainfall,
           hasScroll: false
@@ -28,6 +23,11 @@ export default {
         {
           name: '水位监测',
           component: WaterLevel,
+          hasScroll: false
+        },
+        {
+          name: '排水泵站',
+          component: PumpStation,
           hasScroll: false
         },
         {

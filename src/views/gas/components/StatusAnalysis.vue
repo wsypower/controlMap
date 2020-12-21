@@ -1,7 +1,7 @@
 <template>
   <div class="analysis-panel">
     <div class="panel-header" flex="dir:left cross:center">
-      <span class="title">监测设备统计</span>
+      <span class="title">检查井监测设备统计</span>
     </div>
     <div class="panel-content" ref="statusPieChart"></div>
   </div>

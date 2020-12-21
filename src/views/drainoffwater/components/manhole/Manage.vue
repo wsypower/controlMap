@@ -1,7 +1,7 @@
 <template>
   <div class="video-manage" flex="dir:top">
     <div class="search-panel">
-      <my-address @getAddressData="getAddressData"></my-address>
+      <!--<my-address @getAddressData="getAddressData"></my-address>-->
       <div flex="fir:left cross:center" style="margin-top:10px">
         <label>井盖状态：</label>
         <a-select v-model="query.statusId" style="flex:1">
@@ -15,10 +15,10 @@
         <label>详细地址：</label>
         <a-input placeholder="输入详细地址" v-model="query.address" style="flex:1" />
       </div>
-      <div flex="fir:left cross:center" style="margin-bottom:10px;">
-        <label>井盖编号：</label>
-        <a-input placeholder="输入井盖编号" v-model="query.code" style="flex:1" />
-      </div>
+      <!--<div flex="fir:left cross:center" style="margin-bottom:10px;">-->
+        <!--<label>井盖编号：</label>-->
+        <!--<a-input placeholder="输入井盖编号" v-model="query.code" style="flex:1" />-->
+      <!--</div>-->
       <a-button type="primary" style="width: 100%;margin-bottom: 10px;" @click="onSearch">查询</a-button>
       <div>共计{{ totalSize }}个查询结果</div>
     </div>
@@ -35,11 +35,11 @@
           flex="cross:center main:justify"
           @click="clickDataItem(item, index)"
         >
-          <div class="item_left">
+          <div class="item_left" flex="cross:center">
             <cg-icon-svg name="manhole" class="svg_icon"></cg-icon-svg>
-            <span>{{ item.name }}</span>
+            <span>{{ item.address }}</span>
           </div>
-          <div class="item_right">
+          <div class="item_right" flex="cross:center">
             <span>{{ item.statusName }}</span>
             <cg-icon-svg name="pin" class="svg_icon"></cg-icon-svg>
           </div>
@@ -213,7 +213,7 @@ export default {
       } else {
         this.$refs.manholeOverlay.$el.style.backgroundImage = 'linear-gradient(90deg, #0065ea 0%, #00a5ff 100%)'
       }
-      this.modalTitle = data.imei
+      this.modalTitle = data.address
       this.tipComponentId = ManholeInfo
       this.infoData = data;
       const xy=[parseFloat(data.x), parseFloat(data.y)];
@@ -283,7 +283,6 @@ export default {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          vertical-align: middle;
         }
       }
       .item_right {
@@ -298,7 +297,6 @@ export default {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          vertical-align: middle;
         }
       }
     }

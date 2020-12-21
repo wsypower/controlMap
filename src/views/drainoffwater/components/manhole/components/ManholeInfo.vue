@@ -1,7 +1,5 @@
 <template>
   <div class="info">
-    <div><span>所在区域：</span>{{ info.area }}</div>
-    <div><span>详细地址：</span>{{ info.address }}</div>
     <div><span>当前状态：</span>{{ info.statusName }}</div>
   </div>
 </template>
