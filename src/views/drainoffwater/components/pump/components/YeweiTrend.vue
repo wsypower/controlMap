@@ -1,7 +1,7 @@
 <template>
   <div class="analysis-panel">
     <div class="panel-header" flex="dir:left cross:center">
-      <span class="title">雨量趋势图</span>
+      <span class="title">液位趋势图</span>
     </div>
     <div class="panel-content">
       <div class="time-range" flex="dir:top cross:center">
@@ -25,7 +25,7 @@ import { mapActions } from 'vuex'
 import util from '@/utils/util';
 const userId = util.cookies.get('userId');
 export default {
-  name: 'RainTrend',
+  name: 'YeweiTrend',
   data(){
     return {
       dateFormat: 'YYYY-MM-DD',
@@ -43,7 +43,7 @@ export default {
     }
   },
   methods:{
-    ...mapActions('drainoffwater/statistical', ['getRainTrendData']),
+    ...mapActions('drainoffwater/statistical', ['getDrainpumpTrendData']),
     moment,
     //获取全部数据
     getChartData(){
@@ -53,8 +53,8 @@ export default {
         startTime: new Date(this.dayRange[0]._i).getTime(),
         endTime: new Date(this.dayRange[1]._i).getTime()
       }
-      this.getRainTrendData(params).then(res=>{
-        console.log('getRainTrendData',res);
+      this.getDrainpumpTrendData(params).then(res=>{
+        console.log('getDrainpumpTrendData',res);
         let xArr = [];
         let yArr = [];
         res.forEach(item => {

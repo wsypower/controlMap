@@ -5,7 +5,7 @@
       <div flex="fir:left cross:center" style="margin-top:10px">
         <label>井盖状态：</label>
         <a-select v-model="query.statusId" style="flex:1">
-          <a-select-option value="all">全部</a-select-option>
+          <a-select-option value="">全部</a-select-option>
           <a-select-option value="normal">正常</a-select-option>
           <a-select-option value="outline">离线</a-select-option>
           <a-select-option value="warn">警告</a-select-option>
@@ -37,7 +37,7 @@
         >
           <div class="item_left" flex="cross:center">
             <cg-icon-svg name="manhole" class="svg_icon"></cg-icon-svg>
-            <span>{{ item.address }}</span>
+            <span :title="item.address">{{ item.address }}</span>
           </div>
           <div class="item_right" flex="cross:center">
             <span>{{ item.statusName }}</span>
@@ -97,7 +97,7 @@ export default {
         //选择的城市---数组形式
         area: '',
         //井盖状态
-        statusId: 'all',
+        statusId: '',
         //井盖地址
         address: '',
         //井盖编号
@@ -278,7 +278,7 @@ export default {
         }
         span {
           display: inline-block;
-          max-width: 150px;
+          max-width: 210px;
           margin-left: 5px;
           overflow: hidden;
           text-overflow: ellipsis;

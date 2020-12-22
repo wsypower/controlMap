@@ -1,15 +1,15 @@
 <template>
   <div class="statistical" flex="dir:top">
     <status-analysis></status-analysis>
-    <rain-trend></rain-trend>
+    <yewei-trend></yewei-trend>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import StatusAnalysis from './components/StatusAnalysis.vue'
-import RainTrend from './components/RainTrend.vue'
+import YeweiTrend from './components/YeweiTrend.vue'
 export default{
     name:'statistical',
-    components:{ RainTrend, StatusAnalysis },
+    components:{ YeweiTrend, StatusAnalysis },
     data(){
       return {
       }

@@ -133,7 +133,7 @@ export default {
       this.getAllRainMac();
     },
 
-    //点击树中某个节点（某个人员）时触发
+    //点击某个设备时触发
     onSelect(item,index){
       this.activeIndex = index;
       this.showInfo(item);

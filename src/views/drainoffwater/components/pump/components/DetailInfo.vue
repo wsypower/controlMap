@@ -17,9 +17,9 @@
           </div>
         </div>
         <div class="detail-right" flex="dir:top main:justify">
-          <div class="detail-right_item">瞬时流量：130.96m³/h</div>
-          <div class="detail-right_item">液位差1：0.27m</div>
-          <div class="detail-right_item">液位差2：0m</div>
+          <div class="detail-right_item">瞬时流量：{{info.detailMessage.momentFlow}}m³/h</div>
+          <div class="detail-right_item">液位差1：{{info.detailMessage.levelDistance1}}m</div>
+          <div class="detail-right_item">液位差2：{{info.detailMessage.levelDistance2}}m</div>
         </div>
       </div>
       <div v-if="info.chartData[0].length>0" class="line-chart" ref="lineChart"></div>

@@ -3,6 +3,8 @@ import {
   getRainTrendData,
   getWaterStatusAnalysisData,
   getWaterLevelTrendData,
+  getDrainpumpMacStatusAnalysisData,
+  getDrainpumpTrendData,
   getManholeStatusAnalysisData
 } from '@/api/drainoffwater/statistical.js'
 
@@ -50,6 +52,28 @@ export default {
     getWaterLevelTrendData(state, data) {
       return new Promise((resolve, reject) => {
         getWaterLevelTrendData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            reject(err)
+          })
+      })
+    },
+    getDrainpumpMacStatusAnalysisData(state, data) {
+      return new Promise((resolve, reject) => {
+        getDrainpumpMacStatusAnalysisData(data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            reject(err)
+          })
+      })
+    },
+    getDrainpumpTrendData(state, data) {
+      return new Promise((resolve, reject) => {
+        getDrainpumpTrendData(data)
           .then(res => {
             resolve(res)
           })

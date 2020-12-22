@@ -87,6 +87,46 @@ export function getWaterLevelTrendData(data) {
 }
 
 /**
+ * @description 获取排水泵站设备状态分析数据
+ * @author moxuejuan
+ * @date 2020-12-22 09:28
+ * @method：GET
+ * @response：{
+ *     {String} name: 状态名称,
+ *     {Number} num: 个数
+ * }
+ */
+
+export function getDrainpumpMacStatusAnalysisData(data) {
+  console.log('api:getDrainpumpMacStatusAnalysisData', data)
+  return request({
+    url: 'municipal/getDrainpumpMacStatusAnalysisData?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * @description 获取液位趋势图
+ * @author moxuejuan
+ * @date 2020-12-22 09:28
+ * @param {Number} startTime 开始日期时间戳
+ * @param {Number} endTime 结束日期时间戳
+ * @method：GET
+ * @response：{
+ *
+ * }
+ */
+
+export function getDrainpumpTrendData(data) {
+  return request({
+    url: 'municipal/getDrainpumpTrendData?_t=' + new Date().getTime(),
+    method: 'get',
+    params: data
+  })
+}
+
+/**
  * @description 获取井盖设备状态分析数据
  * @author moxuejuan
  * @date 2020-03-20 15:56
