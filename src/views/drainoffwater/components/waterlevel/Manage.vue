@@ -27,6 +27,7 @@
           <img slot="dept" src="~@img/avatar-jiance.png" />
           <img slot="equipment" src="~@img/avatar-equipment.png" />
           <img slot="equipment-outline" src="~@img/avatar-equipment-outline.png" />
+          <img slot="equipment-warn" src="~@img/avatar-equipment-warn.png" />
         </a-tree>
       </cg-container>
       <div v-if="!showLoading && treeData.length == 0" class="nodata-panel" flex="main:center cross:center">
@@ -139,11 +140,14 @@ export default {
           item.title = item.name;
           item.key = item.id;
           item.dept = deptName;
-          if(item.online){
+          if(item.online==='1'){
             item.slots = {icon: 'equipment'};
           }
-          else{
+          else if(item.online==='2'){
             item.slots = {icon: 'equipment-outline'};
+          }
+          else{
+            item.slots = {icon: 'equipment-warn'};
           }
           item.class = 'itemClass';
           let img;

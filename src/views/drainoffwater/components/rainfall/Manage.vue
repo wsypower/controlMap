@@ -20,7 +20,8 @@
              :key="index"
              @click="onSelect(item,index)">
           <img v-if="item.online==='1'" src="~@img/avatar-equipment.png"/>
-          <img v-else src="~@img/avatar-equipment.png"/>
+          <img v-else-if="item.online==='2'" src="~@img/avatar-equipment-outline.png"/>
+          <img v-else src="~@img/avatar-equipment-warn.png"/>
           <span class="title">{{item.name}}</span>
         </div>
       </cg-container>
