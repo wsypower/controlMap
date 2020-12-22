@@ -151,7 +151,7 @@ export default {
           this.allCarData.push(temp);
           // 通过经纬度生成点位加到地图上
           if (item.x && item.x.length > 0 && item.y && item.y.length > 0) {
-            if (parseFloat(item.x) == 0 && parseFloat(item.y) == 0) {
+            if (parseFloat(item.x) == 0 || parseFloat(item.y) == 0) {
               return true;
             }
             const feature = _this.mapManager.xyToFeature(item.x, item.y);

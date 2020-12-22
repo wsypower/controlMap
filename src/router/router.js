@@ -124,6 +124,15 @@ const frameIn = [
         },
         component: _import('part/index.vue')
       },
+      {
+        path: '/parking',
+        name: 'parking',
+        meta: {
+          title: '停车中心',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('parking/index.vue')
+      },
       // 刷新页面 必须保留
       {
         path: 'refresh',

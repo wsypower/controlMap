@@ -46,6 +46,13 @@ export default [{
     icon: 'bujian',
     active: false,
     role: ['admin']
+  },
+  {
+    path: '/parking',
+    title: '停车中心',
+    icon: 'parking',
+    active: false,
+    role: ['admin']
   }
   // {
   //   path: '/special',
