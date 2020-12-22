@@ -106,7 +106,7 @@ export default {
                     type: "pie",
                     center: ["30%", "50%"],
                     radius: ["55%", "70%"],
-                    color: [ "#50cf3f", "#cccccc", "#cc8718"],
+                    color: [ "#50cf3f",  "#cc8718", "#cccccc"],
                     startAngle: 135,
                     label: {
                         show: false

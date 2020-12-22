@@ -11,14 +11,14 @@
       <div class="detail" flex="dir:left">
         <div class="detail-left" flex="dir:left cross:center">
           <img src="~@img/shui.png" />
-          <div class="mes" flex="dir:top">
-            <span>{{ info.detailMessage.value }}<em>{{ info.detailMessage.unit }}</em></span>
+          <div class="mes" flex="dir:top cross:center">
+            <span>{{ info.detailMessage.momentFlow }}<em>{{ info.detailMessage.unit }}</em></span>
             <span>瞬时流量</span>
           </div>
         </div>
         <div class="detail-right" flex="dir:left cross:center">
-          <div class="mes" flex="dir:top">
-            <span>{{ info.detailMessage.value }}<em>{{ info.detailMessage.unit }}</em></span>
+          <div class="mes" flex="dir:top cross:center">
+            <span>{{ info.detailMessage.totalFlow }}<em>m³</em></span>
             <span>累计流量</span>
           </div>
         </div>
@@ -132,7 +132,7 @@ export default{
           }
         },
         yAxis: {
-          name: '供水流量趋势图',
+          name: '近3小时趋势图',
           nameTextStyle:{
             padding: [0,0,0,30],
             fontSize: 13,
@@ -200,7 +200,6 @@ export default{
         margin-right: 10px;
       }
       span {
-        margin-left: 10px;
         color: #ffffff;
         font-size: 16px;
       }
@@ -235,7 +234,7 @@ export default{
       height: 102px;
       padding: 0px 20px 0px 30px;
       background-color: #f5f5f5;
-      .detail-left {
+      .detail-left,.detail-right {
         img {
           width: 72px;
           height: 72px;
@@ -258,25 +257,6 @@ export default{
             color: #666666;
             line-height: 15px;
           }
-        }
-      }
-      .detail-right {
-        padding: 16px 20px;
-        span {
-          font-family: PingFang-SC-Medium;
-          font-size: 14px;
-          color: #333333;
-          &:first-child {
-            margin-right: 20px;
-          }
-          i {
-          }
-        }
-        .status-c{
-          font-family: PingFang-SC-Heavy;
-          font-size: 30px;
-          color: #2c90f3;
-          margin-bottom: -20px;
         }
       }
     }

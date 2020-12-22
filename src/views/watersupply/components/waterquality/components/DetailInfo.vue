@@ -11,9 +11,9 @@
       <div class="detail" flex="dir:left main:justify">
         <div class="item" v-for="(item, index) in info.detailMessage" :key="index" flex="dir:top cross:center">
           <div class="item-header">{{titleArr[index]}}当前监测值</div>
-          <div class="item-value">{{item.value}}{{item.unit}}</div>
+          <div class="item-value">{{item.value}}<span style="font-size: 14px">{{item.unit}}</span></div>
           <div>正常值参考：</div>
-          <div>[6.5~8.5]</div>
+          <div>{{item.range}}</div>
         </div>
       </div>
       <div class="chart-panel">
@@ -193,7 +193,6 @@ export default{
         margin-right: 10px;
       }
       span {
-        margin-left: 10px;
         color: #ffffff;
         font-size: 16px;
       }
@@ -244,8 +243,7 @@ export default{
         }
         .item-value{
           font-family: PingFang-SC-Heavy;
-          font-size: 36px;
-          line-height: 50px;
+          font-size: 30px;
           color: #2c90f3;
         }
       }

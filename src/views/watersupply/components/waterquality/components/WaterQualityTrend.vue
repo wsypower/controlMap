@@ -44,6 +44,12 @@ export default {
     computed:{
       unit: function(){
         return UNIT[this.waterFlag]
+      },
+      day: function(){
+        let y = new Date().getFullYear();
+        let M = new Date().getMonth() + 1;
+        let d = new Date().getDate();
+        return y + '-' + M + '-' + d
       }
     },
     mounted(){
@@ -54,7 +60,9 @@ export default {
         moment,
         //获取全部数据
         getChartData(){
-            this.getWaterQualityTrendData({userId: userId}).then(res=>{
+          let startTime = new Date(this.day + ' 00:00:00').getTime();
+          let endTime = new Date(this.day + ' 23:59:59').getTime();
+            this.getWaterQualityTrendData({userId: userId, startTime:startTime, endTime: endTime}).then(res=>{
                 console.log('getWaterQualityTrendData',res);
                 let xArr = [];
                 let yPHArr = [];
@@ -62,9 +70,9 @@ export default {
                 let yRCArr = [];
               res.forEach(item => {
                 xArr.push(item.dayTime);
-                yPHArr.push(item.phValue);
-                yTurbidityArr.push(item.turbidityValue);
-                yRCArr.push(item.rcValue);
+                yPHArr.push(item.ph);
+                yTurbidityArr.push(item.turbidity);
+                yRCArr.push(item.residualChlorine);
               })
               this.chartData = [xArr,yPHArr,yTurbidityArr,yRCArr]
               let nowChartData = [xArr,yPHArr];
@@ -167,7 +175,7 @@ export default {
             height: 20,
             bottom: 10,
             start: 10,
-            end: 16,
+            end: 25,
             handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
             handleSize: '110%',
             handleStyle:{

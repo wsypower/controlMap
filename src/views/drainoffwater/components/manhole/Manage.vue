@@ -1,14 +1,12 @@
 <template>
   <div class="video-manage" flex="dir:top">
     <div class="search-panel">
-      <!--<my-address @getAddressData="getAddressData"></my-address>-->
       <div flex="fir:left cross:center" style="margin-top:10px">
         <label>井盖状态：</label>
-        <a-select v-model="query.statusId" style="flex:1">
+        <a-select v-model="query.status" style="flex:1">
           <a-select-option value="">全部</a-select-option>
-          <a-select-option value="normal">正常</a-select-option>
-          <a-select-option value="outline">离线</a-select-option>
-          <a-select-option value="warn">警告</a-select-option>
+          <a-select-option value="0">正常</a-select-option>
+          <a-select-option value="1">警告</a-select-option>
         </a-select>
       </div>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
@@ -31,7 +29,7 @@
           v-for="(item, index) in sourceData"
           :key="index"
           class="item"
-          :class="{ active: activeIndex === index, warning: item.statusId === 1, outline: item.statusId === 2 }"
+          :class="{ active: activeIndex === index, warning: item.status === 1}"
           flex="cross:center main:justify"
           @click="clickDataItem(item, index)"
         >
@@ -94,14 +92,10 @@ export default {
       query: {
         deviceType: 3,
         userId: userId,
-        //选择的城市---数组形式
-        area: '',
         //井盖状态
-        statusId: '',
+        status: '',
         //井盖地址
         address: '',
-        //井盖编号
-        code: '',
         pageNo: 1,
         pageSize: 50
       },
@@ -252,10 +246,10 @@ export default {
         background-color: #e9f6ff;
       }
       &.warning {
-        color: #f07171;
+        //color: #f07171;
         .item_left {
           .svg_icon {
-            color: #f07171;
+            color: #cc8718;
           }
         }
       }

@@ -33,7 +33,6 @@
 
     },
     methods:{
-      ...mapActions('section/common', ['getAllPeopleDataList']),
       init(){
 
       },

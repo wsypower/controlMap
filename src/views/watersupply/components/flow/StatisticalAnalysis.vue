@@ -1,15 +1,15 @@
 <template>
   <div class="statistical" flex="dir:top">
     <status-analysis></status-analysis>
-    <water-quality-trend></water-quality-trend>
+    <flow-trend></flow-trend>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import StatusAnalysis from './components/StatusAnalysis.vue'
-import WaterQualityTrend from './components/WaterQualityTrend.vue'
+import FlowTrend from './components/FlowTrend.vue'
 export default{
     name:'statistical',
-    components:{ WaterQualityTrend, StatusAnalysis },
+    components:{ FlowTrend, StatusAnalysis },
     data(){
       return {
       }

@@ -1,7 +1,7 @@
 <template>
   <div class="analysis-panel">
     <div class="panel-header" flex="dir:left cross:center">
-      <span class="title">水质监测设备统计</span>
+      <span class="title">压力监测设备统计</span>
     </div>
     <div class="panel-content" ref="statusPieChart"></div>
   </div>
@@ -23,11 +23,11 @@ export default {
         this.getChartData();
     },
     methods:{
-        ...mapActions('watersupply/statistical', ['getStatusAnalysisData']),
+        ...mapActions('watersupply/statistical', ['getPressMacStatusAnalysisData']),
         //获取全部数据
         getChartData(){
-            this.getStatusAnalysisData({userId: userId}).then(res=>{
-                console.log('getStatusAnalysisData',res);
+            this.getPressMacStatusAnalysisData({userId: userId}).then(res=>{
+                console.log('getPressMacStatusAnalysisData',res);
                 res.forEach(item=>{
                   this.totalNum += item.num;
                 });
@@ -106,7 +106,7 @@ export default {
                     type: "pie",
                     center: ["30%", "50%"],
                     radius: ["55%", "70%"],
-                    color: [ "#50cf3f", "#cccccc"],
+                    color: [ "#50cf3f", "#cccccc", "#cc8718"],
                     startAngle: 135,
                     label: {
                         show: false

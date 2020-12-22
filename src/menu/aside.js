@@ -10,7 +10,7 @@ export default [
     icon: 'menu-drainoffwater',
     active: false,
     role: ['admin'],
-    hash: ['drainoffwater']
+    hash: ['drainoffwater', 'watersupply', 'gas']
   },
   {
     path: '/watersupply',
@@ -18,7 +18,7 @@ export default [
     icon: 'menu-watersupply',
     active: false,
     role: ['admin'],
-    hash: ['drainoffwater']
+    hash: ['drainoffwater', 'watersupply', 'gas']
   },
   {
     path: '/gas',
@@ -26,7 +26,7 @@ export default [
     icon: 'menu-gas',
     active: false,
     role: ['admin'],
-    hash: ['drainoffwater']
+    hash: ['drainoffwater', 'watersupply', 'gas']
   },
   {
     path: '/streetlight',

@@ -1,7 +1,6 @@
 <template>
   <div class="video-manage" flex="dir:top">
     <div class="search-panel">
-      <!--<my-address @getAddressData="getAddressData"></my-address>-->
       <div flex="fir:left cross:center" style="margin:10px 0px;">
         <label>监测点名称：</label>
         <a-input placeholder="输入监测点名称" v-model="watchPointName" style="flex:1" />
@@ -14,11 +13,17 @@
         <a-spin tip="数据加载中..."></a-spin>
       </div>
       <cg-container scroll v-if="!showLoading && treeData.length > 0">
-        <a-tree class="tree-panel" showIcon showLine :treeData="treeData" @select="onSelect">
-          <img slot="dept" src="~@img/avatar-jiance.png" />
-          <img slot="equipment" src="~@img/avatar-equipment.png" />
-          <img slot="equipment-outline" src="~@img/avatar-equipment-outline.png" />
-        </a-tree>
+        <div class="result_item"
+             :class="{active: activeIndex===index}"
+             flex="cross:center"
+             v-for="(item, index) in treeData"
+             :key="index"
+             @click="onSelect(item,index)">
+          <img v-if="item.online==='1'" src="~@img/avatar-equipment.png"/>
+          <img v-else-if="item.online==='2'" src="~@img/avatar-equipment-outline.png"/>
+          <img v-else src="~@img/avatar-equipment-warn.png"/>
+          <span class="title">{{item.name}}</span>
+        </div>
       </cg-container>
       <div v-if="!showLoading && treeData.length == 0" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
@@ -44,12 +49,8 @@ export default {
   },
   data(){
     return {
-      //详情需要的所有数据
-      detailInfoData: {
-        name: '',
-        detailMessage:[],
-        chartData: [[],[]]
-      },
+      activeIndex: null,
+
       //地图相关
       waterFeatures: [],
       waterLayer: null,
@@ -64,7 +65,6 @@ export default {
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
       this.waterFeatures=[];
-      this.changeTreeData(data,'');
       this.isLoadData=!this.isLoadData;
       return data;
     }
@@ -94,16 +94,12 @@ export default {
         positioning: 'bottom-center',
         element: this.$refs.detailInfo.$el
     });
-    this.getAllWaterQMMac();
+    this.getAllFlowMac();
   },
   methods:{
-    ...mapActions('watersupply/manage', ['getAllWaterQMMacTreeData','getOneWaterQMMacData','getWaterQualityTrendDataForOneMac']),
-    // getAddressData(val){
-    //   console.log('selected city data',val);
-    //   this.selectedCity = val;
-    // },
+    ...mapActions('watersupply/manage', ['getAllFlowMacTreeData','getOneFlowMacData','getFlowTrendDataForOneMac']),
     // 获取所有水质监测设备
-    getAllWaterQMMac(){
+    getAllFlowMac(){
       this.showLoading = true;
       //入参：城市范围、监测点名称，用户ID
       let params = {
@@ -111,98 +107,66 @@ export default {
         // area: this.selectedCity,
         watchPointName: this.watchPointName
       }
-      this.getAllWaterQMMacTreeData(params).then(res=>{
-        console.log('getAllWaterQMMacTreeData',res);
+      this.getAllFlowMacTreeData(params).then(res=>{
+        console.log('getAllFlowMacTreeData',res);
         this.sourceData = res.treeData;
         this.totalSize = res.total;
         this.showLoading = false;
-      });
-    },
-    //给后端的数据增加一些前端展示与判断需要的属性
-    changeTreeData(arr,deptName){
-      const _this = this;
-      arr.forEach(item=>{
-        item.scopedSlots = { title: 'title' };
-        if(item.isLeaf){
-          item.title = item.name;
-          item.key = item.id;
-          item.dept = deptName;
-          if(item.online){
-            item.slots = {icon: 'equipment'};
-          }
-          else{
-            item.slots = {icon: 'equipment-outline'};
-          }
-          item.class = 'itemClass';
+        this.sourceData.forEach(item => {
           let img;
-          if(item.online){
-              img = 'waterSupply';
+          if(item.online==='1'){
+            img = 'waterSupply';
           }else{
-              img = 'waterSupply-lx';
+            img = 'waterSupply-lx';
           }
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
-            const feature=_this.mapManager.xyToFeature(item.x,item.y);
+            const feature = this.mapManager.xyToFeature(item.x,item.y);
             feature.set('icon',img);
             feature.set('props',item);
             feature.set('type','waterSupply');
-            _this.waterFeatures.push(feature);
+            this.waterFeatures.push(feature);
           }
-        }
-        else{
-          item.title = item.name;
-          item.key = 'dept_' + item.id;
-          item.slots = {icon: 'dept'};
-          this.changeTreeData(item.children, item.name);
-        }
-      })
-    },
-    onSearch(){
-      this.getAllWaterQMMac();
+        })
+      });
     },
 
-    //点击树中某个节点（某个人员）时触发
-    onSelect(selectedKeys, e){
-      console.log(selectedKeys, e);
-      if(selectedKeys.length>0){
-        if(selectedKeys[0].indexOf('dept_')<0){
-          let needData = e.selectedNodes[0].data.props;
-          this.showInfo(needData);
-          this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
-        }
-      }
+    onSearch(){
+      this.getAllFlowMac();
     },
+
+    //点击某个设备时触发
+    onSelect(item,index){
+      this.activeIndex = index;
+      this.showInfo(item);
+      this.mapManager.locateTo([parseFloat(item.x),parseFloat(item.y)]);
+    },
+
     // 地图上弹框显示事件
     showInfo(info){
         // 获取详情数据
-        this.detailInfoData.name = info.dept + '-' + info.name;
-        console.log('macId: ' + info.id, 'userId: ' + userId);
-        this.getOneWaterQMMacData({userId: userId, macId: info.id}).then(res=>{
-            let tempList = res;
-            tempList[0].value = info.phValue;
-            tempList[0].unit = info.phUnit;
-            tempList[1].value = info.turbidityValue;
-            tempList[1].unit = info.turbidityUnit;
-            tempList[2].value = info.rcValue;
-            tempList[2].unit = info.rcUnit;
-            this.detailInfoData.detailMessage = tempList;
-        });
-        this.getWaterQualityTrendDataForOneMac({userId: userId, macId: info.id}).then(res=>{
-            let needData = res.reduce((acc,item) => {
-                acc[0].push(item.dayTime);
-                acc[1].push(item.phValue);
-                acc[2].push(item.turbidityValue);
-                acc[3].push(item.rcValue);
-                return acc
-            },[[],[],[],[]]);
-            this.detailInfoData.chartData = needData;
-        });
-        //地图上的点位放大居中显示
-        if(!info.x||!info.y){
-            this.$message.warning('当前视频无点位信息！！！');
-        }else{
-            this.waterOverlay.setPosition([parseFloat(info.x),parseFloat(info.y)]);
-        }
+      this.detailInfoData.detailMessage.name = info.name;
+      this.detailInfoData.detailMessage.unit = info.unit;
+      this.detailInfoData.detailMessage.flagName = '流量';
+      this.detailInfoData.type = 'flow';
+      console.log('macId: ' + info.id, 'userId: ' + userId);
+      this.getOneFlowMacData({userId: userId,macId: info.id}).then(res=>{
+        this.detailInfoData.detailMessage.totalFlow = res.totalFlow;
+        this.detailInfoData.detailMessage.momentFlow = res.momentFlow;
+      });
+      this.getFlowTrendDataForOneMac({userId: userId,macId: info.id}).then(res=>{
+        let needData = res.reduce((acc,item) => {
+          acc[0].push(item.dayTime);
+          acc[1].push(item.value);
+          return acc
+        },[[],[]]);
+        this.detailInfoData.chartData = needData;
+      });
+      if(!info.x||!info.y){
+        this.$message.warning('当前视频无点位信息！！！');
+      }else{
+        this.waterOverlay.setPosition([parseFloat(info.x),parseFloat(info.y)]);
+      }
     },
     videoMapClickHandler({ pixel, coordinate }) {
         const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
@@ -233,45 +197,30 @@ export default {
     background-color: #f5f5f5;
     height: calc(100% - 50px);
     position: relative;
-    .tree-panel {
-      width: 100%;
-      height: 100%;
+    ::v-deep.cg-container-full-bs__body-wrapper-inner{
       padding: 10px;
-      img {
+    }
+    .result_item{
+      width: 100%;
+      height: 30px;
+      padding: 5px;
+      cursor: pointer;
+      img{
         width: 18px;
         height: 18px;
-        display: inline-block;
-        border-radius: 12px;
-        margin-right: 8px;
-        margin-top: -3px;
+      }
+      .title{
+        margin-left: 10px;
+        font-size: 14px;
+      }
+      &.active,&:hover{
+        background-color: rgba(162, 214, 248, 0.4);
       }
     }
     .nodata-panel,
     .spin-panel {
       width: 100%;
       height: 100%;
-    }
-    ::v-deep.ant-tree.ant-tree-show-line li:not(:last-child):before {
-      border-left: 1px dashed rgba(0, 164, 254, 0.8);
-    }
-    ::v-deep.ant-tree.ant-tree-show-line li span.ant-tree-switcher {
-      background-color: #f5f5f5;
-      color: rgba(43, 144, 243, 0.8);
-    }
-    ::v-deep.itemClass {
-      &::before {
-        opacity: 0;
-      }
-      span.ant-tree-switcher {
-        opacity: 0;
-        display: none;
-      }
-    }
-  }
-  .player-panel {
-    display: none;
-    &.active {
-      display: block;
     }
   }
 }

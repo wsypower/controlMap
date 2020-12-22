@@ -37,7 +37,7 @@ export default{
     info:{
       default(){
         return {
-          type: 'water',
+          type: 'yali',
           detailMessage:{
             name: '',
             flagName: '',
