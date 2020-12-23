@@ -49,7 +49,7 @@ export default {
       //获取全部数据
       getChartData(){
         let startTime = new Date(this.day + ' 00:00:00').getTime();
-        let endTime = new Date(this.day + ' 23:59:59').getTime();
+        let endTime = new Date().getTime();
           this.getWaterLevelTrendData({userId: userId, watchPlaceId: this.watchPlaceId, startTime:startTime, endTime: endTime}).then(res=>{
               console.log('getWaterLevelTrendData',res);
               let xArr = [];
@@ -97,6 +97,7 @@ export default {
           data: data[0],
           axisLabel: {
             show: true,
+            interval: 0,
             textStyle:{
               fontSize: 13,
               color: '#333333'
@@ -145,7 +146,7 @@ export default {
           height: 20,
           bottom: 10,
           start: 10,
-          end: 35,
+          end: 30,
           handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
           handleSize: '110%',
           handleStyle:{
@@ -165,7 +166,7 @@ export default {
           end: 35
         }],
         series: [{
-          name: '降雨量',
+          name: '水位',
           type: 'line',
           smooth: false,
           symbol: 'circle',

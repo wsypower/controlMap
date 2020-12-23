@@ -6,7 +6,7 @@
 export default [
   {
     path: '/drainoffwater',
-    title: '排水监测',
+    title: '排水',
     icon: 'menu-drainoffwater',
     active: false,
     role: ['admin'],
@@ -14,7 +14,7 @@ export default [
   },
   {
     path: '/watersupply',
-    title: '供水监测',
+    title: '供水',
     icon: 'menu-watersupply',
     active: false,
     role: ['admin'],
@@ -22,7 +22,7 @@ export default [
   },
   {
     path: '/gas',
-    title: '燃气监测',
+    title: '燃气',
     icon: 'menu-gas',
     active: false,
     role: ['admin'],

@@ -2,7 +2,7 @@
   <div class="tip-content">
     <div class="tip-header" flex="dir:left">
       <div class="info-body-left" flex="cross:center">
-        <cg-icon-svg name="jiance" class="svg_icon_jiance"></cg-icon-svg>
+        <cg-icon-svg name="shebei" class="svg_icon_jiance"></cg-icon-svg>
         <span>{{ info.detailMessage.name }}</span>
       </div>
       <div class="close" flex="main:center cross:center" @click="closeDialog"></div>
@@ -194,7 +194,6 @@ export default{
         margin-right: 10px;
       }
       span {
-        margin-left: 10px;
         color: #ffffff;
         font-size: 16px;
       }

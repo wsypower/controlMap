@@ -61,7 +61,7 @@ export default {
         //获取全部数据
         getChartData(){
           let startTime = new Date(this.day + ' 00:00:00').getTime();
-          let endTime = new Date(this.day + ' 23:59:59').getTime();
+          let endTime = new Date().getTime();
             this.getWaterQualityTrendData({userId: userId, startTime:startTime, endTime: endTime}).then(res=>{
                 console.log('getWaterQualityTrendData',res);
                 let xArr = [];

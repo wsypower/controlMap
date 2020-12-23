@@ -126,9 +126,9 @@ export default{
           }
         },
         yAxis: {
-          name: '近3小时趋势图',
+          name: '近3小时供水压力趋势图',
           nameTextStyle:{
-            padding: [0,0,0,30],
+            padding: [0,0,0,50],
             fontSize: 13,
             color: '#333333'
           },

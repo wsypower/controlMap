@@ -50,8 +50,8 @@ export default {
       console.log('getChartData dayRange',this.dayRange);
       let params = {
         userId:userId,
-        startTime: new Date(this.dayRange[0]._i).getTime(),
-        endTime: new Date(this.dayRange[1]._i).getTime()
+        startTime: new Date(this.dayRange[0]._i + ' 00:00:00').getTime(),
+        endTime: new Date(this.dayRange[1]._i + ' 23:59:59').getTime()
       }
       this.getFlowTrendData(params).then(res=>{
         console.log('getFlowTrendData',res);
@@ -173,7 +173,7 @@ export default {
           end: 35
         }],
         series: [{
-          name: '供水压力',
+          name: '供水流量',
           type: 'line',
           smooth: false,
           symbol: 'circle',

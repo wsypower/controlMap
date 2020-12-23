@@ -2,7 +2,7 @@
   <div class="tip-content">
     <div class="tip-header" flex="dir:left">
       <div class="info-body-left" flex="cross:center">
-        <cg-icon-svg name="jiance" class="svg_icon_jiance"></cg-icon-svg>
+        <cg-icon-svg name="shebei" class="svg_icon_jiance"></cg-icon-svg>
         <span>{{ info.detailMessage.name }}</span>
       </div>
       <div class="close" flex="main:center cross:center" @click="closeDialog"></div>
@@ -132,9 +132,9 @@ export default{
           }
         },
         yAxis: {
-          name: '近3小时趋势图',
+          name: '近3小时供水流量趋势图',
           nameTextStyle:{
-            padding: [0,0,0,30],
+            padding: [0,0,0,60],
             fontSize: 13,
             color: '#333333'
           },

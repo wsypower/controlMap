@@ -2,7 +2,7 @@
   <div class="tip-content">
     <div class="tip-header" flex="dir:left">
       <div class="info-body-left" flex="cross:center">
-        <cg-icon-svg name="jiance" class="svg_icon_jiance"></cg-icon-svg>
+        <cg-icon-svg name="shebei" class="svg_icon_jiance"></cg-icon-svg>
         <span>{{ info.detailMessage.name }}</span>
       </div>
       <div class="close" flex="main:center cross:center" @click="closeDialog"></div>
@@ -11,9 +11,9 @@
       <div class="detail" flex="dir:left">
         <div class="detail-left" flex="dir:left cross:center">
           <img src="~@img/shui.png" />
-          <div class="mes" flex="dir:top">
+          <div class="mes" flex="dir:top cross:center">
             <span>{{ info.detailMessage.value }}<em>{{ info.detailMessage.unit }}</em></span>
-            <span>当日液位</span>
+            <span>液位</span>
           </div>
         </div>
         <div class="detail-right" flex="dir:top main:justify">
@@ -199,7 +199,6 @@ export default{
         margin-right: 10px;
       }
       span {
-        margin-left: 10px;
         color: #ffffff;
         font-size: 16px;
       }
