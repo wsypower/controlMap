@@ -2,7 +2,7 @@
   <div class="tip-content">
     <div class="tip-header" flex="dir:left">
       <div class="info-body-left" flex="cross:center">
-        <cg-icon-svg name="jiance" class="svg_icon_jiance"></cg-icon-svg>
+        <cg-icon-svg name="shebei" class="svg_icon_jiance"></cg-icon-svg>
         <span>{{ info.detailMessage.name }}</span>
       </div>
       <div class="close" flex="main:center cross:center" @click="closeDialog"></div>
@@ -10,7 +10,7 @@
     <div class="tip-body">
       <div class="detail" flex="dir:left">
         <div class="detail-left" flex="dir:left cross:center">
-          <img src="~@img/shui.png" />
+          <img src="~@img/ranqi.png" />
           <div class="mes" flex="dir:top">
             <span>{{ info.detailMessage.value }}<em>{{ info.detailMessage.unit }}</em></span>
             <span>甲烷浓度</span>
@@ -18,7 +18,7 @@
         </div>
         <div class="detail-right" flex="dir:left cross:center">
           <div class="mes" flex="dir:top">
-            <span>{{ info.detailMessage.value }}<em>{{ info.detailMessage.unit }}</em></span>
+            <span>{{ info.detailMessage.temperature }}<em>℃</em></span>
             <span>温度</span>
           </div>
         </div>
@@ -132,9 +132,9 @@ export default{
           }
         },
         yAxis: {
-          name: '甲烷浓度趋势图',
+          name: '近3小时甲烷浓度趋势图',
           nameTextStyle:{
-            padding: [0,0,0,30],
+            padding: [0,0,0,60],
             fontSize: 13,
             color: '#333333'
           },
@@ -200,7 +200,6 @@ export default{
         margin-right: 10px;
       }
       span {
-        margin-left: 10px;
         color: #ffffff;
         font-size: 16px;
       }

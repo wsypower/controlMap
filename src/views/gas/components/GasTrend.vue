@@ -1,7 +1,7 @@
 <template>
   <div class="analysis-panel">
     <div class="panel-header" flex="dir:left cross:center">
-      <span class="title">甲烷含量趋势图</span>
+      <span class="title">甲烷浓度趋势图</span>
     </div>
     <div class="panel-content">
       <div class="time-range" flex="dir:top cross:center">
@@ -49,8 +49,8 @@ export default {
       getChartData(){
         let params = {
           userId: userId,
-          startTime: new Date(this.dayRange[0]._i).getTime(),
-          endTime: new Date(this.dayRange[1]._i).getTime()
+          startTime: new Date(this.dayRange[0]._i + ' 00:00:00').getTime(),
+          endTime: new Date(this.dayRange[1]._i + ' 23:59:59').getTime()
         }
         this.getGasTrendData(params).then(res=>{
           console.log('getGasTrendData',res);
@@ -94,7 +94,7 @@ export default {
               }
             },
             formatter: function(params){
-              let text = params[0].seriesName + '：' + params[0].value + '%';
+              let text = params[0].seriesName + '：' + params[0].value + 'asu';
               return text + "<br/>" + params[0].name
             }
           },
@@ -152,7 +152,7 @@ export default {
             height: 20,
             bottom: 10,
             start: 10,
-            end: 16,
+            end: 14,
             handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
             handleSize: '110%',
             handleStyle:{
@@ -172,7 +172,7 @@ export default {
             end: 35
           }],
           series: [{
-            name: '甲烷含量',
+            name: '甲烷浓度',
             type: 'line',
             smooth: false,
             symbol: 'circle',

@@ -104,7 +104,6 @@ export default {
       //入参：城市范围、监测点名称，用户ID
       let params = {
         userId: userId,
-        // area: this.selectedCity,
         watchPointName: this.watchPointName
       }
       this.getAllFlowMacTreeData(params).then(res=>{
@@ -163,7 +162,7 @@ export default {
         this.detailInfoData.chartData = needData;
       });
       if(!info.x||!info.y){
-        this.$message.warning('当前视频无点位信息！！！');
+        this.$message.warning('当前设备无点位信息！！！');
       }else{
         this.waterOverlay.setPosition([parseFloat(info.x),parseFloat(info.y)]);
       }
@@ -181,7 +180,8 @@ export default {
         }
     },
     closeTip(){
-        this.waterOverlay.setPosition( undefined );
+      this.activeIndex = null;
+      this.waterOverlay.setPosition( undefined );
     }
   }
 }

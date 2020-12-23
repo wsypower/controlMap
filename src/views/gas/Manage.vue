@@ -1,7 +1,6 @@
 <template>
   <div class="video-manage" flex="dir:top">
     <div class="search-panel">
-      <!--<my-address @getAddressData="getAddressData"></my-address>-->
       <div flex="fir:left cross:center" style="margin-bottom: 10px">
         <label>监测点名称：</label>
         <a-input placeholder="输入监测点名称" v-model="watchPointName" style="flex:1" />
@@ -14,11 +13,22 @@
         <a-spin tip="数据加载中..."></a-spin>
       </div>
       <cg-container scroll v-if="!showLoading && treeData.length > 0">
-        <a-tree class="tree-panel" showIcon showLine :treeData="treeData" @select="onSelect">
-          <img slot="dept" src="~@img/avatar-jiance.png" />
-          <img slot="equipment" src="~@img/avatar-equipment.png" />
-          <img slot="equipment-outline" src="~@img/avatar-equipment-outline.png" />
-        </a-tree>
+        <div class="result_item"
+             :class="{active: activeIndex===index}"
+             flex="cross:center"
+             v-for="(item, index) in treeData"
+             :key="index"
+             @click="onSelect(item,index)">
+          <img v-if="item.online==='1'" src="~@img/avatar-equipment.png"/>
+          <img v-else-if="item.online==='2'" src="~@img/avatar-equipment-outline.png"/>
+          <img v-else src="~@img/avatar-equipment-warn.png"/>
+          <span class="title">{{item.name}}</span>
+        </div>
+        <!--<a-tree class="tree-panel" showIcon showLine :treeData="treeData" @select="onSelect">-->
+          <!--<img slot="dept" src="~@img/avatar-jiance.png" />-->
+          <!--<img slot="equipment" src="~@img/avatar-equipment.png" />-->
+          <!--<img slot="equipment-outline" src="~@img/avatar-equipment-outline.png" />-->
+        <!--</a-tree>-->
       </cg-container>
       <div v-if="!showLoading && treeData.length == 0" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
@@ -44,6 +54,7 @@ export default {
   },
   data(){
     return {
+      activeIndex: null,
       //地图相关
       gasFeatures: [],
       gasLayer: null,
@@ -58,7 +69,6 @@ export default {
     treeData:function(){
       let data = JSON.parse(JSON.stringify(this.sourceData));
       this.gasFeatures=[];
-      this.changeTreeData(data,'');
       this.isLoadData=!this.isLoadData;
       return data;
     }
@@ -92,16 +102,11 @@ export default {
   },
   methods:{
     ...mapActions('gas/manage', ['getAllGasMacTreeData','getOneGasMacData','getGasTrendDataForOneMac']),
-    // getAddressData(val){
-    //   console.log('selected city data',val);
-    //   this.selectedCity = val;
-    // },
     // 获取所有燃气监测设备
     getAllGasMac(){
-      //入参：城市范围、监测点名称，用户ID
+      //入参：监测点名称，用户ID
       let params = {
         userId:userId,
-        // area: this.selectedCity,
         watchPointName: this.watchPointName
       }
       this.showLoading = true;
@@ -110,72 +115,48 @@ export default {
         this.sourceData = res.treeData;
         this.totalSize = res.total;
         this.showLoading = false;
-      });
-    },
-    //给后端的数据增加一些前端展示与判断需要的属性
-    changeTreeData(arr,deptName){
-      const _this = this;
-      arr.forEach(item=>{
-        item.scopedSlots = { title: 'title' };
-        if(item.isLeaf){
-          item.title = item.name;
-          item.key = item.id;
-          item.dept = deptName;
-          if(item.online){
-            item.slots = {icon: 'equipment'};
-          }
-          else{
-            item.slots = {icon: 'equipment-outline'};
-          }
-          item.class = 'itemClass';
+        this.sourceData.forEach(item => {
           let img;
-          if(item.online){
-              img = 'gas';
+          if(item.online==='1'){
+            img = 'gas';
           }else{
-              img = 'gas-lx';
+            img = 'gas-lx';
           }
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
-            const feature=_this.mapManager.xyToFeature(item.x,item.y);
+            const feature = this.mapManager.xyToFeature(item.x,item.y);
             feature.set('icon',img);
             feature.set('props',item);
             feature.set('type','gas');
-            _this.gasFeatures.push(feature);
+            this.gasFeatures.push(feature);
           }
-        }
-        else{
-          item.title = item.name;
-          item.key = 'dept_' + item.id;
-          item.slots = {icon: 'dept'};
-          this.changeTreeData(item.children, item.name);
-        }
-      })
+        })
+      });
     },
+
     onSearch(){
       this.getAllGasMac();
     },
 
-    //点击树中某个节点（某个人员）时触发
-    onSelect(selectedKeys, e){
-      console.log(selectedKeys, e);
-      const needData = e.selectedNodes[0].data.props;
-      this.showInfo(needData);
-      this.mapManager.locateTo([parseFloat(needData.x),parseFloat(needData.y)]);
-
+    //点击某个设备时触发
+    onSelect(item,index){
+      this.activeIndex = index;
+      this.showInfo(item);
+      this.mapManager.locateTo([parseFloat(item.x),parseFloat(item.y)]);
     },
     // 地图上弹框显示事件
     showInfo(info){
       //地图上的点位放大居中
       // 获取详情数据
-      this.detailInfoData.detailMessage.name = info.dept + '-' +info.name;
+      this.detailInfoData.detailMessage.name = info.name;
       this.detailInfoData.detailMessage.value = info.value;
       this.detailInfoData.detailMessage.unit = info.unit;
-      this.detailInfoData.detailMessage.flagName = '甲烷含量';
+      this.detailInfoData.detailMessage.flagName = '甲烷浓度';
       this.detailInfoData.type = 'gas';
       console.log('macId: ' + info.id);
       this.getOneGasMacData({userId:userId, macId: info.id}).then(res=>{
-          this.detailInfoData.detailMessage.yty = res.yty;
-          this.detailInfoData.detailMessage.mtm = res.mtm;
+          this.detailInfoData.detailMessage.methane = res.methane;
+          this.detailInfoData.detailMessage.temperature = res.temperature;
       });
       this.getGasTrendDataForOneMac({userId:userId, macId: info.id}).then(res=>{
           let chartData = res.reduce((acc,item) => {
@@ -187,7 +168,7 @@ export default {
       });
       //地图上的点位放大居中显示
       if(!info.x||!info.y){
-          this.$message.warning('当前视频无点位信息！！！');
+          this.$message.warning('当前设备无点位信息！！！');
       }else{
           this.gasOverlay.setPosition([parseFloat(info.x),parseFloat(info.y)]);
       }
@@ -220,17 +201,24 @@ export default {
     background-color: #f5f5f5;
     height: calc(100% - 50px);
     position: relative;
-    .tree-panel {
-      width: 100%;
-      height: 100%;
+    ::v-deep.cg-container-full-bs__body-wrapper-inner{
       padding: 10px;
-      img {
+    }
+    .result_item{
+      width: 100%;
+      height: 30px;
+      padding: 5px;
+      cursor: pointer;
+      img{
         width: 18px;
         height: 18px;
-        display: inline-block;
-        border-radius: 12px;
-        margin-right: 8px;
-        margin-top: -3px;
+      }
+      .title{
+        margin-left: 10px;
+        font-size: 14px;
+      }
+      &.active,&:hover{
+        background-color: rgba(162, 214, 248, 0.4);
       }
     }
     .nodata-panel,
