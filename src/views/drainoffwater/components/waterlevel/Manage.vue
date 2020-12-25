@@ -151,10 +151,19 @@ export default {
           }
           item.class = 'itemClass';
           let img;
-          if(item.online){
-              img = 'waterlevel';
-          }else{
-              img = 'waterlevel-lx';
+          switch (item.online) {
+            case '1':
+              img = 'waterlevel-online';
+              break;
+            case '2':
+              img = 'waterlevel-offline';
+              break;
+            case '3':
+              img = 'waterlevel-lost';
+              break;
+            default:
+              img = 'waterlevel-online';
+              break;
           }
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){

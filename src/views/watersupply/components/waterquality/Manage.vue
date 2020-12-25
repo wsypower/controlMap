@@ -121,21 +121,32 @@ export default {
         this.sourceData.forEach(item => {
           let img;
           if(item.online==='1'){
-            img = 'waterSupply';
+            img = 'waterquality-online';
           } else if(item.online==='2'){
-            img = 'waterSupply-lx';
+            img = 'waterquality-offline';
           } else{
-            img = 'waterSupply-lx';
+            img = 'waterquality-lost';
           }
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature = this.mapManager.xyToFeature(item.x,item.y);
             feature.set('icon',img);
             feature.set('props',item);
-            feature.set('type','waterSupply');
+            feature.set('type','waterquality');
             this.waterFeatures.push(feature);
           }
         })
+        if(this.waterFeatures.length>0){
+          if(this.waterLayer){
+            this.waterLayer.getSource().getSource().clear();
+            this.waterLayer.getSource().getSource().addFeatures(this.waterFeatures);
+          }else{
+            this.waterLayer = this.mapManager.addClusterLayerByFeatures(this.waterFeatures);
+            this.waterLayer.set('featureType','waterquality');
+          }
+          const extent=this.waterLayer.getSource().getSource().getExtent();
+          this.mapManager.getMap().getView().fit(extent);
+        }
       });
     },
     onSearch(){
@@ -195,7 +206,7 @@ export default {
         if(feature.get('features')) {
             const clickFeature = feature.get('features')[0];
             // const coordinates=clickFeature.getGeometry().getCoordinates();
-            if (clickFeature && clickFeature.get('type') == 'waterSupply') {
+            if (clickFeature && clickFeature.get('type') == 'waterquality') {
                 this.showInfo(clickFeature.get('props'));
                 this.waterOverlay.setPosition( coordinate );
                 // const videoInfoData = clickFeature.get('props');

@@ -115,6 +115,7 @@ export default {
       tipComponentId: {},
       //tipModal组件内组件的原始数据
       infoData: {},
+      manholeFeatures:[],
       manholeLayer: null,
       manholeOverlay:null
     }
@@ -160,28 +161,35 @@ export default {
         this.sourceData = res.list;
         this.totalSize = res.total;
         this.showLoading = false;
-        const data = res.list.map(r => {
-            if (r.x.length > 0 && r.y.length > 0){
-                const feature = new Feature({
-                    geometry: new Point([parseFloat(r.x), parseFloat(r.y)])
-                });
-                let img;
-                if(r.online){
-                    img = 'manhole';
-                }else{
-                    img = 'manhole-lx';
-                }
-                feature.set('icon',img);
-                feature.set('type','manhole');
-                feature.set('props',r);
-                // feature.set('type',r.deviceType);
-                return feature;
+        this.manholeFeatures=[];
+        this.sourceData.forEach((item)=>{
+          if (item.x.length > 0 && item.y.length > 0){
+            const feature = new Feature({
+              geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+            });
+            let img;
+            if(item.status=='0'){
+              img = 'manhole-online';
+            }else{
+              img = 'manhole-lost';
             }
-        });
-        // _this.manholeLayer = _this.mapManager.addVectorLayerByFeatures(data, emergencyEquipStyle('3'), 3);
-        _this.manholeLayer = _this.mapManager.addClusterLayerByFeatures(data);
-        _this.manholeLayer.set('featureType','manhole');
-        _this.map.getView().fit(_this.manholeLayer.getSource().getExtent());
+            feature.set('icon',img);
+            feature.set('type','manhole');
+            feature.set('props',item);
+            this.manholeFeatures.push(feature);
+          }
+        })
+        if(this.manholeFeatures.length>0){
+          if(this.manholeLayer){
+            this.manholeLayer.getSource().getSource().clear();
+            this.manholeLayer.getSource().getSource().addFeatures(this.manholeFeatures);
+          }else{
+            this.manholeLayer = this.mapManager.addClusterLayerByFeatures(this.manholeFeatures);
+            this.manholeLayer.set('featureType','manhole');
+          }
+          const extent=this.manholeLayer.getSource().getSource().getExtent();
+          this.mapManager.getMap().getView().fit(extent);
+        }
       })
     },
     //搜索关键字查询

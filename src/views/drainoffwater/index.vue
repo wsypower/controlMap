@@ -58,7 +58,7 @@ export default {
         if (l.get('featureType')) {
           // 视频监控
           if (val == '0') {
-            if (l.get('featureType') == 'videoDistribute') {
+            if (l.get('featureType') == 'rainfall') {
               l.setVisible(true)
               this.map.getView().fit(l.getSource().getExtent())
             } else {
@@ -66,7 +66,7 @@ export default {
             }
           } else if (val == '1') {
             // 雨量监测
-            if (l.get('featureType') == 'rainfall') {
+            if (l.get('featureType') == 'waterLevel') {
               l.setVisible(true)
               this.map.getView().fit(l.getSource().getExtent())
             } else {
@@ -75,7 +75,7 @@ export default {
           } else if (val == '2') {
             //水位监测
             // this.map.getOverlayById('alarmOverlay').setPosition(undefined)
-            if (l.get('featureType') == 'waterLevel') {
+            if (l.get('featureType') == 'pump') {
               l.setVisible(true)
               this.map.getView().fit(l.getSource().getExtent())
             } else {

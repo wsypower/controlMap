@@ -79,7 +79,7 @@ export default {
             this.watchLayer = this.mapManager.addClusterLayerByFeatures(this.watchFeatures);
             this.watchLayer.set('featureType','rainfall');
         }
-        const extent=this.watchLayer.getSource().getSource().getExtent();
+        const extent = this.watchLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
     }
@@ -114,13 +114,22 @@ export default {
         this.showLoading = false;
         // 通过经纬度生成点位加到地图上
         this.sourceData.forEach((item)=>{
-          if(item.x && item.x.length>0 && item.y && item.y.length>0){
+          if(item.x && item.y){
             const feature=this.mapManager.xyToFeature(item.x,item.y);
             let img = '';
-            if(item.online){
-              img = 'rainfall';
-            }else{
-              img = 'rainfall-lx';
+            switch (item.online) {
+              case '1':
+                img = 'rainfall-online';
+                break;
+              case '2':
+                img = 'rainfall-offline';
+                break;
+              case '3':
+                img = 'rainfall-lost';
+                break;
+              default:
+                img = 'rainfall-online';
+                break;
             }
             feature.set('icon',img);
             feature.set('props',item);
@@ -128,6 +137,17 @@ export default {
             this.watchFeatures.push(feature);
           }
         })
+        if(this.watchFeatures.length>0){
+          if(this.watchLayer){
+            this.watchLayer.getSource().getSource().clear();
+            this.watchLayer.getSource().getSource().addFeatures(this.watchFeatures);
+          }else{
+            this.watchLayer = this.mapManager.addClusterLayerByFeatures(this.watchFeatures);
+            this.watchLayer.set('featureType','rainfall');
+          }
+          const extent = this.watchLayer.getSource().getSource().getExtent();
+          this.mapManager.getMap().getView().fit(extent);
+        }
       });
     },
     onSearch(){

@@ -120,19 +120,39 @@ export default {
         // 通过经纬度生成点位加到地图上
         this.sourceData.forEach(item => {
           let img;
-          if(item.online==='1'){
-            img='rainfall'
-          }else{
-            img='rainfall-lx'
+          switch (item.online) {
+            case '1':
+              img = 'pump-online';
+              break;
+            case '2':
+              img = 'pump-offline';
+              break;
+            case '3':
+              img = 'pump-lost';
+              break;
+            default:
+              img = 'pump-online';
+              break;
           }
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature = this.mapManager.xyToFeature(item.x,item.y);
             feature.set('icon',img);
             feature.set('props',item);
-            feature.set('type','rainfall');
+            feature.set('type','pump');
             this.watchFeatures.push(feature);
           }
         })
+        if(this.watchFeatures.length>0){
+          if(this.watchLayer){
+            this.watchLayer.getSource().getSource().clear();
+            this.watchLayer.getSource().getSource().addFeatures(this.watchFeatures);
+          }else{
+            this.watchLayer = this.mapManager.addClusterLayerByFeatures(this.watchFeatures);
+            this.watchLayer.set('featureType','pump');
+          }
+          const extent=this.watchLayer.getSource().getSource().getExtent();
+          this.mapManager.getMap().getView().fit(extent);
+        }
       });
     },
 
@@ -180,7 +200,7 @@ export default {
         const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
         if(feature.get('features')) {
             const clickFeature = feature.get('features')[0];
-            if (clickFeature && clickFeature.get('type') == 'rainfall') {
+            if (clickFeature && clickFeature.get('type') == 'pump') {
                 this.showInfo(clickFeature.get('props'));
                 this.watchOverlay.setPosition( coordinate );
             }
