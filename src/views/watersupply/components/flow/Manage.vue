@@ -50,13 +50,12 @@ export default {
   data(){
     return {
       activeIndex: null,
-
       //地图相关
-      waterFeatures: [],
-      waterLayer: null,
+      flowFeatures: [],
+      flowLayer: null,
       isLoadData: false,
       clusterLayer:null,
-      waterOverlay:null
+      waterOverlay:null,
     }
   },
   computed:{
@@ -71,13 +70,13 @@ export default {
   },
   watch:{
     isLoadData:function() {
-      if(this.waterFeatures.length>0){
-        if(this.waterLayer){
-            this.waterLayer.getSource().clear();
-            this.waterLayer.getSource().addFeatures(this.carFeatures);
+      if(this.flowFeatures.length>0){
+        if(this.flowLayer){
+            this.flowLayer.getSource().getSource().clear();
+            this.flowLayer.getSource().getSource().addFeatures(this.flowFeatures);
         }else{
-            this.waterLayer = this.mapManager.addClusterLayerByFeatures(this.waterFeatures);
-            this.waterLayer.set('featureType','videoDistribute');
+            this.flowLayer = this.mapManager.addClusterLayerByFeatures(this.flowFeatures);
+            this.flowLayer.set('featureType','flow');
         }
         const extent=this.waterLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
@@ -108,25 +107,39 @@ export default {
       }
       this.getAllFlowMacTreeData(params).then(res=>{
         console.log('getAllFlowMacTreeData',res);
+        this.flowFeatures=[];
         this.sourceData = res.treeData;
         this.totalSize = res.total;
         this.showLoading = false;
         this.sourceData.forEach(item => {
           let img;
           if(item.online==='1'){
-            img = 'waterSupply';
-          }else{
-            img = 'waterSupply-lx';
+            img = 'flow-online';
+          }else if(item.online==='2'){
+            img = 'flow-offline';
+          }else {
+            img = 'flow-lost';
           }
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature = this.mapManager.xyToFeature(item.x,item.y);
             feature.set('icon',img);
             feature.set('props',item);
-            feature.set('type','waterSupply');
-            this.waterFeatures.push(feature);
+            feature.set('type','flow');
+            this.flowFeatures.push(feature);
           }
         })
+        if(this.flowFeatures.length>0){
+          if(this.flowLayer){
+            this.flowLayer.getSource().getSource().clear();
+            this.flowLayer.getSource().getSource().addFeatures(this.flowFeatures);
+          }else{
+            this.flowLayer = this.mapManager.addClusterLayerByFeatures(this.flowFeatures);
+            this.flowLayer.set('featureType','flow');
+          }
+          const extent=this.flowLayer.getSource().getSource().getExtent();
+          this.mapManager.getMap().getView().fit(extent);
+        }
       });
     },
 
@@ -172,7 +185,7 @@ export default {
         if(feature.get('features')) {
             const clickFeature = feature.get('features')[0];
             // const coordinates=clickFeature.getGeometry().getCoordinates();
-            if (clickFeature && clickFeature.get('type') == 'waterSupply') {
+            if (clickFeature && clickFeature.get('type') == 'flow') {
                 this.showInfo(clickFeature.get('props'));
                 this.waterOverlay.setPosition( coordinate );
                 // const videoInfoData = clickFeature.get('props');

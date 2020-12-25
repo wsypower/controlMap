@@ -118,9 +118,11 @@ export default {
         this.sourceData.forEach(item => {
           let img;
           if(item.online==='1'){
-            img = 'gas';
+            img = 'gas-online';
+          }else if(item.online==='2'){
+            img = 'gas-offline';
           }else{
-            img = 'gas-lx';
+            img = 'gas-lost';
           }
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
@@ -131,6 +133,17 @@ export default {
             this.gasFeatures.push(feature);
           }
         })
+        if(this.gasFeatures.length>0){
+          if(this.gasLayer){
+            this.gasLayer.getSource().getSource().clear();
+            this.gasLayer.getSource().getSource().addFeatures(this.gasFeatures);
+          }else{
+            this.gasLayer = this.mapManager.addClusterLayerByFeatures(this.gasFeatures);
+            this.gasLayer.set('featureType','gas');
+          }
+          const extent=this.gasLayer.getSource().getSource().getExtent();
+          this.mapManager.getMap().getView().fit(extent);
+        }
       });
     },
 

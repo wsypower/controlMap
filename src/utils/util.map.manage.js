@@ -108,7 +108,7 @@ export class MapManager {
    */
   addClusterLayerByFeatures(features) {
     const clusterSource = new Cluster({
-      distance: 40,
+      distance: 20,
       source: new VectorSource()
     })
     const clusterLayer = new AnimatedCluster({

@@ -52,8 +52,8 @@ export default {
       activeIndex: null,
 
       //地图相关
-      waterFeatures: [],
-      waterLayer: null,
+      pressureFeatures: [],
+      pressureLayer: null,
       isLoadData: false,
       clusterLayer:null,
       waterOverlay:null
@@ -71,15 +71,15 @@ export default {
   },
   watch:{
     isLoadData:function() {
-      if(this.waterFeatures.length>0){
-        if(this.waterLayer){
-            this.waterLayer.getSource().clear();
-            this.waterLayer.getSource().addFeatures(this.carFeatures);
+      if(this.pressureFeatures.length>0){
+        if(this.pressureLayer){
+            this.pressureLayer.getSource().clear();
+            this.pressureLayer.getSource().addFeatures(this.pressureFeatures);
         }else{
-            this.waterLayer = this.mapManager.addClusterLayerByFeatures(this.waterFeatures);
-            this.waterLayer.set('featureType','videoDistribute');
+            this.pressureLayer = this.mapManager.addClusterLayerByFeatures(this.pressureFeatures);
+            this.pressureLayer.set('featureType','pressure');
         }
-        const extent=this.waterLayer.getSource().getSource().getExtent();
+        const extent=this.pressureLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
     }
@@ -115,17 +115,19 @@ export default {
         this.sourceData.forEach(item => {
           let img;
           if(item.online==='1'){
-            img = 'waterSupply';
+            img = 'pressure-online';
+          }else if(item.online==='2'){
+            img = 'pressure-offline';
           }else{
-            img = 'waterSupply-lx';
+            img = 'pressure-lost';
           }
           // 通过经纬度生成点位加到地图上
           if(item.x && item.x.length>0 && item.y && item.y.length>0){
             const feature = this.mapManager.xyToFeature(item.x,item.y);
             feature.set('icon',img);
             feature.set('props',item);
-            feature.set('type','waterSupply');
-            this.waterFeatures.push(feature);
+            feature.set('type','pressure');
+            this.pressureFeatures.push(feature);
           }
         })
       });
@@ -172,7 +174,7 @@ export default {
         if(feature.get('features')) {
             const clickFeature = feature.get('features')[0];
             // const coordinates=clickFeature.getGeometry().getCoordinates();
-            if (clickFeature && clickFeature.get('type') == 'waterSupply') {
+            if (clickFeature && clickFeature.get('type') == 'pressure') {
                 this.showInfo(clickFeature.get('props'));
                 this.waterOverlay.setPosition( coordinate );
                 // const videoInfoData = clickFeature.get('props');
