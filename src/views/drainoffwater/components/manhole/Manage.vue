@@ -148,7 +148,7 @@ export default {
     manholeClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
       if(feature){
-        this.clickDataItem(feature.get('props'),null)
+        this.clickDataItem(feature.get('features')[0].get('props'),null)
         this.manholeOverlay.setPosition(coordinate);
       }
     },
