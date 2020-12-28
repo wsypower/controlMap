@@ -10,7 +10,7 @@
     <div class="tip-body">
       <div class="detail" flex="dir:left">
         <div class="detail-left" flex="dir:left cross:center">
-          <img src="~@img/shui.png" />
+          <img src="~@img/gongshui.png" />
           <div class="mes" flex="dir:top">
             <span>{{ info.detailMessage.value }}<em>{{ info.detailMessage.unit }}</em></span>
             <span>供水压力</span>
