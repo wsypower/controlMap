@@ -189,7 +189,8 @@ export default {
         }
       })
       const overlays = this.map.getOverlays().array_
-      overlays.forEach(o => {
+      const cloneOverlays = [...overlays]
+      cloneOverlays.forEach(o => {
         _this.map.removeOverlay(o)
       })
     }
