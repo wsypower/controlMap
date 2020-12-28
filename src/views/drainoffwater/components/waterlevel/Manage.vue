@@ -25,9 +25,9 @@
       <cg-container scroll v-if="!showLoading && treeData.length > 0">
         <a-tree class="tree-panel" showIcon showLine :treeData="treeData" @select="onSelect">
           <img slot="dept" src="~@img/avatar-jiance.png" />
-          <img slot="equipment" src="~@img/avatar-equipment.png" />
-          <img slot="equipment-outline" src="~@img/avatar-equipment-outline.png" />
-          <img slot="equipment-warn" src="~@img/avatar-equipment-warn.png" />
+          <img slot="equipment" src="~@img/shuiwei_online.png" />
+          <img slot="equipment-outline" src="~@img/shuiwei_outline.png" />
+          <img slot="equipment-warn" src="~@img/shuiwei_shilian.png" />
         </a-tree>
       </cg-container>
       <div v-if="!showLoading && treeData.length == 0" class="nodata-panel" flex="main:center cross:center">
@@ -257,7 +257,7 @@ export default {
       height: 100%;
       padding: 10px;
       img {
-        width: 20px;
+        //width: 20px;
         height: 20px;
         display: inline-block;
         border-radius: 12px;

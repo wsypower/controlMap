@@ -2,7 +2,8 @@
   <div class="tip-content">
     <div class="tip-header" flex="dir:left">
       <div class="info-body-left" flex="cross:center">
-        <cg-icon-svg name="shebei" class="svg_icon_jiance"></cg-icon-svg>
+        <!--<cg-icon-svg name="shebei" class="svg_icon_jiance"></cg-icon-svg>-->
+        <img  class="svg_icon_jiance" src="~@img/shuiwei.png"/>
         <span>{{ info.detailMessage.name }}</span>
       </div>
       <div class="close" flex="main:center cross:center" @click="closeDialog"></div>
@@ -188,7 +189,7 @@ export default{
       width: 300px;
       height: 100%;
       .svg_icon_jiance {
-        width: 22px;
+        /*width: 22px;*/
         height: 22px;
         color: #ffffff;
         margin-right: 10px;
