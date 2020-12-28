@@ -207,7 +207,7 @@ export default {
       this.detailInfoData.type = 'water';
       console.log('macId: ' + info.id, 'userId: ' + userId);
       this.getOneWaterLevelMacData({userId: userId,macId: info.id}).then(res=>{
-        this.detailInfoData.detailMessage.value = res.level;
+        this.detailInfoData.detailMessage.value = res.waterLevel;
       });
       this.getWaterLevelTrendDataForOneMac({userId: userId,macId: info.id}).then(res=>{
           let needData = res.reduce((acc,item) => {

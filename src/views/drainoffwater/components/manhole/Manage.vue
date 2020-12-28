@@ -6,7 +6,7 @@
         <a-select v-model="query.status" style="flex:1">
           <a-select-option value="">全部</a-select-option>
           <a-select-option value="0">正常</a-select-option>
-          <a-select-option value="1">警告</a-select-option>
+          <a-select-option value="1">报警</a-select-option>
         </a-select>
       </div>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
