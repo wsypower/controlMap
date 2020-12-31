@@ -13,6 +13,13 @@ export default [{
     role: ['admin']
   },
   {
+    path: '/zf',
+    title: '执法人员',
+    icon: 'zf-people',
+    active: false,
+    role: ['admin']
+  },
+  {
     path: '/car',
     title: '车辆管控',
     icon: 'menu-car',

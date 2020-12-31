@@ -31,7 +31,7 @@
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
         <a-spin tip="数据加载中..."></a-spin>
       </div>
-      <cg-container scroll v-if="!showLoading && trackSegments.length > 0">
+      <cg-container scroll v-if="!showLoading && dataList.length > 0">
         <div class="item" flex="dir:left main:justify" v-for="(item, index) in trackSegments" :key="index">
           <div flex="cross:center main:center">
             <span>{{ index }}</span>
@@ -62,6 +62,12 @@
       <div v-if="!showLoading && dataList.length == 0" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
       </div>
+    </div>
+    <div hidden>
+      <a-card ref="trailTimeCard" :bodyStyle="cardBodyStyle" style="width: 150px;" title="时间" :headStyle="cardHeadStyle">
+        <a-icon type="close" slot="extra" @click="timeCardClose" />
+        <div>{{ trailTimeData }}</div>
+      </a-card>
     </div>
   </div>
 </template>
@@ -114,7 +120,11 @@ export default {
       eventLayer: null,
       trackPlaying: null,
       isPlayingTrack: null,
-      trackIndex: 0
+      trackIndex: 0,
+      trailOverlay: null,
+      trailTimeData: {},
+      cardBodyStyle: { 'padding': '8px', 'text-align': 'center' },
+      cardHeadStyle: { 'min-height': '35px', 'padding': '0 12px' }
     }
   },
   computed: {
@@ -142,8 +152,17 @@ export default {
     this.dayRange = [moment().startOf('day').format('YYYY-MM-DD HH:mm'), moment().endOf('day').format('YYYY-MM-DD HH:mm')];
     // this.query.startTime = new Date(day).getTime();
     // this.query.endTime = new Date(day).getTime();
-    this.query.startTime = moment().startOf('day').valueOf() ;
+    this.query.startTime = moment().startOf('day').valueOf();
     this.query.endTime = moment().endOf('day').valueOf();
+
+    this.trailOverlay = this.mapManager.addOverlay({
+      id: 'peopleTrailOverlay',
+      offset: [0, -20],
+      positioning: 'bottom-center',
+      element: this.$refs.trailTimeCard.$el
+    });
+    this.map.on('click', this.trailTimeClickHandler);
+
     this.getDataList();
   },
   watch: {
@@ -303,6 +322,7 @@ export default {
         return;
       }
       this.getDataList();
+      this.timeCardClose();
       this.map.removeLayer(this.trackLayer);
       this.map.removeLayer(this.eventLayer);
       if (this.trackPlaying) {
@@ -343,7 +363,36 @@ export default {
     //暂停播放
     pausePlay(item, i) {
       this.dataList[i].isStart = false;
+    },
+    timeCardClose() {
+      this.trailOverlay.setPosition(null);
+    },
+    trailTimeClickHandler({ pixel, coordinate }) {
+      const feature = this.map.forEachFeatureAtPixel(pixel, feature => {
+        if (feature && feature.getGeometry().getType() == 'Point') {
+          const coordinates = feature.getGeometry().getCoordinates();
+          const trailData = feature.getProperties();
+          this.trailOverlay.setPosition(coordinates);
+          this.trailTimeData = trailData.time;
+        }
+        return feature;
+      }, {
+        layerFilter: layer => {
+          if (layer == this.eventLayer) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      });
+      if (!feature) {
+        this.trailOverlay.setPosition(null);
+      }
     }
+  },
+  beforeDestroy() {
+    this.map.removeOverlay(this.trailOverlay);
+    this.map.un('click', this.trailTimeClickHandler);
   }
 }
 </script>

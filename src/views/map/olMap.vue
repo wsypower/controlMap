@@ -151,6 +151,8 @@ export default {
       //管控的地图清除
       this.map.removeOverlay(this.map.getOverlayById('eventPositionOverlay'));
       this.map.removeOverlay(this.map.getOverlayById('carPositionOverlay'));
+      this.map.removeOverlay(this.map.getOverlayById('zfPositionOverlay'));
+      this.map.removeOverlay(this.map.getOverlayById('zfSignInfoOverlay'));
       this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
       this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
       this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));

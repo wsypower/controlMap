@@ -375,7 +375,35 @@ export function listToFeatures(list, type) {
           });
           feature.set('icon', pointImg);
           feature.set('props', item);
-          // feature.set('type','peoplePosition');
+          feature.set('type', 'peopleSimple');
+          return feature;
+        }
+      });
+      break;
+    case '执法人员':
+      features = list.map(item => {
+        let pointImg;
+        if (item.sex === '1') {
+          if (item.online) {
+            pointImg = 'female_online';
+          } else {
+            pointImg = 'female_offline';
+          }
+        } else {
+          if (item.online) {
+            pointImg = 'male_online';
+          } else {
+            pointImg = 'male_offline';
+          }
+        }
+        // 通过经纬度生成点位加到地图上
+        if (item.x && item.x.length > 0 && item.y && item.y.length > 0) {
+          const feature = new Feature({
+            geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+          });
+          feature.set('icon', pointImg);
+          feature.set('props', item);
+          feature.set('type', 'zfSimple');
           return feature;
         }
       });
@@ -395,7 +423,7 @@ export function listToFeatures(list, type) {
           });
           feature.set('icon', pointImg);
           feature.set('props', item);
-          // feature.set('type','CarPosition');
+          feature.set('type', 'carSimple');
           return feature;
         }
       });
@@ -408,7 +436,7 @@ export function listToFeatures(list, type) {
           });
           feature.set('icon', 'event');
           feature.set('props', item);
-          feature.set('type', 'eventPosition');
+          feature.set('type', 'eventSimple');
           return feature;
         }
       });

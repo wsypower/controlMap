@@ -1,16 +1,15 @@
 <template>
-  <div class="car-trail" flex="dir:top">
+  <div class="people-trail" flex="dir:top">
     <div class="search-panel">
       <div flex="fir:left cross:center">
-        <label>选择车辆：</label>
-        <a-select v-model="query.carId" showSearch placeholder="请选择" style="width: 246px;">
-          <a-select-option value="" :key="-1">全部</a-select-option>
-          <a-select-option v-for="(car, index) in carDataList" :value="car.id" :key="index">{{ car.name }}（{{ car.dept }}）</a-select-option>
+        <label style="width: 70px;">选择人员：</label>
+        <a-select v-model="query.userDisplayId" showSearch placeholder="请选择" style="flex:1;width: 246px;">
+          <a-select-option v-for="(people, index) in peopleDataList" :value="people.userDisplayId" :key="index">{{ people.name }}（{{ people.dept }}）</a-select-option>
         </a-select>
       </div>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
         <label style="width: 90px;">查询时间：</label>
-        <a-range-picker v-model="dayRange" format="YYYY-MM-DD" style="width: 100%" />
+        <a-range-picker v-model="dayRange" :show-time="{ format: 'HH:mm' }" format="YYYY-MM-DD HH:mm" style="width: 100%" />
       </div>
       <a-button type="primary" style="width: 100%" @click="onSearch">查询</a-button>
     </div>
@@ -19,11 +18,11 @@
       <div>
         <span>起止时间</span>
         <span class="sort-icon">
-          <i @click="onSort('asc')">
-            <cg-icon-svg name="caret-up" class="svg_icon_up" :class="{ active: activeName === 'asc' }"></cg-icon-svg>
-          </i>
           <i @click="onSort('desc')">
-            <cg-icon-svg name="caret-down" class="svg_icon_down" :class="{ active: activeName === 'desc' }"></cg-icon-svg>
+            <cg-icon-svg name="caret-up" class="svg_icon_up" :class="{ active: activeName === 'desc' }"></cg-icon-svg>
+          </i>
+          <i @click="onSort('asc')">
+            <cg-icon-svg name="caret-down" class="svg_icon_down" :class="{ active: activeName === 'asc' }"></cg-icon-svg>
           </i>
         </span>
       </div>
@@ -42,6 +41,10 @@
             <p><span class="dot red"></span>{{ item.coordinates[item.coordinates.length-1].time }}</p>
           </div>
           <div flex="cross:center main:center">
+            <!--<div @click="trackPlayHandler(item, index)">-->
+            <!--<a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="trackPlayHandler(item, index)" />-->
+            <!--</div>-->
+            <!--<cg-icon-svg name="telephone" class="svg_icon_telephone" @click="onSort('desc')"></cg-icon-svg>-->
             <a-icon v-show="!item.isStart" type="play-circle" theme="filled" @click="trackPlayHandler(item, index)" />
             <a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="trackPlayHandler(item, index)" />
           </div>
@@ -70,20 +73,21 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions, mapState } from 'vuex'
-import util from '@/utils/util';
 import moment from 'moment';
+import util from '@/utils/util';
 import { stampConvertToTime } from '@/utils/util.tool';
 import { trackByLocationList, pointByCoord } from '@/utils/util.map.manage';
 import { trackStyle, trackPointStyle, alarmPointStyle } from '@/utils/util.map.style';
 import { TrackPlaying } from '@/utils/util.map.trackPlaying'
+import { getUserTrailDataList, getTrailDetailData } from '@/api/zf/manage'
 export default {
-  name: 'carTrail',
+  name: 'peopleTrail',
   props: {
     infoId: {
       type: String,
       default: ''
     },
-    carDataList: {
+    peopleDataList: {
       type: Array,
       default () {
         return []
@@ -94,8 +98,8 @@ export default {
     return {
       //各项查询条件
       query: {
-        carId: '',
-        userId: '',
+        // userId: '',
+        userDisplayId: '',
         startTime: '',
         endTime: '',
         sortType: 'desc',
@@ -105,7 +109,7 @@ export default {
       //查询时的过渡效果
       showLoading: false,
       //正序asc、倒序desc
-      activeName: 'asc',
+      activeName: 'desc',
       //单页数据
       dataList: [],
       //总数
@@ -124,22 +128,35 @@ export default {
     }
   },
   computed: {
-    ...mapState('map', ['mapManager']),
+    ...mapState('map', ['mapManager'])
   },
   mounted() {
-    const userId = util.cookies.get('userId');
-    this.query.userId = userId;
     this.map = this.mapManager.getMap();
+    let userId = '';
     if (this.infoId) {
-      this.query.carId = this.infoId;
+      userId = this.infoId;
+    } else {
+      userId = util.cookies.get('userId');
     }
-    let day = moment(new Date()).format('YYYY-MM-DD');
-    this.dayRange = [moment(day, 'YYYY-MM-DD'), moment(day, 'YYYY-MM-DD')];
-    this.query.startTime = new Date(day).getTime();
-    this.query.endTime = new Date(day).getTime();
+    let temp = this.peopleDataList.find(item => item.id === userId);
+    if (temp) {
+      this.query.userId = userId;
+      this.query.userDisplayId = temp.userDisplayId;
+    } else {
+      this.query.userId = userId;
+      this.query.userDisplayId = this.peopleDataList[0].userDisplayId;
+      // this.query.userDisplayId = '';
+    }
+
+    // let day = moment(new Date()).format('YYYY-MM-DD HH:mm');
+    this.dayRange = [moment().startOf('day').format('YYYY-MM-DD HH:mm'), moment().endOf('day').format('YYYY-MM-DD HH:mm')];
+    // this.query.startTime = new Date(day).getTime();
+    // this.query.endTime = new Date(day).getTime();
+    this.query.startTime = moment().startOf('day').valueOf();
+    this.query.endTime = moment().endOf('day').valueOf();
 
     this.trailOverlay = this.mapManager.addOverlay({
-      id: 'carTrailOverlay',
+      id: 'zfTrailOverlay',
       offset: [0, -20],
       positioning: 'bottom-center',
       element: this.$refs.trailTimeCard.$el
@@ -150,43 +167,47 @@ export default {
   },
   watch: {
     infoId: function(val) {
-      this.query.carId = val;
-      let day = moment(new Date()).format('YYYY-MM-DD');
-      this.dayRange = [moment(day, 'YYYY-MM-DD'), moment(day, 'YYYY-MM-DD')];
-      this.query.startTime = new Date(day).getTime();
-      this.query.endTime = new Date(day).getTime();
+      if (val) {
+        console.log('infoId', val);
+        let temp = this.peopleDataList.find(item => item.id === val);
+        this.query.userId = val;
+        this.query.userDisplayId = temp.userDisplayId;
+      }
+      // let day = moment(new Date()).format('YYYY-MM-DD HH:mm');
+      this.dayRange = [moment().startOf('day').format('YYYY-MM-DD HH:mm'), moment().endOf('day').format('YYYY-MM-DD HH:mm')];
+      // this.query.startTime = new Date(day).getTime();
+      // this.query.endTime = new Date(day).getTime();
+      this.query.startTime = moment().startOf('day').valueOf();
+      this.query.endTime = moment().endOf('day').valueOf();
       this.getDataList();
     }
   },
   methods: {
-    ...mapActions('car/manage', ['getCarTrailDataList', 'getTrailDetailData']),
+    // ...mapActions('section/manage', ['getUserTrailDataList', 'getTrailDetailData']),
     //获取人员轨迹数据
     getDataList() {
       console.log('this.query', this.query);
-      if (!this.query.carId) {
-        this.$message.warning('没有选择车辆！！！');
-        return
-      }
       this.showLoading = true;
-      this.getCarTrailDataList(this.query).then(res => {
+      getUserTrailDataList(this.query).then(res => {
         this.showLoading = false;
         this.dataList = res.map(item => {
           item.isStart = false;
           item.hasDetail = false;
-          item.time = stampConvertToTime(item.gpstime);
-          return item
+          item.time = stampConvertToTime(item.createtime);
+          return item;
         });
         if (res.length > 0) {
           this.trackDataHandler(res);
           const trackLineFeature = trackByLocationList(this.dataList);
           this.trackLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature, trackStyle(), 3);
-          this.trackLayer.set('featureType', 'CarTrail');
+          this.trackLayer.set('featureType', 'ZfTrail');
           this.eventLayer = this.mapManager.addVectorLayerByFeatures(this.eventFeatures, trackPointStyle(), 3);
-          this.eventLayer.set('featureType', 'CarTrail');
+          this.eventLayer.set('featureType', 'ZfTrail');
           this.mapManager.getMap().getView().fit(this.trackLayer.getSource().getExtent());
         } else {
           this.$message.warning('未查询到轨迹数据！！！');
         }
+        // this.totalSize = res.data.total;
       });
     },
     // 传过来的轨迹点位分段处理并保存
@@ -195,6 +216,7 @@ export default {
       this.currentQueryTracks = [];
       // 按间隔时间轨迹分段
       let currentCoord = coords[0];
+      currentCoord.operate = '99';
       let nextCoord = null;
       let lineCoordinates = [];
       let lineCoords = [];
@@ -208,13 +230,14 @@ export default {
       }
       for (let i = 1; i < coords.length - 1; i++) {
         nextCoord = coords[i];
+        nextCoord.operate = '99';
         if (nextCoord.operate == "2" || nextCoord.operate == "0" || nextCoord.operate == "1" || nextCoord.operate == "5" || i % 1 == 0) { //配置轨迹点抽稀
           const feature = pointByCoord([parseFloat(nextCoord.gpsx), parseFloat(nextCoord.gpsy)]);
           feature.setProperties(nextCoord);
           this.eventFeatures.push(feature);
         }
         if (nextCoord.operate == "99") { //只串联普通轨迹点
-          if (nextCoord.gpstime - currentCoord.gpstime <= 60 * 1000 * 30) { // 小于间隔时间 30分钟
+          if (nextCoord.createtime - currentCoord.createtime <= 60 * 1000 * 30) { // 小于间隔时间 30分钟
             lineCoordinates.push(nextCoord); // 加入当前线段
             lineCoords.push([parseFloat(nextCoord.gpsx), parseFloat(nextCoord.gpsy)])
           } else { // 大于间隔时间
@@ -263,7 +286,7 @@ export default {
         this.trackSegments[index].isStart = true;
         const routeCoords = this.currentQueryTracks[index];
         if (!this.trackPlaying) {
-          this.trackPlaying = new TrackPlaying(this.map, routeCoords, null, null, 'car', this.stopPlayer, index);
+          this.trackPlaying = new TrackPlaying(this.map, routeCoords, null, null, 'people', this.stopPlayer, index);
         } else {
           this.trackPlaying.data = routeCoords;
         }
@@ -291,9 +314,15 @@ export default {
     },
     //查询(默认显示当天，当前登入的用户)
     onSearch() {
-      this.query.startTime = this.dayRange[0]._d.getTime();
-      this.query.endTime = this.dayRange[1]._d.getTime();
-      // this.query.pageNo = 1;
+      this.query.startTime = this.dayRange[0] ? new Date(this.dayRange[0]).getTime() : '';
+      this.query.endTime = this.dayRange[1] ? new Date(this.dayRange[1]).getTime() : '';
+      // this.query.startTime = this.dayRange[0] ? this.dayRange[0]._d.getTime() : '';
+      // this.query.endTime = this.dayRange[1] ? this.dayRange[1]._d.getTime() : '';
+      let dates = Math.floor((this.query.endTime - this.query.startTime)) / (1000 * 60 * 60 * 24);
+      if (dates > 3) {
+        this.$message.warning('查询时间不可超过3天！！！');
+        return;
+      }
       this.getDataList();
       this.timeCardClose();
       this.map.removeLayer(this.trackLayer);
@@ -309,13 +338,11 @@ export default {
     //     this.query.pageNo = pageNo;
     //     this.getDataList()
     // },
-
     //按照时间排序（正序、倒序）
     onSort(sortType) {
       console.log(11111111111, sortType);
       this.activeName = sortType;
-      // this.query.sortType = sortType;
-      // this.query.pageNo = 1;
+      this.query.sortType = sortType;
       this.getDataList();
     },
     //开始播放
@@ -329,12 +356,11 @@ export default {
           startTime: item.startTime,
           endTime: item.endTime
         }
-        this.getTrailDetailData(temp).then(res => {
+        getTrailDetailData(temp).then(res => {
           console.log('TrailDetailData', res.data);
           item.hasDetail = true;
         });
       }
-
     },
     //暂停播放
     pausePlay(item, i) {
@@ -372,8 +398,16 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-.car-trail {
+<style lang="scss">
+.ant-calendar-picker-input.ant-input {
+  padding: 4px 1px !important;
+}
+
+.ant-calendar-range-picker-input {
+  width: 46% !important;
+}
+
+.people-trail {
   height: 100%;
   width: 100%;
 
@@ -424,6 +458,7 @@ export default {
     background-color: #f5f5f5;
     height: calc(100% - 70px);
     position: relative;
+    margin-bottom: 25px;
 
     .item {
       width: 100%;
@@ -449,6 +484,8 @@ export default {
             padding: 5px 8px;
             background-color: #2b90f3;
             border-radius: 4px;
+            width: 35px;
+            text-align: center;
           }
         }
 

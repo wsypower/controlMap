@@ -10,9 +10,9 @@
       <!-- <a-tab-pane tab="违规查询" key="3">
         <violate-rules :peopleDataList="peopleDataList"></violate-rules>
       </a-tab-pane> -->
-      <a-tab-pane tab="签到-签退" key="4">
+      <!-- <a-tab-pane tab="签到-签退" key="4">
         <people-work-time :peopleDataList="peopleDataList"></people-work-time>
-      </a-tab-pane>
+      </a-tab-pane> -->
     </a-tabs>
   </div>
 </template>
@@ -22,9 +22,10 @@ import PeoplePosition from './peopleManage/PeoplePosition'
 import PeopleTrail from './peopleManage/PeopleTrail'
 import ViolateRules from './peopleManage/ViolateRules'
 import PeopleWorkTime from './peopleManage/PeopleWorkTime'
+import { getAllPeopleDataList } from '@/api/zf/common'
 import util from '@/utils/util'
 export default {
-  name: 'peopleManage',
+  name: 'zfManage',
   data() {
     return {
       activeTab: '1',
@@ -44,26 +45,27 @@ export default {
   mounted() {
     this.map = this.mapManager.getMap();
     const userId = util.cookies.get('userId');
-    this.getAllPeopleDataList({ userId: userId }).then(res => {
+    getAllPeopleDataList().then(res => {
       res.forEach(item => {
-        item.userDisplayId = item.id + '_' + item.name;
+        // item.userDisplayId = item.id + '_' + item.name;
+        item.userDisplayId = item.id;
         this.peopleDataList.push(item);
       });
     });
   },
   methods: {
-    ...mapActions('section/common', ['getAllPeopleDataList']),
+    // ...mapActions('section/common', ['getAllPeopleDataList']),
     init() {},
     changeTab(val) {
-      this.map.getOverlayById('peoplePositionOverlay') && this.map.getOverlayById('peoplePositionOverlay').setPosition(undefined);
-      this.map.getOverlayById('peopleSignInfoOverlay') && this.map.getOverlayById('peopleSignInfoOverlay').setPosition(undefined);
-      this.map.getOverlayById('peopleTrailOverlay') && this.map.getOverlayById('peopleTrailOverlay').setPosition(undefined);
+      this.map.getOverlayById('zfPositionOverlay') && this.map.getOverlayById('zfPositionOverlay').setPosition(undefined);
+      this.map.getOverlayById('zfSignInfoOverlay') && this.map.getOverlayById('zfSignInfoOverlay').setPosition(undefined);
+      this.map.getOverlayById('zfTrailOverlay') && this.map.getOverlayById('zfTrailOverlay').setPosition(undefined);
       const layers = this.map.getLayers().array_;
       //切换时清除地图上的一些操作
       layers.forEach(l => {
         if (l.get('featureType')) {
           if (val == '1') { //人员定位
-            if (l.get('featureType') == 'PeoplePosition') {
+            if (l.get('featureType') == 'ZfPosition') {
               l.setVisible(true);
               // this.map.getView().fit(l.getSource().getExtent());
               const view = this.map.getView();
@@ -73,21 +75,21 @@ export default {
               l.setVisible(false);
             }
           } else if (val == '2') { //轨迹查询
-            if (l.get('featureType') == 'PeopleTrail' || l.get('featureType') == 'trackLine') {
+            if (l.get('featureType') == 'ZfTrail' || l.get('featureType') == 'trackLine') {
               l.setVisible(true);
               this.map.getView().fit(l.getSource().getExtent());
             } else {
               l.setVisible(false);
             }
           } else if (val == '3') { //违规查询
-            if (l.get('featureType') == 'PeopleViolateRules') {
+            if (l.get('featureType') == 'ZfViolateRules') {
               l.setVisible(true);
               this.map.getView().fit(l.getSource().getExtent());
             } else {
               l.setVisible(false);
             }
           } else if (val == '4') {
-            if (l.get('featureType') == 'peopleWorkTime') {
+            if (l.get('featureType') == 'ZfWorkTime') {
               l.setVisible(true);
               this.map.getView().fit(l.getSource().getExtent());
             } else {
@@ -153,7 +155,7 @@ export default {
       width: 100%;
 
       .ant-tabs-tab {
-        width: 33% !important;
+        width: 50% !important;
         text-align: center;
         margin: 0px;
       }
