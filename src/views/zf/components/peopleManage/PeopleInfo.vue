@@ -153,7 +153,7 @@ export default {
 .tip-content {
   z-index: 10;
   width: 300px;
-  height: 240px;
+  height: 131px;
   background-image: linear-gradient(90deg, #0065ea 0%, #00a5ff 100%);
   border-radius: 6px;
   box-shadow: -1px 0px 4px 0px rgba(0, 0, 0, 0.12);
@@ -231,6 +231,7 @@ export default {
     height: calc(100% - 131px);
     overflow: hidden;
     background-color: #ffffff;
+    display: none;
 
     .tab_panel {
       height: 26px;

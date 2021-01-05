@@ -376,6 +376,12 @@ export function listToFeatures(list, type) {
           feature.set('icon', pointImg);
           feature.set('props', item);
           feature.set('type', 'peopleSimple');
+          feature.setStyle(new Style({
+            image: new Icon({
+              src: require('@/assets/mapImage/' + pointImg + '.png'),
+              anchor: [0.5, 0.5]
+            }),
+          }));
           return feature;
         }
       });
@@ -404,6 +410,12 @@ export function listToFeatures(list, type) {
           feature.set('icon', pointImg);
           feature.set('props', item);
           feature.set('type', 'zfSimple');
+          feature.setStyle(new Style({
+            image: new Icon({
+              src: require('@/assets/mapImage/' + pointImg + '.png'),
+              anchor: [0.5, 0.5]
+            }),
+          }));
           return feature;
         }
       });
@@ -424,6 +436,12 @@ export function listToFeatures(list, type) {
           feature.set('icon', pointImg);
           feature.set('props', item);
           feature.set('type', 'carSimple');
+          feature.setStyle(new Style({
+            image: new Icon({
+              src: require('@/assets/mapImage/' + pointImg + '.png'),
+              anchor: [0.5, 0.5]
+            }),
+          }));
           return feature;
         }
       });
@@ -437,6 +455,12 @@ export function listToFeatures(list, type) {
           feature.set('icon', 'event');
           feature.set('props', item);
           feature.set('type', 'eventSimple');
+          feature.setStyle(new Style({
+            image: new Icon({
+              src: require('@/assets/mapImage/' + pointImg + '.png'),
+              anchor: [0.5, 0.5]
+            }),
+          }));
           return feature;
         }
       });
@@ -451,6 +475,12 @@ export function listToFeatures(list, type) {
           feature.set('icon', 'carmera_online');
           feature.set('props', item);
           // feature.set('type','CarPosition');
+          feature.setStyle(new Style({
+            image: new Icon({
+              src: require('@/assets/mapImage/' + pointImg + '.png'),
+              anchor: [0.5, 0.5]
+            }),
+          }));
           return feature;
         }
       });
