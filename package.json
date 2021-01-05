@@ -42,7 +42,7 @@
     "@vue/cli-service": "^3.0.5",
     "@vue/eslint-config-prettier": "^4.0.1",
     "@xohu/vue-cli-plugin-create-router": "^1.2.1",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "babel-eslint": "^10.0.1",
     "docz": "^1.2.0",
     "docz-theme-default": "^1.2.0",
