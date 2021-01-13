@@ -22,15 +22,16 @@
 </template>
 <script>
 import { mapActions, mapState } from 'vuex';
+import GeoJSON from 'ol/format/GeoJSON'
 import selectedImg from '@/assets/mapImage/selected.png';
 import unselectedImg from '@/assets/mapImage/unselected.png';
 import { getTypePoint } from '@/api/map/service';
-import { gridStyle } from '@/utils/util.map.style';
+import { gridStyle, stationaryStyle } from '@/utils/util.map.style';
 import { listToFeatures } from '@/utils/util.map.manage';
 import RecordInfo from '@/views/records/components/RecordInfo.vue';
 import util from '@/utils/util'
 let selectLayer = ['区县', '街道', '社区', '监督网格', '单元网格', '人员', '车辆', '视频', '案卷'];
-let gridLayer = ['区县', '街道', '社区', '监督网格', '单元网格'];
+let gridLayer = ['区县', '街道', '社区', '监督网格', '单元网格', '中队管辖范围'];
 export default {
   name: "LayersSwitch",
   props: {
@@ -68,6 +69,15 @@ export default {
         color: '#FF0000',
         icon: require('@/assets/mapImage/dywg.png'),
         lyr: null
+      // }, {
+      //   name: '中队管辖范围',
+      //   color: '#00FF00',
+      //   icon: require('@/assets/mapImage/qx.png'),
+      //   lyr: null
+      // }, {
+      //   name: '中队驻点',
+      //   icon: require('@/assets/mapImage/sq.png'),
+      //   lyr: null
       }, {
         name: '人员',
         icon: require('@/assets/mapImage/ry.png'),
@@ -110,7 +120,11 @@ export default {
       const userId = util.cookies.get('userId');
       this.allLayers.forEach(layer => {
         if (gridLayer.includes(layer.name)) {
-          getTypePoint(layer.name).then(data => {
+          let layerName = layer.name;
+          if (layerName == '中队管辖范围') {
+            layerName = '街道';
+          }
+          getTypePoint(layerName).then(data => {
             console.log('区县数据====', data);
             layer.lyr = _this.mapManager.addVectorLayerByFeatures(data, gridStyle(layer.color), 33);
             layer.lyr.setVisible(false);
@@ -151,6 +165,14 @@ export default {
               layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
               layer.lyr.setVisible(false);
             });
+          } else if (layer.name == '中队驻点') {
+            const stationaryObj = require('@/assets/json/wc_4490.json');
+            const geoJSON = new GeoJSON();
+            const features = geoJSON.readFeatures(stationaryObj);
+            const stationaryLyr = _this.mapManager.addVectorLayerByFeatures(features);
+            stationaryLyr.setStyle(stationaryStyle);
+            layer.lyr = stationaryLyr;
+            layer.lyr.setVisible(false);
           }
         }
       });
@@ -244,7 +266,7 @@ export default {
 
     .ctrl-panel-item-middle {
       display: flex;
-      width: 90px;
+      width: 100px;
       flex: none;
 
       .ctrl-panel-item-icon {

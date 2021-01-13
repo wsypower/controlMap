@@ -3,7 +3,7 @@
     <div class="map-file-model-header" flex="cross:center main:justify">
       <div class="info-body-left" flex="cross:center">
         <cg-icon-svg name="menu-records" class="svg_icon_records"></cg-icon-svg>
-        <span>{{ detailInfo.code }}</span>
+        <span>{{ detailInfo.taskcode }}</span>
       </div>
       <div class="close" @click="closeDialog"></div>
     </div>
