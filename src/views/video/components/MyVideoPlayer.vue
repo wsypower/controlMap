@@ -93,6 +93,7 @@ export default {
       display: block;
     }
     .close-panel {
+      z-index: 9999;
       position: absolute;
       top: 0;
       right: 0;

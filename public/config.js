@@ -24,7 +24,7 @@ const GIS_CONFIG = {
 };
 const IP_CONFIG = {
   IP: {
-    base: "2.133.132.11:8081",
+    base: "2.133.132.15:8082",
     gis: "2.133.132.17:6350",
     proxy: "2.133.132.11:8081",
     zf: "2.133.132.24:9090"
@@ -40,8 +40,8 @@ const host = window.location.host;
 const ipPortRegExp = /((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)(:\d{0,5})?/;
 for (let key in IP_CONFIG) {
   if (host == IP_CONFIG[key]["base"]) {
-    URL_CONFIG.baseURL = URL_CONFIG.baseURL.replace(ipPortRegExp, IP_CONFIG[key]["proxy"]);
-    URL_CONFIG.baseURL2 = URL_CONFIG.baseURL2.replace(ipPortRegExp, IP_CONFIG[key]["proxy"]);
+    URL_CONFIG.baseURL = URL_CONFIG.baseURL.replace(ipPortRegExp, IP_CONFIG[key]["base"]);
+    URL_CONFIG.baseURL2 = URL_CONFIG.baseURL2.replace(ipPortRegExp, IP_CONFIG[key]["base"]);
     URL_CONFIG.zfURL = URL_CONFIG.zfURL.replace(ipPortRegExp, IP_CONFIG[key]["zf"]);
     GIS_CONFIG.baseURL = GIS_CONFIG.baseURL.replace(ipPortRegExp, IP_CONFIG[key]["gis"]);
     GIS_CONFIG.proxyURL = GIS_CONFIG.proxyURL.replace(ipPortRegExp, IP_CONFIG[key]["proxy"]);

@@ -86,13 +86,14 @@ export default {
     isLoadData: function() {
       if (this.videoFeatures.length > 0) {
         if (this.videoLayer) {
-          this.videoLayer.getSource().getSource().clear();
-          this.videoLayer.getSource().getSource().addFeatures(this.videoFeatures);
+          this.videoLayer.getSource().clear();
+          this.videoLayer.getSource().addFeatures(this.videoFeatures);
         } else {
-          this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
+          // this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
+          this.videoLayer = this.mapManager.addVectorLayerByFeatures(this.videoFeatures, videoPointStyle());
           this.videoLayer.set('featureType', 'videoDistribute');
         }
-        const extent = this.videoLayer.getSource().getSource().getExtent();
+        const extent = this.videoLayer.getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
     }
@@ -103,7 +104,8 @@ export default {
     this.map.on('click', this.videoMapClickHandler);
     this.getAllCameraTreeData({ userId: userId }).then(res => {
       console.log('getAllCameraTreeData', res);
-      this.sourceData = res.data[0].children;
+      // this.sourceData = res.data[0].children;
+      this.sourceData = res;
       this.showLoading = false;
     });
   },
@@ -114,24 +116,28 @@ export default {
       const _this = this;
       arr.forEach(item => {
         item.scopedSlots = { title: 'title' };
-        if (item.isLeaf) {
-          item.title = item.mpname;
-          item.key = item.mpid;
+        if (!item.isLeaf) {
+          item.title = item.cname;
+          item.key = item.id;
           item.dept = deptName;
           item.slots = { icon: 'camera' };
           item.class = 'itemClass';
           let temp = {
-            title: item.mpname,
-            key: item.mpid
+            title: item.cname,
+            key: item.id
           }
           this.allCameraData.push(temp);
           // 通过经纬度生成点位加到地图上
-          if (item.x && item.x.length > 0 && item.x != 'null' && item.y && item.y.length > 0 && item.y != 'null') {
-            const feature = _this.mapManager.xyToFeature(item.x, item.y);
-            feature.set('icon', 'carmera_online');
-            feature.set('props', item);
-            feature.set('type', 'VideoDistribute');
-            _this.videoFeatures.push(feature);
+          if (item.x_84 && item.x_84.length > 0 && item.x_84 != 'null' && item.y_84 && item.y_84.length > 0 && item.y_84 != 'null') {
+            item.x_84 = parseFloat(item.x_84);
+            item.y_84 = parseFloat(item.y_84);
+            if (item.x_84 > 0 && item.y_84 > 0) {
+              const feature = _this.mapManager.xyToFeature(item.x_84, item.y_84);
+              feature.set('icon', 'carmera_online');
+              feature.set('props', item);
+              feature.set('type', 'VideoDistribute');
+              _this.videoFeatures.push(feature);
+            }
           }
         } else {
           item.title = item.name;
@@ -165,26 +171,29 @@ export default {
       console.log(selectedKeys, e);
       if (selectedKeys[0].indexOf('dept_') < 0) {
         let needData = e.selectedNodes[0].data.props;
-        let mpid = needData.mpid;
+        let mpid = needData.cid;
         this.playVideo(mpid);
       }
     },
     videoMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-      if (feature && feature.get('features')) {
-        const clickFeature = feature.get('features')[0];
+      // if (feature && feature.get('features')) {
+      if (feature) {
+        // const clickFeature = feature.get('features')[0];
+        const clickFeature = feature;
         // const coordinates=clickFeature.getGeometry().getCoordinates();
         if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
           const videoInfoData = clickFeature.get('props');
-          this.playVideo(videoInfoData.mpid);
+          this.playVideo(videoInfoData.cid);
         }
       }
     },
     playVideo(mpid) {
       if (this.playerMethod === 'browser') {
         //打开摄像头播放
-        this.getCameraUrl({ userId: userId, mpId: mpid }).then(res => {
-          this.videoSrc = res.mediaURL;
+        // this.videoSrc = 'http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8';
+        this.getCameraUrl({ userId: userId, code: mpid, transmode: 0 }).then(res => {
+          this.videoSrc = res.url;
         });
       } else {
         //打开C端工具播放
@@ -227,7 +236,7 @@ export default {
 
   .yuan_dialog_body {
     background-color: #f5f5f5;
-    height: calc(100% - 50px);
+    height: calc(100% - 70px);
     position: relative;
 
     .tree-panel {

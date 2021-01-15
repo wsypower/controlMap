@@ -131,7 +131,14 @@ service.interceptors.response.use(
       case 0:
         // [ 示例 ] code === 0 代表成功
         success(response.config.url)
+        if (dataAxios.data) {
+          return dataAxios.data
+        }
         return dataAxios.result
+      case 1:
+        // [ 示例 ] code === 0 代表成功
+        success(response.config.url)
+        return dataAxios.data
       case 2:
         // [ 示例 ] code === 2 特例，删除时因为被使用而不能删除
         success(response.config.url)

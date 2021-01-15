@@ -72,7 +72,7 @@ export function getAllAlarmDataList(data) {
 export function getCameraUrl(data) {
   console.log('api:getCameraUrl', data)
   return request({
-    url: 'video/getCameraUrl?_t=' + new Date().getTime(),
+    url: 'sp/getUrl?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -124,7 +124,8 @@ export const alarmReportHandle = data => {
 export function getAllCameraTreeData(data) {
   console.log('api:getAllCameraTreeData', data)
   return request({
-    url: 'video/getAllCameraTreeData?_t=' + new Date().getTime(),
+    // url: 'video/getAllCameraTreeData?_t=' + new Date().getTime(),
+    url: 'sp/getCameraList?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -144,7 +145,8 @@ export function getAllCameraTreeData(data) {
 export function getAllCameraDataList(data) {
     console.log('api:getAllCameraData', data)
     return request({
-        url: 'video/getAllCameraData?_t=' + new Date().getTime(),
+        // url: 'video/getAllCameraData?_t=' + new Date().getTime(),
+        url: 'sp/getCameraList?_t=' + new Date().getTime(),
         method: 'get',
         params: data
     })

@@ -468,13 +468,14 @@ export function listToFeatures(list, type) {
     case '视频':
       features = list.map(item => {
         // 通过经纬度生成点位加到地图上
-        if (item.x && item.x.length > 0 && item.x != 'null' && item.y && item.y.length > 0 && item.y != 'null') {
+        let pointImg = 'carmera_online';
+        if (item.x_84 && item.x_84.length > 0 && item.x_84 != 'null' && item.y_84 && item.y_84.length > 0 && item.y_84 != 'null') {
           const feature = new Feature({
-            geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+            geometry: new Point([parseFloat(item.x_84), parseFloat(item.y_84)])
           });
           feature.set('icon', 'carmera_online');
           feature.set('props', item);
-          // feature.set('type','CarPosition');
+          feature.set('type','videoSimple');
           feature.setStyle(new Style({
             image: new Icon({
               src: require('@/assets/mapImage/' + pointImg + '.png'),

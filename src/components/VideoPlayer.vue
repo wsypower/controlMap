@@ -1,32 +1,30 @@
 <template>
   <div class="video-js">
-    <div v-if="videoSrc === ''" class="no-video">
+    <!-- <div v-if="videoSrc === ''" class="no-video">
       暂未播放视频
-    </div>
-    <video-player
-      v-else
-      class="video-player vjs-custom-skin"
-      ref="videoPlayer"
-      :playsinline="true"
-      :options="playerOptions"
-    >
-    </video-player>
+    </div> -->
+    <!-- <video-player v-else class="video-player vjs-custom-skin" ref="videoPlayer" :playsinline="true" :options="playerOptions">
+    </video-player> -->
+    <video class="video-js vjs-default-skin vjs-big-play-centered" ref="videoPlayer" controls autoplay preload="auto" data-setup="{}">
+      <source ref="videoSource" src="" type="application/x-mpegURL" />
+    </video>
   </div>
 </template>
-
 <script>
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
-import "vue-video-player/src/custom-theme.css";
-import { videoPlayer } from "vue-video-player";
-import "videojs-flash";
-import SWF_URL from "videojs-swf/dist/video-js.swf";
+// import "vue-video-player/src/custom-theme.css";
+// import { videoPlayer } from "vue-video-player";
+// import "videojs-flash";
+import "videojs-contrib-hls";
+// import SWF_URL from "videojs-swf/dist/video-js.swf";
+// import 'videojs-contrib-hls/dist/videojs-contrib-hls.js'
 
-videojs.options.flash.swf = SWF_URL; // 设置flash路径，Video.js会在不支持html5的浏览中使用flash播放视频文件
+// videojs.options.flash.swf = SWF_URL; // 设置flash路径，Video.js会在不支持html5的浏览中使用flash播放视频文件
 export default {
   name: "videojs",
   components: {
-    videoPlayer
+    // videoPlayer
   },
   props: {
     videoUrl: {
@@ -55,37 +53,40 @@ export default {
           progressControl: false, // 进度条
           fullscreenToggle: true // 全屏按钮
         },
-        techOrder: ["flash"], // 兼容顺序
-        flash: {
-          hls: {
-            withCredentials: false
-          },
-          swf: SWF_URL
-        },
-        sources: [
-          {
-            type: "rtmp/flv",
-            src: "" // 视频地址-改变它的值播放的视频会改变
-          }
-        ],
+        // hls: true,
+        // techOrder: ["flash"], // 兼容顺序
+        // flash: {
+        //   hls: {
+        //     withCredentials: false
+        //   },
+        // swf: SWF_URL
+        // },
+        sources: [{
+          type: "application/x-mpegURL",
+          src: "" // 视频地址-改变它的值播放的视频会改变
+        }],
         notSupportedMessage: "此视频暂无法播放，请稍后再试" // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
       }
     };
   },
   mounted() {
-    this.videoSrc = this.videoUrl
+    this.videoSrc = this.videoUrl;
     this.playerOptions.sources[0].src = this.videoUrl;
+    this.$nextTick(() => {
+      this.$refs.videoSource.src = this.videoSrc;
+      videojs(this.$refs.videoPlayer, () => {
+        this.play();
+      });
+    });
   },
-  watch:{
-    videoUrl: function(val){
-      console.log('videoUrl',val);
-      this.videoSrc = val
+  watch: {
+    videoUrl: function(val) {
+      this.videoSrc = val;
       this.playerOptions.sources[0].src = val;
     }
   }
 };
 </script>
-
 <style scoped lang="scss">
 .video-js {
   width: 100%;
