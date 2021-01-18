@@ -40,7 +40,7 @@ export function getAllCameraTreeDataForStreet(data) {
 export function getCameraUrl(data) {
   console.log('api:getCameraUrl', data)
   return request({
-    url: '@test/getCameraUrl?_t=' + new Date().getTime(),
+    url: 'unauthorized/sp/getUrl?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

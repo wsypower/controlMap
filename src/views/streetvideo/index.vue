@@ -148,7 +148,7 @@ export default {
     this.getAllCameraForBridge();
   },
   methods:{
-    ...mapActions('streetvideo/manage', ['getAllCameraTreeDataForStreet']),
+    ...mapActions('streetvideo/manage', ['getAllCameraTreeDataForStreet','getCameraUrl']),
     // 获取所有街道监控
     getAllCameraForBridge(){
 
@@ -210,22 +210,24 @@ export default {
     },
     // 展示视频播放
     showVideo(info){
-        this.videoId = info.id;
-        this.videoName = info.name;
-        this.videoSrc = info.videoUrl;
-        this.selectLayer && this.selectLayer.getSource().clear();
-        if(!info.x||!info.y){
-            this.$message.warning('当前视频无点位信息！！！');
+      this.videoId = info.id;
+      this.videoName = info.name;
+      this.selectLayer && this.selectLayer.getSource().clear();
+      if(!info.x||!info.y){
+        this.$message.warning('当前视频无点位信息！！！');
+      }else{
+        const feature = pointToFeature(info,'big_video');
+        if(this.selectLayer) {
+            this.selectLayer.getSource().addFeatures([feature]);
         }else{
-            const feature = pointToFeature(info,'big_video');
-            if(this.selectLayer) {
-                this.selectLayer.getSource().addFeatures([feature]);
-            }else{
-                this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),6);
-                this.selectLayer.set('featureType','bridge');
-            }
-            this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
+            this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),6);
+            this.selectLayer.set('featureType','bridge');
         }
+        this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
+      }
+      this.getCameraUrl({ code:info.cameraCode }).then( res => {
+       this.videoSrc = res.url;
+      });
     },
     videoMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
@@ -240,18 +242,7 @@ export default {
           }
         }
         else{
-          this.tipComponentId = BridgeInfo;
-          let needData = this.mapData[feature.get('id')];
-          console.log('------------------------',needData);
-          this.modalTitle = needData.bridgeName;
-          this.infoData = {
-            bridgeName: needData.bridgeName,
-            bridgeStructure: needData.bridgeStructure,
-            bridgeAddr: needData.bridgeAddr,
-            completeTime: needData.completeTime
-          }
-          this.bridgeOverlay.setPosition(coordinate);
-          console.log('桥梁');
+          console.log('feature do not have features');
         }
       }
     },

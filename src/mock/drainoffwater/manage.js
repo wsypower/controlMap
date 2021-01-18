@@ -136,26 +136,6 @@ const getAllCameraTreeData = options => {
 }
 Mock.mock(/\/@test\/getAllCameraTreeData/, 'get', getAllCameraTreeData)
 
-const getCameraUrl = options => {
-  console.log('getCameraUrl options', options)
-  const queryParameters = getQueryParameters(options)
-  console.log('getCameraUrl query', queryParameters)
-  let data =
-    'rtmp://115.231.81.231:1935/service/PuId-ChannelNo=123724000100000005-01&PlayMethod=0&StreamingType=0&NetType=1&FCode=12'
-
-  return builder(
-    {
-      code: 0,
-      data: data,
-      msg: '操作成功'
-    },
-    '请求成功',
-    0,
-    { 'Custom-Header': Mock.mock('@id') }
-  )
-}
-Mock.mock(/\/@test\/getCameraUrl/, 'get', getCameraUrl)
-
 const getAllRainMacTreeData = options => {
   console.log('getAllRainMacTreeData options', options)
   const queryParameters = getQueryParameters(options)
