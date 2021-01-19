@@ -149,6 +149,7 @@ export default {
   },
   methods:{
     ...mapActions('bridge/manage', ['getAllCameraTreeDataForBridge']),
+    ...mapActions('streetvideo/manage', ['getCameraUrl']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
@@ -251,22 +252,25 @@ export default {
     },
     // 展示视频播放
     showVideo(info){
-        this.videoId = info.id;
-        this.videoName = info.name;
-        this.videoSrc = info.cameraUrl;
-        this.selectLayer && this.selectLayer.getSource().clear();
-        if(!info.x||!info.y){
-            this.$message.warning('当前视频无点位信息！！！');
+      this.videoId = info.id;
+      this.videoName = info.name;
+      // this.videoSrc = info.cameraUrl;
+      this.selectLayer && this.selectLayer.getSource().clear();
+      if(!info.x||!info.y){
+        this.$message.warning('当前视频无点位信息！！！');
+      }else{
+        const feature = pointToFeature(info,'big_video');
+        if(this.selectLayer) {
+          this.selectLayer.getSource().addFeatures([feature]);
         }else{
-            const feature = pointToFeature(info,'big_video');
-            if(this.selectLayer) {
-                this.selectLayer.getSource().addFeatures([feature]);
-            }else{
-                this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),6);
-                this.selectLayer.set('featureType','bridge');
-            }
-            this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
+          this.selectLayer = this.mapManager.addVectorLayerByFeatures([feature],videoPointStyle(),6);
+          this.selectLayer.set('featureType','bridge');
         }
+        this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
+      }
+      this.getCameraUrl({ code:info.cameraCode }).then( res => {
+        this.videoSrc = res.url;
+      });
     },
     videoMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);

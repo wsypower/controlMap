@@ -100,6 +100,7 @@ export default {
   },
   methods:{
     ...mapActions('site/manage', ['getAllCameraTreeDataForConstructionSite']),
+    ...mapActions('streetvideo/manage', ['getCameraUrl']),
     getAddressData(val){
       console.log('selected city data',val);
       this.selectedCity = val;
@@ -167,7 +168,7 @@ export default {
     showVideo(info){
         this.videoId = info.id;
         this.videoName = info.name;
-        this.videoSrc = info.videoUrl;
+        // this.videoSrc = info.videoUrl;
         this.selectLayer && this.selectLayer.getSource().clear();
         if(!info.x||!info.y){
             this.$message.warning('当前视频无点位信息！！！');
@@ -181,6 +182,9 @@ export default {
             }
             // this.mapManager.locateTo([parseFloat(info.x),parseFloat(info.y)]);
         }
+      this.getCameraUrl({ code:info.cameraCode }).then( res => {
+        this.videoSrc = res.url;
+      });
     },
     videoMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
