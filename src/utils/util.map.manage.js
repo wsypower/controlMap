@@ -457,7 +457,7 @@ export function listToFeatures(list, type) {
           feature.set('type', 'eventSimple');
           feature.setStyle(new Style({
             image: new Icon({
-              src: require('@/assets/mapImage/' + pointImg + '.png'),
+              src: require('@/assets/mapImage/event.png'),
               anchor: [0.5, 0.5]
             }),
           }));
