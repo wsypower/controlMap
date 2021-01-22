@@ -84,7 +84,8 @@ export default {
   max-height: 600px;
   .video-play-item {
     width: 250px;
-    height: 150px;
+    height: 165px;
+    background-color: rgba(43, 144, 243, 0.8);
     border: 2px solid rgba(43, 144, 243, 0.8);
     margin-bottom: 10px;
     margin-left: 10px;
@@ -93,7 +94,7 @@ export default {
       display: block;
     }
     .close-panel {
-      z-index: 9999;
+      z-index: 99999999999;
       position: absolute;
       top: 0;
       right: 0;

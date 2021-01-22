@@ -192,9 +192,10 @@ export default {
       if (this.playerMethod === 'browser') {
         //打开摄像头播放
         // this.videoSrc = 'http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8';
-        this.getCameraUrl({ userId: userId, code: mpid, transmode: 0 }).then(res => {
-          this.videoSrc = res.url;
-        });
+        // this.getCameraUrl({ userId: userId, code: mpid, transmode: 0 }).then(res => {
+        //   this.videoSrc = res.url;
+        // });
+        this.videoSrc = mpid;
       } else {
         //打开C端工具播放
         axios.get('http://61.153.37.214:81/api/sp/getSecretApi').then(resultConfig => {
