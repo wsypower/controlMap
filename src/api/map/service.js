@@ -4,7 +4,7 @@
  * @createDate:2019/7/11 9:18
  **/
 import { getPoint, getEmergencyArea, postFeature, getVideoListApi,getResourceListApi,
-  getEquipListApi, getAddressByXY } from '@/api/map/map'
+  getEquipListApi, getAddressByXY, getFilterRegion } from '@/api/map/map'
 import GeoJSON from 'ol/format/GeoJSON'
 import WFS from 'ol/format/WFS'
 
@@ -15,6 +15,11 @@ import WFS from 'ol/format/WFS'
  */
 export async function getTypePoint(type) {
   const data = await getPoint(type)
+  return new GeoJSON().readFeatures(data)
+}
+
+export async function getJdRegion(type, code) {
+  const data = await getFilterRegion(type, code)
   return new GeoJSON().readFeatures(data)
 }
 

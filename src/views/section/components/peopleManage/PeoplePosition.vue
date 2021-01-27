@@ -15,12 +15,13 @@
           <img slot="female" src="~@img/avatar-female.png" />
           <img slot="female-outline" src="~@img/avatar-female-outline.png" />
           <template slot="title" slot-scope="{ title }">
-            <span v-if="title&&title.indexOf(searchValue) > -1">
+            <!-- <span v-if="title&&title.indexOf(searchValue) > -1">
               {{ title.substr(0, title.indexOf(searchValue)) }}
               <span style="color: #f50">{{ searchValue }}</span>
               {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
             </span>
-            <span v-else>{{ title }}</span>
+            <span v-else>{{ title }}</span> -->
+            <span>{{ title }}</span>
           </template>
         </a-tree>
       </cg-container>
@@ -68,21 +69,24 @@ export default {
       //地图相关
       peopleLayer: null,
       //触发地图刷新
-      isLoadData: false
+      isLoadData: false,
+      treeData: []
     }
   },
   computed: {
     ...mapState('map', ['mapManager']),
     //获得展示的数据与属性
-    treeData: function() {
-      let data = JSON.parse(JSON.stringify(this.sourceData));
-      this.peopleFeatures = [];
-      this.allPeopleData = [];
-      //添加展示属性
-      this.changeTreeData(data);
-      this.isLoadData = !this.isLoadData;
-      return data;
-    }
+    // treeData: function() {
+    //   console.log('change')
+    //   let data = JSON.parse(JSON.stringify(this.sourceData));
+    //   this.peopleFeatures = [];
+    //   this.allPeopleData = [];
+    //   //添加展示属性
+    //   this.changeTreeData(data);
+    //   this.getPeoplePosition();
+    //   // this.isLoadData = !this.isLoadData;
+    //   return data;
+    // }
   },
   watch: {
     //加载完数据后渲染地图
@@ -94,10 +98,21 @@ export default {
         } else {
           this.peopleLayer = this.mapManager.addClusterLayerByFeatures(this.peopleFeatures);
           this.peopleLayer.set('featureType', 'PeoplePosition');
+          const extent = this.peopleLayer.getSource().getSource().getExtent();
+          this.mapManager.getMap().getView().fit(extent);
         }
-        const extent = this.peopleLayer.getSource().getSource().getExtent();
-        this.mapManager.getMap().getView().fit(extent);
       }
+    },
+    sourceData: function() {
+      let data = JSON.parse(JSON.stringify(this.sourceData));
+      if (this.searchValue.length > 0) {
+        this.expandedKeys = [];
+      }
+      this.peopleFeatures = [];
+      this.allPeopleData = [];
+      this.changeTreeData(data);
+      this.getPeoplePosition();
+      this.treeData = data;
     }
   },
   mounted() {
@@ -117,16 +132,16 @@ export default {
     });
     let _this = this;
     _this.timer = setInterval(function() {
-      _this.getAllPeopleTreeData({ userId: userId }).then(res => {
+      _this.getAllPeopleTreeData({ userId: userId, searchParam: _this.searchValue }).then(res => {
         _this.sourceData = res;
       });
-    }, 600000)
+    }, 1 * 60 * 1000);
   },
   beforeDestroy() {
     clearInterval(this.timer)
   },
   methods: {
-    ...mapActions('section/common', ['getAllPeopleTreeData']),
+    ...mapActions('section/common', ['getAllPeopleTreeData', 'getAllPeopleDataList']),
     //给后端的数据增加一些前端展示与判断需要的属性
     changeTreeData(arr, deptName) {
       const _this = this;
@@ -159,15 +174,18 @@ export default {
             title: item.name,
             key: item.id
           }
+          if (this.searchValue.length > 0) {
+            this.expandedKeys.push(item.id);
+          }
           this.allPeopleData.push(temp);
           // 通过经纬度生成点位加到地图上
-          if (item.x && item.x.length > 0 && item.y && item.y.length > 0) {
-            const feature = _this.mapManager.xyToFeature(item.x, item.y);
-            feature.set('icon', pointImg);
-            feature.set('props', item);
-            feature.set('type', 'peoplePosition');
-            _this.peopleFeatures.push(feature);
-          }
+          // if (item.x && item.x.length > 0 && item.y && item.y.length > 0) {
+          //   const feature = _this.mapManager.xyToFeature(item.x, item.y);
+          //   feature.set('icon', pointImg);
+          //   feature.set('props', item);
+          //   feature.set('type', 'peoplePosition');
+          //   _this.peopleFeatures.push(feature);
+          // }
         } else {
           item.key = 'dept_' + item.id;
           item.slots = { icon: 'dept' };
@@ -175,8 +193,37 @@ export default {
         }
       })
     },
+    getPeoplePosition() {
+      const userId = util.cookies.get('userId');
+      this.getAllPeopleDataList({ userId: userId }).then(res => {
+        let pointImg = null;
+        res.forEach(item => {
+          if (item.sex === '1') {
+            if (item.online) {
+              pointImg = 'female_online';
+            } else {
+              pointImg = 'female_offline';
+            }
+          } else {
+            if (item.online) {
+              pointImg = 'male_online';
+            } else {
+              pointImg = 'male_offline';
+            }
+          }
+          if (item.x && item.x.length > 0 && item.y && item.y.length > 0) {
+            const feature = this.mapManager.xyToFeature(item.x, item.y);
+            feature.set('icon', pointImg);
+            feature.set('props', item);
+            feature.set('type', 'peoplePosition');
+            this.peopleFeatures.push(feature);
+          }
+        });
+        this.isLoadData = !this.isLoadData;
+      });
+    },
     onChange() {
-      this.onSearch(this.searchValue);
+      // this.onSearch(this.searchValue);
       //this.searchValue
     },
     //查询后直接筛选数据，不走后端接口调用
@@ -188,17 +235,23 @@ export default {
       // });
       this.expandedKeys = [];
       this.searchValue = val;
-      this.allPeopleData.forEach(item => {
-        if (item.title.indexOf(val) >= 0) {
-          this.expandedKeys.push(item.key);
-        }
-      });
+      // this.allPeopleData.forEach(item => {
+      //   if (item.title.indexOf(val) >= 0) {
+      //     this.expandedKeys.push(item.key);
+      //   }
+      // });
       this.autoExpandParent = true;
-      if (this.expandedKeys.length === 0) {
-        this.showTree = false;
-      } else {
-        this.showTree = true;
-      }
+      // if (this.expandedKeys.length === 0) {
+      //   this.showTree = false;
+      // } else {
+      //   this.showTree = true;
+      // }
+      const userId = util.cookies.get('userId');
+      this.showLoading = true;
+      this.getAllPeopleTreeData({ userId: userId, searchParam: this.searchValue }).then(res => {
+        this.sourceData = res;
+        this.showLoading = false;
+      });
     },
     //展开时触发
     onExpand(expandedKeys) {
@@ -208,7 +261,7 @@ export default {
     //点击树中某个节点（某个人员）时触发
     onSelect(selectedKeys, e) {
       console.log(selectedKeys, e);
-      if (selectedKeys[0].indexOf('dept_') < 0) {
+      if (selectedKeys.length > 0 && selectedKeys[0].indexOf('dept_') < 0) {
         let needData = e.selectedNodes[0].data.props;
         let temp = {};
         temp.id = needData.id;

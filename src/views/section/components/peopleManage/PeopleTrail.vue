@@ -9,7 +9,7 @@
       </div>
       <div flex="fir:left cross:center" style="margin:10px 0px;">
         <label style="width: 90px;">查询时间：</label>
-        <a-range-picker v-model="dayRange" format="YYYY-MM-DD" style="width: 100%" />
+        <a-range-picker v-model="dayRange" :show-time="{ format: 'HH:mm' }" format="YYYY-MM-DD HH:mm" style="width: 100%" />
       </div>
       <a-button type="primary" style="width: 100%" @click="onSearch">查询</a-button>
     </div>
@@ -31,7 +31,7 @@
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
         <a-spin tip="数据加载中..."></a-spin>
       </div>
-      <cg-container scroll v-if="!showLoading && trackSegments.length > 0">
+      <cg-container scroll v-if="!showLoading && dataList.length > 0">
         <div class="item" flex="dir:left main:justify" v-for="(item, index) in trackSegments" :key="index">
           <div flex="cross:center main:center">
             <span>{{ index }}</span>
@@ -63,6 +63,13 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
+    <div hidden>
+      <a-card ref="trailTimeCard" :bodyStyle="cardBodyStyle" style="width: 150px;" title="时间" :headStyle="cardHeadStyle">
+        <a-icon type="close" slot="extra" @click="timeCardClose" />
+        <div>{{ trailTimeData }}</div>
+      </a-card>
+      <record-info ref="recordInfo" :code="taskcode" @closeTip="closeRecordTip"></record-info>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -71,10 +78,15 @@ import moment from 'moment';
 import util from '@/utils/util';
 import { stampConvertToTime } from '@/utils/util.tool';
 import { trackByLocationList, pointByCoord } from '@/utils/util.map.manage';
-import { trackStyle, trackPointStyle, alarmPointStyle } from '@/utils/util.map.style';
+import { trackStyle, trackPointStyle, alarmPointStyle, gridStyle } from '@/utils/util.map.style';
 import { TrackPlaying } from '@/utils/util.map.trackPlaying'
+import { getJdRegion } from '@/api/map/service'
+import RecordInfo from '@/views/records/components/RecordInfo'
 export default {
   name: 'peopleTrail',
+  components: {
+    RecordInfo
+  },
   props: {
     infoId: {
       type: String,
@@ -114,7 +126,14 @@ export default {
       eventLayer: null,
       trackPlaying: null,
       isPlayingTrack: null,
-      trackIndex: 0
+      trackIndex: 0,
+      trailOverlay: null,
+      taskcode: '',
+      eventOverlay: null,
+      trailTimeData: {},
+      cardBodyStyle: { 'padding': '8px', 'text-align': 'center' },
+      cardHeadStyle: { 'min-height': '35px', 'padding': '0 12px' },
+      regionLayer: null
     }
   },
   computed: {
@@ -134,14 +153,32 @@ export default {
       this.query.userDisplayId = temp.userDisplayId;
     } else {
       this.query.userId = userId;
-      this.query.userDisplayId = '';
+      // this.query.userDisplayId = '';
+      this.query.userDisplayId = this.peopleDataList[0].userDisplayId;
     }
 
+    // let day = moment(new Date()).format('YYYY-MM-DD');
+    // this.dayRange = [moment(day, 'YYYY-MM-DD'), moment(day, 'YYYY-MM-DD')];
+    this.dayRange = [moment().startOf('day').format('YYYY-MM-DD HH:mm'), moment().endOf('day').format('YYYY-MM-DD HH:mm')];
+    // this.query.startTime = new Date(day).getTime();
+    // this.query.endTime = new Date(day).getTime();
+    this.query.startTime = moment().startOf('day').valueOf();
+    this.query.endTime = moment().endOf('day').valueOf();
 
-    let day = moment(new Date()).format('YYYY-MM-DD');
-    this.dayRange = [moment(day, 'YYYY-MM-DD'), moment(day, 'YYYY-MM-DD')];
-    this.query.startTime = new Date(day).getTime();
-    this.query.endTime = new Date(day).getTime();
+    this.trailOverlay = this.mapManager.addOverlay({
+      id: 'peopleTrailOverlay',
+      offset: [0, -20],
+      positioning: 'bottom-center',
+      element: this.$refs.trailTimeCard.$el
+    });
+    this.eventOverlay = this.mapManager.addOverlay({
+      id: 'trailEventOverlay',
+      offset: [0, -20],
+      positioning: 'bottom-center',
+      element: this.$refs.recordInfo.$el
+    });
+    this.map.on('click', this.trailTimeClickHandler);
+
     this.getDataList();
   },
   watch: {
@@ -152,15 +189,19 @@ export default {
         this.query.userId = val;
         this.query.userDisplayId = temp.userDisplayId;
       }
-      let day = moment(new Date()).format('YYYY-MM-DD');
-      this.dayRange = [moment(day, 'YYYY-MM-DD'), moment(day, 'YYYY-MM-DD')];
-      this.query.startTime = new Date(day).getTime();
-      this.query.endTime = new Date(day).getTime();
+      // let day = moment(new Date()).format('YYYY-MM-DD');
+      // this.dayRange = [moment(day, 'YYYY-MM-DD'), moment(day, 'YYYY-MM-DD')];
+      this.dayRange = [moment().startOf('day').format('YYYY-MM-DD HH:mm'), moment().endOf('day').format('YYYY-MM-DD HH:mm')];
+      // this.query.startTime = new Date(day).getTime();
+      // this.query.endTime = new Date(day).getTime();
+      this.query.startTime = moment().startOf('day').valueOf();
+      this.query.endTime = moment().endOf('day').valueOf();
       this.getDataList();
     }
   },
   methods: {
     ...mapActions('section/manage', ['getUserTrailDataList', 'getTrailDetailData']),
+    ...mapActions('records/manage', ['getAllRecordsDataList']),
     //获取人员轨迹数据
     getDataList() {
       console.log('this.query', this.query);
@@ -174,6 +215,7 @@ export default {
           item.time = stampConvertToTime(item.gpstime);
           return item;
         });
+        // this.getPeopleRegion('330723104');
         if (res.length > 0) {
           this.trackDataHandler(res);
           const trackLineFeature = trackByLocationList(this.dataList);
@@ -182,6 +224,26 @@ export default {
           this.eventLayer = this.mapManager.addVectorLayerByFeatures(this.eventFeatures, trackPointStyle(), 3);
           this.eventLayer.set('featureType', 'PeopleTrail');
           this.mapManager.getMap().getView().fit(this.trackLayer.getSource().getExtent());
+          this.getAllRecordsDataList({
+            patrolerid: this.query.userId,
+            startTime: this.query.startTime,
+            endTime: this.query.endTime,
+            pagesize: 10000
+          }).then(res => {
+            this.showLoading = false;
+            res.data.forEach(item => {
+              item.operate = 'event';
+              if (item.x84 && item.x84.length > 0 && item.y84 && item.y84.length > 0) {
+                const feature = pointByCoord([parseFloat(item.x84), parseFloat(item.y84)]);
+                feature.setProperties(item);
+                this.eventFeatures.push(feature);
+              }
+            });
+            if (this.eventLayer) {
+              this.eventLayer.getSource().clear();
+              this.eventLayer.getSource().addFeatures(this.eventFeatures);
+            }
+          });
         } else {
           this.$message.warning('未查询到轨迹数据！！！');
         }
@@ -192,6 +254,7 @@ export default {
     trackDataHandler(coords) {
       this.trackSegments = [];
       this.currentQueryTracks = [];
+      this.eventFeatures = [];
       // 按间隔时间轨迹分段
       let currentCoord = coords[0];
       let nextCoord = null;
@@ -290,14 +353,17 @@ export default {
     },
     //查询(默认显示当天，当前登入的用户)
     onSearch() {
-      this.query.startTime = this.dayRange[0] ? this.dayRange[0]._d.getTime() : '';
-      this.query.endTime = this.dayRange[1] ? this.dayRange[1]._d.getTime() : '';
+      this.query.startTime = this.dayRange[0] ? new Date(this.dayRange[0]).getTime() : '';
+      this.query.endTime = this.dayRange[1] ? new Date(this.dayRange[1]).getTime() : '';
+      // this.query.startTime = this.dayRange[0] ? this.dayRange[0]._d.getTime() : '';
+      // this.query.endTime = this.dayRange[1] ? this.dayRange[1]._d.getTime() : '';
       let dates = Math.floor((this.query.endTime - this.query.startTime)) / (1000 * 60 * 60 * 24);
       if (dates > 3) {
         this.$message.warning('查询时间不可超过3天！！！');
         return;
       }
       this.getDataList();
+      this.timeCardClose();
       this.map.removeLayer(this.trackLayer);
       this.map.removeLayer(this.eventLayer);
       if (this.trackPlaying) {
@@ -338,11 +404,68 @@ export default {
     //暂停播放
     pausePlay(item, i) {
       this.dataList[i].isStart = false;
+    },
+    closeRecordTip() {
+      this.eventOverlay.setPosition(null);
+    },
+    timeCardClose() {
+      this.trailOverlay.setPosition(null);
+    },
+    trailTimeClickHandler({ pixel, coordinate }) {
+      const feature = this.map.forEachFeatureAtPixel(pixel, feature => {
+        if (feature && feature.getGeometry().getType() == 'Point') {
+          const coordinates = feature.getGeometry().getCoordinates();
+          const trailData = feature.getProperties();
+          if (trailData.taskcode && trailData.taskcode.length > 0) {
+            this.taskcode = trailData.taskcode;
+            this.eventOverlay.setPosition(coordinates);
+          } else {
+            this.trailOverlay.setPosition(coordinates);
+            this.trailTimeData = trailData.time;
+          }
+        }
+        return feature;
+      }, {
+        layerFilter: layer => {
+          if (layer == this.eventLayer) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      });
+      if (!feature) {
+        this.trailOverlay.setPosition(null);
+      }
+    },
+    getPeopleRegion(code) {
+      getJdRegion('街道', code).then(data => {
+        if (this.regionLayer) {
+          this.regionLayer.getSource().clear();
+          this.regionLayer.getSource().addFeatures(data);
+        } else {
+          this.regionLayer = this.mapManager.addVectorLayerByFeatures(data, gridStyle('red'), 2);
+          this.regionLayer.set('featureType', 'PeopleTrail');
+        }
+      });
     }
+  },
+  beforeDestroy() {
+    this.map.removeOverlay(this.eventOverlay);
+    this.map.removeOverlay(this.trailOverlay);
+    this.map.un('click', this.trailTimeClickHandler);
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+.ant-calendar-picker-input.ant-input {
+  padding: 4px 1px !important;
+}
+
+.ant-calendar-range-picker-input {
+  width: 46% !important;
+}
+
 .people-trail {
   height: 100%;
   width: 100%;

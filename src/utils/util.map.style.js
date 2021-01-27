@@ -39,20 +39,45 @@ export function trackStyle() {
  */
 export function trackPointStyle() {
   return function(feature) {
-    if (feature.get('operate')) { //是案卷点
-      return new Style({ //普通轨迹点样式
-        image: new Circle({
-          radius: 5,
-          fill: new Fill({
-            color: '#3399CC'
-          }),
-          stroke: new Stroke({
-            color: '#fff',
-            width: 2
-          })
-        })
+    // if (feature.get('operate')) { //是案卷点
+    //   return new Style({ //普通轨迹点样式
+    //     image: new Circle({
+    //       radius: 5,
+    //       fill: new Fill({
+    //         color: '#3399CC'
+    //       }),
+    //       stroke: new Stroke({
+    //         color: '#fff',
+    //         width: 2
+    //       })
+    //     })
+    //   });
+    // }
+    let color = '#3399CC';
+    const operate = feature.get('operate');
+    if (operate == 'yuejie') {
+      color = '#FFA500';
+    } else if (operate == 'event') {
+      // color = '#008000';
+      return new Style({
+        image: new Icon({
+          src: require('@/assets/mapImage/event.png')
+        }),
+        anchor: [0.5, 1],
       });
     }
+    return new Style({
+      image: new Circle({
+        radius: 5,
+        fill: new Fill({
+          color: color
+        }),
+        stroke: new Stroke({
+          color: '#fff',
+          width: 2
+        })
+      })
+    });
   }
 }
 const violateTypeColor = {
