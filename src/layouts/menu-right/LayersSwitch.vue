@@ -162,6 +162,15 @@ export default {
             });
           } else if (layer.name == '执法人员') {
             getAllZfDataList().then(res => {
+              for (let i = res.length - 1; i >= 0; i--) {
+                let item = res[i];
+                if (item.dept.indexOf('中队') == -1) {
+                  const deptIndex = res.indexOf(item);
+                  if (deptIndex != -1) {
+                    res.splice(deptIndex, 1);
+                  }
+                }
+              }
               const features = listToFeatures(res, '执法人员');
               console.log('所有执法人员数据=====', features.length);
               // layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
@@ -264,6 +273,15 @@ export default {
         });
       } else if (layer.name == '执法人员') {
         getAllZfDataList().then(res => {
+          for (let i = res.length - 1; i >= 0; i--) {
+            let item = res[i];
+            if (item.dept.indexOf('中队') == -1) {
+              const deptIndex = res.indexOf(item);
+              if (deptIndex != -1) {
+                res.splice(deptIndex, 1);
+              }
+            }
+          }
           const features = listToFeatures(res, '执法人员');
           console.log('所有执法人员数据=====', features.length);
           refreshData(layer, features);

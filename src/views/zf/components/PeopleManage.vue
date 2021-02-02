@@ -46,11 +46,20 @@ export default {
     this.map = this.mapManager.getMap();
     const userId = util.cookies.get('userId');
     getAllPeopleDataList().then(res => {
-      res.forEach(item => {
-        // item.userDisplayId = item.id + '_' + item.name;
-        item.userDisplayId = item.id;
-        this.peopleDataList.push(item);
-      });
+      // res.forEach(item => {
+      for (let i = res.length - 1; i >= 0; i--) {
+        let item = res[i];
+        if (item.dept.indexOf('中队') == -1) {
+          const deptIndex = res.indexOf(item);
+          if (deptIndex != -1) {
+            res.splice(deptIndex, 1);
+          }
+        } else {
+          // item.userDisplayId = item.id + '_' + item.name;
+          item.userDisplayId = item.id;
+          this.peopleDataList.push(item);
+        }
+      };
     });
   },
   methods: {

@@ -192,8 +192,8 @@ export default {
         let signFeature = [];
         if (res.signIn.positionX && res.signIn.positionY) {
           let signInfoProps = {
-            photoUrl: res.signIn.fileList[0].url,
-            photoName: res.signIn.fileList[0].name,
+            photoUrl: res.signIn.fileList ? res.signIn.fileList[0].url : null,
+            photoName: res.signIn.fileList ? res.signIn.fileList[0].name : null,
             photoList: res.signIn.fileList,
             signTime: res.signIn.time,
             isSignIn: true
@@ -206,8 +206,8 @@ export default {
         }
         if (res.signOut.positionX && res.signOut.positionY) {
           let signInfoProps = {
-            photoUrl: res.signOut.fileList[0].url,
-            photoName: res.signOut.fileList[0].name,
+            photoUrl: res.signOut.fileList ? res.signOut.fileList[0].url : null,
+            photoName: res.signOut.fileList ? res.signOut.fileList[0].name : null,
             photoList: res.signOut.fileList,
             signTime: res.signOut.time,
             isSignIn: false
@@ -234,7 +234,7 @@ export default {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
       if (feature && feature.get('type') == 'peopleWorkTime') {
         this.signInfoData = feature.get('props');
-        this.signOverlay.setPosition(coordinate);
+        this.signOverlay.setPosition(feature.getGeometry().getCoordinates());
       }
     },
     closeTip() {

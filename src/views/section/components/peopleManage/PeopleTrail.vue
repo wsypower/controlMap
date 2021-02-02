@@ -73,6 +73,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions, mapState } from 'vuex'
+import { getDistance } from 'ol/sphere'
 import moment from 'moment';
 import util from '@/utils/util';
 import { stampConvertToTime } from '@/utils/util.tool';
@@ -214,6 +215,7 @@ export default {
     trackDataHandler(coords) {
       this.trackSegments = [];
       this.currentQueryTracks = [];
+      this.eventFeatures = [];
       // 按间隔时间轨迹分段
       let currentCoord = coords[0];
       let nextCoord = null;
@@ -227,8 +229,48 @@ export default {
         feature.setProperties(currentCoord);
         this.eventFeatures.push(feature);
       }
+      // let isOvertime = false;
+      // let isDeletePosition = false;
+      // let stayPosition = currentCoord;
       for (let i = 1; i < coords.length - 1; i++) {
         nextCoord = coords[i];
+        // const distance = getDistance([parseFloat(stayPosition.gpsx), parseFloat(stayPosition.gpsy)], [parseFloat(nextCoord.gpsx), parseFloat(nextCoord.gpsy)]);
+        // if (isOvertime) {
+        //   if (distance < 200) {
+        //     if (isDeletePosition) {
+        //       console.log('delete------------------------------')
+        //       const coordIndex = this.dataList.indexOf(nextCoord);
+        //       if (coordIndex > -1) {
+        //         this.dataList.splice(coordIndex, 1);
+        //       }
+        //       // currentCoord = nextCoord;
+        //       // continue;
+        //     } else {
+        //       if (nextCoord.gpstime - stayPosition.gpstime >= 60 * 1000 * 10) {
+        //         isDeletePosition = true;
+        //         nextCoord.isOvertime = true;
+        //         nextCoord.text = stayPosition.time;
+        //       }
+        //     }
+        //   } else {
+        //     isOvertime = false;
+        //     if (isDeletePosition) {
+        //       isDeletePosition = false;
+        //       nextCoord.isOvertime = true;
+        //       nextCoord.text = stayPosition.time;
+        //     }
+        //     stayPosition = nextCoord;
+        //   }
+        // } else {
+        //   if (distance < 200) {
+        //     isOvertime = true;
+        //     stayPosition = coords[i - 1];
+        //     if (nextCoord.gpstime - stayPosition.gpstime >= 60 * 1000 * 10) {
+        //       isDeletePosition = true;
+        //       nextCoord.isOvertime = true;
+        //     }
+        //   }
+        // }
         if (nextCoord.operate == "2" || nextCoord.operate == "0" || nextCoord.operate == "1" || nextCoord.operate == "5" || i % 1 == 0) { //配置轨迹点抽稀
           const feature = pointByCoord([parseFloat(nextCoord.gpsx), parseFloat(nextCoord.gpsy)]);
           feature.setProperties(nextCoord);

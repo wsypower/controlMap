@@ -7,7 +7,7 @@
     </div>
     <div class="tip-body">
       <!--      <img :src="info.photoUrl"/>-->
-      <div class="tip-body-content">
+      <div v-if="info.photoList" class="tip-body-content">
         <swiper :options="swiperOption" ref="mySwiper" v-viewer>
           <swiper-slide v-for="(item, index) in info.photoList" :key="index">
             <img :src="item.url" :alt="item.name" />
@@ -20,6 +20,7 @@
           <a-icon type="right" />
         </div>
       </div>
+      <img v-else src="@/assets/images/noImage.png">
     </div>
     <div class="tooltip__arrow"></div>
   </div>

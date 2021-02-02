@@ -12,12 +12,12 @@
   <div :id="videoSrc" class="playWnd"></div>
 </template>
 <script>
-import videojs from "video.js";
-import "video.js/dist/video-js.css";
+// import videojs from "video.js";
+// import "video.js/dist/video-js.css";
 // import "vue-video-player/src/custom-theme.css";
 // import { videoPlayer } from "vue-video-player";
 // import "videojs-flash";
-import "videojs-contrib-hls";
+// import "videojs-contrib-hls";
 // import SWF_URL from "videojs-swf/dist/video-js.swf";
 // import 'videojs-contrib-hls/dist/videojs-contrib-hls.js'
 
@@ -75,7 +75,7 @@ export default {
   },
   mounted() {
     this.videoSrc = this.videoUrl;
-    this.playerOptions.sources[0].src = this.videoUrl;
+    // this.playerOptions.sources[0].src = this.videoUrl;
     this.$nextTick(() => {
       // this.$refs.videoSource.src = this.videoSrc;
       // videojs(this.$refs.videoPlayer, () => {
@@ -87,7 +87,7 @@ export default {
   watch: {
     videoUrl: function(val) {
       this.videoSrc = val;
-      this.playerOptions.sources[0].src = val;
+      // this.playerOptions.sources[0].src = val;
     }
   },
   methods: {
@@ -114,7 +114,7 @@ export default {
         },
         cbConnectError: function() { // 创建WebControl实例失败
           oWebControl = null;
-          $("#playWnd").html("插件未启动，正在尝试启动，请稍候...");
+          console.log("插件未启动，正在尝试启动，请稍候...");
           WebControl.JS_WakeUp("VideoWebPlugin://"); // 程序未启动时执行error函数，采用wakeup来启动程序
           _this.initCount++;
           if (_this.initCount < 3) {
@@ -122,7 +122,7 @@ export default {
               _this.initPlugin();
             }, 3000)
           } else {
-            $("#playWnd").html("插件启动失败，请检查插件是否安装！");
+            console.log("插件启动失败，请检查插件是否安装！");
           }
         },
         cbConnectClose: function(bNormalClose) {

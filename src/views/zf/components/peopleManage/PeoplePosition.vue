@@ -112,6 +112,7 @@ export default {
     this.showLoading = true;
     // getAllPeopleTreeData({ userId: userId }).then(res => {
     getAllPeopleTreeData().then(res => {
+      this.filterDept(res);
       this.sourceData = res;
       this.showLoading = false;
     });
@@ -130,6 +131,7 @@ export default {
       // }
       // getAllPeopleTreeData({ userId: userId }).then(res => {
       getAllPeopleTreeData().then(res => {
+        _this.filterDept(res);
         _this.sourceData = res;
       }); //600000
     }, 600000);
@@ -197,6 +199,20 @@ export default {
           this.changeTreeData(item.children, item.name);
         }
       })
+    },
+    filterDept(res) {
+      if (res && res.length > 0) {
+        const depts = res[0].children;
+        for (let i = depts.length - 1; i >= 0; i--) {
+          let dept = depts[i];
+          if (dept.name.indexOf('中队') == -1) {
+            const deptIndex = depts.indexOf(dept);
+            if (deptIndex != -1) {
+              depts.splice(deptIndex, 1);
+            }
+          }
+        }
+      }
     },
     onChange() {
       this.onSearch(this.searchValue);

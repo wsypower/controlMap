@@ -3,7 +3,7 @@
  * @author:sijianting
  * @createDate:2019/7/11 11:16
  */
-import { Fill, Stroke, Circle, Style, Icon } from 'ol/style';
+import { Fill, Stroke, Circle, Style, Icon, Text } from 'ol/style';
 /**
  * @description:人员点位样式
  * @author:sijianting
@@ -40,11 +40,32 @@ export function trackStyle() {
 export function trackPointStyle() {
   return function(feature) {
     if (feature.get('operate')) { //是案卷点
+      let color = '#3399CC';
+      if (feature.getProperties().isOvertime) {
+        color = 'orange';
+        return new Style({ //普通轨迹点样式
+          image: new Circle({
+            radius: 5,
+            fill: new Fill({
+              color: color
+            }),
+            stroke: new Stroke({
+              color: '#fff',
+              width: 2
+            })
+          }),
+          text: new Text({
+            text: feature.getProperties().text,
+            font: 'bold 12px Microsoft YaHei'
+          }),
+          zIndex: 999
+        });
+      }
       return new Style({ //普通轨迹点样式
         image: new Circle({
           radius: 5,
           fill: new Fill({
-            color: '#3399CC'
+            color: color
           }),
           stroke: new Stroke({
             color: '#fff',
