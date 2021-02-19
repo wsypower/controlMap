@@ -94,9 +94,9 @@ export default {
         } else {
           this.peopleLayer = this.mapManager.addClusterLayerByFeatures(this.peopleFeatures);
           this.peopleLayer.set('featureType', 'PeoplePosition');
+          const extent = this.peopleLayer.getSource().getSource().getExtent();
+          this.mapManager.getMap().getView().fit(extent);
         }
-        const extent = this.peopleLayer.getSource().getSource().getExtent();
-        this.mapManager.getMap().getView().fit(extent);
       }
     }
   },

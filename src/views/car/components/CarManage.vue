@@ -7,7 +7,7 @@
       <a-tab-pane tab="轨迹查询" key="2">
         <car-trail :carDataList="carDataList" :infoId="infoId"></car-trail>
       </a-tab-pane>
-      <a-tab-pane tab="违规查询" key="3">
+      <a-tab-pane tab="告警查询" key="3">
         <violate-rules></violate-rules>
       </a-tab-pane>
     </a-tabs>

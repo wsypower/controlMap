@@ -92,9 +92,9 @@ export default {
         } else {
           this.carLayer = this.mapManager.addClusterLayerByFeatures(this.carFeatures);
           this.carLayer.set('featureType', 'CarPosition');
+          const extent = this.carLayer.getSource().getSource().getExtent();
+          this.mapManager.getMap().getView().fit(extent);
         }
-        const extent = this.carLayer.getSource().getSource().getExtent();
-        this.mapManager.getMap().getView().fit(extent);
       }
     }
   },
