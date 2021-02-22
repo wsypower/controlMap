@@ -90,7 +90,7 @@ export const alarmNormalHandle = data => {
   return request({
     url: `video/alarmNormalHandle`,
     method: 'post',
-    params: data
+    data
   })
 }
 
@@ -106,7 +106,7 @@ export const alarmReportHandle = data => {
   return request({
     url: `video/alarmReportHandle`,
     method: 'post',
-    params: data
+    data
   })
 }
 

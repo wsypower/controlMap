@@ -23,19 +23,55 @@ export default {
         ...mapActions('video/statistical', ['getHighIncidenceRoadAnalysisData']),
         //获取越界数据
         getChartData(){
-            this.getHighIncidenceRoadAnalysisData().then(res=>{
-                console.log('getHighIncidenceRoadAnalysisData',res);
-                let data = [],
-                    nameArr = [],
-                    numArr = [];
-                res.data.forEach(item=>{
-                    nameArr.push(item.name);
-                    numArr.push(item.num);
-                })
-                data.push(nameArr);
-                data.push(numArr);
-                this.chartInit(data);
-            })
+          let needdata = [
+            {
+              name: 'xxxx路',
+              num: 40
+            },
+            {
+              name: 'yyyyy路',
+              num: 32
+            },
+            {
+              name: 'aaaa路',
+              num: 21
+            },
+            {
+              name: 'bbbb路',
+              num: 10
+            },
+            {
+              name: 'ccccc路',
+              num: 16
+            },
+            {
+              name: 'zzzzzzzz路',
+              num: 12
+            }
+          ]
+          let data = [],
+                  nameArr = [],
+                  numArr = [];
+          needdata.forEach(item=>{
+            nameArr.push(item.name);
+            numArr.push(item.num);
+          })
+          data.push(nameArr);
+          data.push(numArr);
+          this.chartInit(data);
+            // this.getHighIncidenceRoadAnalysisData().then(res=>{
+            //     console.log('getHighIncidenceRoadAnalysisData',res);
+            //     let data = [],
+            //         nameArr = [],
+            //         numArr = [];
+            //     res.data.forEach(item=>{
+            //         nameArr.push(item.name);
+            //         numArr.push(item.num);
+            //     })
+            //     data.push(nameArr);
+            //     data.push(numArr);
+            //     this.chartInit(data);
+            // })
 
         },
         //初始化图表

@@ -28,6 +28,22 @@ export function getPoint(type = '全部视频') {
   })
 }
 
+export function getFilterRegion(type = '全部视频', code) {
+  type = type == '全部视频' ? '视频' : type;
+  return request({
+    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix+'/ows',
+    method: 'get',
+    params: {
+      service: 'WFS',
+      version: '1.0.0',
+      request: 'GetFeature',
+      cql_filter: `xzqdm = '${code}'`,
+      typeName: `${GIS_CONFIG.featurePrefix}:${type}`,
+      outputFormat: 'application/json'
+    }
+  })
+}
+
 /**
  * @description: 获取预案区域调用的接口
  * @author:sijianting

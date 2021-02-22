@@ -38,17 +38,55 @@ export default {
     },
     //获取人员状态数据
     getChartData(){
-      this.getRecordsStatisticalAnalysisData().then(res=>{
-        console.log('getRecordsStatisticalAnalysisData', res);
-        let xArr = [];
-        let yArr = [];
-        res.data.forEach(item => {
-          xArr.push(item.name);
-          yArr.push(item.num);
-        });
-        this.chartData = [xArr, yArr];
-        this.chartInit();
+      // this.getRecordsStatisticalAnalysisData().then(res=>{
+      //   console.log('getRecordsStatisticalAnalysisData', res);
+      //   let xArr = [];
+      //   let yArr = [];
+      //   res.data.forEach(item => {
+      //     xArr.push(item.name);
+      //     yArr.push(item.num);
+      //   });
+      //   this.chartData = [xArr, yArr];
+      //   this.chartInit();
+      // });
+      let data = [
+        {
+          name: '上报',
+          num: 475
+        },
+        {
+          name: '立案',
+          num: 357
+        },
+        {
+          name: '处置',
+          num: 331
+        },
+        {
+          name: '核实',
+          num: 209
+        },
+        {
+          name: '核查',
+          num: 201
+        },
+        {
+          name: '结案',
+          num: 199
+        },
+        {
+          name: '废弃',
+          num: 157
+        }
+      ]
+      let xArr = [];
+      let yArr = [];
+      data.forEach(item => {
+        xArr.push(item.name);
+        yArr.push(item.num);
       });
+      this.chartData = [xArr, yArr];
+      this.chartInit();
     },
     //初始化图表
     chartInit(){

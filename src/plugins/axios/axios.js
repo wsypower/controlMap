@@ -76,7 +76,7 @@ let base_url= '';
 //axios config配置
 let config = {
   baseURL: URL_CONFIG.baseURL,
-  timeout: 60 * 100, // 请求超时时间
+  // timeout: 60 * 100, // 请求超时时间
   //TODO:只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法
   //修改请求数据添加必填项 userId
   transformRequest: [

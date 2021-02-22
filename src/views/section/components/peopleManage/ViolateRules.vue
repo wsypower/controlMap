@@ -118,7 +118,13 @@ export default {
       this.map=this.mapManager.getMap();
       this.query.userId = util.cookies.get('userId');
       let temp = this.peopleDataList.find(item => item.id === this.query.userId );
-      this.query.userDisplayId = temp.userDisplayId;
+      if(temp){
+        this.query.userDisplayId = temp.userDisplayId;
+      }
+      else{
+        this.query.userDisplayId = '';
+      }
+
       //获取当前日期并进行转化与显示
       let day = moment(new Date()).format('YYYY-MM-DD');
       this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
@@ -158,8 +164,8 @@ export default {
         onSearch() {
             this.violateLayer && this.map.removeLayer(this.violateLayer);
             this.violatePointLayer && this.map.removeLayer(this.violatePointLayer);
-            this.query.startTime = this.dayRange[0]._d.getTime();
-            this.query.endTime = this.dayRange[1]._d.getTime();
+            this.query.startTime = this.dayRange[0]?this.dayRange[0]._d.getTime():'';
+            this.query.endTime = this.dayRange[1]?this.dayRange[1]._d.getTime():'';
             this.getDataList();
         },
         //展开或者收起违规详情

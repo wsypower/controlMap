@@ -9,9 +9,9 @@
         <label style="width: 90px;">告警类型：</label>
         <a-select v-model="query.alarmTypeId" showSearch placeholder="请选择" style="width: 100%">
           <a-select-option value="" :key="-1">所有</a-select-option>
-          <a-select-option v-for="(alarmType, index) in alarmTypeList" :value="alarmType.id" :key="index">{{
-            alarmType.name
-          }}</a-select-option>
+          <a-select-option v-for="(alarmType, index) in alarmTypeList" :value="alarmType.id" :key="index">
+            {{ alarmType.name }}
+          </a-select-option>
         </a-select>
       </div>
       <a-button type="primary" style="width: 100%" @click="onSearch">查询</a-button>
@@ -57,7 +57,7 @@
                   <span>监控名称：</span><span>{{ itemData.cameraName }}</span>
                 </div>
               </div>
-              <div class="photo"><img :src="itemData.photoUrl" /></div>
+              <div class="photo" @click.stop v-viewer><img :src="itemData.photoUrl" /></div>
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default {
       this.getAllAlarmDataList(this.query).then(res=>{
         _this.showLoading = false;
         console.log('测试====',res);
-        _this.dataList = res.list;
+        _this.dataList = res.data;
         if(_this.dataList&&_this.dataList.length>0) {
             _this.alarmFeatures = this.dataList.map((d) => {
                 if (d.x && d.x.length > 0 && d.y && d.y.length > 0) {
@@ -244,7 +244,7 @@ export default {
   height: 100%;
   width: 100%;
   .search-panel {
-    padding: 20px;
+    padding: 20px 20px 0px 20px;
   }
   .table_header {
     padding: 10px 20px 5px 20px;
@@ -341,6 +341,7 @@ export default {
           .photo {
             width: 84px;
             height: 60px;
+            cursor: zoom-in;
             img {
               width: 100%;
             }
