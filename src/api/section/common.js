@@ -21,7 +21,7 @@ import request from '@/plugins/axios/axios2'
 export function getAllPeopleDataList(data) {
   console.log('api:getAllPeopleDataList', data)
   return request({
-    url: 'people/getAllPeopleDataList?orgId=b5dfc6e042dc11e814b4612fb490e44b&_t=' + new Date().getTime(),
+    url: 'people/getAllPeopleDataList?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })
@@ -40,16 +40,7 @@ export function getAllPeopleDataList(data) {
 export function getAllPeopleTreeData(data) {
   console.log('api:getAllPeopleTreeData', data)
   return request({
-    url: 'people/getAllPeopleTreeData?orgId=b5dfc6e042dc11e814b4612fb490e44b&_t=' + new Date().getTime(),
-    method: 'get',
-    params: data
-  })
-}
-
-export function getJDYPeopleDataList(data) {
-  console.log('api:getJDYPeopleDataList', data)
-  return request({
-    url: 'people/getJDYPeopleDataList?orgId=b5dfc6e042dc11e814b4612fb490e44b&_t=' + new Date().getTime(),
+    url: 'people/getAllPeopleTreeData?_t=' + new Date().getTime(),
     method: 'get',
     params: data
   })

@@ -18,7 +18,7 @@ import request from '@/plugins/axios/axios'
  */
 export const AccountLogin = data => {
   return request({
-    url: 'userInfo/getUserInfo?_t='+ new Date().getTime(),
+    url: 'emergencyplan/getUserInfo?_t='+ new Date().getTime(),
     method: 'get',
     params: data
   })

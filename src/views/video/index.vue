@@ -16,6 +16,11 @@ export default {
       //tab标签
       tabData: [
         {
+          name: '告警统计',
+          component: AlarmStatistics,
+          hasScroll: true
+        },
+        {
           name: '告警查询',
           component: AlarmSearch,
           hasScroll: false
@@ -24,11 +29,6 @@ export default {
           name: '监控分布',
           component: VideoDistribute,
           hasScroll: false
-        },
-        {
-          name: '告警统计',
-          component: AlarmStatistics,
-          hasScroll: true
         }
       ]
     }

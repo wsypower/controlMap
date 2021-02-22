@@ -29,78 +29,23 @@ export default {
         ...mapActions('section/statistical', ['getPeopleAnalysisData']),
         //获取人员状态数据
         getChartData(){
-            // this.getPeopleAnalysisData().then(res=>{
-            //     console.log('getPeopleAnalysisData', res);
-            //     let gArr = [], allArr = [], onWorkArr = [], onLineArr = [];
-            //     res.data.forEach(item=>{
-            //         gArr.push(item.groupName);
-            //         allArr.push(item.allNum);
-            //         onWorkArr.push(item.onWorkNum);
-            //         onLineArr.push(item.onlineNum);
-            //     })
-            //     this.chartData.push(gArr);
-            //     this.chartData.push(onWorkArr);
-            //     this.chartData.push(onLineArr);
-            //     this.chartData.push(allArr);
-            //     console.log('this.chartData',this.chartData);
-            //     this.chartInit();
-            // });
-          let data = [
-            {
-              groupName: '市本级指挥中心',
-              allNum: 240,
-              onWorkNum: 115,
-              onlineNum: 180
-            },
-            {
-              groupName: '金东区指挥平台',
-              allNum: 290,
-              onWorkNum: 130,
-              onlineNum: 230
-            },
-            {
-              groupName: '婺城区指挥平台',
-              allNum: 240,
-              onWorkNum: 150,
-              onlineNum: 180
-            },
-            {
-              groupName: '兰溪市指挥平台',
-              allNum: 290,
-              onWorkNum: 180,
-              onlineNum: 230
-            },
-            {
-              groupName: '义乌市指挥平台',
-              allNum: 260,
-              onWorkNum: 70,
-              onlineNum: 160
-            },
-            {
-              groupName: '东阳市指挥平台',
-              allNum: 275,
-              onWorkNum: 130,
-              onlineNum: 195
-            },
-            {
-              groupName: '永康市指挥平台',
-              allNum: 310,
-              onWorkNum: 90,
-              onlineNum: 220
-            }
-          ]
-          let gArr = [], allArr = [], onWorkArr = [], onLineArr = [];
-          data.forEach(item=>{
-              gArr.push(item.groupName);
-              allArr.push(item.allNum);
-              onWorkArr.push(item.onWorkNum);
-              onLineArr.push(item.onlineNum);
-          })
-          this.chartData.push(gArr);
-          this.chartData.push(onWorkArr);
-          this.chartData.push(onLineArr);
-          this.chartData.push(allArr);
-          this.chartInit();
+            this.getPeopleAnalysisData().then(res=>{
+                console.log('getPeopleAnalysisData', res);
+                let gArr = [], allArr = [], onWorkArr = [], onLineArr = [];
+                res.data.forEach(item=>{
+                    gArr.push(item.groupName);
+                    allArr.push(item.allNum);
+                    onWorkArr.push(item.onWorkNum);
+                    onLineArr.push(item.onlineNum);
+                })
+                this.chartData.push(gArr);
+                this.chartData.push(onWorkArr);
+                this.chartData.push(onLineArr);
+                this.chartData.push(allArr);
+                console.log('this.chartData',this.chartData);
+                this.chartInit();
+            });
+
         },
         //初始化图表
         chartInit(){

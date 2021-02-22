@@ -27,55 +27,23 @@ export default {
         ...mapActions('car/statistical', ['getBreakTypeAnalysisData']),
         //获取全部数据
         getChartData(){
-            // this.getBreakTypeAnalysisData().then(res=>{
-            //     console.log('getBreakTypeAnalysisData',res);
-            //     //一次性获取全部数据，从而把数据进行归类显示
-            //   res.data.forEach((item) => {
-            //     let temp = {
-            //       name: item.name +'  '+ item.num,
-            //       value: item.num
-            //     }
-            //     this.dataArr.push(temp);
-            //   })
-            //   let totalNum = res.data.reduce((acc,item) => {
-            //     return acc + item.num
-            //   },0);
-            //
-            //     this.chartInit(this.dataArr,totalNum);
-            // })
-          let data = [
-            {
-              name: '超速',
-              num: 43
-            },
-            {
-              name: '禁行路段',
-              num: 38
-            },
-            {
-              name: '超时停留',
-              num: 34
-            },
-            {
-              name: '超范围',
-              num: 178
-            },
-            {
-              name: '疑似偷盗',
-              num: 78
-            }
-          ]
-          data.forEach((item) => {
-            let temp = {
-              name: item.name +'  '+ item.num,
-              value: item.num
-            }
-            this.dataArr.push(temp);
-          })
-          let totalNum = data.reduce((acc,item) => {
-            return acc + item.num
-          },0);
-          this.chartInit(this.dataArr,totalNum);
+            this.getBreakTypeAnalysisData().then(res=>{
+                console.log('getBreakTypeAnalysisData',res);
+                //一次性获取全部数据，从而把数据进行归类显示
+              res.data.forEach((item) => {
+                let temp = {
+                  name: item.name +'  '+ item.num,
+                  value: item.num
+                }
+                this.dataArr.push(temp);
+              })
+              let totalNum = res.data.reduce((acc,item) => {
+                return acc + item.num
+              },0);
+
+                this.chartInit(this.dataArr,totalNum);
+            })
+          // this.chartInit(this.totalArr,this.totalNum);
 
         },
         //初始化图表

@@ -8,21 +8,21 @@ import VectorSource from 'ol/source/Vector'
 import { Heatmap as HeatmapLayer } from 'ol/layer'
 import GeoJSON from 'ol/format/GeoJSON'
 import Overlay from 'ol/Overlay'
-import Draw, { createRegularPolygon, createBox } from 'ol/interaction/Draw.js';
+import Draw, {createRegularPolygon, createBox} from 'ol/interaction/Draw.js';
 import { Modify } from 'ol/interaction.js';
-import { Fill, Stroke, Circle, Style, Icon, Text } from 'ol/style';
+import {Fill, Stroke, Circle, Style,Icon,Text} from 'ol/style';
 import Feature from 'ol/Feature';
 import MultiPolygon from 'ol/geom/MultiPolygon';
 import { fromCircle } from 'ol/geom/Polygon';
 import Point from 'ol/geom/Point';
 import LineString from 'ol/geom/LineString';
 import Cluster from 'ol/source/Cluster';
-import AnimatedCluster from 'ol-ext/layer/AnimatedCluster';
-import SelectCluster from 'ol-ext/interaction/SelectCluster';
+import  AnimatedCluster from 'ol-ext/layer/AnimatedCluster';
+import  SelectCluster from 'ol-ext/interaction/SelectCluster';
 export class MapManager {
   constructor(map) {
     this.map = map
-    this.drawLayer = null;
+    this.drawLayer=null;
   }
   /**
    * @description: xy生成要素
@@ -102,66 +102,65 @@ export class MapManager {
     this.map.addLayer(heatmapLayer);
     return heatmapLayer
   }
-  /**
-   * @description: 通过features数组添加聚类图层
-   * @param {Array} features
-   */
-  addClusterLayerByFeatures(features) {
+    /**
+     * @description: 通过features数组添加聚类图层
+     * @param {Array} features
+     */
+  addClusterLayerByFeatures(features){
     const clusterSource = new Cluster({
-      distance: 40,
-      source: new VectorSource()
+        distance: 40,
+        source: new VectorSource()
     });
     const clusterLayer = new AnimatedCluster({
-      name: 'Cluster',
-      source: clusterSource,
-      animationDuration: 700,
-      style: getClusterStyle
+        name: 'Cluster',
+        source: clusterSource,
+        animationDuration: 700,
+        style: getClusterStyle
     });
     this.map.addLayer(clusterLayer);
-
     function getClusterStyle(feature, resolution) {
-      let styleCache = {};
-      if (!feature.get('features')) {
-        return;
-      }
-      let size = feature.get('features').length;
-
-      let style = styleCache[size];
-      if (!style) {
-        if (size == 1) {
-          const styleFeature = feature.get('features')[0];
-          style = styleCache[size] = new Style({
-            image: new Icon({
-              src: require('@/assets/mapImage/' + styleFeature.get('icon') + '.png'),
-              anchor: [0.5, 0.5],
-              size: [30, 39],
-              opacity: 1
-            }),
-          });
-        } else {
-          const color = size > 25 ? '192, 0, 0' : size > 8 ? '255, 128, 0' : '0, 128, 0';
-          const radius = Math.max(8, Math.min(size * 0.75, 20));
-          style = styleCache[size] = new Style({
-            image: new Circle({
-              radius: radius,
-              stroke: new Stroke({
-                color: 'rgba(' + color + ', 0.5)',
-                width: 15
-              }),
-              fill: new Fill({
-                color: 'rgba(' + color + ', 1)'
-              })
-            }),
-            text: new Text({
-              text: size.toString(),
-              fill: new Fill({
-                color: '#fff'
-              })
-            })
-          });
+        let styleCache = {};
+        if (!feature.get('features')) {
+            return;
         }
-      }
-      return [style];
+        let size = feature.get('features').length;
+
+        let style = styleCache[size];
+        if (!style) {
+            if (size == 1) {
+                const styleFeature=feature.get('features')[0];
+                style = styleCache[size] = new Style({
+                    image:  new Icon({
+                        src: require('@/assets/mapImage/'+styleFeature.get('icon')+'.png'),
+                        anchor: [0.5, 0.5],
+                        size: [30, 39],
+                        opacity: 1
+                    }),
+                });
+            } else {
+                const color = size>25 ? '192, 0, 0' : size>8 ? '255, 128, 0' : '0, 128, 0';
+                const radius = Math.max(8, Math.min(size * 0.75, 20));
+                style = styleCache[size] = new Style({
+                    image: new Circle({
+                        radius: radius,
+                        stroke: new Stroke({
+                            color: 'rgba(' + color + ', 0.5)',
+                            width: 15
+                        }),
+                        fill: new Fill({
+                            color:'rgba(' + color + ', 1)'
+                        })
+                    }),
+                    text: new Text({
+                        text: size.toString(),
+                        fill: new Fill({
+                            color: '#fff'
+                        })
+                    })
+                });
+            }
+        }
+        return [style];
     }
     clusterSource.getSource().addFeatures(features);
     return clusterLayer;
@@ -193,27 +192,28 @@ export class MapManager {
    * @param {Boolean}isFreeHand 是否自由绘制
    * @return {*}
    */
-  activateDraw(type, draw) {
+  activateDraw(type,draw) {
     let source = new VectorSource({ wrapX: false })
-    if (draw) {
+    if(draw){
       this.inactivateDraw(draw)
     }
-    if (this.drawLayer) {
+    if(this.drawLayer){
       this.drawLayer.getSource().clear();
     }
-    if (type === '0' || type === '1') {
+    if(type==='0' ||type==='1') {
       draw = new Draw({
         source,
         type: 'Circle',
-        geometryFunction: type == '0' ? createRegularPolygon(4) : createBox()
+        geometryFunction:type=='0'?createRegularPolygon(4):createBox()
       })
-    } else if (type === '4') {
+    } else if(type==='4') {
       draw = new Draw({
         source,
         type: 'MultiPolygon',
         freehand: true
       })
-    } else {
+    }
+    else{
       draw = new Draw({
         source,
         type: type === '2' ? 'Circle' : 'MultiPolygon'
@@ -253,11 +253,11 @@ export class MapManager {
    * @author:sijianting
    * @createDate:2019/7/26 9:52
    */
-  activeModifyFeature(modify, modifySource) {
-    if (modify) {
+  activeModifyFeature(modify, modifySource){
+    if(modify){
       this.inactivateDraw(modify);
     }
-    modify = new Modify({ source: modifySource });
+    modify = new Modify({ source: modifySource});
     this.map.addInteraction(modify);
     return modify;
   }
@@ -268,7 +268,7 @@ export class MapManager {
   removeLayer(layer) {
     this.map.removeLayer(layer)
   }
-  getMap() {
+  getMap(){
     return this.map;
   }
 }
@@ -281,7 +281,7 @@ export class MapManager {
 export function filterMeetingPeople(feature, points) {
   const geo = feature.getGeometry();
   const peoples = points.filter(p => {
-    if (geo.intersectsCoordinate(p.position)) {
+    if(geo.intersectsCoordinate(p.position)){
       return p;
     }
   });
@@ -294,7 +294,7 @@ export function filterMeetingPeople(feature, points) {
  * @createDate:2019/7/26 15:22
  */
 export function circleToPloygon(feature) {
-  const polygon = fromCircle(feature.getGeometry(), 64, 90);
+  const polygon = fromCircle(feature.getGeometry(), 64,90);
   let mutiPolygon = new MultiPolygon({});
   mutiPolygon.appendPolygon(polygon);
   feature = new Feature({
@@ -309,23 +309,23 @@ export function circleToPloygon(feature) {
  * @createDate:2019/12/5 15:31
  */
 export function trackByLocationList(list) {
-  const features = []
-  const coords = []
-  // 根据点列生成轨迹线
-  list.forEach(trackPt => {
-    if (trackPt.gpsx && trackPt.gpsy) {
-      const coord = [Number(trackPt.gpsx), Number(trackPt.gpsy)];
-      coords.push(coord);
+    const features = []
+    const coords = []
+    // 根据点列生成轨迹线
+    list.forEach(trackPt => {
+        if (trackPt.gpsx && trackPt.gpsy) {
+            const coord = [Number(trackPt.gpsx), Number(trackPt.gpsy)];
+            coords.push(coord);
+        }
+    });
+    if (coords.length > 0) {
+        // 根据数据生成feature
+        const trackLine = trackFeatureByCoords(coords)
+        // const firstPoint = pointByCoord(coords[0])
+        // const lastPoint = pointByCoord(coords[coords.length - 1])
+        features.push(trackLine)
     }
-  });
-  if (coords.length > 0) {
-    // 根据数据生成feature
-    const trackLine = trackFeatureByCoords(coords)
-    // const firstPoint = pointByCoord(coords[0])
-    // const lastPoint = pointByCoord(coords[coords.length - 1])
-    features.push(trackLine)
-  }
-  return features
+    return features
 }
 
 /**
@@ -333,101 +333,93 @@ export function trackByLocationList(list) {
  * @param  {[type]} coords [description]
  * @return {[type]}        [description]
  */
-export function trackFeatureByCoords(coords) {
-  return new Feature(new LineString(coords))
+export function trackFeatureByCoords (coords) {
+    return new Feature(new LineString(coords))
 }
 /**
  * 根据点生成点位feature
  * @param  {[type]} coords [description]
  * @return {[type]}        [description]
  */
-export function pointByCoord(coord) {
-  return new Feature(new Point(coord))
+export function pointByCoord (coord) {
+    return new Feature(new Point(coord))
 }
 /**
  * 根据list生成点位feature
  * @param  {[type]} list [description]
  * @return {[type]}        [description]
  */
-export function listToFeatures(list, type) {
-  let features;
-  switch (type) {
-    case '人员':
-      features = list.map(item => {
-        let pointImg;
-        if (item.sex === '1') {
-          if (item.online) {
-            pointImg = 'female_online';
-          } else {
-            pointImg = 'female_offline';
-          }
-        } else {
-          if (item.online) {
-            pointImg = 'male_online';
-          } else {
-            pointImg = 'male_offline';
-          }
-        }
-        // 通过经纬度生成点位加到地图上
-        if (item.x && item.x.length > 0 && item.y && item.y.length > 0) {
-          const feature = new Feature({
-            geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
-          });
-          feature.set('icon', pointImg);
-          feature.set('props', item);
-          // feature.set('type','peoplePosition');
-          return feature;
-        }
-      });
-      break;
-    case '车辆':
-      features = list.map(item => {
-        let pointImg;
-        if (item.online) {
-          pointImg = 'car-online';
-        } else {
-          pointImg = 'car-offline';
-        }
-        // 通过经纬度生成点位加到地图上
-        if (item.x && item.x.length > 0 && item.y && item.y.length > 0) {
-          const feature = new Feature({
-            geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
-          });
-          feature.set('icon', pointImg);
-          feature.set('props', item);
-          // feature.set('type','CarPosition');
-          return feature;
-        }
-      });
-      break;
-    case '案卷':
-      features = list.map(item => {
-        if (item.x84 && item.x84.length > 0 && item.y84 && item.y84.length > 0) {
-          const feature = new Feature({
-            geometry: new Point([parseFloat(item.x84), parseFloat(item.y84)])
-          });
-          feature.set('icon', 'event');
-          feature.set('props', item);
-          feature.set('type', 'eventPosition');
-          return feature;
-        }
-      });
-      break;
-    case '视频':
-      features = list.map(item => {
-        // 通过经纬度生成点位加到地图上
-        if (item.x && item.x.length > 0 && item.x != 'null' && item.y && item.y.length > 0 && item.y != 'null') {
-          const feature = new Feature({
-            geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
-          });
-          feature.set('icon', 'carmera_online');
-          feature.set('props', item);
-          // feature.set('type','CarPosition');
-          return feature;
-        }
-      });
-      break;
+export function listToFeatures (list,type) {
+    let features;
+    switch (type){
+        case '人员':
+            features = list.map(item=>{
+                let pointImg;
+                if(item.sex === '1'){
+                    if(item.online){
+                        pointImg='female_online';
+                    }
+                    else{
+                        pointImg='female_offline';
+                    }
+                }
+                else{
+                    if(item.online){
+                        pointImg='male_online';
+                    }
+                    else{
+                        pointImg='male_offline';
+                    }
+                }
+                // 通过经纬度生成点位加到地图上
+                if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                    const feature=new Feature({
+                        geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+                    });
+                    feature.set('icon',pointImg);
+                    feature.set('props',item);
+                    // feature.set('type','peoplePosition');
+                    return feature;
+                }
+            });
+            break;
+        case '车辆':
+            features = list.map(item=>{
+                let pointImg;
+                if(item.online){
+                    pointImg='car-online';
+                }
+                else{
+                    pointImg='car-offline';
+                }
+                // 通过经纬度生成点位加到地图上
+                if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                    const feature=new Feature({
+                        geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+                    });
+                    feature.set('icon',pointImg);
+                    feature.set('props',item);
+                    // feature.set('type','CarPosition');
+                    return feature;
+                }
+            });
+            break;
+        case '视频':
+            features = list.map(item=>{
+                // 通过经纬度生成点位加到地图上
+                if(item.x && item.x.length>0 && item.y && item.y.length>0){
+                    const feature=new Feature({
+                        geometry: new Point([parseFloat(item.x), parseFloat(item.y)])
+                    });
+                    feature.set('icon','carmera_online');
+                    feature.set('props',item);
+                    // feature.set('type','CarPosition');
+                    return feature;
+                }
+            });
+            break;
 
-  }
-  return features.filter(Boolean);
+    }
+    return features.filter(Boolean);
 }
+

@@ -68,13 +68,12 @@ export default{
       ...mapActions('video/manage', ['alarmNormalHandle','alarmReportHandle']),
       //关闭弹窗
       closeDialog(isRefresh){
-        this.remark = '';
         this.$emit('closeTip', isRefresh)
       },
       //未违规操作
       noBackRulesHandle(){
         console.log('noBackRulesHandle',this.info, this.remark);
-        this.alarmNormalHandle({id:this.info.id, remark:this.remark}).then((res) => {
+        this.alarmNormalHandle({userId: userId, id:this.info.id, remark:this.remark}).then((res) => {
           console.log('把告警设置为未违规');
           this.remark = '';
           this.closeDialog(true);
@@ -83,7 +82,7 @@ export default{
       //案件上报
       reportHandle(){
         console.log('reportHandle',this.info, this.remark);
-        this.alarmReportHandle({id:this.info.id, remark:this.remark}).then((res) => {
+        this.alarmReportHandle({userId: userId, id:this.info.id, remark:this.remark}).then((res) => {
           console.log('把告警上报上去');
           this.remark = '';
           this.closeDialog(true);

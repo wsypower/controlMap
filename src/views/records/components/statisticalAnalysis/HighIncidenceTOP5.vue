@@ -26,47 +26,17 @@ export default {
     ...mapActions('records/statistical', ['getHighIncidenceTOP5Data']),
     //获取人员状态数据
     getChartData(){
-      // this.getHighIncidenceTOP5Data().then(res=>{
-      //   console.log('getHighIncidenceTOP5Data', res);
-      //   let xArr = [];
-      //   let yArr = [];
-      //   res.data.forEach(item => {
-      //     xArr.push(item.name);
-      //     yArr.push(item.num);
-      //   });
-      //   this.chartData = [xArr, yArr];
-      //   this.chartInit();
-      // });
-      let data = [
-        {
-          name: '私搭乱建',
-          num: 475
-        },
-        {
-          name: '上水井盖',
-          num: 357
-        },
-        {
-          name: '非法小广告',
-          num: 331
-        },
-        {
-          name: '无照经营游商',
-          num: 209
-        },
-        {
-          name: '街头散发广告',
-          num: 201
-        }
-      ]
-      let xArr = [];
-      let yArr = [];
-      data.forEach(item => {
-        xArr.push(item.name);
-        yArr.push(item.num);
+      this.getHighIncidenceTOP5Data().then(res=>{
+        console.log('getHighIncidenceTOP5Data', res);
+        let xArr = [];
+        let yArr = [];
+        res.data.forEach(item => {
+          xArr.push(item.name);
+          yArr.push(item.num);
+        });
+        this.chartData = [xArr, yArr];
+        this.chartInit();
       });
-      this.chartData = [xArr, yArr];
-      this.chartInit();
     },
     //初始化图表
     chartInit(){

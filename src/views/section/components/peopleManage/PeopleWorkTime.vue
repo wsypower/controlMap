@@ -128,13 +128,7 @@ export default {
     mounted(){
         this.query.userId = util.cookies.get('userId');
         let temp = this.peopleDataList.find(item => item.id === this.query.userId );
-        if(temp){
-          this.query.userDisplayId = temp.userDisplayId;
-        }
-        else{
-          this.query.userDisplayId = '';
-        }
-
+        this.query.userDisplayId = temp.userDisplayId;
         let day = moment(new Date()).format('YYYY-MM-DD');
         this.dayRange = [moment(day, 'YYYY-MM-DD'),moment(day, 'YYYY-MM-DD')];
         this.query.startTime = new Date(day).getTime();
@@ -170,15 +164,10 @@ export default {
 
         //查询(默认显示当天，当前登入的用户)
         onSearch() {
-          this.query.startTime = this.dayRange[0]?this.dayRange[0]._d.getTime():'';
-          this.query.endTime = this.dayRange[1]?this.dayRange[1]._d.getTime():'';
-          let dates = Math.floor((this.query.endTime - this.query.startTime))/(1000*60*60*24);
-          if(dates>3){
-            this.$message.warning('查询时间不可超过3天！！！');
-            return;
-          }
-          this.query.curPage = 1;
-          this.getDataList()
+            this.query.startTime = this.dayRange[0]._d.getTime();
+            this.query.endTime = this.dayRange[1]._d.getTime();
+            this.query.curPage = 1;
+            this.getDataList()
         },
 
         //翻页

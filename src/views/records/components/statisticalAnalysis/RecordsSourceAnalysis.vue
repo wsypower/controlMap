@@ -25,56 +25,22 @@ export default {
         ...mapActions('records/statistical', ['getRecordsSourceAnalysisData']),
         //获取全部数据
         getChartData(){
-            // this.getRecordsSourceAnalysisData().then(res=>{
-            //     console.log('getRecordsSourceAnalysisData',res);
-            //     //一次性获取全部数据，从而把数据进行归类显示
-            //   res.data.forEach((item) => {
-            //     let temp = {
-            //       name: item.name +'  '+ item.num,
-            //       value: item.num
-            //     }
-            //     this.dataArr.push(temp);
-            //   })
-            //   let totalNum = res.data.reduce((acc,item) => {
-            //     return acc + item.num
-            //   },0);
-            //
-            //     this.chartInit(this.dataArr,totalNum);
-            // })
-          let data = [
-            {
-              name: '微信上报',
-              num: 43
-            },
-            {
-              name: '视频上报',
-              num: 38
-            },
-            {
-              name: '平台上报',
-              num: 94
-            },
-            {
-              name: '网络员上报',
-              num: 178
-            },
-            {
-              name: '其他',
-              num: 78
-            }
-          ]
-          data.forEach((item) => {
-            let temp = {
-              name: item.name +'  '+ item.num,
-              value: item.num
-            }
-            this.dataArr.push(temp);
-          })
-          let totalNum = data.reduce((acc,item) => {
-            return acc + item.num
-          },0);
+            this.getRecordsSourceAnalysisData().then(res=>{
+                console.log('getRecordsSourceAnalysisData',res);
+                //一次性获取全部数据，从而把数据进行归类显示
+              res.data.forEach((item) => {
+                let temp = {
+                  name: item.name +'  '+ item.num,
+                  value: item.num
+                }
+                this.dataArr.push(temp);
+              })
+              let totalNum = res.data.reduce((acc,item) => {
+                return acc + item.num
+              },0);
 
-            this.chartInit(this.dataArr,totalNum);
+                this.chartInit(this.dataArr,totalNum);
+            })
         },
         //初始化图表
         chartInit(data,total){

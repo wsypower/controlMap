@@ -24,55 +24,20 @@ export default {
         ...mapActions('section/statistical', ['getOverstepAnalysisData']),
         //获取越界数据
         getChartData(){
-            // this.getOverstepAnalysisData().then(res=>{
-            //     console.log('getOverstepAnalysisData',res);
-            //     let data = [],
-            //         dayArr = [],
-            //         numArr = [];
-            //     res.data.forEach(item=>{
-            //         dayArr.push(item.day);
-            //         numArr.push(item.num);
-            //     })
-            //     data.push(dayArr);
-            //     data.push(numArr);
-            //     this.chartInit(data);
-            // })
-          let result = [
-            {
-              day: '09-23',
-              num: 40
-            },
-            {
-              day: '09-24',
-              num: 32
-            },
-            {
-              day: '09-25',
-              num: 21
-            },
-            {
-              day: '09-26',
-              num: 10
-            },
-            {
-              day: '09-27',
-              num: 16
-            },
-            {
-              day: '09-28',
-              num: 12
-            }
-          ]
-          let data = [],
-              dayArr = [],
-              numArr = [];
-          result.forEach(item=>{
-              dayArr.push(item.day);
-              numArr.push(item.num);
-          })
-          data.push(dayArr);
-          data.push(numArr);
-          this.chartInit(data);
+            this.getOverstepAnalysisData().then(res=>{
+                console.log('getOverstepAnalysisData',res);
+                let data = [],
+                    dayArr = [],
+                    numArr = [];
+                res.data.forEach(item=>{
+                    dayArr.push(item.day);
+                    numArr.push(item.num);
+                })
+                data.push(dayArr);
+                data.push(numArr);
+                this.chartInit(data);
+            })
+
         },
         //初始化图表
         chartInit(data){

@@ -27,62 +27,22 @@ export default {
         ...mapActions('car/statistical', ['getCarGroupAnalysisData']),
         //获取全部数据
         getChartData(){
-            // this.getCarGroupAnalysisData().then(res=>{
-            //     console.log('getCarGroupAnalysisData',res);
-            //     //一次性获取全部数据，从而把数据进行归类显示
-            //     res.data.forEach((item) => {
-            //       let temp = {
-            //         name: item.name,
-            //         value: item.num
-            //       }
-            //       this.dataArr.push(temp);
-            //     })
-            //     let totalNum = res.data.reduce((acc,item) => {
-            //         return acc + item.num
-            //     },0);
-            //     this.chartInit(this.dataArr, totalNum);
-            // })
-          let data = [
-            {
-              name: '市本级指挥中心1',
-              num: 13
-            },
-            {
-              name: '市本级指挥中心2',
-              num: 28
-            },
-            {
-              name: '信息采集中心1',
-              num: 34
-            },
-            {
-              name: '信息采集中心2',
-              num: 17
-            },
-            {
-              name: '信息采集中心3',
-              num: 78
-            },
-            {
-              name: '信息采集中心4',
-              num: 31
-            },
-            {
-              name: '信息采集中心5',
-              num: 45
-            }
-          ]
-          data.forEach((item) => {
-            let temp = {
-              name: item.name,
-              value: item.num
-            }
-            this.dataArr.push(temp);
-          })
-          let totalNum = data.reduce((acc,item) => {
-              return acc + item.num
-          },0);
-          this.chartInit(this.dataArr, totalNum);
+            this.getCarGroupAnalysisData().then(res=>{
+                console.log('getCarGroupAnalysisData',res);
+                //一次性获取全部数据，从而把数据进行归类显示
+                res.data.forEach((item) => {
+                  let temp = {
+                    name: item.name,
+                    value: item.num
+                  }
+                  this.dataArr.push(temp);
+                })
+                let totalNum = res.data.reduce((acc,item) => {
+                    return acc + item.num
+                },0);
+                this.chartInit(this.dataArr, totalNum);
+            })
+
         },
         //初始化图表
         chartInit(data,total){

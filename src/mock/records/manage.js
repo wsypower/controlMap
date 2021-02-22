@@ -174,27 +174,15 @@ const getRecordPhotosData = options => {
   console.log('getRecordPhotosData query', queryParameters)
   let data = {
     handleBefore: {
+      uploadTime: 1574730352000,
       photosList: [
-        {
-          type: '上报',
-          time: 1574739352000,
-          imgUrl: 'http://61.153.37.213:8087/upload/file/2019/11/20/20191120145436458442.jpg'
-        },
-        {
-          type: '核实',
-          time: 1574739352000,
-          imgUrl: 'http://61.153.37.213:8087/upload/file/2019/11/20/20191120145452931177.jpg'
-        }
+        'http://61.153.37.213:8087/upload/file/2019/11/20/20191120145436458442.jpg',
+        'http://61.153.37.213:8087/upload/file/2019/11/20/20191120145452931177.jpg'
       ]
     },
     handleAfter: {
       uploadTime: 1574739352000,
-      photosList: [
-        {
-          type: '处置',
-          time: 1574739352000,
-          imgUrl: 'http://61.153.37.213:8087/upload/file/2019/11/20/20191120145452931177.jpg'
-        }]
+      photosList: ['http://61.153.37.213:8087/camera/2019/11/18/20191118092357512929.jpg']
     }
   }
   return builder(

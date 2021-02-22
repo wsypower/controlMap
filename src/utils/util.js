@@ -66,43 +66,4 @@ util.open = function(url) {
   document.body.removeChild(document.getElementById('cgadmin-link-temp'))
 }
 
-//功能：计算两个时间戳之间相差的日时分秒
-//$begin_time  开始时间戳
-//$end_time 结束时间戳
-util.timediff = function($begin_time,$end_time)
-{
-  if($begin_time===0||$end_time===0){
-    return []
-  }
-  else{
-    let $starttime = '';
-    let $endtime = '';
-    if($begin_time < $end_time){
-      $starttime = $begin_time;
-      $endtime = $end_time;
-    }else{
-      $starttime = $end_time;
-      $endtime = $begin_time;
-    }
-
-    //计算天数
-    let $timediff = $endtime-$starttime;
-    let $days = parseInt($timediff/86400);
-    //计算小时数
-    let $remain = $timediff%86400;
-    let $hours = parseInt($remain/3600);
-    //计算分钟数
-    $remain = $remain%3600;
-    let $mins = parseInt($remain/60);
-    //计算秒数
-    let $secs = $remain%60;
-
-    let $res = [$days,$hours,$mins,$secs]
-
-    return $res;
-  }
-}
-
 export default util
-
-

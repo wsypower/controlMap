@@ -91,46 +91,11 @@ export default {
       },
       //获取人员状态数据
         getChartData(){
-          let data = [
-            { day: '2018-01-01', num: 16 },
-            { day: '2018-01-02', num: 61 },
-            { day: '2018-01-03', num: 26 },
-            { day: '2018-01-04', num: 62 },
-            { day: '2018-01-05', num: 36 },
-            { day: '2018-01-06', num: 64 },
-            { day: '2018-01-07', num: 56 },
-            { day: '2018-01-08', num: 66 },
-            { day: '2018-01-09', num: 67 },
-            { day: '2018-01-10', num: 0 },
-            { day: '2018-01-11', num: 0 },
-            { day: '2018-01-12', num: 0 },
-            { day: '2018-01-13', num: 23 },
-            { day: '2018-01-14', num: 34 },
-            { day: '2018-01-15', num: 41 },
-            { day: '2018-01-16', num: 51 },
-            { day: '2018-01-17', num: 13 },
-            { day: '2018-01-18', num: 6 },
-            { day: '2018-01-19', num: 65 },
-            { day: '2018-01-20', num: 0 },
-            { day: '2018-01-21', num: 1 },
-            { day: '2018-01-22', num: 0 },
-            { day: '2018-01-23', num: 77 },
-            { day: '2018-01-24', num: 0 },
-            { day: '2018-01-25', num: 89 },
-            { day: '2018-01-26', num: 34 },
-            { day: '2018-01-27', num: 22 },
-            { day: '2018-01-28', num: 0 },
-            { day: '2018-01-29', num: 36 },
-            { day: '2018-01-30', num: 76 },
-            { day: '2018-01-31', num: 16 }
-          ]
-          this.chartData = data;
-          this.chartInit();
-            // this.getHighIncidenceTimeAnalysisData().then(res=>{
-            //   console.log(res.data);
-            //   this.chartData = res.data
-            //   this.chartInit();
-            // });
+            this.getHighIncidenceTimeAnalysisData().then(res=>{
+              console.log(res.data);
+              this.chartData = res.data
+              this.chartInit();
+            });
 
         },
         //初始化图表

@@ -3,7 +3,7 @@
     <div class="map-file-model-header" flex="cross:center main:justify">
       <div class="info-body-left" flex="cross:center">
         <cg-icon-svg name="menu-records" class="svg_icon_records"></cg-icon-svg>
-        <span>{{ detailInfo.taskcode }}</span>
+        <span>{{ detailInfo.code }}</span>
       </div>
       <div class="close" @click="closeDialog"></div>
     </div>
@@ -27,37 +27,37 @@
             <div class="file-message-item-list" flex>
               <div class="one-line">
                 问题来源：
-                <span>{{ detailInfo.sourcename }}</span>
+                <span>{{ detailInfo.sourceName }}</span>
               </div>
               <div class="two-line" flex>
                 问题描述：
-                <span :title="detailInfo.eventdesc">{{ detailInfo.eventdesc }}</span>
+                <span :title="detailInfo.description">{{ detailInfo.description }}</span>
               </div>
             </div>
             <div class="file-message-item-list" flex>
               <div class="one-line">
                 问题分类：
-                <span>{{ detailInfo.type1name }}</span>
+                <span>{{ detailInfo.type1Name }}</span>
               </div>
             </div>
             <div class="file-message-item-list" flex>
               <div class="one-line">
                 大&emsp;&emsp;类：
-                <span>{{ detailInfo.type2name }}</span>
+                <span>{{ detailInfo.type2Name }}</span>
               </div>
               <div class="one-line">
                 核查结果：
-                <span>{{ detailInfo.checkmsg }}</span>
+                <span>{{ detailInfo.hcResult }}</span>
               </div>
             </div>
             <div class="file-message-item-list" flex>
               <div class="one-line">
                 小&emsp;&emsp;类：
-                <span>{{ detailInfo.type3name }}</span>
+                <span>{{ detailInfo.type3Name }}</span>
               </div>
               <div class="one-line">
                 核实结果：
-                <span>{{ detailInfo.verifymsg }}</span>
+                <span>{{ detailInfo.hsResult }}</span>
               </div>
             </div>
           </div>
@@ -65,17 +65,17 @@
             <div class="file-message-item-list" flex>
               <div class="one-line">
                 街&emsp;&emsp;道：
-                <span>{{ detailInfo.streetname }}</span>
+                <span>{{ detailInfo.streetName }}</span>
               </div>
               <div class="one-line">
                 单元网格：
-                <span>{{ detailInfo.gridname }}</span>
+                <span>{{ detailInfo.gridName }}</span>
               </div>
             </div>
             <div class="file-message-item-list" flex>
               <div class="one-line">
                 社&emsp;&emsp;区：
-                <span>{{ detailInfo.countryname }}</span>
+                <span>{{ detailInfo.countryName }}</span>
               </div>
               <div class="one-line">
                 位&emsp;&emsp;置：
@@ -87,21 +87,21 @@
             <div class="file-message-item-list" flex>
               <div class="one-line">
                 受&ensp;理&ensp;员：
-                <span>{{ detailInfo.createname }}</span>
+                <span>{{ detailInfo.creator }}</span>
               </div>
               <div class="one-line">
                 举&ensp;报&ensp;人：
-                <span>{{ detailInfo.reportername }}</span>
+                <span>{{ detailInfo.reporterName }}</span>
               </div>
             </div>
             <div class="file-message-item-list" flex>
               <div class="one-line">
                 监&ensp;督&ensp;员：
-                <span>{{ detailInfo.patrolername }}</span>
+                <span>{{ detailInfo.supervisor }}</span>
               </div>
               <div class="one-line">
                 联系方式：
-                <span>{{ detailInfo.reporterphone }}</span>
+                <span>{{ detailInfo.reporterPhone }}</span>
               </div>
             </div>
           </div>
@@ -110,82 +110,165 @@
           <div class="file-img-content" flex>
             <div class="file-img-content-item">
               <div class="img-box" v-if="handleBeforeObj.photosList.length>1">
-                <swiper :options="swiperOption" ref="beforeSwiper" style="height:100%" v-viewer>
+                <swiper :options="swiperOption" ref="beforeSwiper">
                   <swiper-slide v-for="(item, index) in handleBeforeObj.photosList" :key="index">
-                    <div class="photo-panel">
-                      <img class="photo-panel_img" :src="fileServer + item.path" alt="" />
-                      <div class="photo-panel_mes"><span>{{item.type}}</span><span>{{ new Date(item.createtime) | date_format() }}</span></div>
-                    </div>
+                    <img :src="item" alt="" />
                   </swiper-slide>
                 </swiper>
                 <div class="swiper-button-prev" slot="button-prev"><a-icon type="left" /></div>
                 <div class="swiper-button-next" slot="button-next"><a-icon type="right" /></div>
               </div>
               <div class="img-box" v-else>
-                <div class="photo-panel" v-for="(item, index) in handleBeforeObj.photosList" :key="index" v-viewer>
-                  <img class="photo-panel_img" :src="fileServer + item.path" alt="" />
-                  <div class="photo-panel_mes"><span>{{item.type}}</span><span>{{ new Date(item.createtime) | date_format() }}</span></div>
-                </div>
+                <img v-for="(item, index) in handleBeforeObj.photosList" :key="index" :src="item" />
               </div>
               <div class="img-box-title">
                 <div>处理前（{{handleBeforeObj.photosList.length}}）</div>
+                <div>{{ new Date(handleBeforeObj.uploadTime) | date_format() }}</div>
               </div>
             </div>
             <div class="file-img-content-item">
               <div class="img-box" v-if="handleAfterObj.photosList.length>1">
-                <swiper :options="swiperOption" ref="afterSwiper" style="height:100%" v-viewer>
+                <swiper :options="swiperOption" ref="afterSwiper">
                   <swiper-slide v-for="(item, index) in handleAfterObj.photosList" :key="index">
-                    <div class="photo-panel">
-                      <img class="photo-panel_img" :src="fileServer+item.path" alt="" />
-                      <div class="photo-panel_mes"><span>{{item.type}}</span><span>{{ new Date(item.createtime) | date_format() }}</span></div>
-                    </div>
+                    <img :src="item" alt="" />
                   </swiper-slide>
                 </swiper>
                 <div class="swiper-button-prev" slot="button-prev"><a-icon type="left" /></div>
                 <div class="swiper-button-next" slot="button-next"><a-icon type="right" /></div>
               </div>
               <div class="img-box" v-else>
-                <div class="photo-panel" v-for="(item, index) in handleAfterObj.photosList" :key="index" v-viewer>
-                  <img class="photo-panel_img" :src="fileServer+item.path" alt="" />
-                  <div class="photo-panel_mes"><span>{{item.type}}</span><span>{{ new Date(item.createtime) | date_format() }}</span></div>
-                </div>
+                <img v-for="(item, index) in handleAfterObj.photosList" :key="index" :src="item">
               </div>
               <div class="img-box-title">
                 <div>处理后（{{handleAfterObj.photosList.length}}）</div>
+                <div>{{ new Date(handleAfterObj.uploadTime) | date_format() }}</div>
               </div>
             </div>
           </div>
         </div>
         <div class="file-model-body-content" :class="{ active: activeIndex === 2 }">
           <div class="file-log-content">
-            <my-scroll>
-              <div class="file-log-content-item" v-for="(log, index) in logData" :key="index">
+            <cg-container scroll>
+              <div class="file-log-content-item">
                 <div class="log-content-item-header" flex="cross:center">
                   <div class="title" flex="cross:center">
-                    {{log.typename}}
+                    结案
+                    <!--                    <i class="iconfont icon-shijian"></i>-->
                     <cg-icon-svg name="time2" class="svg_icon_time"></cg-icon-svg>
                   </div>
                   <div class="text" flex="cross:center">
-                    【{{log.dealdept}}】环节用时：{{log.usetime}}
+                    【监督中心】环节用时：14时55分
                   </div>
                 </div>
                 <div class="log-content-item-body">
                   <div class="log-content-item-body-content">
-                    <div class="item-content" v-for="detail in log.detailelogs" :key="detail.id">
+                    <div class="item-content">
                       <div class="item-content-header">
-                        {{new Date(detail.dealtime) | date_format()}}
+                        2018.08.29 15:27
                       </div>
                       <div class="item-content-body">
-                        <div class="log" flex="dir:left">
+                        <div class="log" flex="cross:center">
                           <span>[批转意见]</span>
-                          <span style="flex:1">{{detail.dealmsg}}</span>
+                          <span>区受理员[jksly003]执行了办理操作</span>
+                        </div>
+                        <div class="opinion" flex="cross:center">
+                          <span>[批转意见]</span>
+                          <span>区受理员[jksly003]执行了办理操作</span>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </my-scroll>
+              <div class="file-log-content-item">
+                <div class="log-content-item-header" flex="cross:center">
+                  <div class="title" flex="cross:center">
+                    处置
+                    <cg-icon-svg name="time2" class="svg_icon_time"></cg-icon-svg>
+                    <!--                    <i class="iconfont icon-shijian"></i>-->
+                  </div>
+                  <div class="text" flex="cross:center">
+                    【监督中心】环节用时：14时55分
+                  </div>
+                </div>
+                <div class="log-content-item-body">
+                  <div class="log-content-item-body-content">
+                    <div class="item-content">
+                      <div class="item-content-header">
+                        2018.08.29 15:27
+                      </div>
+                      <div class="item-content-body">
+                        <div class="log" flex="cross:center">
+                          <span>[批转意见]</span>
+                          <span>区受理员[jksly003]执行了办理操作</span>
+                        </div>
+                        <div class="opinion" flex="cross:center">
+                          <span>[批转意见]</span>
+                          <span>区受理员[jksly003]执行了办理操作</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="file-log-content-item">
+                <div class="log-content-item-header" flex="cross:center">
+                  <div class="title" flex="cross:center">
+                    立案
+                    <!--                    <i class="iconfont icon-shijian"></i>-->
+                    <cg-icon-svg name="time2" class="svg_icon_time"></cg-icon-svg>
+                  </div>
+                  <div class="text" flex="cross:center">
+                    【监督中心】环节用时：14时55分
+                  </div>
+                </div>
+                <div class="log-content-item-body">
+                  <div class="log-content-item-body-content">
+                    <div class="item-content">
+                      <div class="item-content-header">
+                        2018.08.29 15:27
+                      </div>
+                      <div class="item-content-body">
+                        <div class="log" flex="cross:center">
+                          <span>[批转意见]</span>
+                          <span>区受理员[jksly003]执行了办理操作</span>
+                        </div>
+                        <div class="opinion" flex="cross:center">
+                          <span>[批转意见]</span>
+                          <span>区受理员[jksly003]执行了办理操作</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="file-log-content-item">
+                <div class="log-content-item-header" flex="cross:center">
+                  <div class="title" flex="cross:center">
+                    上报
+                    <!--                    <i class="iconfont icon-shijian"></i>-->
+                    <cg-icon-svg name="time2" class="svg_icon_time"></cg-icon-svg>
+                  </div>
+                  <div class="text" flex="cross:center">
+                    【监督中心】环节用时：14时55分
+                  </div>
+                  <!--                  <div>-->
+                  <!--                    <h6>附件1：</h6>-->
+                  <!--                    <ul style="list-style: none;padding-left: 15px;">-->
+                  <!--                      <li>1111</li>-->
+                  <!--                      <li>2222</li>-->
+                  <!--                      <li>3333</li>-->
+                  <!--                    </ul>-->
+                  <!--                    <h6>附件2：</h6>-->
+                  <!--                    <ul style="list-style: none">-->
+                  <!--                      <li>1111</li>-->
+                  <!--                      <li>2222</li>-->
+                  <!--                      <li>3333</li>-->
+                  <!--                    </ul>-->
+                  <!--                  </div>-->
+                </div>
+              </div>
+            </cg-container>
           </div>
         </div>
       </div>
@@ -195,8 +278,6 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
-import util from '@/utils/util'
-const typeArr = ['上报', '核实', '核查', '处置'];
 export default {
   name: 'recordInfo',
   props:{
@@ -217,33 +298,33 @@ export default {
       },
       activeIndex: 0,
       detailInfo: {
-        taskcode: '',
-        sourcename: '',
-        type1name: '',
-        type2name: '',
-        type3name: '',
-        eventdesc: '',
-        checkmsg: '',
-        verifymsg: '',
+        code: '',
+        sourceName: '',
+        type1Name: '',
+        type2Name: '',
+        type3Name: '',
+        description: '',
+        hcResult: '',
+        hsResult: '',
 
-        streetname: '',
-        countryname: '',
-        gridname: '',
+        streetName: '',
+        countryName: '',
+        gridName: '',
         address: '',
 
-        createname: '',
-        patrolername: '',
-        reportername: '',
-        reporterphone: '',
+        creator: '',
+        supervisor: '',
+        reporterName: '',
+        reporterPhone: '',
       },
-      fileServer: '',
       handleBeforeObj:{
+        time: null,
         photosList: []
       },
       handleAfterObj:{
+        time: null,
         photosList: []
-      },
-      logData: []
+      }
     }
   },
   mounted(){
@@ -251,32 +332,15 @@ export default {
   },
   watch:{
     code: function(val){
-      console.log('watch code: ' + val);
-      this.getRecordDetailData({taskcode: val}).then( res => {
-        this.detailInfo = res;
+      this.getRecordDetailData({code: val}).then( res => {
+        this.detailInfo = res.data;
       })
-      this.getRecordPhotosData({taskcode: val}).then( res => {
-        this.fileServer = res.fileServer;
-        res.handleBefore.photosList.forEach(photo => {
-          photo.type = typeArr[parseInt(photo.submittype)];
-        })
-        res.handleAfter.photosList.forEach(photo => {
-          photo.type = typeArr[parseInt(photo.submittype)];
-        })
-        this.handleBeforeObj = res.handleBefore;
-        this.handleAfterObj = res.handleAfter;
+      this.getRecordPhotosData({code: val}).then( res => {
+        this.handleBeforeObj = res.data.handleBefore;
+        this.handleAfterObj = res.data.handleAfter;
       })
-      this.getRecordLogsData({taskcode: val}).then( res => {
-        res.forEach(log => {
-          let timeArr = util.timediff(log.starttime,log.endtime);
-          if(timeArr.length===0){
-            log.usetime = ''
-          }
-          else{
-            log.usetime = timeArr[0]+'天'+timeArr[1]+'时'+timeArr[2]+'分'+timeArr[3]+'秒'
-          }
-        })
-        this.logData = res;
+      this.getRecordLogsData({code: val}).then( res => {
+
       })
     }
   },
@@ -400,7 +464,6 @@ export default {
                 width: 60%;
               }
               span {
-                flex: 1;
                 color: #333333;
               }
             }
@@ -418,7 +481,6 @@ export default {
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 2;
-                flex: 1;
               }
             }
           }
@@ -444,30 +506,9 @@ export default {
               background: #fafafa url('~@img/noImage.png') no-repeat 30px 10px;
               overflow: hidden;
               position: relative;
-              .photo-panel{
+              img {
                 width: 100%;
-                height: 100%;
-                position: relative;
-                img {
-                  width: 100%;
-                  cursor: zoom-in;
-                }
-                .photo-panel_mes{
-                  position: absolute;
-                  bottom: 0px;
-                  left: 0px;
-                  width: 100%;
-                  height: 30px;
-                  line-height: 30px;
-                  padding-left: 10px;
-                  background-color: rgba(0,0,0,0.5);
-                  color: #fff;
-                  span:last-child{
-                    margin-left: 5px;
-                  }
-                }
               }
-
               .swiper-button-prev,
               .swiper-button-next {
                 position: absolute;
@@ -517,6 +558,7 @@ export default {
           width: 100%;
           padding-top: 15px;
           height: 100%;
+          position: relative;
           .file-log-content-item {
             width: 100%;
             .log-content-item-header {
@@ -526,7 +568,7 @@ export default {
                 font-size: 16px;
                 color: #2c90f3;
                 .svg_icon_time {
-                  margin-left: 5px;
+                  margin-left: 14px;
                 }
               }
               .text {
@@ -581,11 +623,6 @@ export default {
                     }
                   }
                 }
-              }
-            }
-            &:last-child{
-              .log-content-item-body-content{
-                border-left: 2px solid transparent;
               }
             }
           }

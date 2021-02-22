@@ -38,30 +38,6 @@ import 'swiper/dist/css/swiper.css'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 Vue.use(VueAwesomeSwiper)
 
-import vuescroll from 'vuescroll';
-
-// 你可以在这里设置全局配置
-Vue.use(vuescroll, {
-  ops: {
-    bar: {
-      showDelay: 500,
-      onlyShowBarOnScroll: true,
-      keepShow: false,
-      background: '#c1c1c1',
-      opacity: 1,
-      hoverStyle: false,
-      specifyBorderRadius: false,
-      minSize: false,
-      size: '6px',
-      disable: false,
-    }
-  }, // 在这里设置全局默认配置
-  name: 'myScroll' // 在这里自定义组件名字，默认是vueScroll
-});
-
-//图片放大查看
-import viewer from '@/plugins/cg-viewer';
-Vue.use(viewer)
 
 //mock => 生产环境(上线前请注释！！！)
 import '@/mock'

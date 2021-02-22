@@ -39,15 +39,10 @@ export default {
         ...mapActions('records/statistical', ['getShiBuJianAnalysisData']),
         //获取全部数据
         getChartData(){
-            // this.getShiBuJianAnalysisData().then(res=>{
-            //     console.log('getShiBuJianAnalysisData',res);
-            //     this.resultData = res.data;
-            // })
-          let data = {
-            shiJianNum: 15420,
-            buJianNum: 14900
-          }
-          this.resultData = data;
+            this.getShiBuJianAnalysisData().then(res=>{
+                console.log('getShiBuJianAnalysisData',res);
+                this.resultData = res.data;
+            })
         }
     }
 }

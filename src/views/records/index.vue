@@ -13,14 +13,14 @@ export default {
       //tab标签
       tabData: [
         {
-          name: '案卷管控',
-          component: recordsManage,
-          hasScroll: false
-        },
-        {
           name: '统计分析',
           component: StatisticalAnalysis,
           hasScroll: true
+        },
+        {
+          name: '案卷管控',
+          component: recordsManage,
+          hasScroll: false
         }
       ]
     }
