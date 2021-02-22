@@ -3,7 +3,7 @@
   </div>
 </template>
 <script>
-import { mapMutations,mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import 'ol/ol.css'
 import { Map, View } from 'ol'
 import { defaults as defaultControls } from 'ol/control'
@@ -22,17 +22,17 @@ export default {
       mockPoints: []
     }
   },
-  watch:{
+  watch: {
     //监听从而实现动画效果
-    current: function(current){
-      if(current){
-          this.layerClear();
+    current: function(current) {
+      if (current) {
+        this.layerClear();
       }
     },
-    activeModule:function (activeModule) {
-        if(activeModule){
-            this.layerClear();
-        }
+    activeModule: function(activeModule) {
+      if (activeModule) {
+        this.layerClear();
+      }
     }
   },
   mounted() {
@@ -53,7 +53,7 @@ export default {
         target: 'map',
         view: new View({
           projection: 'EPSG:4326',
-          center: [122.22190299972,30.26656000004],
+          center: [122.22190299972, 30.26656000004],
           zoom: 13,
           maxZoom: 20,
           minZoom: 7
@@ -96,18 +96,18 @@ export default {
        * @desc 与分辨率信息需要每层严格对应起来
        */
       const matrixIds = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-      const matrixIdszj = [15, 16, 17, 18, 19, 20]
+      const matrixIdszj = [19, 20]
       /**
        * @desc 天地图格网信息
        */
       const tdtGrid = new WMTSTileGrid({
         origin: getTopLeft(projectionExtent),
-        resolutions: tdtResolutions.slice(0, 12),
+        resolutions: tdtResolutions.slice(0, 13),
         matrixIds: matrixIds
       })
       const tdtGridzj = new WMTSTileGrid({
         origin: getTopLeft(projectionExtent),
-        resolutions: tdtResolutions.slice(9, 15),
+        resolutions: tdtResolutions.slice(13),
         matrixIds: matrixIdszj
       })
       /**
@@ -120,10 +120,11 @@ export default {
           version: '1.0.0',
           matrixSet: 'c',
           format: 'tiles',
-          url: 'http://t{0-6}.tianditu.com/vec_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          url: 'http://t{0-6}.tianditu.gov.cn/vec_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
           tileGrid: tdtGrid,
           wrapX: true
-        })
+        }),
+        minResolution: 0.00000536441802978515625
       })
       const wmtsAnnoLayer = new TileLayer({
         source: new WMTS({
@@ -132,10 +133,11 @@ export default {
           version: '1.0.0',
           matrixSet: 'c',
           format: 'tiles',
-          url: 'http://t{0-6}.tianditu.com/cva_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          url: 'http://t{0-6}.tianditu.gov.cn/cva_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
           tileGrid: tdtGrid,
           wrapX: true
-        })
+        }),
+        minResolution: 0.00000536441802978515625
       })
       /**
        * @desc 浙江天地图图层
@@ -144,58 +146,59 @@ export default {
         source: new WMTS({
           style: 'default',
           version: '1.0.0',
-          layer: 'ZJEMAP',
-          matrixSet: 'TileMatrixSet0',
-          format: 'image/png',
-          url: 'http://srv.zjditu.cn/ZJEMAP_2D/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          layer: 'emap',
+          matrixSet: 'default028mm',
+          format: 'image/jpgpng',
+          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap/default/oss?token=2c92920471b56e640171be7444540073',
           tileGrid: tdtGridzj,
           wrapX: true
         }),
         minResolution: 0.0000013411045074462890625,
-        maxResolution: 0.0000858306884765625
+        maxResolution: 0.00000536441802978515625
       })
 
       const zJAnnoLayer = new TileLayer({
         source: new WMTS({
           style: 'default',
           version: '1.0.0',
-          layer: 'ZJEMAPANNO',
-          matrixSet: 'TileMatrixSet0',
-          format: 'image/png',
-          url: 'http://srv.zjditu.cn/ZJEMAPANNO_2D/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          layer: 'emap_lab',
+          matrixSet: 'default028mm',
+          format: 'image/jpgpng',
+          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap_lab/default/oss?token=2c92920471b56e640171be7537bd0074',
           tileGrid: tdtGridzj,
           wrapX: true
         }),
         minResolution: 0.0000013411045074462890625,
-        maxResolution: 0.0000858306884765625
+        maxResolution: 0.00000536441802978515625
       })
       return [wmtsVecLayer, wmtsAnnoLayer, zJVecLayer, zJAnnoLayer]
     },
-      //切换时清除地图上的内容
-    layerClear(){
-        this.pageLayers.map(layer=>{
-            this.map.removeLayer(layer)
-        });
-        this.setPageLayers([]);
-        this.map.un('click',this.clickHandler);
-        console.log(this.yuanOverlay);
-        this.map.removeOverlay(this.yuanOverlay);
-        //管控的地图清除
-        this.map.removeOverlay(this.map.getOverlayById('carPositionOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
-        this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));
-        const layers=this.map.getLayers().array_;
-        layers.forEach(l=>{
-            if(l.get('featureType')){
-                this.map.removeLayer(l);
-            }
-        });
+    //切换时清除地图上的内容
+    layerClear() {
+      this.pageLayers.map(layer => {
+        this.map.removeLayer(layer)
+      });
+      this.setPageLayers([]);
+      this.map.un('click', this.clickHandler);
+      console.log(this.yuanOverlay);
+      this.map.removeOverlay(this.yuanOverlay);
+      //管控的地图清除
+      this.map.removeOverlay(this.map.getOverlayById('eventPositionOverlay'));
+      this.map.removeOverlay(this.map.getOverlayById('carPositionOverlay'));
+      this.map.removeOverlay(this.map.getOverlayById('peoplePositionOverlay'));
+      this.map.removeOverlay(this.map.getOverlayById('peopleSignInfoOverlay'));
+      this.map.removeOverlay(this.map.getOverlayById('alarmOverlay'));
+      const layers = this.map.getLayers().getArray();
+      for (let i = layers.length - 1; i >= 0; i--) {
+        if (layers[i].get('featureType')) {
+          this.map.removeLayer(layers[i]);
+        }
+      }
     }
   },
-  computed:{
+  computed: {
     ...mapState('cgadmin/page', ['current']),
-    ...mapState('map', ['pageLayers','clickHandler','yuanOverlay']),
+    ...mapState('map', ['pageLayers', 'clickHandler', 'yuanOverlay']),
   }
 }
 </script>
@@ -205,20 +208,38 @@ export default {
   height: 100%;
   position: relative;
 }
+
 .draw {
   position: absolute;
-  top: 1.333rem  /* 100/75 */;
-  right: 1.333rem  /* 100/75 */;
-  width: 0.8rem  /* 60/75 */;
-  height: 0.533rem  /* 40/75 */;
+  top: 1.333rem
+    /* 100/75 */
+  ;
+  right: 1.333rem
+    /* 100/75 */
+  ;
+  width: 0.8rem
+    /* 60/75 */
+  ;
+  height: 0.533rem
+    /* 40/75 */
+  ;
   z-index: 999;
 }
+
 .draw1 {
   position: absolute;
-  top: 2.667rem  /* 200/75 */;
-  right: 1.333rem  /* 100/75 */;
-  width: 0.8rem  /* 60/75 */;
-  height: 0.533rem  /* 40/75 */;
+  top: 2.667rem
+    /* 200/75 */
+  ;
+  right: 1.333rem
+    /* 100/75 */
+  ;
+  width: 0.8rem
+    /* 60/75 */
+  ;
+  height: 0.533rem
+    /* 40/75 */
+  ;
   z-index: 999;
 }
 </style>
