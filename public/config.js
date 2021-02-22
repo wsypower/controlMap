@@ -12,10 +12,10 @@ const URL_CONFIG = {
   baseURL2: "http://zhcg.xzzfj.jinhua.gov.cn/api", //正式外网服务器
 };
 const GIS_CONFIG = {
-  baseURL: "http://zhcg.xzzfj.jinhua.gov.cn/geoserver/", //正式外网服务器
+  baseURL: "http://172.16.40.10:8080/geoserver/", //正式外网服务器
   // baseURL:"http://172.16.40.10:8080/geoserver/",//本地测试服务器
-  featureNS: "http://gis.jinhua.com", //正式预案区域图层所在工作空间的url
+  featureNS: "http://changxing", //正式预案区域图层所在工作空间的url
   // featureNS:"http://www.jinhua.com",//测试预案区域图层所在工作空间的url
-  featurePrefix: "jinhua", //正式工作空间名称
+  featurePrefix: "changxing", //正式工作空间名称
   // featurePrefix:"jinhua",//测试工作空间名称
 }
