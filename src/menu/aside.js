@@ -60,11 +60,11 @@ export default [
   //     active: false,
   //     role: ['admin', 'super_editor']
   // },
-  {
-    path: '/emergency',
-    title: '应急指挥',
-    icon: 'menu-emergency',
-    active: false,
-    role: ['admin', 'super_editor']
-  }
+  // {
+  //   path: '/emergency',
+  //   title: '应急指挥',
+  //   icon: 'menu-emergency',
+  //   active: false,
+  //   role: ['admin', 'super_editor']
+  // }
 ]

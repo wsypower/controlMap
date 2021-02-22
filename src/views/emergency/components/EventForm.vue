@@ -564,15 +564,15 @@ export default {
     height: calc(100% - 60px);
     padding: 20px;
     border-bottom: 1px solid #dddddd;
-    /deep/.ant-upload.ant-upload-select-picture-card {
+    ::v-deep.ant-upload.ant-upload-select-picture-card {
       width: 100%;
       height: 100%;
       border: 0px;
     }
-    /deep/.ant-upload.ant-upload-select-picture-card > .ant-upload {
+    ::v-deep.ant-upload.ant-upload-select-picture-card > .ant-upload {
       padding: 0px;
     }
-    /deep/.ant-form-item {
+    ::v-deep.ant-form-item {
       margin-bottom: 5px;
       textarea.ant-input {
         max-width: unset;

@@ -268,7 +268,7 @@ export default {
     label {
       font-size: 13px;
     }
-    /deep/.ant-input {
+    ::v-deep.ant-input {
       font-size: 13px;
     }
   }
@@ -350,7 +350,7 @@ export default {
       .right-bottom-panel {
         position: absolute;
         right: 12px;
-        top: 64px;
+        top: 42px;
         cursor: pointer;
         span {
           font-family: PingFang-SC-Medium;

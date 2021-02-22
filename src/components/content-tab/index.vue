@@ -51,7 +51,7 @@ export default {
 //}
 .tab-layer {
   height: 100%;
-  /deep/.ant-tabs-bar {
+  ::v-deep.ant-tabs-bar {
     background-color: #f5f5f5;
     margin-bottom: 3px;
     padding: 0px 20px;
@@ -71,7 +71,7 @@ export default {
       }
     }
   }
-  /deep/.ant-tabs-content {
+  ::v-deep.ant-tabs-content {
     height: calc(100% - 50px);
     .ant-tabs-tabpane {
       position: relative;

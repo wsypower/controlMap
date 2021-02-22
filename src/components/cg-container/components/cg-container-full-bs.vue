@@ -43,7 +43,7 @@ export default {
       position: relative;
     }
     //滚动条样式改变
-    /deep/ .bscroll-indicator {
+    ::v-deep .bscroll-indicator {
       background: rgba(216, 216, 216, 0.4) !important;
       border: 1px solid rgba(255, 255, 255, 0.3)!important;
     }
