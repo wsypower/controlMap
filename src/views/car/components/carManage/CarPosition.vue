@@ -13,10 +13,7 @@
           <img slot="car" src="~@img/avatar-car.png" />
           <img slot="car-outline" src="~@img/avatar-car-outline.png" />
           <template slot="title" slot-scope="{ title }">
-            <span v-if="title.indexOf(searchValue) > -1">
-              {{ title.substr(0, title.indexOf(searchValue)) }}
-              <span style="color: #f50">{{ searchValue }}</span>
-              {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
+            <span v-if="title.indexOf(searchValue) > -1">{{ title.substr(0, title.indexOf(searchValue)) }}<span style="color: #f50">{{ searchValue }}</span>{{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
             </span>
             <span v-else>{{ title }}</span>
           </template>
@@ -122,6 +119,7 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.timer)
+    this.map.un('click', this.carMapClickHandler);
   },
   methods: {
     ...mapActions('car/manage', ['getAllCarTreeData']),
@@ -192,7 +190,7 @@ export default {
     //点击树中某个节点（某个人员）时触发
     onSelect(selectedKeys, e) {
       console.log(selectedKeys, e);
-      if (selectedKeys[0].indexOf('dept_') < 0) {
+      if (selectedKeys.length > 0 && selectedKeys[0].indexOf('dept_') < 0) {
         let needData = e.selectedNodes[0].data.props;
         let temp = {};
         temp.id = needData.id;
@@ -248,7 +246,7 @@ export default {
 
   .yuan_dialog_body {
     background-color: #f5f5f5;
-    height: calc(100% - 70px);
+    height: calc(100% - 100px);
     position: relative;
 
     .tree-panel {

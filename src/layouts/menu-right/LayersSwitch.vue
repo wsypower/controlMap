@@ -16,7 +16,7 @@
       </ul>
     </div>
     <div hidden>
-      <record-info ref="recordInfo" :code="code" @closeTip="closeTip"></record-info>
+      <record-info ref="recordInfo" :code="code" @closeTip="closeTip('record')"></record-info>
     </div>
   </div>
 </template>
@@ -29,8 +29,6 @@ import { gridStyle } from '@/utils/util.map.style';
 import { listToFeatures } from '@/utils/util.map.manage';
 import RecordInfo from '@/views/records/components/RecordInfo.vue';
 import util from '@/utils/util'
-let selectLayer = ['区辖区', '街道', '社区', '责任网格', '单元网格', '人员', '车辆', '视频', '案卷'];
-let gridLayer = ['区辖区', '街道', '社区', '责任网格', '单元网格'];
 export default {
   name: "LayersSwitch",
   props: {
@@ -43,6 +41,7 @@ export default {
   },
   data() {
     return {
+      gridLayer: ['区辖区', '街道', '社区', '责任网格', '单元网格'],
       allLayers: [{
         name: '区辖区',
         color: '#800000',
@@ -77,16 +76,32 @@ export default {
         icon: require('@/assets/mapImage/cl.png'),
         lyr: null
       }, {
-        name: '视频',
-        icon: require('@/assets/mapImage/sp.png'),
-        lyr: null
-      }, {
         name: '案卷',
         icon: require('@/assets/mapImage/aj.png'),
         lyr: null
-      }, ],
+      }, {
+        name: '视频',
+        icon: require('@/assets/mapImage/sp.png'),
+        lyr: null
+      }],
       selectLayer: [],
-      code: ''
+      code: '',
+      refreshTimer: null
+    }
+  },
+  watch: {
+    selectLayer: function(val) {
+      if (this.selectLayer.includes('人员') || this.selectLayer.includes('车辆') || this.selectLayer.includes('案卷')) {
+        this.getAllLayers();
+        if (!this.refreshTimer) {
+          this.refreshTimer = setInterval(() => {
+            this.getAllLayers();
+          }, 10 * 60 * 1000);
+        }
+      } else {
+        clearInterval(this.refreshTimer);
+        this.refreshTimer = null;
+      }
     }
   },
   computed: {
@@ -98,6 +113,14 @@ export default {
     }
   },
   mounted() {
+    this.map = this.mapManager.getMap();
+    this.map.on('click', this.mapClickHandler);
+    this.recordOverlay = this.mapManager.addOverlay({
+      id: 'recordOverlay',
+      offset: [0, -20],
+      positioning: 'bottom-center',
+      element: this.$refs.recordInfo.$el
+    });
     this.getAllLayers();
   },
   methods: {
@@ -109,36 +132,38 @@ export default {
       const _this = this;
       const userId = util.cookies.get('userId');
       this.allLayers.forEach(layer => {
-        if (gridLayer.includes(layer.name)) {
+        if (this.gridLayer.includes(layer.name)) {
+          if (layer.lyr) return true;
           getTypePoint(layer.name).then(data => {
-            console.log('区县数据====', data);
+            console.log(`${layer.name}====`, data.length);
             layer.lyr = _this.mapManager.addVectorLayerByFeatures(data, gridStyle(layer.color), 33);
             layer.lyr.setVisible(false);
           });
         } else {
-          //获取人员数据
           if (layer.name == '人员') {
+            if (layer.lyr && !this.selectLayer.includes(layer.name)) return true;
             _this.getAllPeopleDataList({ userId: userId }).then(res => {
               const features = listToFeatures(res, '人员');
-              console.log('所有人员数据=====', features);
-              layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
-              layer.lyr.setVisible(false);
+              console.log('人员数据=====', features.length);
+              this.refreshLayerData(layer, features);
             });
           } else if (layer.name == '车辆') {
+            if (layer.lyr && !this.selectLayer.includes(layer.name)) return true;
             _this.getAllCarDataList({ userId: userId }).then(res => {
               const features = listToFeatures(res, '车辆');
-              console.log('所有人员数据=====', features);
-              layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
-              layer.lyr.setVisible(false);
+              console.log('车辆数据=====', features.length);
+              this.refreshLayerData(layer, features);
             });
           } else if (layer.name == '视频') {
+            if (layer.lyr) return true;
             _this.getAllCameraDataList({ userId: userId }).then(res => {
               const features = listToFeatures(res.data, '视频');
-              console.log('所有视频数据=====', features);
-              layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
+              console.log('视频数据=====', features.length);
+              layer.lyr = this.mapManager.addClusterLayerByFeatures(features);
               layer.lyr.setVisible(false);
             });
           } else if (layer.name == '案卷') {
+            if (layer.lyr && !this.selectLayer.includes(layer.name)) return true;
             _this.getAllRecordsDataList({
               userId: userId,
               type: 0,
@@ -146,22 +171,23 @@ export default {
               curpage: 1,
               pagesize: 10000
             }).then(res => {
-              console.log('所有案件数据=====', res);
+              console.log('案件数据=====', res.data.length);
               const features = listToFeatures(res.data, '案卷');
-              layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
-              layer.lyr.setVisible(false);
+              this.refreshLayerData(layer, features);
             });
           }
         }
       });
-      this.map = this.mapManager.getMap();
-      this.map.on('click', this.mapClickHandler);
-      this.detailOverlay = this.mapManager.addOverlay({
-        id: 'detailOverlay',
-        offset: [0, -20],
-        positioning: 'bottom-center',
-        element: this.$refs.recordInfo.$el
-      });
+    },
+    refreshLayerData(layer, features) {
+      if (layer.lyr) {
+        const source = layer.lyr.getSource().getSource();
+        source.clear();
+        source.addFeatures(features);
+      } else {
+        layer.lyr = this.mapManager.addClusterLayerByFeatures(features);
+        layer.lyr.setVisible(false);
+      }
     },
     toggleService(layer) {
       if (layer.name === '全部图层') {
@@ -190,17 +216,19 @@ export default {
         }
       }
     },
-    closeTip() {
-      this.detailOverlay.setPosition(undefined);
+    closeTip(type) {
+      if (type == 'record') {
+        this.recordOverlay.setPosition(undefined);
+      }
     },
     mapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
       if (feature && feature.get('features')) {
         const clickFeature = feature.get('features')[0];
-        // const coordinates = clickFeature.getGeometry().getCoordinates();
+        const coordinates = clickFeature.getGeometry().getCoordinates();
         if (clickFeature && clickFeature.get('type') == 'eventPosition') {
           this.code = clickFeature.get('props').taskcode;
-          this.detailOverlay.setPosition(coordinate);
+          this.recordOverlay.setPosition(coordinates);
         }
       }
     },

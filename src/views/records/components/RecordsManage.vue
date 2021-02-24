@@ -107,10 +107,6 @@ export default {
     ...mapState('map', ['mapManager']),
   },
   mounted() {
-    this.getAllAddressData({ userId: userId }).then(res => {
-      this.addressData = res;
-    });
-    this.getDataList();
     this.map = this.mapManager.getMap();
     this.map.on('click', this.eventMapClickHandler);
     this.eventOverlay = this.mapManager.addOverlay({
@@ -119,7 +115,10 @@ export default {
       positioning: 'bottom-center',
       element: this.$refs.recordInfo.$el
     });
-
+    this.getAllAddressData({ userId: userId }).then(res => {
+      this.addressData = res;
+    });
+    this.getDataList();
   },
   methods: {
     ...mapActions('records/manage', ['getAllAddressData', 'getAllRecordsDataList']),
@@ -134,6 +133,7 @@ export default {
     //获取案卷数据
     getDataList() {
       console.log('this.query', this.query);
+      this.closeTip();
       this.showLoading = true;
       this.getAllRecordsDataList(this.query).then(res => {
         this.showLoading = false;
@@ -177,10 +177,10 @@ export default {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
       if (feature && feature.get('features')) {
         const clickFeature = feature.get('features')[0];
-        // const coordinates = clickFeature.getGeometry().getCoordinates();
+        const coordinates = clickFeature.getGeometry().getCoordinates();
         if (clickFeature && clickFeature.get('type') == 'eventPosition') {
           this.code = clickFeature.get('props').taskcode;
-          this.eventOverlay.setPosition(coordinate);
+          this.eventOverlay.setPosition(coordinates);
         }
       }
     },
@@ -213,7 +213,10 @@ export default {
       const extent = this.eventLayer.getSource().getSource().getExtent();
       this.mapManager.getMap().getView().fit(extent);
     }
-  }
+  },
+  beforeDestroy() {
+    this.map.un('click', this.eventMapClickHandler);
+  },
 }
 </script>
 <style lang="scss" scoped>
@@ -251,7 +254,7 @@ export default {
 
   .content_body {
     background-color: #ffffff;
-    height: calc(100% - 70px);
+    height: calc(100% - 240px);
     position: relative;
 
     .item {

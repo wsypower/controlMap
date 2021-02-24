@@ -18,11 +18,11 @@
       <div>
         <span>起止时间</span>
         <span class="sort-icon">
-          <i @click="onSort('desc')">
-            <cg-icon-svg name="caret-up" class="svg_icon_up" :class="{ active: activeName === 'desc' }"></cg-icon-svg>
-          </i>
           <i @click="onSort('asc')">
-            <cg-icon-svg name="caret-down" class="svg_icon_down" :class="{ active: activeName === 'asc' }"></cg-icon-svg>
+            <cg-icon-svg name="caret-up" class="svg_icon_up" :class="{ active: activeName === 'asc' }"></cg-icon-svg>
+          </i>
+          <i @click="onSort('desc')">
+            <cg-icon-svg name="caret-down" class="svg_icon_down" :class="{ active: activeName === 'desc' }"></cg-icon-svg>
           </i>
         </span>
       </div>
@@ -31,7 +31,7 @@
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
         <a-spin tip="数据加载中..."></a-spin>
       </div>
-      <cg-container scroll v-if="!showLoading && trackSegments.length > 0">
+      <cg-container scroll v-if="!showLoading && dataList.length > 0">
         <div class="item" flex="dir:left main:justify" v-for="(item, index) in trackSegments" :key="index">
           <div flex="cross:center main:center">
             <span>{{ index }}</span>
@@ -95,14 +95,14 @@ export default {
         userDisplayId: '',
         startTime: '',
         endTime: '',
-        sortType: 'desc',
+        sortType: 'asc',
       },
       //查询的时间范围
       dayRange: [],
       //查询时的过渡效果
       showLoading: false,
       //正序asc、倒序desc
-      activeName: 'desc',
+      activeName: 'asc',
       //单页数据
       dataList: [],
       //总数
@@ -195,6 +195,7 @@ export default {
     trackDataHandler(coords) {
       this.trackSegments = [];
       this.currentQueryTracks = [];
+      this.eventFeatures = [];
       // 按间隔时间轨迹分段
       let currentCoord = coords[0];
       let nextCoord = null;
@@ -293,8 +294,10 @@ export default {
     },
     //查询(默认显示当天，当前登入的用户)
     onSearch() {
-      this.query.startTime = this.dayRange[0] ? this.dayRange[0]._d.getTime() : '';
-      this.query.endTime = this.dayRange[1] ? this.dayRange[1]._d.getTime() : '';
+      this.query.startTime = this.dayRange[0] ? new Date(this.dayRange[0]).getTime() : '';
+      this.query.endTime = this.dayRange[1] ? new Date(this.dayRange[1]).getTime() : '';
+      // this.query.startTime = this.dayRange[0] ? this.dayRange[0]._d.getTime() : '';
+      // this.query.endTime = this.dayRange[1] ? this.dayRange[1]._d.getTime() : '';
       let dates = Math.floor((this.query.endTime - this.query.startTime)) / (1000 * 60 * 60 * 24);
       if (dates > 3) {
         this.$message.warning('查询时间不可超过3天！！！');
@@ -317,9 +320,9 @@ export default {
     //按照时间排序（正序、倒序）
     onSort(sortType) {
       console.log(11111111111, sortType);
-      this.activeName = sortType;
-      this.query.sortType = sortType;
-      this.getDataList();
+      // this.activeName = sortType;
+      // this.query.sortType = sortType;
+      // this.getDataList();
     },
     //开始播放
     startPlay(item, i) {
@@ -345,21 +348,21 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.ant-calendar-picker-input.ant-input {
-  padding: 4px 1px !important;
-}
-
-.ant-calendar-range-picker-input {
-  width: 46% !important;
-}
-
+<style lang="scss" scoped>
 .people-trail {
   height: 100%;
   width: 100%;
 
   .search-panel {
     padding: 20px 0px;
+
+    ::v-deep.ant-calendar-picker-input.ant-input {
+      padding: 4px 1px;
+    }
+
+    ::v-deep.ant-calendar-range-picker-input {
+      width: 46%;
+    }
   }
 
   .table_header {

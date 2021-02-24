@@ -57,7 +57,7 @@ export default {
     changeTab(val) {
       this.map.getOverlayById('peoplePositionOverlay') && this.map.getOverlayById('peoplePositionOverlay').setPosition(undefined);
       this.map.getOverlayById('peopleSignInfoOverlay') && this.map.getOverlayById('peopleSignInfoOverlay').setPosition(undefined);
-      const layers = this.map.getLayers().array_;
+      const layers = this.map.getLayers().getArray();
       //切换时清除地图上的一些操作
       layers.forEach(l => {
         if (l.get('featureType')) {

@@ -8,33 +8,17 @@
         <a-spin tip="数据加载中..."></a-spin>
       </div>
       <cg-container scroll v-if="!showLoading && treeData.length > 0 && showTree">
-        <a-tree
-          class="tree-panel"
-          showIcon
-          showLine
-          :treeData="treeData"
-          :expandedKeys="expandedKeys"
-          :autoExpandParent="autoExpandParent"
-          @select="onSelect"
-          @expand="onExpand"
-        >
+        <a-tree class="tree-panel" showIcon showLine :treeData="treeData" :expandedKeys="expandedKeys" :autoExpandParent="autoExpandParent" @select="onSelect" @expand="onExpand">
           <img slot="dept" src="~@img/avatar_dept.png" />
           <img slot="camera" src="~@img/globel-eye.png" />
           <template slot="title" slot-scope="{ title }">
-            <span v-if="title.indexOf(searchValue) > -1">
-              {{ title.substr(0, title.indexOf(searchValue)) }}
-              <span style="color: #f50">{{ searchValue }}</span>
-              {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
+            <span v-if="title.indexOf(searchValue) > -1">{{ title.substr(0, title.indexOf(searchValue)) }}<span style="color: #f50">{{ searchValue }}</span>{{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
             </span>
             <span v-else>{{ title }}</span>
           </template>
         </a-tree>
       </cg-container>
-      <div
-        v-if="(!showLoading && treeData.length == 0) || !showTree"
-        class="nodata-panel"
-        flex="main:center cross:center"
-      >
+      <div v-if="(!showLoading && treeData.length == 0) || !showTree" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
@@ -45,18 +29,17 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapState,mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import util from '@/utils/util';
 import MyVideoPlayer from "./MyVideoPlayer.vue";
-import {videoPointStyle} from '@/utils/util.map.style'
+import { videoPointStyle } from '@/utils/util.map.style'
 import axios from 'axios'
-const userId = util.cookies.get('userId');
 export default {
   name: 'VideoDistribute',
-  components:{
+  components: {
     MyVideoPlayer
   },
-  data(){
+  data() {
     return {
       //展开节点key
       expandedKeys: [],
@@ -80,58 +63,60 @@ export default {
       //地图相关
       videoLayer: null,
       isLoadData: false,
-      clusterLayer:null
+      clusterLayer: null,
+      userId: ''
     }
   },
-  computed:{
+  computed: {
     ...mapState('map', ['mapManager']),
     //获得展示的数据与属性
-    treeData:function(){
+    treeData: function() {
       let data = JSON.parse(JSON.stringify(this.sourceData));
-      this.videoFeatures=[];
+      this.videoFeatures = [];
       this.allCameraData = [];
-      this.changeTreeData(data,'');
-      this.isLoadData=!this.isLoadData;
+      this.changeTreeData(data, '');
+      this.isLoadData = !this.isLoadData;
       return data;
     }
   },
-  watch:{
-    isLoadData:function() {
-      if(this.videoFeatures.length>0){
-        if(this.videoLayer){
-            this.videoLayer.getSource().clear();
-            this.videoLayer.getSource().addFeatures(this.carFeatures);
-        }else{
-            this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
-            this.videoLayer.set('featureType','videoDistribute');
+  watch: {
+    isLoadData: function() {
+      if (this.videoFeatures.length > 0) {
+        if (this.videoLayer) {
+          this.videoLayer.getSource().getSource().clear();
+          this.videoLayer.getSource().getSource().addFeatures(this.videoFeatures);
+        } else {
+          this.videoLayer = this.mapManager.addClusterLayerByFeatures(this.videoFeatures);
+          this.videoLayer.set('featureType', 'videoDistribute');
+          const extent = this.videoLayer.getSource().getSource().getExtent();
+          this.mapManager.getMap().getView().fit(extent);
         }
-        const extent=this.videoLayer.getSource().getSource().getExtent();
-        this.mapManager.getMap().getView().fit(extent);
       }
     }
   },
-  mounted(){
+  mounted() {
+    this.userId = util.cookies.get('userId');
     this.showLoading = true;
     this.map = this.mapManager.getMap();
     this.map.on('click', this.videoMapClickHandler);
-    this.getAllCameraTreeData({userId:userId}).then(res=>{
-      console.log('getAllCameraTreeData',res);
+    this.getAllCameraTreeData({ userId: this.userId }).then(res => {
+      console.log('getAllCameraTreeData', res);
       this.sourceData = res.data[0].children;
       this.showLoading = false;
     });
   },
-  methods:{
-    ...mapActions('video/manage', ['getAllCameraTreeData','getCameraUrl']),
+  methods: {
+    ...mapActions('video/manage', ['getAllCameraTreeData', 'getCameraUrl']),
     //给后端的数据增加一些前端展示与判断需要的属性
-    changeTreeData(arr,deptName){
+    changeTreeData(arr, deptName) {
       const _this = this;
-      arr.forEach(item=>{
+      arr.forEach(item => {
         item.scopedSlots = { title: 'title' };
-        if(item.isLeaf){
+        if (item.isLeaf) {
           item.title = item.mpname;
           item.key = item.mpid;
           item.dept = deptName;
-          item.slots = {icon: 'camera'};
+          item.slots = { icon: 'camera' };
           item.class = 'itemClass';
           let temp = {
             title: item.mpname,
@@ -139,35 +124,33 @@ export default {
           }
           this.allCameraData.push(temp);
           // 通过经纬度生成点位加到地图上
-          if(item.x && item.x.length>0 && item.x != 'null' && item.y && item.y.length>0 && item.y != 'null'){
-            const feature=_this.mapManager.xyToFeature(item.x,item.y);
-            feature.set('icon','carmera_online');
-            feature.set('props',item);
-            feature.set('type','VideoDistribute');
+          if (item.x && item.x.length > 0 && item.x != 'null' && item.y && item.y.length > 0 && item.y != 'null') {
+            const feature = _this.mapManager.xyToFeature(item.x, item.y);
+            feature.set('icon', 'carmera_online');
+            feature.set('props', item);
+            feature.set('type', 'VideoDistribute');
             _this.videoFeatures.push(feature);
           }
-        }
-        else{
+        } else {
           item.title = item.name;
           item.key = 'dept_' + item.id;
-          item.slots = {icon: 'dept'};
+          item.slots = { icon: 'dept' };
           this.changeTreeData(item.children, item.mpname);
         }
       })
     },
-    onSearch(val){
+    onSearch(val) {
       this.expandedKeys = [];
       this.searchValue = val;
       this.allCameraData.forEach(item => {
-        if(item.title.indexOf(val)>=0){
+        if (item.title.indexOf(val) >= 0) {
           this.expandedKeys.push(item.key);
         }
       });
       this.autoExpandParent = true;
-      if(this.expandedKeys.length === 0){
+      if (this.expandedKeys.length === 0) {
         this.showTree = false;
-      }
-      else{
+      } else {
         this.showTree = true;
       }
     },
@@ -176,29 +159,31 @@ export default {
       this.autoExpandParent = false;
     },
     //点击树中某个节点（某个人员）时触发
-    onSelect(selectedKeys, e){
+    onSelect(selectedKeys, e) {
       console.log(selectedKeys, e);
-      if(selectedKeys[0].indexOf('dept_')<0){
+      if (selectedKeys.length > 0 && selectedKeys[0].indexOf('dept_') < 0) {
         let needData = e.selectedNodes[0].data.props;
         let mpid = needData.mpid;
         this.playVideo(mpid);
       }
     },
-      videoMapClickHandler({ pixel, coordinate }) {
-          const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
-          if(feature.get('features')) {
-              const clickFeature = feature.get('features')[0];
-              // const coordinates=clickFeature.getGeometry().getCoordinates();
-              if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
-                  const videoInfoData = clickFeature.get('props');
-                  this.playVideo(videoInfoData.mpid);
-              }
-          }
-      },
-    playVideo(mpid){
+    videoMapClickHandler({ pixel, coordinate }) {
+      const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
+      if (feature && feature.get('features')) {
+        const clickFeature = feature.get('features')[0];
+        // const coordinates=clickFeature.getGeometry().getCoordinates();
+        if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
+          const videoInfoData = clickFeature.get('props');
+          this.playVideo(videoInfoData.mpid);
+        }
+      }
+    },
+    playVideo(mpid) {
       if (this.playerMethod === 'browser') {
         //打开摄像头播放
-        this.getCameraUrl({userId: userId, mpId: mpid}).then(res => {
+        // this.videoSrc = 'http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8';
+        // this.videoSrc = 'rtmp://58.200.131.2:1935/livetv/cctv1';
+        this.getCameraUrl({ userId: this.userId, mpId: mpid }).then(res => {
           this.videoSrc = res.mediaURL;
         });
       } else {
@@ -224,6 +209,9 @@ export default {
         });
       }
     }
+  },
+  beforeDestroy() {
+    this.map.un('click', this.videoMapClickHandler);
   }
 }
 </script>
@@ -232,17 +220,21 @@ export default {
   height: 100%;
   width: 100%;
   padding: 20px;
+
   .search-panel {
     padding-bottom: 20px;
   }
+
   .yuan_dialog_body {
     background-color: #f5f5f5;
     height: calc(100% - 50px);
     position: relative;
+
     .tree-panel {
       width: 100%;
       height: 100%;
       padding: 10px;
+
       img {
         width: 20px;
         height: 20px;
@@ -251,30 +243,37 @@ export default {
         margin-right: 8px;
       }
     }
+
     .nodata-panel,
     .spin-panel {
       width: 100%;
       height: 100%;
     }
+
     ::v-deep.ant-tree.ant-tree-show-line li:not(:last-child):before {
       border-left: 1px dashed rgba(0, 164, 254, 0.8);
     }
+
     ::v-deep.ant-tree.ant-tree-show-line li span.ant-tree-switcher {
       background-color: #f5f5f5;
       color: rgba(43, 144, 243, 0.8);
     }
+
     ::v-deep.itemClass {
       &::before {
         opacity: 0;
       }
+
       span.ant-tree-switcher {
         opacity: 0;
         display: none;
       }
     }
   }
+
   .player-panel {
     display: none;
+
     &.active {
       display: block;
     }

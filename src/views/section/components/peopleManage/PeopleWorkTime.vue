@@ -233,8 +233,9 @@ export default {
     signMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature)
       if (feature && feature.get('type') == 'peopleWorkTime') {
+        const coordinates = feature.getGeometry().getCoordinates();
         this.signInfoData = feature.get('props');
-        this.signOverlay.setPosition(coordinate);
+        this.signOverlay.setPosition(coordinates);
       }
     },
     closeTip() {

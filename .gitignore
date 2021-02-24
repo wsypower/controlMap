@@ -19,7 +19,3 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
-*.svn-base
-.svn/entries
-.svn/format
-.svn/wc.db

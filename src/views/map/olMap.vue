@@ -13,11 +13,10 @@ import WMTS from 'ol/source/WMTS'
 import WMTSTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent'
 import { MapManager } from '@/utils/util.map.manage'
-const namespace = 'map'
-let mapManager
 export default {
   data() {
     return {
+      mapManager: null,
       mockPoints: []
     }
   },
@@ -41,7 +40,7 @@ export default {
     })
   },
   methods: {
-    ...mapMutations(namespace, [
+    ...mapMutations('map', [
       'setMapManager',
       'setPageLayers'
     ]),
@@ -60,9 +59,9 @@ export default {
         layers: this.getBaseLayers(),
         controls: defaultControls({ attribution: false, rotate: false, zoom: false }) // 默认控件配置
       })
-      mapManager = new MapManager(this.map)
+      this.mapManager = new MapManager(this.map)
       // 将mapManager状态存至vuex
-      this.setMapManager(mapManager)
+      this.setMapManager(this.mapManager)
     },
     getBaseLayers() {
       /**
