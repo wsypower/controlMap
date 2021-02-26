@@ -3,22 +3,18 @@
  * @author:sijianting
  * @createDate:2019/7/11 9:48
  */
-import VectorLayer from 'ol/layer/Vector'
-import VectorSource from 'ol/source/Vector'
-import { Heatmap as HeatmapLayer } from 'ol/layer'
+import { Vector as VectorSource, Cluster } from 'ol/source'
+import { Heatmap as HeatmapLayer, Vector as VectorLayer } from 'ol/layer'
 import GeoJSON from 'ol/format/GeoJSON'
 import Overlay from 'ol/Overlay'
-import Draw, { createRegularPolygon, createBox } from 'ol/interaction/Draw.js';
-import { Modify } from 'ol/interaction.js';
-import { Fill, Stroke, Circle, Style, Icon, Text } from 'ol/style';
-import Feature from 'ol/Feature';
-import MultiPolygon from 'ol/geom/MultiPolygon';
-import { fromCircle } from 'ol/geom/Polygon';
-import Point from 'ol/geom/Point';
-import LineString from 'ol/geom/LineString';
-import Cluster from 'ol/source/Cluster';
-import AnimatedCluster from 'ol-ext/layer/AnimatedCluster';
-import SelectCluster from 'ol-ext/interaction/SelectCluster';
+import Draw, { createRegularPolygon, createBox } from 'ol/interaction/Draw'
+import { Modify } from 'ol/interaction'
+import { Fill, Stroke, Circle, Style, Icon, Text } from 'ol/style'
+import Feature from 'ol/Feature'
+import { MultiPolygon, Point, LineString } from 'ol/geom'
+import { fromCircle } from 'ol/geom/Polygon'
+import AnimatedCluster from 'ol-ext/layer/AnimatedCluster'
+import SelectCluster from 'ol-ext/interaction/SelectCluster'
 export class MapManager {
   constructor(map) {
     this.map = map
@@ -375,7 +371,7 @@ export function listToFeatures(list, type) {
           });
           feature.set('icon', pointImg);
           feature.set('props', item);
-          // feature.set('type','peoplePosition');
+          feature.set('type', 'people');
           return feature;
         }
       });
@@ -395,7 +391,7 @@ export function listToFeatures(list, type) {
           });
           feature.set('icon', pointImg);
           feature.set('props', item);
-          // feature.set('type','CarPosition');
+          feature.set('type', 'car');
           return feature;
         }
       });
@@ -408,7 +404,7 @@ export function listToFeatures(list, type) {
           });
           feature.set('icon', 'event');
           feature.set('props', item);
-          feature.set('type', 'eventPosition');
+          feature.set('type', 'event');
           return feature;
         }
       });
@@ -422,12 +418,11 @@ export function listToFeatures(list, type) {
           });
           feature.set('icon', 'carmera_online');
           feature.set('props', item);
-          // feature.set('type','CarPosition');
+          feature.set('type', 'video');
           return feature;
         }
       });
       break;
-
   }
   return features.filter(Boolean);
 }

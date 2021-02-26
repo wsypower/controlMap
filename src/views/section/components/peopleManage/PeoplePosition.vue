@@ -324,6 +324,7 @@ export default {
         display: inline-block;
         border-radius: 12px;
         margin-right: 8px;
+        margin-bottom: 6px;
       }
     }
 

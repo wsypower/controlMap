@@ -9,7 +9,7 @@
     </div>
     <div class="tip-body">
       <div>
-        <span class="title">编码：</span><span>{{ info.code }}</span>
+        <span class="title">编码：</span><span>{{ info.name }}</span>
       </div>
       <div>
         <span class="title">标识：</span><span>{{ info.flag }}</span>
@@ -24,9 +24,9 @@
         <span class="title">GPS上报：</span><span>{{ new Date(info.gpsTime) | date_format() }}</span>
       </div>
     </div>
-    <div class="info-body-operation" @click="lookCarTrail">
+    <!-- <div v-show="isTrack" class="info-body-operation" @click="lookCarTrail">
       查看轨迹
-    </div>
+    </div> -->
     <div class="tooltip__arrow"></div>
   </div>
 </template>
@@ -57,6 +57,10 @@ export default {
       default () {
         return null
       }
+    },
+    isTrack: {
+      type: Boolean,
+      default: true
     }
   },
   mounted() {},
@@ -74,7 +78,7 @@ export default {
 <style lang="scss" scoped>
 .tip-content {
   width: 280px;
-  height: 210px;
+  height: 180px;
   background-image: linear-gradient(90deg, #0065ea 0%, #00a5ff 100%);
   border-radius: 6px;
   box-shadow: -1px 0px 4px 0px rgba(0, 0, 0, 0.12);
@@ -154,7 +158,7 @@ export default {
 
   .tip-body {
     width: 100%;
-    height: calc(100% - 75px);
+    height: calc(100% - 40px);
     overflow: hidden;
     background-color: #ffffff;
     padding: 10px 16px;

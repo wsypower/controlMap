@@ -48,13 +48,13 @@
             <div class="photo"><img :src="itemData.url ? itemData.fileServer + itemData.url:''" /></div>
           </div>
         </div>
-        <div v-if="totalSize > 20" class="pagination-panel">
-          <a-pagination size="small" :total="totalSize" :showTotal="total => `共 ${total} 条`" :pageSize="20" :current="query.curpage" @change="changePagination" />
-        </div>
       </cg-container>
       <div v-if="!showLoading && dataList.length == 0" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
       </div>
+    </div>
+    <div class="pagination-panel">
+      <a-pagination size="small" :total="totalSize" :showTotal="total => `共 ${total} 条`" :pageSize="20" :current="query.curpage" @change="changePagination" />
     </div>
     <div hidden>
       <record-info ref="recordInfo" :code="code" @closeTip="closeTip"></record-info>
@@ -254,7 +254,7 @@ export default {
 
   .content_body {
     background-color: #ffffff;
-    height: calc(100% - 240px);
+    height: calc(100% - 290px);
     position: relative;
 
     .item {
@@ -295,6 +295,7 @@ export default {
             line-height: 20px;
             color: #333333;
             overflow: hidden;
+            cursor: pointer;
 
             &:first-child {
               font-family: PingFang-SC-Heavy;
@@ -331,16 +332,16 @@ export default {
       }
     }
 
-    .pagination-panel {
-      text-align: right;
-      padding: 10px 20px 20px 0px;
-    }
-
     .nodata-panel,
     .spin-panel {
       width: 100%;
       height: 100%;
     }
+  }
+
+  .pagination-panel {
+    text-align: right;
+    padding: 10px 10px 20px 0px;
   }
 }
 </style>

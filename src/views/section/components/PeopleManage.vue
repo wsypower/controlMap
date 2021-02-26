@@ -149,7 +149,7 @@ export default {
       width: 100%;
 
       .ant-tabs-tab {
-        width: 33% !important;
+        width: 33.3% !important;
         text-align: center;
         margin: 0px;
       }

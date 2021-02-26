@@ -227,7 +227,7 @@ export default {
 
   .yuan_dialog_body {
     background-color: #f5f5f5;
-    height: calc(100% - 50px);
+    height: calc(100% - 80px);
     position: relative;
 
     .tree-panel {
@@ -241,6 +241,7 @@ export default {
         display: inline-block;
         border-radius: 12px;
         margin-right: 8px;
+        margin-bottom: 6px;
       }
     }
 

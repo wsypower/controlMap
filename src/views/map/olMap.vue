@@ -7,7 +7,7 @@ import { mapMutations, mapState } from 'vuex'
 import 'ol/ol.css'
 import { Map, View } from 'ol'
 import { defaults as defaultControls } from 'ol/control'
-import { get as projGet } from 'ol/proj'
+import { get as getProjection } from 'ol/proj'
 import { Tile as TileLayer } from 'ol/layer'
 import WMTS from 'ol/source/WMTS'
 import WMTSTileGrid from 'ol/tilegrid/WMTS'
@@ -35,7 +35,6 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      // 初始化地图底图
       this.initMap()
     })
   },
@@ -45,29 +44,25 @@ export default {
       'setPageLayers'
     ]),
     initMap() {
-      /* 添加影像地图 */
       this.map = new Map({
         loadTilesWhileAnimating: true,
         target: 'map',
         view: new View({
           projection: 'EPSG:4326',
-          center: [122.22190299972, 30.26656000004],
-          zoom: 13,
+          center: [120.2042181, 30.24775551],
+          zoom: 11,
           maxZoom: 20,
           minZoom: 7
         }),
         layers: this.getBaseLayers(),
-        controls: defaultControls({ attribution: false, rotate: false, zoom: false }) // 默认控件配置
-      })
+        controls: defaultControls({ attribution: false, rotate: false, zoom: false })
+      });
       this.mapManager = new MapManager(this.map)
       // 将mapManager状态存至vuex
       this.setMapManager(this.mapManager)
     },
     getBaseLayers() {
-      /**
-       * @desc 定义坐标系统与范围
-       */
-      const projection = projGet('EPSG:4326') // 4326坐标
+      const projection = getProjection('EPSG:4326')
       const projectionExtent = projection.getExtent()
       /**
        * @desc 去掉第0层的天地图分辨率信息，不会出现缩放到最后是空白的现象
@@ -117,7 +112,7 @@ export default {
           version: '1.0.0',
           matrixSet: 'c',
           format: 'tiles',
-          url: 'http://t{0-6}.tianditu.gov.cn/vec_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          url: 'https://t{0-6}.tianditu.gov.cn/vec_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
           tileGrid: tdtGrid,
           wrapX: true
         }),
@@ -130,7 +125,7 @@ export default {
           version: '1.0.0',
           matrixSet: 'c',
           format: 'tiles',
-          url: 'http://t{0-6}.tianditu.gov.cn/cva_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
+          url: 'https://t{0-6}.tianditu.gov.cn/cva_c/wmts?tk=c5ea7cd74c9b43ebb4fd9b73ef2f9f74',
           tileGrid: tdtGrid,
           wrapX: true
         }),
@@ -146,7 +141,7 @@ export default {
           layer: 'emap',
           matrixSet: 'default028mm',
           format: 'image/jpgpng',
-          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap/default/oss?token=2c92920471b56e640171be7444540073',
+          url: 'https://ditu.zjzwfw.gov.cn/services/wmts/emap/default/oss?token=2c92920471b56e640171be7444540073',
           tileGrid: tdtGridzj,
           wrapX: true
         }),
@@ -160,7 +155,7 @@ export default {
           layer: 'emap_lab',
           matrixSet: 'default028mm',
           format: 'image/jpgpng',
-          url: 'http://ditu.zjzwfw.gov.cn/services/wmts/emap_lab/default/oss?token=2c92920471b56e640171be7537bd0074',
+          url: 'https://ditu.zjzwfw.gov.cn/services/wmts/emap_lab/default/oss?token=2c92920471b56e640171be7537bd0074',
           tileGrid: tdtGridzj,
           wrapX: true
         }),

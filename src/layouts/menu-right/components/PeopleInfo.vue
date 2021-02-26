@@ -61,9 +61,9 @@
         <!--        </div>-->
       </div>
     </div>
-    <div class="info-body-operation" @click="lookPeopleTrail">
+    <!-- <div class="info-body-operation" @click="lookPeopleTrail">
       查看轨迹
-    </div>
+    </div> -->
     <div class="tooltip__arrow"></div>
   </div>
 </template>

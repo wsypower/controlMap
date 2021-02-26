@@ -63,6 +63,9 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
+    <div hidden>
+      <trail-info ref="trailInfo" :info="trailInfoData" @click="trailTipClose"></trail-info>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -73,8 +76,12 @@ import { stampConvertToTime } from '@/utils/util.tool';
 import { trackByLocationList, pointByCoord } from '@/utils/util.map.manage';
 import { trackStyle, trackPointStyle, alarmPointStyle } from '@/utils/util.map.style';
 import { TrackPlaying } from '@/utils/util.map.trackPlaying'
+import TrailInfo from './TrailInfo.vue'
 export default {
   name: 'peopleTrail',
+  components: {
+    TrailInfo
+  },
   props: {
     infoId: {
       type: String,
@@ -114,7 +121,8 @@ export default {
       eventLayer: null,
       trackPlaying: null,
       isPlayingTrack: null,
-      trackIndex: 0
+      trackIndex: 0,
+      trailInfoData: {}
     }
   },
   computed: {
@@ -144,6 +152,15 @@ export default {
     // this.query.endTime = new Date(day).getTime();
     this.query.startTime = moment().startOf('day').valueOf() ;
     this.query.endTime = moment().endOf('day').valueOf();
+
+    this.map.on('click', this.trailPointClickHandler);
+    this.trailOverlay = this.mapManager.addOverlay({
+      id: 'peopleTrailOverlay',
+      offset: [0, -20],
+      positioning: 'bottom-center',
+      element: this.$refs.trailInfo.$el
+    });
+
     this.getDataList();
   },
   watch: {
@@ -304,6 +321,7 @@ export default {
         return;
       }
       this.getDataList();
+      this.trailOverlay.setPosition(null);
       this.map.removeLayer(this.trackLayer);
       this.map.removeLayer(this.eventLayer);
       if (this.trackPlaying) {
@@ -344,7 +362,36 @@ export default {
     //暂停播放
     pausePlay(item, i) {
       this.dataList[i].isStart = false;
+    },
+    trailTipClose() {
+      this.trailOverlay.setPosition(null);
+    },
+    trailPointClickHandler({ pixel, coordinate }) {
+      const feature = this.map.forEachFeatureAtPixel(pixel, feature => {
+        if (feature && feature.getGeometry().getType() == 'Point') {
+          const coordinates = feature.getGeometry().getCoordinates();
+          const trailData = feature.getProperties();
+          this.trailOverlay.setPosition(coordinates);
+          this.trailInfoData = trailData.time;
+        }
+        return feature;
+      }, {
+        layerFilter: layer => {
+          if (layer == this.eventLayer) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      });
+      if (!feature) {
+        this.trailOverlay.setPosition(null);
+      }
     }
+  },
+  beforeDestroy() {
+    this.map.removeOverlay(this.trailOverlay);
+    this.map.un('click', this.trailPointClickHandler);
   }
 }
 </script>
