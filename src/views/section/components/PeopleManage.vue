@@ -7,7 +7,7 @@
       <a-tab-pane tab="轨迹查询" key="2">
         <people-trail :peopleDataList="peopleDataList" :infoId="infoId"></people-trail>
       </a-tab-pane>
-      <a-tab-pane tab="违规查询" key="3">
+      <a-tab-pane tab="告警查询" key="3">
         <violate-rules :peopleDataList="peopleDataList"></violate-rules>
       </a-tab-pane>
       <a-tab-pane tab="签到-签退" key="4">
