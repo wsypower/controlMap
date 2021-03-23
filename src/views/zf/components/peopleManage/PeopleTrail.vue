@@ -398,21 +398,21 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.ant-calendar-picker-input.ant-input {
-  padding: 4px 1px !important;
-}
-
-.ant-calendar-range-picker-input {
-  width: 46% !important;
-}
-
+<style lang="scss" scoped>
 .people-trail {
   height: 100%;
   width: 100%;
 
   .search-panel {
     padding: 20px 0px;
+
+    ::v-deep.ant-calendar-picker-input.ant-input {
+      padding: 4px 1px;
+    }
+
+    ::v-deep.ant-calendar-range-picker-input {
+      width: 46%;
+    }
   }
 
   .table_header {
