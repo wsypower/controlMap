@@ -1,18 +1,18 @@
 <template>
   <div class="page">
-    <div class="page-header">
-      <span class="larger">部件</span>
+    <div class="page-title">
+      部件
     </div>
-    <partList></partList>
+    <part-manage></part-manage>
   </div>
 </template>
 <script>
-import partList from './components/PartList.vue'
+import partManage from './components/PartManage'
 import { mapState, mapActions } from 'vuex'
 export default {
   name: 'part',
   components: {
-    partList
+    partManage
   },
   data() {
     return {}
@@ -31,27 +31,18 @@ export default {
 .page {
   width: 100%;
   height: 100%;
+  background-color: #ffffff;
+  position: relative;
 
-  .page-header {
+  .page-title {
     height: 50px;
     width: 100%;
     padding-left: 20px;
     line-height: 50px;
+    background-color: #f5f7f8;
     color: #2b90f3;
     font-size: 18px;
     text-align: left;
-    font-weight: bold;
-
-    .larger {
-      font-size: 20px;
-    }
-  }
-
-  .grey-wrapper {
-    background: #f5f5f5;
-    padding: 20px;
-    height: 100%;
-    margin: 0 20px 20px;
   }
 }
 </style>

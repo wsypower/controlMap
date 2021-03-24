@@ -197,6 +197,8 @@ export default {
           item.scopedSlots = { title: 'title' };
           const tempName = item.title.replace(/[\、|\ |\（|\）]/g, '');
           item.name = tempName;
+          const count = PART_COUNT[tempName];
+          item.title += `（${count}）`;
           if (this.allLayerNames.indexOf(tempName) != -1) {
             typeArray.push(item);
             item.key = item.id;
@@ -231,12 +233,22 @@ export default {
     },
     closePartTip() {
       this.partOverlay.setPosition(null);
+    },
+    changeStatus(current) {
+      if (current) {
+        this.map.on('click', this.mapClickHandler);
+        this.map.addOverlay(this.partOverlay);
+        this.map.addLayer(this.partLayerGroup);
+      } else {
+        this.map.un('click', this.mapClickHandler);
+        this.partOverlay.setPosition(null);
+        this.map.removeOverlay(this.partOverlay);
+        this.map.removeLayer(this.partLayerGroup);
+      }
     }
   },
   beforeDestroy() {
-    this.map.un('click', this.mapClickHandler);
-    this.map.removeOverlay(this.partOverlay);
-    this.map.removeLayer(this.partLayerGroup);
+    this.changeStatus(false);
   }
 }
 </script>
