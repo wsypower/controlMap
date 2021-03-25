@@ -298,6 +298,9 @@ export default {
         this.map.addLayer(this.drawLayer);
         this.map.addLayer(this.resultLayer);
       } else {
+        if (this.drawTool) {
+          this.map.removeInteraction(this.drawTool);
+        }
         this.map.un('click', this.mapClickHandler);
         this.partOverlay.setPosition(null);
         this.map.removeOverlay(this.partOverlay);
