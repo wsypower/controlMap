@@ -125,6 +125,15 @@ const frameIn = [
           role: ['admin', 'super_editor']
         },
         component: _import('function/redirect')
+      },
+      {
+        path: '/zcc',
+        name: 'zcc',
+        meta: {
+          title: '早餐摊点',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('zcc/index.vue')
       }
     ]
   }

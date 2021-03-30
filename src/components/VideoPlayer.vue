@@ -22,7 +22,7 @@ import { videoPlayer } from "vue-video-player";
 import "videojs-flash";
 import SWF_URL from "videojs-swf/dist/video-js.swf";
 
-videojs.options.flash.swf = SWF_URL; // 设置flash路径，Video.js会在不支持html5的浏览中使用flash播放视频文件
+// videojs.options.flash.swf = SWF_URL; // 设置flash路径，Video.js会在不支持html5的浏览中使用flash播放视频文件
 export default {
   name: "videojs",
   components: {

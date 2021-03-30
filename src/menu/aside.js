@@ -34,6 +34,13 @@ export default [
     active: false,
     role: ['admin']
   },
+  {
+    path: '/zcc',
+    title: '早餐摊点',
+    icon: 'menu-zcc',
+    active: false,
+    role: ['admin']
+  }
   // {
   //   path: '/special',
   //   title: '专题服务',
