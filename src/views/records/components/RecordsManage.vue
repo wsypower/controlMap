@@ -17,10 +17,10 @@
           <a-radio :value="2">历史</a-radio>
         </a-radio-group>
       </div>
-      <div flex="fir:left cross:center" style="margin-bottom: 10px">
+      <!-- <div flex="fir:left cross:center" style="margin-bottom: 10px">
         <label style="width: 80px;">地&emsp;&emsp;区：</label>
         <a-cascader :options="addressData" @change="onChange" placeholder="街道/社区/网格" changeOnSelect style="width:80%;" />
-      </div>
+      </div> -->
       <a-button type="primary" style="width: 100%" @click="onSearch">查询</a-button>
     </div>
     <div class="table_header">
