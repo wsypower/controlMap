@@ -110,6 +110,18 @@ export default {
       } else {
         this.$refs.component.$refs.body.scrollTop = top
       }
-    }
+    },
+    scrollToElement(element) {
+      // const bs = this.$refs.component.BS
+      // if (bs) bs.scrollToElement(element)
+      if (this.scroll) {
+        const bs = this.$refs.component.BS
+        if (bs) {
+          bs.scrollToElement(element)
+          // 手动触发一遍 scroll 事件
+          this.$refs.component.scroll()
+        }
+      }
+    },
   }
 }

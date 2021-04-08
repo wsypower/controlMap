@@ -16,7 +16,7 @@
     <div class="table_header">
       <span>序号</span>
       <div>
-        <span>起止时间</span>
+        <span>时间</span>
         <span class="sort-icon">
           <i @click="onSort('desc')">
             <cg-icon-svg name="caret-up" class="svg_icon_up" :class="{ active: activeName === 'desc' }"></cg-icon-svg>
@@ -26,28 +26,44 @@
           </i>
         </span>
       </div>
+      <div>
+        <a-select v-if="!showLoading && dataList.length > 0" v-model="intervalTime" placeholder="请选择" @change="intervalTimeChange">
+          <a-select-option :value="0">全部</a-select-option>
+          <a-select-option :value="30000">30秒</a-select-option>
+          <a-select-option :value="60000">1分钟</a-select-option>
+          <a-select-option :value="120000">2分钟</a-select-option>
+          <a-select-option :value="180000">3分钟</a-select-option>
+          <a-select-option :value="240000">4分钟</a-select-option>
+          <a-select-option :value="300000">5分钟</a-select-option>
+        </a-select>
+      </div>
+      <div class="play-tool" v-if="!showLoading && dataList.length > 0">
+        <a-icon v-show="!isPlayingTrack" type="play-circle" theme="filled" @click="playHandler" />
+        <a-icon v-show="isPlayingTrack" type="pause-circle" theme="filled" @click="playHandler" />
+      </div>
     </div>
     <div class="content_body">
       <div class="spin-panel" flex="main:center cross:center" v-if="showLoading">
         <a-spin tip="数据加载中..."></a-spin>
       </div>
-      <cg-container scroll v-if="!showLoading && dataList.length > 0">
-        <div class="item" flex="dir:left main:justify" v-for="(item, index) in trackSegments" :key="index">
+      <cg-container ref="cgContainer" scroll v-if="!showLoading && dataList.length > 0">
+        <div class="item" :class="{ active: trackIndex === index }" flex="dir:left main:left" v-for="(item, index) in dataList" :id="'trackItem' + index" :key="index" @click="trackItemClick(index)">
           <div flex="cross:center main:center">
-            <span>{{ index }}</span>
-          </div>
-          <div>
-            <p><span class="dot green"></span>{{ item.coordinates[0].time }}</p>
-            <p><span class="dot red"></span>{{ item.coordinates[item.coordinates.length-1].time }}</p>
+            <span>{{ index + 1 }}</span>
           </div>
           <div flex="cross:center main:center">
-            <!--<div @click="trackPlayHandler(item, index)">-->
-            <!--<a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="trackPlayHandler(item, index)" />-->
-            <!--</div>-->
-            <!--<cg-icon-svg name="telephone" class="svg_icon_telephone" @click="onSort('desc')"></cg-icon-svg>-->
-            <a-icon v-show="!item.isStart" type="play-circle" theme="filled" @click="trackPlayHandler(item, index)" />
-            <a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="trackPlayHandler(item, index)" />
+            <span>{{ item.time }}</span>
+            <!-- <p><span class="dot green"></span>{{ item.coordinates[0].time }}</p>
+            <p><span class="dot red"></span>{{ item.coordinates[item.coordinates.length-1].time }}</p> -->
           </div>
+          <!-- <div flex="cross:center main:center"> -->
+          <!--<div @click="trackPlayHandler(item, index)">-->
+          <!--<a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="trackPlayHandler(item, index)" />-->
+          <!--</div>-->
+          <!--<cg-icon-svg name="telephone" class="svg_icon_telephone" @click="onSort('desc')"></cg-icon-svg>-->
+          <!--  <a-icon v-show="!item.isStart" type="play-circle" theme="filled" @click="trackPlayHandler(item, index)" />
+            <a-icon v-show="item.isStart" type="pause-circle" theme="filled" @click="trackPlayHandler(item, index)" /> -->
+          <!-- </div> -->
         </div>
         <!--<div v-if="dataList.length > 20" class="pagination-panel">-->
         <!--<a-pagination-->
@@ -74,6 +90,11 @@
 <script type="text/ecmascript-6">
 import { mapActions, mapState } from 'vuex'
 import { getDistance } from 'ol/sphere'
+import { Style, Icon, Stroke } from 'ol/style'
+import { Vector as VectorLayer } from 'ol/layer'
+import { Vector as VectorSource } from 'ol/source'
+import Feature from 'ol/Feature'
+import { Point, LineString } from 'ol/geom'
 import moment from 'moment';
 import util from '@/utils/util';
 import { stampConvertToTime } from '@/utils/util.tool';
@@ -112,6 +133,7 @@ export default {
       activeName: 'desc',
       //单页数据
       dataList: [],
+      resultList: [],
       //总数
       totalSize: 0,
       trackSegments: [],
@@ -125,7 +147,13 @@ export default {
       trailOverlay: null,
       trailTimeData: {},
       cardBodyStyle: { 'padding': '8px', 'text-align': 'center' },
-      cardHeadStyle: { 'min-height': '35px', 'padding': '0 12px' }
+      cardHeadStyle: { 'min-height': '35px', 'padding': '0 12px' },
+      routeLayer: null,
+      lineFeature: null,
+      posFeature: null,
+      posImageName: '1',
+      rotationTrue: 0,
+      intervalTime: 0
     }
   },
   computed: {
@@ -191,25 +219,93 @@ export default {
       this.showLoading = true;
       this.getUserTrailDataList(this.query).then(res => {
         this.showLoading = false;
-        this.dataList = res.map(item => {
+        let index = 0;
+        this.resultList = res.map(item => {
           item.isStart = false;
           item.hasDetail = false;
+          item.index = index;
           item.time = stampConvertToTime(item.gpstime);
+          index++;
           return item;
         });
-        if (res.length > 0) {
-          this.trackDataHandler(res);
-          const trackLineFeature = trackByLocationList(this.dataList);
-          this.trackLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature, trackStyle(), 3);
-          this.trackLayer.set('featureType', 'PeopleTrail');
-          this.eventLayer = this.mapManager.addVectorLayerByFeatures(this.eventFeatures, trackPointStyle(), 3);
-          this.eventLayer.set('featureType', 'PeopleTrail');
-          this.mapManager.getMap().getView().fit(this.trackLayer.getSource().getExtent());
-        } else {
-          this.$message.warning('未查询到轨迹数据！！！');
-        }
+        this.trackResultHandler();
         // this.totalSize = res.data.total;
       });
+    },
+    intervalTimeChange() {
+      this.timeCardClose();
+      this.routeClear();
+      this.map.removeLayer(this.trackLayer);
+      this.map.removeLayer(this.eventLayer);
+      this.trackResultHandler();
+    },
+    trackResultHandler() {
+      this.dataList = [];
+      let index = 0;
+      if (this.intervalTime > 0) {
+        this.resultList.forEach(item => {
+          if (index == 0) {
+            this.dataList.push(item);
+            index++;
+          } else {
+            const preItem = this.dataList[this.dataList.length - 1];
+            if ((item.gpstime - preItem.gpstime) > this.intervalTime) {
+              this.dataList.push(item);
+              this.dataList[this.dataList.length - 1].index = index;
+              index++;
+            }
+          }
+        });
+      } else {
+        this.dataList = this.resultList;
+      }
+      if (this.dataList.length > 0) {
+        this.trackDataHandler(this.dataList);
+        const trackLineFeature = trackByLocationList(this.dataList);
+        this.trackLayer = this.mapManager.addVectorLayerByFeatures(trackLineFeature, trackStyle(), 3);
+        this.trackLayer.set('featureType', 'PeopleTrail');
+        this.eventLayer = this.mapManager.addVectorLayerByFeatures(this.eventFeatures, trackPointStyle(), 3);
+        this.eventLayer.set('featureType', 'PeopleTrail');
+        this.mapManager.getMap().getView().fit(this.trackLayer.getSource().getExtent());
+        this.routeLayer = new VectorLayer({
+          zIndex: 99,
+          source: new VectorSource(),
+          style: feature => {
+            if (feature.getGeometry().getType() == 'Point') {
+              return new Style({
+                image: new Icon({
+                  src: require(`@/assets/mapImage/track/people/${this.posImageName}.png`),
+                  scale: 0.3,
+                  anchor: [0.5, 1],
+                  rotateWithView: false,
+                  rotation: this.rotationTrue
+                })
+              });
+            } else {
+              return new Style({
+                stroke: new Stroke({
+                  color: 'blue',
+                  width: 4
+                })
+              });
+            }
+          }
+        });
+        this.lineFeature = new Feature({
+          geometry: new LineString([])
+        });
+        this.posFeature = new Feature({
+          geometry: new Point([0, 0])
+        });
+        this.routeLayer.set('featureType', 'trackLine');
+        this.routeLayer.getSource().addFeatures([this.lineFeature, this.posFeature]);
+        this.map.addLayer(this.routeLayer);
+        this.$nextTick(() => {
+          this.$refs.cgContainer.scrollToTop();
+        });
+      } else {
+        this.$message.warning('未查询到轨迹数据！！！');
+      }
     },
     // 传过来的轨迹点位分段处理并保存
     trackDataHandler(coords) {
@@ -219,9 +315,9 @@ export default {
       // 按间隔时间轨迹分段
       let currentCoord = coords[0];
       let nextCoord = null;
-      let lineCoordinates = [];
+      // let lineCoordinates = [];
       let lineCoords = [];
-      lineCoordinates.push(currentCoord); // 加载第一个点
+      // lineCoordinates.push(currentCoord); // 加载第一个点
       lineCoords.push([parseFloat(currentCoord.gpsx), parseFloat(currentCoord.gpsy)]);
       if (currentCoord.operate == "2" || currentCoord.operate == "0" || currentCoord.operate == "1" ||
         currentCoord.operate == "5" || currentCoord.operate == "99") { //上报、签到、签退、核查、普通轨迹点
@@ -232,7 +328,7 @@ export default {
       // let isOvertime = false;
       // let isDeletePosition = false;
       // let stayPosition = currentCoord;
-      for (let i = 1; i < coords.length - 1; i++) {
+      for (let i = 1; i < coords.length; i++) {
         nextCoord = coords[i];
         // const distance = getDistance([parseFloat(stayPosition.gpsx), parseFloat(stayPosition.gpsy)], [parseFloat(nextCoord.gpsx), parseFloat(nextCoord.gpsy)]);
         // if (isOvertime) {
@@ -276,42 +372,113 @@ export default {
           feature.setProperties(nextCoord);
           this.eventFeatures.push(feature);
         }
-        if (nextCoord.operate == "99") { //只串联普通轨迹点
-          if (nextCoord.gpstime - currentCoord.gpstime <= 60 * 1000 * 30) { // 小于间隔时间 30分钟
-            lineCoordinates.push(nextCoord); // 加入当前线段
-            lineCoords.push([parseFloat(nextCoord.gpsx), parseFloat(nextCoord.gpsy)])
-          } else { // 大于间隔时间
-            if (lineCoordinates.length > 3) {
-              this.trackSegments.push({
-                coordinates: lineCoordinates,
-                isStart: false
-              });
-              this.currentQueryTracks.push(lineCoords);
-            } else { //如果轨迹点数小于3的则不计入轨迹段中
+        // if (nextCoord.operate == "99") { //只串联普通轨迹点
+        //   if (nextCoord.gpstime - currentCoord.gpstime <= 60 * 1000 * 30) { // 小于间隔时间 30分钟
+        // lineCoordinates.push(nextCoord); // 加入当前线段
+        lineCoords.push([parseFloat(nextCoord.gpsx), parseFloat(nextCoord.gpsy)])
+        //   } else { // 大于间隔时间
+        //     if (lineCoordinates.length > 3) {
+        //       this.trackSegments.push({
+        //         coordinates: lineCoordinates,
+        //         isStart: false
+        //       });
+        // this.currentQueryTracks.push(lineCoords);
+        //     } else { //如果轨迹点数小于3的则不计入轨迹段中
 
-            }
-            lineCoordinates = [];
-            lineCoords = [];
-            // 将下一个线段的第一点加入
-            lineCoordinates.push(nextCoord); // 加入当前线段
-            lineCoords.push([parseFloat(nextCoord.gpsx), parseFloat(nextCoord.gpsy)]);
-          }
-        }
-        currentCoord = nextCoord;
+        //     }
+        //     lineCoordinates = [];
+        //     lineCoords = [];
+        //     // 将下一个线段的第一点加入
+        //     lineCoordinates.push(nextCoord); // 加入当前线段
+        //     lineCoords.push([parseFloat(nextCoord.gpsx), parseFloat(nextCoord.gpsy)]);
+        //   }
+        // }
+        // currentCoord = nextCoord;
       }
       // 处理最后一次
-      if (lineCoordinates.length > 0) {
-        this.trackSegments.push({
-          coordinates: lineCoordinates,
-          isStart: false
-        });
-        this.currentQueryTracks.push(lineCoords);
-      }
-      console.log('轨迹=====', this.trackSegments);
+      // if (lineCoordinates.length > 0) {
+      //   this.trackSegments.push({
+      //     coordinates: lineCoordinates,
+      //     isStart: false
+      //   });
+      this.currentQueryTracks.push(lineCoords);
+      // }
+      // console.log('轨迹=====', this.trackSegments);
     },
-    //轨迹播放处理
+    playHandler() {
+      this.isPlayingTrack = !this.isPlayingTrack;
+      if (this.isPlayingTrack) {
+        this.routePlay();
+        this.routeTimer = setInterval(() => {
+          this.routePlay();
+        }, 1 * 1000);
+      } else {
+        this.routePause();
+      }
+    },
+    changePosImage() {
+      if (this.trackIndex > 1) {
+        const curCoords = this.currentQueryTracks[0][this.trackIndex];
+        const preCoords = this.currentQueryTracks[0][this.trackIndex - 1];
+        let x = curCoords[0],
+          y = curCoords[1];
+        let x1 = preCoords[0],
+          y1 = preCoords[1];
+        let dx = x - x1,
+          dy = y - y1;
+        if ((dx && dy) && (dx != 0 || dy != 0)) {
+          const rotation = Math.atan2(dy, dx);
+          const PI = Math.PI;
+          let rotationTrue = 0;
+          let suffix = '';
+          if (rotation >= 0 && rotation < PI / 2) {
+            rotationTrue = -rotation;
+            suffix = '';
+          } else if (rotation >= PI / 2 && rotation < PI) {
+            rotationTrue = (PI - rotation);
+            suffix = 'bak';
+          } else if (rotation >= -PI && rotation < -PI / 2) {
+            rotationTrue = -(rotation + PI);
+            suffix = 'bak';
+          } else if (rotation >= -PI / 2 && rotation < 0) {
+            suffix = '';
+            rotationTrue = (-rotation);
+          }
+          const num = this.trackIndex % 20 + 1;
+          this.posImageName = num + suffix;
+          this.rotationTrue = rotationTrue;
+        }
+      }
+    },
+    routePlay() {
+      this.trackIndex++;
+      this.$refs.cgContainer.scrollToElement(document.getElementById(`trackItem${this.trackIndex}`));
+      const coords = this.currentQueryTracks[0][this.trackIndex];
+      this.lineFeature.getGeometry().appendCoordinate(coords);
+      this.changePosImage();
+      this.posFeature.setGeometry(new Point(coords));
+    },
+    routePause() {
+      this.isPlayingTrack = false;
+      clearInterval(this.routeTimer);
+    },
+    trackItemClick(index) {
+      this.trackIndex = index;
+      const coords = this.currentQueryTracks[0].slice(0, this.trackIndex + 1);
+      this.lineFeature.setGeometry(new LineString(coords));
+      this.changePosImage();
+      this.posFeature.setGeometry(new Point(coords[coords.length - 1]));
+    },
+    routeClear() {
+      this.routePause();
+      this.trackIndex = 0;
+      if (this.routeLayer) {
+        this.map.removeLayer(this.routeLayer);
+        this.routeLayer = null;
+      }
+    },
     trackPlayHandler(item, index) {
-      // this.isPlayingTrack=!this.isPlayingTrack;
+      // this.isPlayingTrack = !this.isPlayingTrack;
       if (this.trackIndex !== index) {
         this.trackIndex = index;
         this.isPlayingTrack = null;
@@ -365,6 +532,7 @@ export default {
       }
       this.getDataList();
       this.timeCardClose();
+      this.routeClear();
       this.map.removeLayer(this.trackLayer);
       this.map.removeLayer(this.eventLayer);
       if (this.trackPlaying) {
@@ -380,10 +548,10 @@ export default {
     // },
     //按照时间排序（正序、倒序）
     onSort(sortType) {
-      console.log(11111111111, sortType);
-      this.activeName = sortType;
-      this.query.sortType = sortType;
-      this.getDataList();
+      // console.log(11111111111, sortType);
+      // this.activeName = sortType;
+      // this.query.sortType = sortType;
+      // this.getDataList();
     },
     //开始播放
     startPlay(item, i) {
@@ -460,7 +628,7 @@ export default {
 
     >div {
       display: inline-block;
-      width: 100px;
+      width: 80px;
       text-align: center;
 
       .sort-icon {
@@ -492,6 +660,22 @@ export default {
       text-align: center;
       vertical-align: middle;
     }
+
+    .play-tool {
+      height: 100%;
+      width: 50px;
+      margin-left: 10px;
+
+      i {
+        color: #2bbdf3;
+        font-size: 26px;
+        cursor: pointer;
+
+        &:hover {
+          color: #2b90f3;
+        }
+      }
+    }
   }
 
   .content_body {
@@ -500,15 +684,25 @@ export default {
     position: relative;
     margin-bottom: 25px;
 
+    ::v-deep .bscroll-vertical-scrollbar {
+      opacity: 1 !important
+    }
+
     .item {
-      width: 100%;
-      height: 68px;
+      width: 96%;
+      height: 40px;
       border-top: solid 1px #f5f5f5;
       border-right: solid 1px #f5f5f5;
       border-left: solid 1px #f5f5f5;
       border-bottom: 1px solid #dddddd;
+      cursor: pointer;
 
       &:hover {
+        background-color: #e9f6ff;
+        border: solid 1px #2b90f3;
+      }
+
+      &.active {
         background-color: #e9f6ff;
         border: solid 1px #2b90f3;
       }
@@ -521,17 +715,14 @@ export default {
           span {
             color: #ffffff;
             font-size: 14px;
-            padding: 5px 8px;
+            padding: 2px 5px;
             background-color: #2b90f3;
             border-radius: 4px;
-            width: 35px;
             text-align: center;
           }
         }
 
         &:nth-child(2) {
-          border-left: 1px dashed #dddddd;
-          margin: 20px 0px 20px -30px;
 
           p {
             margin-bottom: 5px;
@@ -560,7 +751,6 @@ export default {
         }
 
         &:last-child {
-          width: 66px;
           height: 100%;
 
           i {

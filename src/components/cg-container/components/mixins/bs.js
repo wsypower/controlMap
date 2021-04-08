@@ -38,7 +38,7 @@ export default {
             preventDefault: false,
             scrollbar: {
               fade: true,
-              interactive: false
+              interactive: true
             }
           },
           this.betterScrollOptions
