@@ -120,6 +120,9 @@ export function getAddressByXY(xy) {
   });
 }
 
+/**
+ * @description:获取图层描述
+ */
 export function getDescribeLayer(type) {
   return request({
     url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix + '/ows',
@@ -134,6 +137,9 @@ export function getDescribeLayer(type) {
   })
 }
 
+/**
+ * @description:wms点击获取信息
+ */
 export function getPartFeatureInfo(params) {
   return request({
     url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix + '/ows',
@@ -159,10 +165,34 @@ export function getPartFeatureInfo(params) {
   })
 }
 
+/**
+ * @description:获取部件分类
+ */
 export function getEventTypeTreeData(data) {
   return request({
     url: `eventtype/getEventTypeTreeData`,
     method: 'get',
     params: data
   });
+}
+
+/**
+ * @description:wfs空间查询
+ */
+export function getPartQueryData(data) {
+  return request({
+    url: GIS_CONFIG.baseURL + GIS_CONFIG.featurePrefix + '/ows',
+    method: 'get',
+    params: {
+      service: 'WFS',
+      version: '1.0.0',
+      request: 'GetFeature',
+      typeName: `${GIS_CONFIG.featurePrefix}:${data.type}`,
+      outputFormat: 'application/json',
+      // cql_filter: `BBOX(the_geom,${data.extent.toString()})`,
+      cql_filter: `INTERSECTS(the_geom,${data.geometry})`,
+      maxFeatures: data.pageSize,
+      startIndex: data.startIndex
+    }
+  })
 }

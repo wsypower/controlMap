@@ -302,3 +302,14 @@ export function parkingStyle(type) {
   })
   return style
 }
+
+export function eventRepeatStyle() {
+  return function(feature) {
+    return new Style({
+      image: new Icon({
+        src: require('@/assets/mapImage/mrtb.png')
+      }),
+      anchor: [0.5, 1],
+    })
+  }
+}

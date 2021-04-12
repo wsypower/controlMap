@@ -73,9 +73,11 @@ export default {
               l.setVisible(false);
             }
           } else if (val == '2') { //轨迹查询
-            if (l.get('featureType') == 'PeopleTrail' || l.get('featureType') == 'trackLine') {
+            if (l.get('featureType') == 'PeopleTrail') {
               l.setVisible(true);
               this.map.getView().fit(l.getSource().getExtent());
+            } else if (l.get('featureType') == 'trackLine') {
+              l.setVisible(true);
             } else {
               l.setVisible(false);
             }
@@ -153,7 +155,7 @@ export default {
       width: 100%;
 
       .ant-tabs-tab {
-        width: 33% !important;
+        width: 33.3% !important;
         text-align: center;
         margin: 0px;
       }

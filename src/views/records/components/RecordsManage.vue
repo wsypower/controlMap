@@ -38,6 +38,9 @@
           <div class="item-right" flex="cross:center">
             <div class="description-panel">
               <div class="name-panel" :title="itemData.taskcode">【{{ itemData.taskcode }}】</div>
+              <div>
+                <span v-if="itemData.isExistSimilarEvent == '1'" class="repeat">疑似重复案卷</span>
+              </div>
               <div flex>
                 <span>类型：</span><span>{{ itemData.type1name }}</span>
               </div>
@@ -48,13 +51,13 @@
             <div class="photo"><img :src="itemData.url ? itemData.fileServer + itemData.url:''" /></div>
           </div>
         </div>
-        <div v-if="totalSize > 20" class="pagination-panel">
-          <a-pagination size="small" :total="totalSize" :showTotal="total => `共 ${total} 条`" :pageSize="20" :current="query.curpage" @change="changePagination" />
-        </div>
       </cg-container>
       <div v-if="!showLoading && dataList.length == 0" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
       </div>
+    </div>
+    <div v-if="!showLoading && dataList.length > 0" class="pagination-panel">
+      <a-pagination size="small" :total="totalSize" :showTotal="total => `共 ${total} 条`" :pageSize="20" :current="query.curpage" @change="changePagination" />
     </div>
     <div hidden>
       <record-info ref="recordInfo" :code="code" @closeTip="closeTip"></record-info>
@@ -64,6 +67,7 @@
 <script type="text/ecmascript-6">
 import { mapActions, mapState } from 'vuex'
 import Pin from '../../emergency/components/Position.vue';
+import { eventRepeatStyle } from '@/utils/util.map.style'
 import RecordInfo from './RecordInfo.vue';
 import { pointByCoord } from '@/utils/util.map.manage';
 import util from '@/utils/util';
@@ -100,18 +104,22 @@ export default {
       activeIndex: null,
       //案卷编码
       code: '',
-      eventLayer: null
+      eventLayer: null,
+      repeatLayer: null
+    }
+  },
+  watch: {
+    querySelectData(feature) {
+      this.popupDetail(feature);
     }
   },
   computed: {
-    ...mapState('map', ['mapManager']),
+    ...mapState('map', ['mapManager', 'querySelectData']),
   },
   mounted() {
-    this.getAllAddressData({ userId: userId }).then(res => {
-      this.addressData = res;
-    });
-    this.getDataList();
     this.map = this.mapManager.getMap();
+    this.repeatLayer = this.mapManager.addVectorLayerByFeatures([], eventRepeatStyle(), 33);
+    this.repeatLayer.set('featureType', 'eventRepeatPosition');
     this.map.on('click', this.eventMapClickHandler);
     this.eventOverlay = this.mapManager.addOverlay({
       id: 'eventPositionOverlay',
@@ -119,7 +127,10 @@ export default {
       positioning: 'bottom-center',
       element: this.$refs.recordInfo.$el
     });
-
+    this.getAllAddressData({ userId: userId }).then(res => {
+      this.addressData = res;
+    });
+    this.getDataList();
   },
   methods: {
     ...mapActions('records/manage', ['getAllAddressData', 'getAllRecordsDataList']),
@@ -134,6 +145,8 @@ export default {
     //获取案卷数据
     getDataList() {
       console.log('this.query', this.query);
+      this.activeIndex = null;
+      this.closeTip();
       this.showLoading = true;
       this.getAllRecordsDataList(this.query).then(res => {
         this.showLoading = false;
@@ -171,20 +184,28 @@ export default {
     //关闭地图上的弹窗
     closeTip() {
       this.eventOverlay.setPosition(undefined);
+      this.repeatLayer.getSource().clear();
     },
     //地图点击事件
     eventMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
       if (feature && feature.get('features')) {
         const clickFeature = feature.get('features')[0];
+        this.popupDetail(clickFeature);
         // const coordinates = clickFeature.getGeometry().getCoordinates();
-        if (clickFeature && clickFeature.get('type') == 'eventPosition') {
-          this.code = clickFeature.get('props').taskcode;
-          this.eventOverlay.setPosition(coordinate);
-        }
+        // if (clickFeature && clickFeature.get('type') == 'eventPosition') {
+        //   this.code = clickFeature.get('props').taskcode;
+        //   this.eventOverlay.setPosition(coordinates);
+        // }
       }
     },
-    // 事件点位处理
+    popupDetail(feature) {
+      const coordinates = feature.getGeometry().getCoordinates();
+      if (feature && feature.get('type') == 'eventPosition') {
+        this.code = feature.get('props').taskcode;
+        this.eventOverlay.setPosition(coordinates);
+      }
+    },
     eventPointHandler(list) {
       const features = [];
       list.forEach((item) => {
@@ -195,8 +216,7 @@ export default {
           feature.set('type', 'eventPosition');
           features.push(feature);
         }
-      })
-      //加载聚类车辆图层
+      });
       if (this.eventLayer) {
         this.eventLayer.getSource().getSource().clear();
         if (features.length == 0) {
@@ -251,7 +271,7 @@ export default {
 
   .content_body {
     background-color: #ffffff;
-    height: calc(100% - 70px);
+    height: calc(100% - 235px);
     position: relative;
 
     .item {
@@ -313,6 +333,13 @@ export default {
               text-overflow: ellipsis;
               overflow: hidden;
             }
+
+            span.repeat {
+              border-radius: 10px;
+              background-color: rgba(240, 113, 113, 0.2);
+              color: #f07171;
+              padding: 2px 8px;
+            }
           }
         }
 
@@ -328,16 +355,16 @@ export default {
       }
     }
 
-    .pagination-panel {
-      text-align: right;
-      padding: 10px 20px 20px 0px;
-    }
-
     .nodata-panel,
     .spin-panel {
       width: 100%;
       height: 100%;
     }
+  }
+
+  .pagination-panel {
+    text-align: right;
+    padding: 10px 20px 10px 0px;
   }
 }
 </style>

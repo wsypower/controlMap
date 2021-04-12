@@ -133,3 +133,12 @@ export const getRecordLogsData = data => {
     data
   })
 }
+
+export const getSimilarEventList = data => {
+  console.log('api:getSimilarEventList', data)
+  return request({
+    url: `/statistics/event/similarEventList`,
+    method: 'post',
+    data
+  })
+}
