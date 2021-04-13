@@ -53,7 +53,7 @@
         <img src="~@img/zanwudata.png" />
       </div>
     </div>
-    <div class="pagination-panel">
+    <div v-if="!showLoading && dataList.length > 0" class="pagination-panel">
       <a-pagination size="small" :total="totalSize" :showTotal="total => `共 ${total} 条`" :pageSize="20" :current="query.curpage" @change="changePagination" />
     </div>
     <div hidden>

@@ -35,7 +35,7 @@
       <cg-container scroll v-if="!showLoading && dataList.length > 0">
         <div class="item" flex="dir:left main:justify" v-for="(item, index) in trackSegments" :key="index">
           <div flex="cross:center main:center">
-            <span>{{ index }}</span>
+            <span>{{ index + 1 }}</span>
           </div>
           <div>
             <p><span class="dot green"></span>{{ item.coordinates[0].time }}</p>
