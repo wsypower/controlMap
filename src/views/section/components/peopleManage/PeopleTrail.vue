@@ -18,11 +18,11 @@
       <div>
         <span>起止时间</span>
         <span class="sort-icon">
-          <i @click="onSort('desc')">
-            <cg-icon-svg name="caret-up" class="svg_icon_up" :class="{ active: activeName === 'desc' }"></cg-icon-svg>
-          </i>
           <i @click="onSort('asc')">
-            <cg-icon-svg name="caret-down" class="svg_icon_down" :class="{ active: activeName === 'asc' }"></cg-icon-svg>
+            <cg-icon-svg name="caret-up" class="svg_icon_up" :class="{ active: activeName === 'asc' }"></cg-icon-svg>
+          </i>
+          <i @click="onSort('desc')">
+            <cg-icon-svg name="caret-down" class="svg_icon_down" :class="{ active: activeName === 'desc' }"></cg-icon-svg>
           </i>
         </span>
       </div>
@@ -34,7 +34,7 @@
       <cg-container scroll v-if="!showLoading && dataList.length > 0">
         <div class="item" flex="dir:left main:justify" v-for="(item, index) in trackSegments" :key="index">
           <div flex="cross:center main:center">
-            <span>{{ index }}</span>
+            <span>{{ index + 1 }}</span>
           </div>
           <div>
             <p><span class="dot green"></span>{{ item.coordinates[0].time }}</p>
@@ -107,14 +107,14 @@ export default {
         userDisplayId: '',
         startTime: '',
         endTime: '',
-        sortType: 'desc',
+        sortType: 'asc',
       },
       //查询的时间范围
       dayRange: [],
       //查询时的过渡效果
       showLoading: false,
       //正序asc、倒序desc
-      activeName: 'desc',
+      activeName: 'asc',
       //单页数据
       dataList: [],
       //总数
@@ -349,6 +349,8 @@ export default {
     //播放停止
     stopPlayer(index) {
       this.trackSegments[index].isStart = false;
+      this.isPlayingTrack = false;
+      this.trackPlaying.stopMoving();
       console.log('回调========')
     },
     //查询(默认显示当天，当前登入的用户)
@@ -380,9 +382,9 @@ export default {
     //按照时间排序（正序、倒序）
     onSort(sortType) {
       console.log(11111111111, sortType);
-      this.activeName = sortType;
-      this.query.sortType = sortType;
-      this.getDataList();
+      // this.activeName = sortType;
+      // this.query.sortType = sortType;
+      // this.getDataList();
     },
     //开始播放
     startPlay(item, i) {

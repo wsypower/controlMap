@@ -13,8 +13,9 @@
           <img slot="car" src="~@img/zcc.png" />
           <img slot="car-outline" src="~@img/zcc-outline.png" />
           <template slot="title" slot-scope="{ title }">
-            <span v-if="title.indexOf(searchValue) > -1">{{ title.substr(0, title.indexOf(searchValue)) }}<span style="color: #f50">{{ searchValue }}</span>{{ title.substr(title.indexOf(searchValue) + searchValue.length) }}</span>
-            <span v-else>{{ title }}</span>
+            <!-- <span v-if="title.indexOf(searchValue) > -1">{{ title.substr(0, title.indexOf(searchValue)) }}<span style="color: #f50">{{ searchValue }}</span>{{ title.substr(title.indexOf(searchValue) + searchValue.length) }}</span>
+            <span v-else>{{ title }}</span> -->
+            <span>{{ title }}</span>
           </template>
         </a-tree>
       </cg-container>
@@ -34,7 +35,7 @@ import { mapState, mapActions } from 'vuex'
 import util from '@/utils/util'
 import CartInfo from './CartInfo.vue'
 import { carPointStyle, gridStyle } from '@/utils/util.map.style'
-import { getAllCarTreeData } from '@/api/cart/manage'
+import { getAllCarTreeData, getAllCarDataList } from '@/api/cart/manage'
 export default {
   name: '',
   components: {
@@ -66,19 +67,20 @@ export default {
       carLayer: null,
       //地图更新需要
       isLoadData: false,
-      regionLayer: null
+      regionLayer: null,
+      treeData: []
     }
   },
   computed: {
     ...mapState('map', ['mapManager']),
-    treeData: function() {
-      let data = JSON.parse(JSON.stringify(this.sourceData));
-      this.carFeatures = [];
-      this.allCarData = [];
-      this.changeTreeData(data, '');
-      this.isLoadData = !this.isLoadData;
-      return data
-    }
+    // treeData: function() {
+    //   let data = JSON.parse(JSON.stringify(this.sourceData));
+    //   this.carFeatures = [];
+    //   this.allCarData = [];
+    //   this.changeTreeData(data, '');
+    //   this.isLoadData = !this.isLoadData;
+    //   return data
+    // }
   },
   watch: {
     isLoadData: function() {
@@ -93,12 +95,23 @@ export default {
           this.mapManager.getMap().getView().fit(extent);
         }
       }
+    },
+    sourceData: function() {
+      let data = JSON.parse(JSON.stringify(this.sourceData));
+      if (this.searchValue.length > 0) {
+        this.expandedKeys = [];
+      }
+      this.carFeatures = [];
+      this.allCarData = [];
+      this.changeTreeData(data);
+      this.getCartPosition();
+      this.treeData = data;
     }
   },
   mounted() {
     const userId = util.cookies.get('userId');
     this.showLoading = true;
-    getAllCarTreeData({ userId: userId }).then(res => {
+    getAllCarTreeData({ userId: userId, searchParam: this.searchValue }).then(res => {
       this.sourceData = res;
       this.showLoading = false;
     });
@@ -112,7 +125,7 @@ export default {
     });
     let _this = this;
     this.timer = setInterval(function() {
-      getAllCarTreeData({ userId: userId }).then(res => {
+      getAllCarTreeData({ userId: userId, searchParam: _this.searchValue }).then(res => {
         _this.sourceData = res;
       });
     }, 10 * 60 * 1000);
@@ -143,13 +156,30 @@ export default {
             title: item.name,
             key: item.id
           }
+          if (this.searchValue.length > 0) {
+            this.expandedKeys.push(item.id);
+          }
           this.allCarData.push(temp);
           if (item.x && item.x.length > 0 && item.y && item.y.length > 0) {
-            const feature = _this.mapManager.xyToFeature(item.x, item.y);
-            feature.set('icon', pointImg);
-            feature.set('props', item);
-            feature.set('type', 'CarPosition');
-            _this.carFeatures.push(feature);
+            const x = parseFloat(item.x);
+            const y = parseFloat(item.y);
+            if (!isNaN(x) && x > 0) {
+              item.x = x;
+            } else {
+              item.x = null;
+            }
+            if (!isNaN(y) && y > 0) {
+              item.y = y;
+            } else {
+              item.y = null;
+            }
+            //   if (item.x && item.y) {
+            //     const feature = _this.mapManager.xyToFeature(item.x, item.y);
+            //     feature.set('icon', pointImg);
+            //     feature.set('props', item);
+            //     feature.set('type', 'CarPosition');
+            //     _this.carFeatures.push(feature);
+            //   }
           }
         } else {
           item.key = 'dept_' + item.id;
@@ -158,24 +188,65 @@ export default {
         }
       })
     },
+    getCartPosition() {
+      const userId = util.cookies.get('userId');
+      getAllCarDataList({ userId: userId }).then(res => {
+        let pointImg = null;
+        res.forEach(item => {
+          if (item.online) {
+            pointImg = 'zcc-online';
+          } else {
+            pointImg = 'zcc-offline';
+          }
+          if (item.x && item.x.length > 0 && item.y && item.y.length > 0) {
+            const x = parseFloat(item.x);
+            const y = parseFloat(item.y);
+            if (!isNaN(x) && x > 0) {
+              item.x = x;
+            } else {
+              item.x = null;
+            }
+            if (!isNaN(y) && y > 0) {
+              item.y = y;
+            } else {
+              item.y = null;
+            }
+            if (item.x && item.y) {
+              const feature = this.mapManager.xyToFeature(item.x, item.y);
+              feature.set('icon', pointImg);
+              feature.set('props', item);
+              feature.set('type', 'CarPosition');
+              this.carFeatures.push(feature);
+            }
+          }
+        });
+        this.isLoadData = !this.isLoadData;
+      });
+    },
     onChange() {
-      this.onSearch(this.searchValue);
+      // this.onSearch(this.searchValue);
     },
     //查询触发
     onSearch(val) {
       this.expandedKeys = [];
       this.searchValue = val;
-      this.allCarData.forEach(item => {
-        if (item.title.indexOf(val) >= 0) {
-          this.expandedKeys.push(item.key);
-        }
-      });
+      // this.allCarData.forEach(item => {
+      //   if (item.title.indexOf(val) >= 0) {
+      //     this.expandedKeys.push(item.key);
+      //   }
+      // });
       this.autoExpandParent = true;
-      if (this.expandedKeys.length === 0) {
-        this.showTree = false;
-      } else {
-        this.showTree = true;
-      }
+      // if (this.expandedKeys.length === 0) {
+      //   this.showTree = false;
+      // } else {
+      //   this.showTree = true;
+      // }
+      const userId = util.cookies.get('userId');
+      this.showLoading = true;
+      getAllCarTreeData({ userId: userId, searchParam: this.searchValue }).then(res => {
+        this.sourceData = res;
+        this.showLoading = false;
+      });
     },
     onExpand(expandedKeys) {
       this.expandedKeys = expandedKeys;
@@ -183,7 +254,7 @@ export default {
     },
     onSelect(selectedKeys, e) {
       // console.log(selectedKeys, e);
-      if (selectedKeys && selectedKeys[0].indexOf('dept_') < 0) {
+      if (selectedKeys.length > 0 && selectedKeys[0].indexOf('dept_') < 0) {
         if (this.regionLayer) {
           this.regionLayer.getSource().clear();
         }

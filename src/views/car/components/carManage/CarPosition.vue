@@ -192,7 +192,7 @@ export default {
     //点击树中某个节点（某个人员）时触发
     onSelect(selectedKeys, e) {
       console.log(selectedKeys, e);
-      if (selectedKeys[0].indexOf('dept_') < 0) {
+      if (selectedKeys.length > 0 && selectedKeys[0].indexOf('dept_') < 0) {
         let needData = e.selectedNodes[0].data.props;
         let temp = {};
         temp.id = needData.id;

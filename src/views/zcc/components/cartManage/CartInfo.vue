@@ -17,9 +17,9 @@
       <div>
         <span class="title">电话：</span><span>{{ info.phone }}</span>
       </div>
-      <div>
+      <!-- <div>
         <span class="title">组别：</span><span>{{ info.dept }}</span>
-      </div>
+      </div> -->
       <div>
         <span class="title">GPS上报：</span><span>{{ new Date(info.gpsTime) | date_format() }}</span>
       </div>

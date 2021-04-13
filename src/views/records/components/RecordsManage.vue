@@ -48,13 +48,13 @@
             <div class="photo"><img :src="itemData.url ? itemData.fileServer + itemData.url:''" /></div>
           </div>
         </div>
-        <div v-if="totalSize > 20" class="pagination-panel">
-          <a-pagination size="small" :total="totalSize" :showTotal="total => `共 ${total} 条`" :pageSize="20" :current="query.curpage" @change="changePagination" />
-        </div>
       </cg-container>
       <div v-if="!showLoading && dataList.length == 0" class="nodata-panel" flex="main:center cross:center">
         <img src="~@img/zanwudata.png" />
       </div>
+    </div>
+    <div v-if="!showLoading && dataList.length > 0" class="pagination-panel">
+      <a-pagination :showLessItems="true" size="small" :total="totalSize" :showTotal="total => `共 ${total} 条`" :pageSize="20" :current="query.curpage" @change="changePagination" />
     </div>
     <div hidden>
       <record-info ref="recordInfo" :code="code" @closeTip="closeTip"></record-info>
@@ -107,10 +107,6 @@ export default {
     ...mapState('map', ['mapManager']),
   },
   mounted() {
-    this.getAllAddressData({ userId: userId }).then(res => {
-      this.addressData = res;
-    });
-    this.getDataList();
     this.map = this.mapManager.getMap();
     this.map.on('click', this.eventMapClickHandler);
     this.eventOverlay = this.mapManager.addOverlay({
@@ -119,7 +115,10 @@ export default {
       positioning: 'bottom-center',
       element: this.$refs.recordInfo.$el
     });
-
+    this.getAllAddressData({ userId: userId }).then(res => {
+      this.addressData = res;
+    });
+    this.getDataList();
   },
   methods: {
     ...mapActions('records/manage', ['getAllAddressData', 'getAllRecordsDataList']),
@@ -134,6 +133,7 @@ export default {
     //获取案卷数据
     getDataList() {
       console.log('this.query', this.query);
+      this.closeTip();
       this.showLoading = true;
       this.getAllRecordsDataList(this.query).then(res => {
         this.showLoading = false;
@@ -251,7 +251,7 @@ export default {
 
   .content_body {
     background-color: #ffffff;
-    height: calc(100% - 70px);
+    height: calc(100% - 235px);
     position: relative;
 
     .item {
@@ -328,16 +328,16 @@ export default {
       }
     }
 
-    .pagination-panel {
-      text-align: right;
-      padding: 10px 20px 20px 0px;
-    }
-
     .nodata-panel,
     .spin-panel {
       width: 100%;
       height: 100%;
     }
+  }
+
+  .pagination-panel {
+    text-align: right;
+    padding: 10px 20px 10px 0px;
   }
 }
 </style>
