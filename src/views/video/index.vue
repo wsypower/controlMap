@@ -1,33 +1,39 @@
 <template>
   <div class="page">
-    <!-- <content-tabs :tabData="tabData" @changeTab="changeTab"></content-tabs> -->
-    <div class="page-title">
+    <content-tabs :tabData="tabData" @changeTab="changeTab"></content-tabs>
+    <!-- <div class="page-title">
+      
       监控分布
     </div>
-    <video-distribute></video-distribute>
+    <video-distribute></video-distribute> -->
   </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 import AlarmSearch from './components/AlarmSearch.vue'
+import AlarmStatistics from './components/AlarmStatistics.vue'
 import VideoDistribute from './components/VideoDistribute.vue'
 export default {
   name: 'alarmVideo',
-  components: {
-    VideoDistribute
-  },
+  // components: {
+  //   VideoDistribute
+  // },
   data() {
     return {
       //tab标签
       tabData: [{
-          name: '告警查询',
-          component: AlarmSearch,
-          hasScroll: false
-        },
-        {
           name: '监控分布',
           component: VideoDistribute,
           hasScroll: false
+        // }, {
+        //   name: '告警查询',
+        //   component: AlarmSearch,
+        //   hasScroll: false
+        // },
+        // {
+        //   name: '告警统计',
+        //   component: AlarmStatistics,
+        //   hasScroll: true
         }
       ]
     }
@@ -40,11 +46,11 @@ export default {
   },
   methods: {
     changeTab(val) {
-      const layers = this.map.getLayers().array_;
+      const layers = this.map.getLayers().getArray();
       //切换时清除地图上的一些操作
       layers.forEach(l => {
         if (l.get('featureType')) {
-          if (val == '0') { //告警统计
+          if (val == '2') { //告警统计
             this.map.getOverlayById('alarmOverlay').setPosition(undefined);
             if (l.get('featureType') == 'alarmSearch' || l.get('featureType') == 'videoDistribute') {
               l.setVisible(false);
@@ -56,7 +62,7 @@ export default {
             } else {
               l.setVisible(false);
             }
-          } else if (val == '2') { //监控分布
+          } else if (val == '0') { //监控分布
             this.map.getOverlayById('alarmOverlay').setPosition(undefined);
             if (l.get('featureType') == 'videoDistribute') {
               l.setVisible(true);

@@ -70,7 +70,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('map', ['mapManager']),
+    ...mapState('map', ['mapManager', 'querySelectData']),
     //获得展示的数据与属性
     treeData: function() {
       let data = JSON.parse(JSON.stringify(this.sourceData));
@@ -96,6 +96,11 @@ export default {
         const extent = this.carLayer.getSource().getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
       }
+    },
+    querySelectData(feature) {
+      if (feature) {
+        this.popupDetail(feature);
+      }
     }
   },
   mounted() {
@@ -109,7 +114,7 @@ export default {
     this.map.on('click', this.carMapClickHandler);
     this.carOverlay = this.mapManager.addOverlay({
       id: 'carPositionOverlay',
-      offset: [0, -20],
+      offset: [0, -35],
       positioning: 'bottom-center',
       element: this.$refs.carInfo.$el
     });
@@ -218,19 +223,25 @@ export default {
         }
       }
     },
-    //地图上人员点击事件处理器
     carMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
       if (feature && feature.get('features')) {
         const clickFeature = feature.get('features')[0];
-        const coordinates = clickFeature.getGeometry().getCoordinates();
-        if (clickFeature && clickFeature.get('type') == 'CarPosition') {
-          this.carInfoData = clickFeature.get('props');
-          this.carOverlay.setPosition(coordinates);
-        }
+        this.popupDetail(clickFeature);
+        // const coordinates = clickFeature.getGeometry().getCoordinates();
+        // if (clickFeature && clickFeature.get('type') == 'CarPosition') {
+        //   this.carInfoData = clickFeature.get('props');
+        //   this.carOverlay.setPosition(coordinates);
+        // }
       }
     },
-    //人员轨迹触发
+    popupDetail(feature) {
+      const coordinates = feature.getGeometry().getCoordinates();
+      if (feature && feature.get('type') == 'CarPosition') {
+        this.carInfoData = feature.get('props');
+        this.carOverlay.setPosition(coordinates);
+      }
+    },
     getCarId(data) {
       this.$emit('getCarId', data);
     },

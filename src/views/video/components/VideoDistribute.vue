@@ -71,7 +71,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('map', ['mapManager']),
+    ...mapState('map', ['mapManager', 'querySelectData']),
     //获得展示的数据与属性
     treeData: function() {
       let data = JSON.parse(JSON.stringify(this.sourceData));
@@ -95,6 +95,11 @@ export default {
         }
         const extent = this.videoLayer.getSource().getExtent();
         this.mapManager.getMap().getView().fit(extent);
+      }
+    },
+    querySelectData(feature) {
+      if (feature) {
+        this.popupDetail(feature);
       }
     }
   },
@@ -182,10 +187,17 @@ export default {
         // const clickFeature = feature.get('features')[0];
         const clickFeature = feature;
         // const coordinates=clickFeature.getGeometry().getCoordinates();
-        if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
-          const videoInfoData = clickFeature.get('props');
-          this.playVideo(videoInfoData.cid);
-        }
+        this.popupDetail(clickFeature);
+        // if (clickFeature && clickFeature.get('type') == 'VideoDistribute') {
+        //   const videoInfoData = clickFeature.get('props');
+        //   this.playVideo(videoInfoData.cid);
+        // }
+      }
+    },
+    popupDetail(feature) {
+      if (feature && feature.get('type') == 'VideoDistribute') {
+        const videoInfoData = feature.get('props');
+        this.playVideo(videoInfoData.cid);
       }
     },
     playVideo(mpid) {

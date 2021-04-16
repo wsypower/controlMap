@@ -12,64 +12,62 @@
 import { mapActions } from 'vuex'
 export default {
   name: 'HighIncidenceTOP5',
-  data(){
+  data() {
     return {
       chartData: []
     }
   },
-  mounted(){
+  mounted() {
     this.$nextTick(() => {
       this.getChartData();
     });
   },
-  methods:{
+  methods: {
     ...mapActions('records/statistical', ['getHighIncidenceTOP5Data']),
-    //获取人员状态数据
-    getChartData(){
-      // this.getHighIncidenceTOP5Data().then(res=>{
-      //   console.log('getHighIncidenceTOP5Data', res);
-      //   let xArr = [];
-      //   let yArr = [];
-      //   res.data.forEach(item => {
-      //     xArr.push(item.name);
-      //     yArr.push(item.num);
-      //   });
-      //   this.chartData = [xArr, yArr];
-      //   this.chartInit();
-      // });
-      let data = [
-        {
-          name: '私搭乱建',
-          num: 475
-        },
-        {
-          name: '上水井盖',
-          num: 357
-        },
-        {
-          name: '非法小广告',
-          num: 331
-        },
-        {
-          name: '无照经营游商',
-          num: 209
-        },
-        {
-          name: '街头散发广告',
-          num: 201
-        }
-      ]
-      let xArr = [];
-      let yArr = [];
-      data.forEach(item => {
-        xArr.push(item.name);
-        yArr.push(item.num);
+    getChartData() {
+      this.getHighIncidenceTOP5Data().then(res => {
+        console.log('getHighIncidenceTOP5Data', res);
+        let xArr = [];
+        let yArr = [];
+        res.forEach(item => {
+          xArr.push(item.name);
+          yArr.push(item.num);
+        });
+        this.chartData = [xArr, yArr];
+        this.chartInit();
       });
-      this.chartData = [xArr, yArr];
-      this.chartInit();
+      // let data = [
+      //   {
+      //     name: '私搭乱建',
+      //     num: 475
+      //   },
+      //   {
+      //     name: '上水井盖',
+      //     num: 357
+      //   },
+      //   {
+      //     name: '非法小广告',
+      //     num: 331
+      //   },
+      //   {
+      //     name: '无照经营游商',
+      //     num: 209
+      //   },
+      //   {
+      //     name: '街头散发广告',
+      //     num: 201
+      //   }
+      // ]
+      // let xArr = [];
+      // let yArr = [];
+      // data.forEach(item => {
+      //   xArr.push(item.name);
+      //   yArr.push(item.num);
+      // });
+      // this.chartData = [xArr, yArr];
+      // this.chartInit();
     },
-    //初始化图表
-    chartInit(){
+    chartInit() {
       let _this = this;
       const ChartColumnar = this.$echarts.init(document.getElementById('top5-bar'));
       ChartColumnar.setOption({
@@ -81,7 +79,7 @@ export default {
           containLabel: true
         },
         tooltip: {
-          show: false
+          show: true
         },
         xAxis: {
           data: _this.chartData[0],
@@ -89,11 +87,18 @@ export default {
             fontSize: 12,
             color: '#333333',
             interval: 0,
-            rotate: 20
+            rotate: 50,
+            formatter: value => {
+              let res = value;
+              if (res.length > 8) {
+                res = `${res.substring(0, 7)}..`;
+              }
+              return res;
+            },
           },
           axisLine: {
             show: true,
-            lineStyle:{
+            lineStyle: {
               color: '#dddddd'
             }
           },
@@ -107,7 +112,7 @@ export default {
         yAxis: {
           axisLabel: {
             show: true,
-            textStyle:{
+            textStyle: {
               color: '#999999'
             }
           },
@@ -119,7 +124,7 @@ export default {
           },
           splitLine: {
             show: true,
-            lineStyle:{
+            lineStyle: {
               type: 'dashed',
               color: '#dddddd'
             }
@@ -143,7 +148,7 @@ export default {
               }])
             }
           },
-          label:{
+          label: {
             show: true,
             position: 'top'
           },
@@ -159,19 +164,23 @@ export default {
   width: 100%;
   height: 262px;
   padding-top: 6px;
+
   .panel-header {
     width: 100%;
     height: 30px;
+
     .title {
       font-family: PingFang-SC-Medium;
       font-size: 14px;
       color: #333333;
     }
   }
+
   .panel-content {
     width: 100%;
     height: 232px;
     background-color: #f5f5f5;
+
     #top5-bar {
       width: 100%;
       height: 100%;

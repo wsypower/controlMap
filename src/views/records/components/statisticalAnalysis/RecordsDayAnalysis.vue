@@ -5,14 +5,11 @@
       <div class="legend">
         <span><i class="dot blue"></i>上报</span>
         <span><i class="dot green"></i>立案</span>
-        <span><i class="dot yellow"></i>处置</span>
+        <span><i class="dot yellow"></i>处理</span>
       </div>
     </div>
     <a-select v-model="year" @change="handleChange" class="year-panel">
-      <a-select-option value="2019">2019</a-select-option>
-      <a-select-option value="2018">2018</a-select-option>
-      <a-select-option value="2017">2017</a-select-option>
-      <a-select-option value="2016">2016</a-select-option>
+      <a-select-option v-for="(item, index) in yearList" :value="item.value" :key="index">{{ item.name }}</a-select-option>
     </a-select>
     <div class="panel-content">
       <happy-scroll color="rgba(0,0,0,0.2)" size="5" resize>
@@ -23,124 +20,138 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
+import moment from 'moment'
 export default {
   name: 'RecordsDayAnalysis',
-  data(){
+  data() {
     return {
-      year: '2019',
-      chartData: []
+      year: '',
+      yearList: [],
+      chartData: [],
+      chartColumnar: null
     }
   },
-  mounted(){
+  mounted() {
+    const curYear = parseInt(moment().format('YYYY'));
+    const startYear = 2020;
+    for (let i = startYear; i <= curYear; i++) {
+      this.yearList.push({
+        value: i,
+        name: i
+      });
+    }
+    this.year = curYear;
     this.$nextTick(() => {
       this.getChartData();
     });
   },
-  methods:{
+  methods: {
     ...mapActions('records/statistical', ['getRecordsDayAnalysisData']),
-    //获取越界数据
-    getChartData(){
-      //this.chartData = [['一月','二月','三月','四月','五月'],[20,30,40,50,60],[40,50,60,30,20],[60,70,40,50,20]];
-      // this.getRecordsDayAnalysisData({year: this.year}).then(res=>{
-      //   console.log('getRecordsDayAnalysisData',res);
-      //   let xArr = [], yArr1 = [], yArr2 = [], yArr3 = [];
-      //   res.data.forEach(item=>{
-      //     xArr.push(item.month);
-      //     yArr1.push(item.num1);
-      //     yArr2.push(item.num2);
-      //     yArr3.push(item.num3);
-      //   })
-      //   this.chartData = [xArr, yArr1, yArr2, yArr3];
-      //   this.chartInit();
-      // })
-      let data = [
-        {
-          month: '一月',
-          num1: 20,
-          num2: 40,
-          num3: 60
-        },
-        {
-          month: '二月',
-          num1: 30,
-          num2: 50,
-          num3: 70
-        },
-        {
-          month: '三月',
-          num1: 40,
-          num2: 60,
-          num3: 40
-        },
-        {
-          month: '四月',
-          num1: 50,
-          num2: 30,
-          num3: 50
-        },
-        {
-          month: '五月',
-          num1: 60,
-          num2: 20,
-          num3: 20
-        },
-        {
-          month: '六月',
-          num1: 40,
-          num2: 30,
-          num3: 30
-        },
-        {
-          month: '七月',
-          num1: 10,
-          num2: 20,
-          num3: 10
-        },
-        {
-          month: '八月',
-          num1: 20,
-          num2: 60,
-          num3: 30
-        },
-        {
-          month: '九月',
-          num1: 20,
-          num2: 40,
-          num3: 60
-        },
-        {
-          month: '十月',
-          num1: 20,
-          num2: 40,
-          num3: 60
-        },
-        {
-          month: '十一月',
-          num1: 80,
-          num2: 40,
-          num3: 60
-        },
-        {
-          month: '十二月',
-          num1: 100,
-          num2: 40,
-          num3: 60
-        }
-      ]
-      let xArr = [], yArr1 = [], yArr2 = [], yArr3 = [];
-      data.forEach(item=>{
-        xArr.push(item.month);
-        yArr1.push(item.num1);
-        yArr2.push(item.num2);
-        yArr3.push(item.num3);
+    getChartData() {
+      this.getRecordsDayAnalysisData({ year: this.year }).then(res => {
+        console.log('getRecordsDayAnalysisData', res);
+        const xArr = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+          yArr1 = [],
+          yArr2 = [],
+          yArr3 = [];
+        res.forEach(item => {
+          // xArr.push(item.month);
+          yArr1.push(item.sbs);
+          yArr2.push(item.las);
+          yArr3.push(item.cls);
+        })
+        this.chartData = [xArr, yArr1, yArr2, yArr3];
+        this.chartInit();
       })
-      this.chartData = [xArr, yArr1, yArr2, yArr3];
-      this.chartInit();
+      // let data = [{
+      //     month: '一月',
+      //     num1: 20,
+      //     num2: 40,
+      //     num3: 60
+      //   },
+      //   {
+      //     month: '二月',
+      //     num1: 30,
+      //     num2: 50,
+      //     num3: 70
+      //   },
+      //   {
+      //     month: '三月',
+      //     num1: 40,
+      //     num2: 60,
+      //     num3: 40
+      //   },
+      //   {
+      //     month: '四月',
+      //     num1: 50,
+      //     num2: 30,
+      //     num3: 50
+      //   },
+      //   {
+      //     month: '五月',
+      //     num1: 60,
+      //     num2: 20,
+      //     num3: 20
+      //   },
+      //   {
+      //     month: '六月',
+      //     num1: 40,
+      //     num2: 30,
+      //     num3: 30
+      //   },
+      //   {
+      //     month: '七月',
+      //     num1: 10,
+      //     num2: 20,
+      //     num3: 10
+      //   },
+      //   {
+      //     month: '八月',
+      //     num1: 20,
+      //     num2: 60,
+      //     num3: 30
+      //   },
+      //   {
+      //     month: '九月',
+      //     num1: 20,
+      //     num2: 40,
+      //     num3: 60
+      //   },
+      //   {
+      //     month: '十月',
+      //     num1: 20,
+      //     num2: 40,
+      //     num3: 60
+      //   },
+      //   {
+      //     month: '十一月',
+      //     num1: 80,
+      //     num2: 40,
+      //     num3: 60
+      //   },
+      //   {
+      //     month: '十二月',
+      //     num1: 100,
+      //     num2: 40,
+      //     num3: 60
+      //   }
+      // ]
+      // let xArr = [],
+      //   yArr1 = [],
+      //   yArr2 = [],
+      //   yArr3 = [];
+      // data.forEach(item => {
+      //   xArr.push(item.month);
+      //   yArr1.push(item.num1);
+      //   yArr2.push(item.num2);
+      //   yArr3.push(item.num3);
+      // })
+      // this.chartData = [xArr, yArr1, yArr2, yArr3];
+      // this.chartInit();
     },
-    //初始化图表
-    chartInit(){
-      const ChartColumnar = this.$echarts.init(document.getElementById('day-bar'));
-      ChartColumnar.setOption({
+    chartInit() {
+      this.chartColumnar = this.$echarts.init(document.getElementById('day-bar'));
+      this.chartColumnar.setOption({
         grid: {
           top: 90,
           left: 5,
@@ -153,13 +164,14 @@ export default {
           data: this.chartData[0],
           axisLabel: {
             show: true,
-            textStyle:{
+            interval: 0,
+            textStyle: {
               color: '#999999'
             }
           },
           axisLine: {
             show: true,
-            lineStyle:{
+            lineStyle: {
               color: '#dddddd'
             }
           },
@@ -184,46 +196,49 @@ export default {
           },
           splitLine: {
             show: true,
-            lineStyle:{
+            lineStyle: {
               type: 'dashed',
               color: '#dddddd'
             }
           }
         },
-        tooltip:{
+        tooltip: {
           show: true,
           trigger: 'axis',
           axisPointer: {
-            type:'none'
+            type: 'none'
           }
         },
         series: [{
-          name: '上报',
-          type: 'bar',
-          barWidth: 8,
-          color: '#2c90f3',
-          data: this.chartData[1]
-        },
-        {
-          name: '立案',
-          type: 'bar',
-          barWidth: 8,
-          color: '#50cf3f',
-          data: this.chartData[2]
-        },
-        {
-          name: '处置',
-          type: 'bar',
-          barWidth: 8,
-          color: '#febb08',
-          barCategoryGap: 20,
-          data: this.chartData[3]
-        }]
+            name: '上报',
+            type: 'bar',
+            barWidth: 8,
+            color: '#2c90f3',
+            data: this.chartData[1]
+          },
+          {
+            name: '立案',
+            type: 'bar',
+            barWidth: 8,
+            color: '#50cf3f',
+            data: this.chartData[2]
+          },
+          {
+            name: '处理',
+            type: 'bar',
+            barWidth: 8,
+            color: '#febb08',
+            barCategoryGap: 10,
+            data: this.chartData[3]
+          }
+        ]
       });
     },
-    //选择年份
-    handleChange(val){
-      console.log(val);
+    handleChange(val) {
+      if (!this.chartColumnar.isDisposed()) {
+        this.chartColumnar.dispose();
+      }
+      this.getChartData();
     }
   }
 }
@@ -239,33 +254,40 @@ export default {
   background-image: -o-linear-gradient(180deg, #ffffff 36px, #f5f5f5 36px);
   background-image: linear-gradient(180deg, #ffffff 36px, #f5f5f5 36px);
   position: relative;
+
   .panel-header {
     position: absolute;
     top: 10px;
     width: 100%;
     padding-right: 3px;
+
     .title {
       font-family: PingFang-SC-Medium;
       font-size: 14px;
       color: #333333;
     }
+
     .legend {
-      > span {
+      >span {
         font-family: MicrosoftYaHei;
         font-size: 12px;
         color: #666666;
+
         .dot {
           display: inline-block;
           width: 10px;
           height: 10px;
           border-radius: 2px;
           margin: 0px 5px 0px 10px;
+
           &.green {
             background-color: #50cf3f;
           }
+
           &.blue {
             background-color: #2c90f3;
           }
+
           &.yellow {
             background-color: #febb08;
           }
@@ -273,6 +295,7 @@ export default {
       }
     }
   }
+
   .year-panel {
     position: absolute;
     right: 15px;
@@ -281,16 +304,19 @@ export default {
     height: 30px;
     z-index: 1;
   }
+
   .panel-content {
     height: 272px;
     width: 317px;
+
     ::v-deep.happy-scroll-container {
       height: 272px !important;
       width: 317px !important;
     }
+
     #day-bar {
       height: 272px;
-      width: 700px;
+      width: 600px;
     }
   }
 }

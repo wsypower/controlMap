@@ -75,7 +75,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('map', ['mapManager']),
+    ...mapState('map', ['mapManager', 'querySelectData']),
     //获得展示的数据与属性
     treeData: function() {
       let data = JSON.parse(JSON.stringify(this.sourceData));
@@ -104,6 +104,11 @@ export default {
           // this.mapManager.getMap().getView().fit(extent);
         }
       }
+    },
+    querySelectData(feature) {
+      if (feature) {
+        this.popupDetail(feature);
+      }
     }
   },
   mounted() {
@@ -120,7 +125,7 @@ export default {
     this.map.on('click', this.peopleMapClickHandler);
     this.peopleOverlay = this.mapManager.addOverlay({
       id: 'zfPositionOverlay',
-      offset: [0, -20],
+      offset: [0, -35],
       positioning: 'bottom-center',
       element: this.$refs.peopleInfo.$el
     });
@@ -304,23 +309,28 @@ export default {
       this.peopleLayer.getSource().getSource().clear();
       this.peopleLayer.getSource().getSource().addFeatures(this.peopleFeatures);
     },
-    //地图上人员点击事件处理器
     peopleMapClickHandler({ pixel, coordinate }) {
       const feature = this.map.forEachFeatureAtPixel(pixel, feature => feature);
       if (feature && feature.get('features')) {
         const clickFeature = feature.get('features')[0];
-        const coordinates = clickFeature.getGeometry().getCoordinates();
-        if (clickFeature && clickFeature.get('type') == 'zfPosition') {
-          this.peopleInfoData = clickFeature.get('props');
-          this.peopleOverlay.setPosition(coordinates);
-        }
+        this.popupDetail(clickFeature);
+        // const coordinates = clickFeature.getGeometry().getCoordinates();
+        // if (clickFeature && clickFeature.get('type') == 'zfPosition') {
+        //   this.peopleInfoData = clickFeature.get('props');
+        //   this.peopleOverlay.setPosition(coordinates);
+        // }
       }
     },
-    //人员轨迹触发
+    popupDetail(feature) {
+      const coordinates = feature.getGeometry().getCoordinates();
+      if (feature && feature.get('type') == 'zfPosition') {
+        this.peopleInfoData = feature.get('props');
+        this.peopleOverlay.setPosition(coordinates);
+      }
+    },
     getUserId(data) {
       this.$emit('getUserId', data);
     },
-    //关闭地图上的弹窗
     closeTip() {
       this.peopleOverlay.setPosition(undefined);
     }

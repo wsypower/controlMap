@@ -110,7 +110,9 @@ export default {
   },
   watch: {
     querySelectData(feature) {
-      this.popupDetail(feature);
+      if (feature) {
+        this.popupDetail(feature);
+      }
     }
   },
   computed: {
@@ -123,7 +125,7 @@ export default {
     this.map.on('click', this.eventMapClickHandler);
     this.eventOverlay = this.mapManager.addOverlay({
       id: 'eventPositionOverlay',
-      offset: [0, -20],
+      offset: [0, -35],
       positioning: 'bottom-center',
       element: this.$refs.recordInfo.$el
     });

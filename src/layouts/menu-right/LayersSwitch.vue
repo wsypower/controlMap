@@ -124,8 +124,18 @@ export default {
       videoSrc: ''
     }
   },
+  watch: {
+    querySelectData(feature) {
+      this.popupDetail(feature);
+    },
+    // mapManager(val) {
+    //   if (this.mapManager && !this.map) {
+    //     this.getAllLayers();
+    //   }
+    // }
+  },
   computed: {
-    ...mapState('map', ['mapManager']),
+    ...mapState('map', ['mapManager', 'querySelectData']),
     getSelectState: function(layer) {
       return function(layer) {
         return this.selectLayer.includes(layer) ? selectedImg : unselectedImg
@@ -157,7 +167,8 @@ export default {
               const features = listToFeatures(res, '人员');
               console.log('所有人员数据=====', features.length);
               // layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
-              layer.lyr = _this.mapManager.addVectorLayerByFeatures(features);
+              layer.lyr = _this.mapManager.addVectorLayerByFeatures(features, null, 33);
+              layer.lyr.set('featureType', 'peopleSimple');
               layer.lyr.setVisible(false);
             });
           } else if (layer.name == '执法人员') {
@@ -174,7 +185,8 @@ export default {
               const features = listToFeatures(res, '执法人员');
               console.log('所有执法人员数据=====', features.length);
               // layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
-              layer.lyr = _this.mapManager.addVectorLayerByFeatures(features);
+              layer.lyr = _this.mapManager.addVectorLayerByFeatures(features, null, 33);
+              layer.lyr.set('featureType', 'zfSimple');
               layer.lyr.setVisible(false);
             });
           } else if (layer.name == '车辆') {
@@ -182,7 +194,8 @@ export default {
               const features = listToFeatures(res, '车辆');
               console.log('所有车辆数据=====', features.length);
               // layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
-              layer.lyr = _this.mapManager.addVectorLayerByFeatures(features);
+              layer.lyr = _this.mapManager.addVectorLayerByFeatures(features, null, 33);
+              layer.lyr.set('featureType', 'carSimple');
               layer.lyr.setVisible(false);
             });
           } else if (layer.name == '视频') {
@@ -190,7 +203,8 @@ export default {
               const features = listToFeatures(res, '视频');
               console.log('所有视频数据=====', features.length);
               // layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
-              layer.lyr = _this.mapManager.addVectorLayerByFeatures(features);
+              layer.lyr = _this.mapManager.addVectorLayerByFeatures(features, null, 33);
+              layer.lyr.set('featureType', 'videoSimple');
               layer.lyr.setVisible(false);
             });
           } else if (layer.name == '案卷') {
@@ -204,7 +218,8 @@ export default {
               console.log('所有案件数据=====', res.length);
               const features = listToFeatures(res.data, '案卷');
               // layer.lyr = _this.mapManager.addClusterLayerByFeatures(features);
-              layer.lyr = _this.mapManager.addVectorLayerByFeatures(features);
+              layer.lyr = _this.mapManager.addVectorLayerByFeatures(features, null, 33);
+              layer.lyr.set('featureType', 'eventSimple');
               layer.lyr.setVisible(false);
             });
           }
@@ -215,25 +230,25 @@ export default {
       this.map.on('click', this.mapClickHandler);
       this.detailOverlay = this.mapManager.addOverlay({
         id: 'detailOverlay',
-        offset: [0, -20],
+        offset: [0, -35],
         positioning: 'bottom-center',
         element: this.$refs.recordInfo.$el
       });
       this.carOverlay = this.mapManager.addOverlay({
         id: 'carDetailOverlay',
-        offset: [0, -20],
+        offset: [0, -35],
         positioning: 'bottom-center',
         element: this.$refs.carInfo.$el
       });
       this.peopleOverlay = this.mapManager.addOverlay({
         id: 'peopleDetailOverlay',
-        offset: [0, -20],
+        offset: [0, -35],
         positioning: 'bottom-center',
         element: this.$refs.peopleInfo.$el
       });
       this.zfOverlay = this.mapManager.addOverlay({
         id: 'zfDetailOverlay',
-        offset: [0, -20],
+        offset: [0, -35],
         positioning: 'bottom-center',
         element: this.$refs.zfInfo.$el
       });
@@ -252,6 +267,26 @@ export default {
           });
         });
       }, 10 * 60 * 1000);
+    },
+    getExistLayer(item, features, featureType, layerName) {
+      let lyr = null;
+      const layers = this.map.getLayers().getArray();
+      layers.forEach(layer => {
+        if (layer.get('featureType') == featureType) {
+          lyr = layer;
+          this.selectLayer.push(layerName);
+          return false;
+        };
+      });
+      if (lyr) {
+        lyr.getSource().clear();
+        lyr.getSource().addFeatures(features);
+        item.lyr = lyr;
+      } else {
+        item.lyr = this.mapManager.addVectorLayerByFeatures(features);
+        item.lyr.set('featureType', featureType);
+        item.lyr.setVisible(false);
+      }
     },
     getControlData(layer) {
       const refreshData = (layer, features) => {
@@ -362,28 +397,7 @@ export default {
       // if (feature && feature.get('features')) {
       if (feature && !feature.get('features')) {
         // const clickFeature = feature.get('features')[0];
-        const clickFeature = feature;
-        const coords = feature.getGeometry().getCoordinates();
-        // const coordinates = clickFeature.getGeometry().getCoordinates();
-        if (clickFeature && clickFeature.get('type') == 'eventSimple') {
-          this.code = clickFeature.get('props').taskcode;
-          this.detailOverlay.setPosition(coords);
-        } else if (clickFeature && clickFeature.get('type') == 'carSimple') {
-          this.carInfoData = clickFeature.get('props');
-          this.carOverlay.setPosition(coords);
-        } else if (clickFeature && clickFeature.get('type') == 'peopleSimple') {
-          this.peopleInfoData = clickFeature.get('props');
-          this.peopleOverlay.setPosition(coords);
-        } else if (clickFeature && clickFeature.get('type') == 'zfSimple') {
-          this.zfInfoData = clickFeature.get('props');
-          this.zfOverlay.setPosition(coords);
-        } else if (clickFeature && clickFeature.get('type') == 'videoSimple') {
-          const videoData = clickFeature.get('props');
-          const userId = util.cookies.get('userId');
-          this.getCameraUrl({ userId: userId, code: videoData.cid, transmode: 0 }).then(res => {
-            this.videoSrc = res.url;
-          });
-        }
+        this.popupDetail(feature);
         this.map.render();
       }
       // if (this.partSelectLayer.length > 0) {
@@ -402,6 +416,29 @@ export default {
       //     }
       //   });
       // }
+    },
+    popupDetail(feature) {
+      const coords = feature.getGeometry().getCoordinates();
+      if (feature && feature.get('type') == 'eventSimple') {
+        this.code = feature.get('props').taskcode;
+        this.detailOverlay.setPosition(coords);
+      } else if (feature && feature.get('type') == 'carSimple') {
+        this.carInfoData = feature.get('props');
+        this.carOverlay.setPosition(coords);
+      } else if (feature && feature.get('type') == 'peopleSimple') {
+        this.peopleInfoData = feature.get('props');
+        this.peopleOverlay.setPosition(coords);
+      } else if (feature && feature.get('type') == 'zfSimple') {
+        this.zfInfoData = feature.get('props');
+        this.zfOverlay.setPosition(coords);
+      } else if (feature && feature.get('type') == 'videoSimple') {
+        const videoData = feature.get('props');
+        this.videoSrc = videoData.cid;
+        // const userId = util.cookies.get('userId');
+        // this.getCameraUrl({ userId: userId, code: videoData.cid, transmode: 0 }).then(res => {
+        //   this.videoSrc = res.url;
+        // });
+      }
     },
     getPartLayers() {
       getDescribeLayer('dongtaibujian').then(data => {

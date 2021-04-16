@@ -5,6 +5,7 @@
     <records-source-analysis></records-source-analysis>
     <high-incidence-top5></high-incidence-top5>
     <records-day-analysis></records-day-analysis>
+    <!-- <heatmap-analysis></heatmap-analysis> -->
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -13,15 +14,14 @@ import RecordsStatistical from './statisticalAnalysis/RecordsStatistical.vue'
 import RecordsSourceAnalysis from './statisticalAnalysis/RecordsSourceAnalysis.vue'
 import HighIncidenceTop5 from './statisticalAnalysis/HighIncidenceTOP5.vue'
 import RecordsDayAnalysis from './statisticalAnalysis/RecordsDayAnalysis.vue'
-export default{
-    name:'statistical',
-    components:{RecordsBigTypeAnalysis,RecordsStatistical,RecordsSourceAnalysis,HighIncidenceTop5,RecordsDayAnalysis},
-    data(){
-      return {
-      }
-    },
-    mounted() {
-    }
+// import HeatmapAnalysis from './statisticalAnalysis/HeatmapAnalysis.vue'
+export default {
+  name: 'statistical',
+  components: { RecordsBigTypeAnalysis, RecordsStatistical, RecordsSourceAnalysis, HighIncidenceTop5, RecordsDayAnalysis },
+  data() {
+    return {}
+  },
+  mounted() {}
 }
 </script>
 <style lang="scss" scoped>

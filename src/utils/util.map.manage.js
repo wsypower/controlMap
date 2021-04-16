@@ -115,7 +115,8 @@ export class MapManager {
       name: 'Cluster',
       source: clusterSource,
       animationDuration: 700,
-      style: getClusterStyle
+      style: getClusterStyle,
+      zIndex: 33
     });
     this.map.addLayer(clusterLayer);
 
@@ -133,7 +134,7 @@ export class MapManager {
           style = styleCache[size] = new Style({
             image: new Icon({
               src: require('@/assets/mapImage/' + styleFeature.get('icon') + '.png'),
-              anchor: [0.5, 0.5],
+              anchor: [0.5, 1],
               size: [30, 39],
               opacity: 1
             }),
@@ -357,14 +358,18 @@ export function listToFeatures(list, type) {
         let pointImg;
         if (item.sex === '1') {
           if (item.online) {
+            item.slots = { icon: 'female' };
             pointImg = 'female_online';
           } else {
+            item.slots = { icon: 'female-outline' };
             pointImg = 'female_offline';
           }
         } else {
           if (item.online) {
+            item.slots = { icon: 'male' };
             pointImg = 'male_online';
           } else {
+            item.slots = { icon: 'male-outline' };
             pointImg = 'male_offline';
           }
         }
@@ -379,7 +384,7 @@ export function listToFeatures(list, type) {
           feature.setStyle(new Style({
             image: new Icon({
               src: require('@/assets/mapImage/' + pointImg + '.png'),
-              anchor: [0.5, 0.5]
+              anchor: [0.5, 1]
             }),
           }));
           return feature;
@@ -391,14 +396,18 @@ export function listToFeatures(list, type) {
         let pointImg;
         if (item.sex === '1') {
           if (item.online) {
+            item.slots = { icon: 'female' };
             pointImg = 'female_online';
           } else {
+            item.slots = { icon: 'female-outline' };
             pointImg = 'female_offline';
           }
         } else {
           if (item.online) {
+            item.slots = { icon: 'male' };
             pointImg = 'male_online';
           } else {
+            item.slots = { icon: 'male-outline' };
             pointImg = 'male_offline';
           }
         }
@@ -413,7 +422,7 @@ export function listToFeatures(list, type) {
           feature.setStyle(new Style({
             image: new Icon({
               src: require('@/assets/mapImage/' + pointImg + '.png'),
-              anchor: [0.5, 0.5]
+              anchor: [0.5, 1]
             }),
           }));
           return feature;
@@ -424,8 +433,10 @@ export function listToFeatures(list, type) {
       features = list.map(item => {
         let pointImg;
         if (item.online) {
+          item.slots = { icon: 'car' };
           pointImg = 'car-online';
         } else {
+          item.slots = { icon: 'car-outline' };
           pointImg = 'car-offline';
         }
         // 通过经纬度生成点位加到地图上
@@ -439,7 +450,7 @@ export function listToFeatures(list, type) {
           feature.setStyle(new Style({
             image: new Icon({
               src: require('@/assets/mapImage/' + pointImg + '.png'),
-              anchor: [0.5, 0.5]
+              anchor: [0.5, 1]
             }),
           }));
           return feature;
@@ -458,7 +469,7 @@ export function listToFeatures(list, type) {
           feature.setStyle(new Style({
             image: new Icon({
               src: require('@/assets/mapImage/event.png'),
-              anchor: [0.5, 0.5]
+              anchor: [0.5, 1]
             }),
           }));
           return feature;
@@ -479,7 +490,7 @@ export function listToFeatures(list, type) {
           feature.setStyle(new Style({
             image: new Icon({
               src: require('@/assets/mapImage/' + pointImg + '.png'),
-              anchor: [0.5, 0.5]
+              anchor: [0.5, 1]
             }),
           }));
           return feature;

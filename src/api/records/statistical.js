@@ -16,12 +16,11 @@ import request from '@/plugins/axios/axios'
  *     {Number} buJianNum: 部件数
  * }
  */
-export const getShiBuJianAnalysisData = data => {
-  console.log('api:getShiBuJianAnalysisData', data)
+export function getShiBuJianAnalysisData() {
+  console.log('api:getShiBuJianAnalysisData')
   return request({
-    url: '@test/getShiBuJianAnalysisData?_t=' + new Date().getTime(),
-    method: 'get',
-    params: data
+    url: 'bigscreen/allSjBj?_t=' + new Date().getTime(),
+    method: 'post'
   })
 }
 
@@ -40,9 +39,9 @@ export const getShiBuJianAnalysisData = data => {
 export function getRecordsStatisticalAnalysisData(data) {
   console.log('api:getRecordsStatisticalAnalysisData', data)
   return request({
-    url: '@test/getRecordsStatisticalAnalysisData?_t=' + new Date().getTime(),
-    method: 'get',
-    params: data
+    url: 'bigscreen/ajtj?_t=' + new Date().getTime(),
+    method: 'post',
+    data
   })
 }
 
@@ -58,12 +57,11 @@ export function getRecordsStatisticalAnalysisData(data) {
  * }
  */
 
-export function getRecordsSourceAnalysisData(data) {
-  console.log('api:getRecordsSourceAnalysisData', data)
+export function getRecordsSourceAnalysisData() {
+  console.log('api:getRecordsSourceAnalysisData')
   return request({
-    url: '@test/getRecordsSourceAnalysisData?_t=' + new Date().getTime(),
-    method: 'get',
-    params: data
+    url: 'bigscreen/lyfs?_t=' + new Date().getTime(),
+    method: 'post'
   })
 }
 
@@ -79,12 +77,11 @@ export function getRecordsSourceAnalysisData(data) {
  * }
  */
 
-export function getHighIncidenceTOP5Data(data) {
-  console.log('api:getHighIncidenceTOP5Data', data)
+export function getHighIncidenceTOP5Data() {
+  console.log('api:getHighIncidenceTOP5Data')
   return request({
-    url: '@test/getHighIncidenceTOP5Data?_t=' + new Date().getTime(),
-    method: 'get',
-    params: data
+    url: 'bigscreen/top5?_t=' + new Date().getTime(),
+    method: 'post'
   })
 }
 
@@ -105,8 +102,28 @@ export function getHighIncidenceTOP5Data(data) {
 export function getRecordsDayAnalysisData(data) {
   console.log('api:getRecordsDayAnalysisData', data)
   return request({
-    url: '@test/getRecordsDayAnalysisData?_t=' + new Date().getTime(),
-    method: 'get',
-    params: data
+    url: 'bigscreen/eventCircle?_t=' + new Date().getTime(),
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * @description 获取案卷来源
+ */
+export function getRecordsSource() {
+  console.log('api:getRecordsSource')
+  return request({
+    url: 'bigscreen/eventsource?_t=' + new Date().getTime(),
+    method: 'post'
+  })
+}
+
+export function getRecordsLocation(data) {
+  console.log('api:getRecordsLocation', data)
+  return request({
+    url: 'bigscreen/hotmap?_t=' + new Date().getTime(),
+    method: 'post',
+    data
   })
 }

@@ -74,7 +74,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('map', ['mapManager']),
+    ...mapState('map', ['mapManager', 'querySelectData']),
     //获得展示的数据与属性
     treeData: function() {
       let data = JSON.parse(JSON.stringify(this.sourceData));
@@ -103,6 +103,11 @@ export default {
           // this.mapManager.getMap().getView().fit(extent);
         }
       }
+    },
+    querySelectData(feature) {
+      if (feature) {
+        this.popupDetail(feature);
+      }
     }
   },
   mounted() {
@@ -116,7 +121,7 @@ export default {
     this.map.on('click', this.peopleMapClickHandler);
     this.peopleOverlay = this.mapManager.addOverlay({
       id: 'peoplePositionOverlay',
-      offset: [0, -20],
+      offset: [0, -35],
       positioning: 'bottom-center',
       element: this.$refs.peopleInfo.$el
     });
@@ -294,6 +299,13 @@ export default {
           this.peopleInfoData = clickFeature.get('props');
           this.peopleOverlay.setPosition(coordinates);
         }
+      }
+    },
+    popupDetail(feature) {
+      const coordinates = feature.getGeometry().getCoordinates();
+      if (feature && feature.get('type') == 'peoplePosition') {
+        this.peopleInfoData = feature.get('props');
+        this.peopleOverlay.setPosition(coordinates);
       }
     },
     //人员轨迹触发

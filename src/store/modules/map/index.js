@@ -10,9 +10,11 @@ export default {
     mapManager: null,
     emergencyAllArea: null,
     selectEmergencyFeature: null, //当前选中应急预案的要素
-    pageLayers:[],
-    clickHandler:null,
-    yuanOverlay:null
+    pageLayers: [],
+    clickHandler: null,
+    yuanOverlay: null,
+    querySelectData: null,
+    showHeatmapAnalysis: false
   },
   mutations: {
     setMapManager(state, mapManager) {
@@ -24,18 +26,24 @@ export default {
     setSelectEmergencyFeature(state, selectEmergencyFeature) {
       state.selectEmergencyFeature = selectEmergencyFeature;
     },
-    pushPageLayers(state, pageLayer){
+    pushPageLayers(state, pageLayer) {
       state.pageLayers.push(pageLayer);
     },
-    setPageLayers(state, pageLayers){
+    setPageLayers(state, pageLayers) {
       state.pageLayers = pageLayers;
     },
-    setClickHandler(state, clickHandler){
+    setClickHandler(state, clickHandler) {
       state.clickHandler = clickHandler;
     },
-    setOverlay(state, yuanOverlay){
+    setOverlay(state, yuanOverlay) {
       state.yuanOverlay = yuanOverlay;
     },
+    setQuerySelectData(state, querySelectData) {
+      state.querySelectData = querySelectData;
+    },
+    setShowHeatmapAnalysis(state, showHeatmapAnalysis) {
+      state.showHeatmapAnalysis = showHeatmapAnalysis;
+    }
   },
   actions: {
 
