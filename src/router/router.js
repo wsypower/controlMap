@@ -41,6 +41,15 @@ const frameIn = [
         },
         component: _import('section/index.vue')
       },
+      {
+        path: '/zf',
+        name: 'zf',
+        meta: {
+          title: '执法队员',
+          role: ['admin', 'super_editor']
+        },
+        component: _import('zf/index.vue')
+      },
       //测试 => page2
       {
         path: '/car',
