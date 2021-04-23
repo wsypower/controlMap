@@ -210,7 +210,7 @@ export default {
         const depts = res[0].children;
         for (let i = depts.length - 1; i >= 0; i--) {
           let dept = depts[i];
-          if (dept.name.indexOf('中队') == -1) {
+          if (dept.name.indexOf('中队') == -1 && dept.name.indexOf('执法终端') == -1 && dept.name.indexOf('4G执法仪') == -1) {
             const deptIndex = depts.indexOf(dept);
             if (deptIndex != -1) {
               depts.splice(deptIndex, 1);
