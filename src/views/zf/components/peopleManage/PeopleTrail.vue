@@ -143,12 +143,12 @@ export default {
   mounted() {
     this.map = this.mapManager.getMap();
     let userId = '';
-    if (this.infoId) {
-      userId = this.infoId;
-    } else {
+    // if (this.infoId) {
+      // userId = this.infoId;
+    // } else {
       userId = util.cookies.get('userId');
-    }
-    let temp = this.peopleDataList.find(item => item.id === userId);
+    // }
+    let temp = this.peopleDataList.find(item => item.id === this.infoId);
     if (temp) {
       this.query.userId = userId;
       this.query.userDisplayId = temp.userDisplayId;
@@ -187,7 +187,7 @@ export default {
       if (val) {
         console.log('infoId', val);
         let temp = this.peopleDataList.find(item => item.id === val);
-        this.query.userId = val;
+        // this.query.userId = val;
         this.query.userDisplayId = temp.userDisplayId;
       }
       // let day = moment(new Date()).format('YYYY-MM-DD');
@@ -207,7 +207,9 @@ export default {
     getDataList() {
       console.log('this.query', this.query);
       this.showLoading = true;
-      this.query.userId = this.query.userDisplayId.split('_')[0];
+      // this.query.userId = this.query.userDisplayId.split('_')[0];
+      this.query.usercode = this.query.userDisplayId.split('_')[0];
+      this.query.qxcode = this.query.userDisplayId.split('_')[1];
       getUserTrailDataList(this.query).then(res => {
         this.showLoading = false;
         this.dataList = res.map(item => {

@@ -144,7 +144,7 @@ export default {
                     }
                 },
                 series: [{
-                    name: '监督员',
+                    name: '队员',
                     type: 'line',
                     smooth: true,
                     symbol: 'circle',

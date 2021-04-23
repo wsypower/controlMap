@@ -82,43 +82,43 @@ export default {
             // })
           let data = [
             {
-              name: '市本级指挥中心1',
+              name: '婺城区',
               totalNum: 24,
               onlineNum: 20,
               outlineNum: 4
             },
             {
-              name: '市本级指挥中心2',
+              name: '金东区',
               totalNum: 24,
               onlineNum: 18,
               outlineNum: 6
             },
             {
-              name: '信息采集中心1',
+              name: '兰溪市',
               totalNum: 34,
               onlineNum: 30,
               outlineNum: 4
             },
             {
-              name: '信息采集中心2',
+              name: '义乌市',
               totalNum: 17,
               onlineNum: 17,
               outlineNum: 0
             },
             {
-              name: '信息采集中心3',
+              name: '东阳市',
               totalNum: 78,
               onlineNum: 70,
               outlineNum: 8
             },
             {
-              name: '信息采集中心4',
+              name: '永康市',
               totalNum: 31,
               onlineNum: 30,
               outlineNum: 1
             },
             {
-              name: '信息采集中心5',
+              name: '经济技术开发区',
               totalNum: 45,
               onlineNum: 42,
               outlineNum: 3

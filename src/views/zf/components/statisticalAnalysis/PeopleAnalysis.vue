@@ -47,43 +47,43 @@ export default {
             // });
           let data = [
             {
-              groupName: '市本级指挥中心',
+              groupName: '婺城区',
               allNum: 240,
               onWorkNum: 115,
               onlineNum: 180
             },
             {
-              groupName: '金东区指挥平台',
+              groupName: '金东区',
               allNum: 290,
               onWorkNum: 130,
               onlineNum: 230
             },
             {
-              groupName: '婺城区指挥平台',
+              groupName: '经济技术开发区',
               allNum: 240,
               onWorkNum: 150,
               onlineNum: 180
             },
             {
-              groupName: '兰溪市指挥平台',
+              groupName: '兰溪市',
               allNum: 290,
               onWorkNum: 180,
               onlineNum: 230
             },
             {
-              groupName: '义乌市指挥平台',
+              groupName: '义乌市',
               allNum: 260,
               onWorkNum: 70,
               onlineNum: 160
             },
             {
-              groupName: '东阳市指挥平台',
+              groupName: '东阳市',
               allNum: 275,
               onWorkNum: 130,
               onlineNum: 195
             },
             {
-              groupName: '永康市指挥平台',
+              groupName: '永康市',
               allNum: 310,
               onWorkNum: 90,
               onlineNum: 220

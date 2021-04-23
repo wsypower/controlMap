@@ -31,7 +31,7 @@ export const getUserWorkInfoData = data => {
 export const getUserTrailDataList = data => {
   console.log('api:getUserTrailDataList', data)
   return request({
-    url: `people/getTrailList?_t=` + new Date().getTime(),
+    url: `qxCollectionData/getTrailList?_t=` + new Date().getTime(),
     method: 'get',
     params: data
   })

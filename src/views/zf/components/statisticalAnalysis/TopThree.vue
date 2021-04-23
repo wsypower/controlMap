@@ -46,7 +46,7 @@ export default {
             {
               photoUrl: '',
               name: '许三多',
-              dept: '金东区指挥平台',
+              dept: '三江中队',
               sbajs: 56,
               hsajs: 48,
               hcajs: 36
@@ -54,7 +54,7 @@ export default {
             {
               photoUrl: '',
               name: '许三多',
-              dept: '金东区指挥平台',
+              dept: '三江中队',
               sbajs: 50,
               hsajs: 31,
               hcajs: 30
@@ -62,7 +62,7 @@ export default {
             {
               photoUrl: '',
               name: '许三多',
-              dept: '金东区指挥平台',
+              dept: '三江中队',
               sbajs: 41,
               hsajs: 29,
               hcajs: 36

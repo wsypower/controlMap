@@ -23,7 +23,7 @@ import PeopleTrail from './peopleManage/PeopleTrail'
 import ViolateRules from './peopleManage/ViolateRules'
 import PeopleWorkTime from './peopleManage/PeopleWorkTime'
 import util from '@/utils/util'
-import { getJDYPeopleDataList, getAllPeopleDataList } from '@/api/zf/common'
+import { getAllPeopleDataList } from '@/api/zf/common'
 export default {
   name: 'peopleManage',
   data() {
@@ -48,14 +48,8 @@ export default {
     const userId = util.cookies.get('userId');
     getAllPeopleDataList({ userId: userId }).then(res => {
       res.forEach(item => {
-        item.userDisplayId = item.id + '_' + item.name;
+        item.userDisplayId = item.id + '_' + item.qxcode;
         this.peopleDataList.push(item);
-      });
-    });
-    getJDYPeopleDataList({ userId: userId }).then(res => {
-      res.forEach(item => {
-        item.userDisplayId = item.id + '_' + item.name;
-        this.jdyPeopleDataList.push(item);
       });
     });
   },

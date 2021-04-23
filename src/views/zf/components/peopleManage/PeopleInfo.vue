@@ -2,9 +2,9 @@
   <div class="tip-content">
     <div class="tip-header" flex="dir:left">
       <div class="info-body-left" flex="main:center cross:center">
-        <img v-if="!info.online && info.sex == '0'" src="~@img/avatar-male-outline.png" />
+        <img v-if="!info.online && info.sex != '1'" src="~@img/avatar-male-outline.png" />
         <img v-if="!info.online && info.sex == '1'" src="~@img/avatar-female-outline.png" />
-        <img v-if="info.online && info.sex == '0'" src="~@img/avatar-male.png" />
+        <img v-if="info.online && info.sex != '1'" src="~@img/avatar-male.png" />
         <img v-if="info.online && info.sex == '1'" src="~@img/avatar-female.png" />
       </div>
       <div class="info-body-right">
