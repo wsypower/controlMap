@@ -17,7 +17,8 @@ const URL_CONFIG = {
   baseURL2: "http://61.153.37.214:81/api", //正式外网服务器
 
   // fileURL: "http://192.168.71.33:50000/file/file/uploadFileWeb", //测试文件服务器
-  fileURL: "http://61.153.37.213:8087/file/file/uploadFileWeb" //正式文件服务器
+  fileURL: "http://61.153.37.213:8087/file/file/uploadFileWeb", //正式文件服务器
+  lampURL: "http://36.26.80.85:8800/web/index.html" //路灯URL
 };
 const GIS_CONFIG={
  baseURL:"http://61.153.37.212:6350/geoserver",//正式外网服务器

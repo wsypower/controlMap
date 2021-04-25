@@ -72,8 +72,9 @@ export default {
       if(module === this.activeModule) return;
       if(modulePermission.indexOf(module)>=0){
         if(module==='ld'){
-          this.$message.config({top: '100px'});
-          this.$message.warning('页面正在开发尽情期待！！！');
+          window.open(URL_CONFIG.lampURL)
+          // this.$message.config({top: '100px'});
+          // this.$message.warning('页面正在开发尽情期待！！！');
         }
         else{
           this.asideCollapseSet(false);

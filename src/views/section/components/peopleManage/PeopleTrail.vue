@@ -128,7 +128,6 @@ export default {
     },
     mounted(){
         this.map=this.mapManager.getMap();
-        console.log('10101010101');
         let userId = '';
         if(this.infoId){
             userId = this.infoId.split('_')[0];
