@@ -159,6 +159,7 @@ export default {
           }
         } else {
           item.key = 'dept_' + item.id;
+          item.title = `${item.name}[${item.onlineNum}/${item.allNum}]`;
           item.slots = { icon: 'dept' }
           this.changeTreeData(item.children, item.name)
         }

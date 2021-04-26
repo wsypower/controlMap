@@ -189,6 +189,7 @@ export default {
           // }
         } else {
           item.key = 'dept_' + item.id;
+          item.title = `${item.name}[${item.onlineNum}/${item.allNum}]`;
           item.slots = { icon: 'dept' };
           this.changeTreeData(item.children, item.name);
         }
@@ -227,7 +228,6 @@ export default {
       // this.onSearch(this.searchValue);
       //this.searchValue
     },
-    //查询后直接筛选数据，不走后端接口调用
     onSearch(val) {
       // this.showLoading = true;
       // this.getAllPeopleTreeData({searchContent: val}).then(res=>{
