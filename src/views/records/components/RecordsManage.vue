@@ -140,9 +140,9 @@ export default {
     onChange(val) {
       console.log('onChange', val);
       this.query.address = val;
-      this.query.areaId = val[0] ? val[0] : '';
-      this.query.streetId = val[1] ? val[1] : '';
-      this.query.countryId = val[2] ? val[2] : '';
+      this.query.areaId = val[1] ? val[1] : '';
+      this.query.streetId = val[2] ? val[2] : '';
+      this.query.countryId = val[3] ? val[3] : '';
     },
     //获取案卷数据
     getDataList() {

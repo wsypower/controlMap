@@ -175,7 +175,7 @@ export default {
             getAllZfDataList().then(res => {
               for (let i = res.length - 1; i >= 0; i--) {
                 let item = res[i];
-                if (item.dept.indexOf('中队') == -1) {
+                if (item.dept.indexOf('中队') == -1 && item.dept.indexOf('执法终端') == -1 && item.dept.indexOf('4G执法仪') == -1) {
                   const deptIndex = res.indexOf(item);
                   if (deptIndex != -1) {
                     res.splice(deptIndex, 1);
@@ -310,7 +310,7 @@ export default {
         getAllZfDataList().then(res => {
           for (let i = res.length - 1; i >= 0; i--) {
             let item = res[i];
-            if (item.dept.indexOf('中队') == -1) {
+            if (item.dept.indexOf('中队') == -1 && item.dept.indexOf('执法终端') == -1 && item.dept.indexOf('4G执法仪') == -1) {
               const deptIndex = res.indexOf(item);
               if (deptIndex != -1) {
                 res.splice(deptIndex, 1);
