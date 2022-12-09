@@ -28,7 +28,7 @@
     "lowdb": "^1.0.0",
     "ua-parser-js": "^0.7.19",
     "screenfull": "^4.2.0",
-    "qs": "^6.7.0",
+    "qs": "^6.5.3",
     "lodash": "^4.17.11",
     "hotkeys-js": "^3.6.2",
     "nprogress": "^0.2.0"
